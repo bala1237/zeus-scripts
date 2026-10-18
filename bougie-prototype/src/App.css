@@ -10,6 +10,7 @@
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: var(--text);
   background: var(--bg);
+  color-scheme: dark;
 }
 
 * {

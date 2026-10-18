@@ -69,10 +69,10 @@ const SOURCES: { name: string; label: string }[] = [
 
 async function loadFlatSource(name: string): Promise<FlatSource | null> {
   try {
-    const image = await loadImage(`/${name}.png`);
+    const image = await loadImage(`${import.meta.env.BASE_URL}${name}.png`);
     const lm =
       loadStoredLandmarks(name) ??
-      (await fetchJson<Landmarks>(`/${name}.landmarks.json`)) ??
+      (await fetchJson<Landmarks>(`${import.meta.env.BASE_URL}${name}.landmarks.json`)) ??
       guessLandmarks(image.naturalWidth, image.naturalHeight);
     return { name, image, landmarks: lm };
   } catch {
