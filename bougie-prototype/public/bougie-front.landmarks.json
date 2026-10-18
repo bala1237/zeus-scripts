@@ -1,0 +1,15 @@
+{
+  "imageWidth": 194,
+  "imageHeight": 298,
+  "tilt": 1.5,
+  "face": { "cx": 99, "cy": 145, "w": 49, "h": 62 },
+  "neckY": 215,
+  "eyeL": { "cx": 125, "cy": 122, "w": 14, "h": 5.5 },
+  "eyeR": { "cx": 72, "cy": 121, "w": 14, "h": 5.5 },
+  "browL": { "cx": 126, "cy": 106, "w": 16, "h": 3 },
+  "browR": { "cx": 71, "cy": 106, "w": 16, "h": 3 },
+  "mouth": { "cx": 96, "cy": 172, "w": 17, "h": 3.5 },
+  "mouthCurve": 1,
+  "pins": [],
+  "paintTeeth": false
+}
