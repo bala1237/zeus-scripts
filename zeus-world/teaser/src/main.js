@@ -102,16 +102,16 @@ const boltGeo = boltGeometry(0.42); const dummy = new THREE.Object3D();
 function boltSwarm(n) { const m = new THREE.InstancedMesh(boltGeo, glowGold, n); m.frustumCulled = false; scene.add(m); return m; }
 const rain = boltSwarm(120); const rainData = []; { const r = rng(9);
   for (let i = 0; i < 120; i++) { const cafe = i >= 70; const base = cafe ? CAFE : PLOT; rainData.push({ t0: cafe ? CUTS.plot + 2.8 + r() * 1.6 : CUTS.plot + 0.3 + r() * 2.0, x: base.x + (r() - 0.5) * 7, z: base.z + (r() - 0.5) * 6, dx: (r() - 0.5) * 10, sp: r() * 6, dur: 1.0 + r() * 0.4 }); } }
-const stream = boltSwarm(260); const streamData = []; { const r = rng(10);
-  for (let i = 0; i < 260; i++) streamData.push({ who: Math.floor(r() * crowd.length), t0: CUTS.stadium + 0.4 + r() * 3.5, dur: 0.8 + r() * 0.5, ox: (r() - 0.5) * 16, oz: (r() - 0.5) * 12, sp: r() * 6 }); }
+const stream = boltSwarm(340); const streamData = []; { const r = rng(10);
+  for (let i = 0; i < 340; i++) streamData.push({ who: Math.floor(r() * crowd.length), t0: CUTS.stadium + 0.4 + r() * 4.8, dur: 0.8 + r() * 0.5, ox: (r() - 0.5) * 16, oz: (r() - 0.5) * 12, sp: r() * 6 }); }
 function hide(m, i) { dummy.position.set(0, -50, 0); dummy.scale.setScalar(0); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix); }
 
 // ---------- lightning ----------
 const strikes = [
   { t: 2.0, mesh: makeLightning(V(-14, 150, -40), V(0, 0, 0), 1, 0.22), power: 1 },
   { t: CUTS.gate - 0.14, mesh: makeLightning(V(30, 170, -120), V(18, 0, -60), 2, 0.4), power: 1.6 },
-  { t: CUTS.wide + 1.9, mesh: makeLightning(V(40, 300, -310), OLYMPUS_PEAK, 3, 1.3), power: 0.5 },
-  { t: CUTS.title + 0.2, mesh: makeLightning(V(-60, 310, -300), OLYMPUS_PEAK, 4, 1.5), power: 0.9 },
+  { t: CUTS.wide + 0.02, mesh: makeLightning(V(40, 300, -310), OLYMPUS_PEAK, 3, 1.3), power: 0.5 },
+  { t: CUTS.title, mesh: makeLightning(V(-60, 310, -300), OLYMPUS_PEAK, 4, 1.5), power: 0.9 },
 ];
 strikes.forEach((s) => scene.add(s.mesh));
 
@@ -161,13 +161,13 @@ function frame(t) {
 
   // what exists yet
   const built = (a, b) => outCubic(ramp(t, a, b));
-  const houseP = built(CUTS.plot + 1.1, CUTS.plot + 3.1), cafeP = built(CUTS.plot + 3.5, CUTS.plot + 5.3), stadP = ramp(t, CUTS.stadium + 0.7, CUTS.stadium + 4.2);
+  const houseP = built(CUTS.plot + 1.1, CUTS.plot + 3.1), cafeP = built(CUTS.plot + 3.5, CUTS.plot + 5.3), stadP = ramp(t, CUTS.stadium + 2.0, CUTS.stadium + 5.5);
   world.houseRise.set(houseP, shot === 'plot' ? t : 0); world.cafeRise.set(cafeP, shot === 'plot' && t > CUTS.plot + 2.6 ? t : 0); world.stadiumRise.set(stadP, shot === 'stadium' ? t : 0);
   world.stele.visible = t >= CUTS.names; world.fountain.visible = world.extras.visible = t >= CUTS.wide;
   world.stele.traverse((o) => { if (o.userData.flame) o.scale.setScalar(1 + 0.18 * Math.sin(t * 17 + o.position.x)); });
-  const doorOpen = er(t, CUTS.gate + 0.5, CUTS.gate + 3.2);
+  const doorOpen = outCubic(ramp(t, CUTS.gate + 1.7, CUTS.gate + 3.0));
   world.gate.userData.doors.forEach(({ pivot, s }) => { pivot.rotation.y = s * doorOpen * 1.9; });
-  doorGlow.material.opacity = shot === 'gate' ? doorOpen * 0.4 * (1 - er(t, CUTS.gate + 2.2, CUTS.gate + 4)) : 0;
+  doorGlow.material.opacity = shot === 'gate' ? doorOpen * 0.5 * (1 - er(t, CUTS.gate + 2.4, CUTS.gate + 4.4)) : 0;
 
   // hero citizen
   if (shot === 'gate') { hero.visible = true; hero.position.set(0.5, 0, lerp(87, 70.5, ramp(t, CUTS.gate, CUTS.plot))); face(hero, 0, -1); pose(hero, t, true); }
@@ -177,7 +177,7 @@ function frame(t) {
   // crowd
   const showCrowd = t >= CUTS.stadium;
   for (const p of crowd) { p.c.visible = showCrowd; if (!showCrowd) continue; const k = ease(ramp(t, p.t0, p.t0 + p.dur)); p.c.position.lerpVectors(p.from, p.to, k); face(p.c, STAD.x - p.c.position.x, STAD.z - p.c.position.z); pose(p.c, t, k < 1, k >= 1 ? 0.5 + 0.5 * Math.sin(t * 2 + p.ph) : 0, p.ph); }
-  watchers.forEach((c, i) => { c.visible = t >= CUTS.names; pose(c, t, false, t > CUTS.names + 1.9 ? 0.6 : 0, i); });
+  watchers.forEach((c, i) => { c.visible = t >= CUTS.names; pose(c, t, false, t > CUTS.names + 2.0 ? 0.6 : 0, i); });
   walkers.forEach((w) => { w.c.visible = t >= CUTS.wide; const z = ((w.z0 + w.dir * w.sp * t + 40) % 95 + 95) % 95 - 40; w.c.position.set(w.x, 0, z); face(w.c, 0, w.dir); pose(w.c, t, true, 0, w.ph); });
 
   // bolts raining onto the plot
@@ -189,7 +189,7 @@ function frame(t) {
   stream.instanceMatrix.needsUpdate = true;
 
   // names wall
-  if (t >= CUTS.names) drawStele(Math.floor((t - CUTS.names - 0.2) / 0.07), er(t, CUTS.names + 1.85, CUTS.names + 2.25) * (0.86 + 0.14 * Math.sin(t * 6)));
+  if (t >= CUTS.names) drawStele(Math.floor((t - CUTS.names - 0.2) / 0.07), er(t, CUTS.names + 1.95, CUTS.names + 2.3) * (0.86 + 0.14 * Math.sin(t * 6)));
 
   // camera
   let pos, look, shadowR = 48, focus;
@@ -207,12 +207,12 @@ function frame(t) {
 
   // overlay
   CAPTIONS.forEach((c, i) => { const a = er(t, c.in, c.in + (c.snap ? 0.12 : 0.4)) * (1 - er(t, c.out - 0.28, c.out)); capEls[i].style.opacity = a; capEls[i].style.transform = `translateY(${(1 - er(t, c.in, c.in + 0.5)) * 26}px) scale(${c.snap ? 1 + 0.12 * (1 - er(t, c.in, c.in + 0.35)) : 1})`; });
-  placeTag(heroTag, hero, shot === 'gate' ? er(t, CUTS.gate + 1.5, CUTS.gate + 1.9) : shot === 'plot' ? er(t, CUTS.plot + 0.3, CUTS.plot + 0.7) : 0);
+  placeTag(heroTag, hero, shot === 'gate' ? er(t, CUTS.gate + 2.1, CUTS.gate + 2.5) : shot === 'plot' ? er(t, CUTS.plot + 0.3, CUTS.plot + 0.7) : 0);
   crowdTags.forEach(({ i, tag, at }) => placeTag(tag, crowd[i].c, shot === 'stadium' ? er(t, at, at + 0.3) : 0));
   const T = CUTS.title;
   el('flash').style.opacity = sat(flash * (shot === 'valley' ? 0.2 : 0.22) + (shot === 'valley' ? 1.0 * er(t, CUTS.gate - 0.1, CUTS.gate) : 0) + (shot === 'gate' ? 0.9 * (1 - ramp(t, CUTS.gate, CUTS.gate + 0.45)) : 0));
-  el('dim').style.opacity = er(t, T, T + 0.9) * 0.9;
-  el('title').style.opacity = er(t, T + 0.2, T + 0.75); el('title').style.transform = `scale(${1.14 - 0.14 * outCubic(ramp(t, T + 0.2, T + 1.2)) + 0.02 * ramp(t, T + 1.2, DURATION)})`;
+  el('dim').style.opacity = er(t, T - 0.1, T + 0.6) * 0.9;
+  el('title').style.opacity = er(t, T + 0.05, T + 0.5); el('title').style.transform = `scale(${1.14 - 0.14 * outCubic(ramp(t, T + 0.2, T + 1.2)) + 0.02 * ramp(t, T + 1.2, DURATION)})`;
   el('tagline').style.opacity = er(t, T + 1.1, T + 1.6); el('soon').style.opacity = er(t, T + 1.8, T + 2.3);
 
   composer.render();
