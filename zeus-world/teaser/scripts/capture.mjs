@@ -17,7 +17,7 @@ const url = 'http://localhost:4173/?capture=1' + (process.env.TEASER_Q ? '&' + p
 for (let i = 0; i < 60; i++) { try { await fetch(url); break; } catch { await new Promise((r) => setTimeout(r, 250)); } }
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.on('pageerror', (e) => console.error('page error:', e.message)); p.on('console', (m) => { if (m.type() === "error") console.error('console:', m.text().slice(0, 1500)); }); await p.goto(url, { waitUntil: 'commit', timeout: 0 }); await p.waitForFunction('window.__ready === true', null, { timeout: 600000 }); return p; }
+async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.setDefaultTimeout(0); p.on('pageerror', (e) => console.error('page error:', e.message)); p.on('console', (m) => { if (m.type() === "error") console.error('console:', m.text().slice(0, 1500)); }); await p.goto(url, { waitUntil: 'commit', timeout: 0 }); await p.waitForFunction('window.__ready === true', null, { timeout: 600000 }); return p; }
 const shoot = async (p, t, file) => { await p.evaluate((t) => window.__frame(t), t); await p.screenshot({ path: file, type: 'jpeg', quality: 93 }); };
 
 try {
