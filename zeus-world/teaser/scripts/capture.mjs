@@ -17,7 +17,7 @@ const url = 'http://localhost:4173/?capture=1' + (process.env.TEASER_Q ? '&' + p
 for (let i = 0; i < 60; i++) { try { await fetch(url); break; } catch { await new Promise((r) => setTimeout(r, 250)); } }
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.on('pageerror', (e) => console.error('page error:', e.message)); p.on('console', (m) => { if (m.type() === "error") console.error('console:', m.text().slice(0, 1500)); }); await p.goto(url); await p.waitForFunction('window.__ready === true', null, { timeout: 300000 }); return p; }
+async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.on('pageerror', (e) => console.error('page error:', e.message)); p.on('console', (m) => { if (m.type() === "error") console.error('console:', m.text().slice(0, 1500)); }); await p.goto(url, { waitUntil: 'commit', timeout: 0 }); await p.waitForFunction('window.__ready === true', null, { timeout: 600000 }); return p; }
 const shoot = async (p, t, file) => { await p.evaluate((t) => window.__frame(t), t); await p.screenshot({ path: file, type: 'jpeg', quality: 93 }); };
 
 try {
@@ -25,7 +25,7 @@ try {
     const p = await open();
     for (const t of stills.split(',').map(Number)) { await shoot(p, t, path.join(out, `still-${t.toFixed(2)}.jpg`)); console.log('still', t); }
   } else {
-    const pages = await Promise.all(Array.from({ length: workers }, open));
+    const pages = []; for (let i = 0; i < workers; i++) pages.push(await open());
     const duration = await pages[0].evaluate('window.__duration');
     const from = Math.round(+arg('from', 0) * fps), to = Math.round(+arg('to', duration) * fps);
     rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
