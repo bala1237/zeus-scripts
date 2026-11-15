@@ -292,45 +292,81 @@ Current lean: Unity for look and ecosystem, Three.js for build speed and overlay
 
 **Next session starts here:** pick the engine, then write the shot list and the Fab/asset-store pull list for the teaser.
 
-## Addendum, 15 Nov 2026: wallets, personal plots, and community builds
+## Addendum, 15 Nov 2026: Bolts, personal plots, and community builds
 
-This addendum amends the constitution. Where it differs from the text above, the addendum wins. Items marked *proposed* are not yet confirmed.
+This addendum amends the constitution. Where it differs from the text above, the addendum wins. Everything here is agreed unless listed under open questions. All numbers are starting values to be tuned.
+
+**Names**
+
+- **Zeus** is the streamer (Bala's TikTok handle) and the world is his.
+- **Zeya** is the AI co-host.
+- **Bolts** ⚡ is the world's currency. The name is a single setting and can change later.
 
 **Amended principles**
 
 - **Principle 2, collective over individual.** The world has two kinds of structure. Personal plots are individually owned and built. Civic structures (stadiums, halls, monuments, district infrastructure) are funded and raised collectively. No single citizen can fund a civic structure alone.
-- **Principle 5, no money on screen.** Diamonds, gift values, and rankings by spend never appear on stream or in narration. The in-world currency may be named and shown. A citizen's balance is visible only to that citizen in the builder, and to the director.
+- **Principle 5, no money on screen.** Diamonds, gift values, and rankings by spend never appear on stream or in narration. Bolts may be named and shown. A citizen's balance is visible only to that citizen in the builder, and to the director.
 
-**Currency (working name: Bolts)**
+**Earning Bolts**
 
-- Every kind of participation earns currency into the citizen's wallet: taps, comments, shares, time spent in the live, and gifts. Gifts earn more, but nothing is gift-only.
+- Everything counts: taps, comments, shares, time spent in the live, and gifts. Gifts earn more, but nothing is gift-only.
+- Diamonds spent are captured per citizen internally and converted to Bolts. The diamond figure itself is never displayed.
+- Earnings from taps and watch time are capped per stream, so automated tapping cannot farm Bolts.
 - The wallet is a ledger derived from the event log, so every balance is replayable and auditable.
-- *Proposed:* earnings from taps and watch time are capped per stream, so automated tapping cannot farm currency.
 
 **Personal plots**
 
-- Every citizen has a plot. They spend currency to build, upgrade, and furnish it from a fixed catalogue (homes, apartments, cafés, furniture, trees).
-- A logged-in citizen sees and edits only their own plot. The whole world is visible only on the live stream.
-- The director can browse every plot and send any of them to the showcase camera.
+- Every citizen has a plot. They spend Bolts to build, upgrade, and furnish it from a fixed catalogue: homes, apartments, cafés, furniture, trees, and more over time.
+- A logged-in citizen sees and edits only their own plot. The whole world is visible only on the live stream, which is what brings builders back to the live.
+- Zeus showcases citizens' builds during the live. The director view lets him browse every plot and send any of them to the showcase camera.
 - Builder actions enter the simulation as events through ingestion, like every other source.
 - Catalogue items only; no uploads. Any free text (such as a café name) passes moderation before it can appear on stream.
 
 **Community builds**
 
-- A community build is a civic structure with a funding goal. Citizens pledge currency from their own wallets directly to the project; there is no shared wallet for anyone to control.
-- *Proposed:* once a minimum number of distinct citizens have pledged, every pledged coin counts double toward the goal.
-- *Proposed:* no single citizen can supply more than a fixed share of the goal, so a build always needs a group.
-- *Proposed:* pledging funds the build; the structure rises stage by stage during the live through participation.
-- Every contributor is named on the finished structure. Names are listed without amounts and not ordered by amount.
-- Citizens can also gift small public items (a tree, a bench, a fountain, a lamp) to the district on their own, tagged with their name.
-- If a community build is cancelled, pledges are returned.
+- A community build is a civic structure with a funding goal in Bolts. Citizens pledge from their own wallets directly to the project. There is no shared wallet for anyone to control.
+- **Doubling.** Once 10 distinct citizens have pledged, every pledged Bolt counts double toward the goal, including those pledged earlier.
+- **Share cap.** No single citizen can supply more than 20% of the goal, so a build always needs a group.
+- **Funded in the builder, raised on the live.** Pledging pays for the build. The structure then rises stage by stage during the stream through participation.
+- **Names.** Every contributor is named on the finished structure, listed without amounts and never ordered by amount.
+- **Public gifts.** A citizen can gift a small public item (a tree, a bench, a fountain, a lamp) to the district on their own, tagged with their name.
+- If a community build is cancelled, pledges are returned in full.
+- A finished community build is a permanent achievement under principle 3.
 
 **Account linking**
 
-- *Proposed:* a citizen proves ownership of their TikTok account by typing a one-time code from the builder into the live chat.
+- A citizen proves ownership of their TikTok account by typing a one-time code from the builder into the live chat. TikTok's official login is the alternative if it is approved later.
+
+**Effect on the architecture**
+
+- New event source: **Citizen** (builder actions: place, upgrade, remove, pledge, gift). It passes through the same ingestion rules as TikTok and director events.
+- New simulation state: wallets, plots, the catalogue, and pledge records per project.
+- New component: the **builder app**, a mobile web page. Because it must run in a phone browser, this favours Three.js for the renderer; the benchmark still decides.
+- New director console view: browse all plots, queue a showcase.
+
+**Additions to "outcomes that must never occur"**
+
+- A diamond count, gift value, or ranking by spend appears on stream, in narration, or on a contributor list.
+- A citizen sees or edits another citizen's plot or balance in the builder.
+- A wallet balance goes negative, or Bolts are created or destroyed outside a logged event.
+- One citizen supplies more than the share cap of a community build.
+- A citizen who never gifts is unable to earn Bolts or build.
+- A builder action is credited to a TikTok account that has not completed linking.
+
+**Decisions locked by this addendum**
+
+| Decision | Locked as |
+| --- | --- |
+| Currency | Bolts; earned from all participation; gifts earn more |
+| Ownership | Personal plots are individual; civic structures are collective |
+| Community funding | Direct pledges; doubling at 10 contributors; 20% share cap |
+| Visibility | Citizens see only their own plot; the full world is shown on the live |
+| Builder content | Fixed catalogue; moderated text; no uploads |
+| Account linking | One-time code typed in live chat |
 
 **Open questions added**
 
-- [ ] Final currency name
 - [ ] Do TikTok's LIVE guidelines restrict rewarding gifts with in-world currency?
-- [ ] Earning rates, catalogue prices, the doubling threshold, and the per-citizen share cap
+- [ ] Earning rates per action, the per-stream caps, and catalogue prices
+- [ ] How a community build is proposed: by Zeus, by civic vote, or by any citizen
+- [ ] Whether Bolts spent on a removed plot item are refunded
