@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus World Teaser</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: #000; }
+  #stage canvas { position: absolute; inset: 0; display: block; }
+  #flash, #dim { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  #flash { background: #eaf0ff; }
+  #dim { background: radial-gradient(ellipse at 50% 45%, rgba(8,10,28,.72), rgba(4,5,16,.94)); }
+  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.42) 100%); }
+  .cap { position: absolute; left: 80px; width: 920px; text-align: center; font-family: 'Cinzel', serif; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .06em; line-height: 1.16; opacity: 0; text-shadow: 0 4px 22px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.9); }
+  .cap.gold { color: #ffd676; text-shadow: 0 4px 22px rgba(0,0,0,.85), 0 0 36px rgba(255,190,70,.55); }
+  .tag { position: absolute; left: 0; top: 0; padding: 10px 24px 10px 18px; border-radius: 40px; background: rgba(14,16,36,.78); border: 2px solid #ffd676; color: #fff; font: 600 34px/1 system-ui, -apple-system, 'Segoe UI', sans-serif; white-space: nowrap; opacity: 0; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 22px rgba(0,0,0,.45); }
+  .tag svg { width: 22px; height: 34px; }
+  #title { position: absolute; left: 0; width: 1080px; top: 520px; text-align: center; opacity: 0; font-family: 'Cinzel', serif; }
+  #title .bolt { width: 150px; height: 230px; filter: drop-shadow(0 0 40px rgba(255,200,80,.85)); }
+  #title h1 { margin: 10px 0 0; font-weight: 900; font-size: 196px; line-height: .98; letter-spacing: .05em; background: linear-gradient(180deg, #fff6d6 0%, #ffd676 45%, #e09a2b 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 6px 30px rgba(0,0,0,.7)); }
+  #tagline { position: absolute; left: 0; width: 1080px; top: 1240px; text-align: center; font: 700 52px 'Cinzel', serif; color: #fff; letter-spacing: .05em; opacity: 0; text-shadow: 0 4px 20px rgba(0,0,0,.8); }
+  #soon { position: absolute; left: 0; width: 1080px; top: 1350px; text-align: center; font: 700 36px 'Cinzel', serif; color: #ffd676; letter-spacing: .42em; padding-left: .42em; box-sizing: border-box; opacity: 0; }
+  #hud { position: fixed; right: 10px; bottom: 10px; color: #9aa; font: 12px system-ui; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="vignette"></div>
+  <div id="tags"></div>
+  <div id="caps"></div>
+  <div id="dim"></div>
+  <div id="title">
+    <svg class="bolt" viewBox="-60 -110 120 220"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset=".5" stop-color="#ffd676"/><stop offset="1" stop-color="#e09a2b"/></linearGradient></defs><polygon fill="url(#bg)" points="15,-100 -45,10 -5,10 -20,100 45,-20 5,-20 35,-100"/></svg>
+    <h1>ZEUS<br/>WORLD</h1>
+  </div>
+  <div id="tagline">Everyone has a place.</div>
+  <div id="soon">OPENING SOON</div>
+  <div id="flash"></div>
+</div>
+<div id="hud"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
