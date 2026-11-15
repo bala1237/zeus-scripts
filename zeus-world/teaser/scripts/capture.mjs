@@ -1,8 +1,9 @@
 // Renders the teaser frame by frame in headless Chromium and encodes an mp4.
-// Usage: node scripts/capture.mjs [--fps 30] [--from 0] [--to 30] [--stills 1,5,10] [--audio track.mp3]
+// Usage: node scripts/capture.mjs [--fps 30] [--from 0] [--to 30] [--stills 1,5,10] [--audio track.mp3] [--resume]
+// A full recording takes hours on a machine without a graphics card; --resume continues one that was interrupted.
 import { createRequire } from 'node:module';
 import { spawn, execFileSync } from 'node:child_process';
-import { mkdirSync, rmSync, existsSync } from 'node:fs';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
 let chromium; try { ({ chromium } = require('playwright')); } catch { ({ chromium } = createRequire('/opt/node-tools/')('playwright')); }
@@ -28,9 +29,10 @@ try {
     const pages = []; for (let i = 0; i < workers; i++) pages.push(await open());
     const duration = await pages[0].evaluate('window.__duration');
     const from = Math.round(+arg('from', 0) * fps), to = Math.round(+arg('to', duration) * fps);
-    rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
+    const resume = process.argv.includes('--resume'); if (!resume) rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
+    const done0 = (f) => { const file = path.join(frames, `f${String(f - from).padStart(5, '0')}.jpg`); if (!existsSync(file)) return false; const b = readFileSync(file); return b.length > 50000 && b[b.length - 2] === 0xff && b[b.length - 1] === 0xd9; };
     let next = from, done = 0; const t0 = Date.now();
-    await Promise.all(pages.map(async (p) => { while (next < to) { const f = next++; await shoot(p, f / fps, path.join(frames, `f${String(f - from).padStart(5, '0')}.jpg`)); if (++done % 60 === 0) console.log(`${done}/${to - from} frames, ${((Date.now() - t0) / 1000).toFixed(0)}s`); } }));
+    await Promise.all(pages.map(async (p) => { while (next < to) { const f = next++; if (resume && done0(f)) { done++; continue; } await shoot(p, f / fps, path.join(frames, `f${String(f - from).padStart(5, '0')}.jpg`)); if (++done % 60 === 0) console.log(`${done}/${to - from} frames, ${((Date.now() - t0) / 1000).toFixed(0)}s`); } }));
     const file = path.join(out, 'zeus-world-teaser.mp4');
     const a = audio && existsSync(audio) ? ['-i', audio, '-c:a', 'aac', '-b:a', '192k', '-shortest'] : [];
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%05d.jpg'), ...a, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '17', '-preset', 'slow', '-movflags', '+faststart', file]);
