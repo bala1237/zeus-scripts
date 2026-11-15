@@ -13,11 +13,11 @@ const root = path.resolve(import.meta.dirname, '..'), out = path.join(root, 'out
 mkdirSync(out, { recursive: true });
 
 const server = spawn('npx', ['vite', 'preview', '--port', '4173', '--strictPort'], { cwd: root, stdio: 'ignore' });
-const url = 'http://localhost:4173/?capture=1';
+const url = 'http://localhost:4173/?capture=1' + (process.env.TEASER_Q ? '&' + process.env.TEASER_Q : '');
 for (let i = 0; i < 60; i++) { try { await fetch(url); break; } catch { await new Promise((r) => setTimeout(r, 250)); } }
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.on('pageerror', (e) => console.error('page error:', e.message)); await p.goto(url); await p.waitForFunction('window.__ready === true', null, { timeout: 120000 }); return p; }
+async function open() { const p = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 }); p.on('pageerror', (e) => console.error('page error:', e.message)); p.on('console', (m) => { if (m.type() === "error") console.error('console:', m.text().slice(0, 1500)); }); await p.goto(url); await p.waitForFunction('window.__ready === true', null, { timeout: 300000 }); return p; }
 const shoot = async (p, t, file) => { await p.evaluate((t) => window.__frame(t), t); await p.screenshot({ path: file, type: 'jpeg', quality: 93 }); };
 
 try {
