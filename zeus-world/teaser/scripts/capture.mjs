@@ -35,7 +35,7 @@ try {
     await Promise.all(pages.map(async (p) => { while (next < to) { const f = next++; if (resume && done0(f)) { done++; continue; } await shoot(p, f / fps, path.join(frames, `f${String(f - from).padStart(5, '0')}.jpg`)); if (++done % 60 === 0) console.log(`${done}/${to - from} frames, ${((Date.now() - t0) / 1000).toFixed(0)}s`); } }));
     const file = path.join(out, 'zeus-world-teaser.mp4');
     const a = audio && existsSync(audio) ? ['-i', audio, '-c:a', 'aac', '-b:a', '192k', '-shortest'] : [];
-    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%05d.jpg'), ...a, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '17', '-preset', 'slow', '-movflags', '+faststart', file]);
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%05d.jpg'), ...a, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '22', '-preset', 'slow', '-movflags', '+faststart', file]);
     console.log('wrote', file);
   }
 } finally { await browser.close(); server.kill(); }
