@@ -22,6 +22,16 @@
   button.primary { background: linear-gradient(180deg, #f7d789, #d99a32); color: var(--ink); border-color: #fff3c9; }
   button:active { transform: scale(.97); }
   button:focus-visible { outline: 3px solid #fff3c9; outline-offset: 2px; }
+  .top2 { top: calc(max(14px, env(safe-area-inset-top)) + 58px); justify-content: flex-end; gap: 8px; }
+  .top2 button { padding: 8px 14px; min-height: 38px; font-size: 13px; }
+  #build { position: fixed; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; padding-bottom: max(14px, env(safe-area-inset-bottom)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: linear-gradient(180deg, rgba(20,18,38,0), rgba(20,18,38,.55) 30%, rgba(20,18,38,.72)); }
+  .slot { display: flex; align-items: center; gap: 8px; max-width: 560px; width: 100%; margin: 0 auto; }
+  .slot-name { width: 52px; flex: none; color: #fff; font: 700 12px system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+  .chip { flex: 1; min-width: 0; min-height: 50px; padding: 6px 8px; border-radius: 14px; font-size: 14px; line-height: 1.15; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .chip small { font-size: 11px; font-weight: 600; color: var(--gold); margin-top: 2px; }
+  .chip[aria-pressed="true"] { background: linear-gradient(180deg, #f7d789, #d99a32); color: var(--ink); border-color: #fff3c9; }
+  .chip[aria-pressed="true"] small { color: #5a3b06; }
+  .chip:disabled { opacity: .4; }
   #plaque { position: fixed; left: 0; top: 0; pointer-events: none; transform: translate(-50%, -100%); background: var(--glass); color: #fff; border: 1.5px solid var(--gold); border-radius: 12px; padding: 7px 14px; font-weight: 700; font-size: 14px; white-space: nowrap; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); text-align: center; }
   #plaque small { display: block; font-weight: 600; font-size: 11px; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; }
   #loading { position: fixed; inset: 0; display: grid; place-items: center; background: linear-gradient(180deg, #f6dfc0, #e2b98d); color: var(--ink); font: 700 18px system-ui, sans-serif; transition: opacity .6s; z-index: 5; }
@@ -36,13 +46,10 @@
   <div class="pill"><div class="avatar">L</div><div><div class="name">Luna</div><div class="sub">Citizen · Builder</div></div></div>
   <div class="pill bolts"><svg viewBox="-50 -105 100 210"><polygon fill="#f3c35b" points="15,-100 -45,10 -5,10 -20,100 45,-20 5,-20 35,-100"/></svg><span id="bolts">1,240</span></div>
 </div>
-<div id="plaque"><small id="tier">Tier 1</small>Luna's Villa</div>
+<div id="plaque"><small id="tier"></small>Luna's Villa</div>
 <div id="toast"></div>
-<div class="hud bottom">
-  <button id="upgrade" class="primary">Upgrade villa</button>
-  <button id="light">Golden hour</button>
-  <button id="spin">Pause spin</button>
-</div>
+<div class="hud top2"><button id="light">Golden hour</button><button id="spin">Pause spin</button></div>
+<div id="build" aria-label="Build your villa"></div>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

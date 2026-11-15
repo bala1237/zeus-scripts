@@ -4,7 +4,19 @@ One citizen's plot, built from AI-generated 3D models, to judge the art directio
 
 - `concepts/`: the concept images every model was generated from (one shared style prompt).
 - `public/models/`: the 3D models, compressed for phones (meshopt geometry, WebP textures). About 9 MB in total.
-- `src/main.js`: the scene: plot, lighting, models, citizen walk/idle/cheer, upgrade toggle.
+- `src/main.js`: the scene: plot, lighting, models, citizen walk/idle/cheer, and the modular villa builder.
+
+## Modular villa
+
+The villa is assembled from three slots, each a separately generated part scaled to a fixed socket (6.4 x 4.4 m footprint, 3 m walls):
+
+| Slot | Options (Bolts) |
+| --- | --- |
+| Walls | Plaster 300, Marble 800 |
+| Roof | Terracotta 200, Azure 600 |
+| Porch | None, Doric 250, Ionic 700 |
+
+That gives 12 combinations from 6 parts; each new part adds combinations rather than one more house. The citizen has 2,000 Bolts, so the most expensive combination is out of reach and its chips grey out.
 
 ## Pipeline used
 
@@ -16,6 +28,6 @@ One citizen's plot, built from AI-generated 3D models, to judge the art directio
 
 ## Run it
 
-`npm install`, then `npm run dev`. Add `?tier=3` to start with the upgraded villa, `?light=day` for daylight.
+`npm install`, then `npm run dev`. Add `?walls=1&roof=1&porch=2` to start with a given combination, `?light=day` for daylight.
 
 The licence terms of each generator for commercial on-stream use still need checking before these models ship.

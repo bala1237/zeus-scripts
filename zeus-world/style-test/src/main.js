@@ -90,7 +90,8 @@ const clouds = new THREE.Group(); scene.add(clouds);
 
 // ---------- models ----------
 const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
-const ITEMS = ['home1', 'home3', 'olive', 'fountain', 'cafe', 'statue', 'brazier'];
+const PARTS = { walls: [['body_plaster', 'Plaster', 300], ['body_marble', 'Marble', 800]], roof: [['roof_terracotta', 'Terracotta', 200], ['roof_azure', 'Azure', 600]], porch: [[null, 'None', 0], ['porch_doric', 'Doric', 250], ['porch_ionic', 'Ionic', 700]] };
+const ITEMS = ['olive', 'fountain', 'cafe', 'statue', 'brazier', ...Object.values(PARTS).flat().map((p) => p[0]).filter(Boolean)];
 const models = {}; let loaded = 0;
 function fit(obj, height) {
   const box = new THREE.Box3().setFromObject(obj); const size = box.getSize(new THREE.Vector3()); const s = height / size.y;
@@ -104,8 +105,32 @@ await Promise.all(ITEMS.map((id) => loader.loadAsync(`./models/${id}.${EXT}`).th
 const place = (id, h, x, z, ry = 0) => { const o = fit(models[id].clone(true), h); o.position.set(x, 0, z); o.rotation.y = ry; island.add(o); return o; };
 // AI models face the camera they were generated from (three-quarter view), so a 45 degree turn puts the front toward +z.
 const FRONT = Math.PI / 4 + (parseFloat(params.get('rot')) || 0);
-const home1 = place('home1', 5.2, 0, -2.6, FRONT);
-const home3 = place('home3', 6.6, 0, -2.6, FRONT); home3.visible = false;
+// ---------- modular villa: walls + roof + porch snap to fixed sockets ----------
+const VW = 6.4, VD = 4.4, VH = 3.0, VZ = -2.6; // footprint width, depth, wall height, centre z
+const FLIP = new Set((params.get('flip') || '').split(',')); // parts whose generated front faces backwards
+// Scale a generated part to exactly fill a w x h x d box, long side along x, front toward +z.
+function fitBox(id, w, h, d) {
+  const inner = models[id].clone(true), holder = new THREE.Group(); holder.add(inner);
+  const box = () => { holder.updateMatrixWorld(true); return new THREE.Box3().setFromObject(inner); };
+  let b = box(), s = b.getSize(new THREE.Vector3());
+  if (s.z > s.x) { inner.rotation.y = Math.PI / 2; b = box(); s = b.getSize(new THREE.Vector3()); }
+  if (FLIP.has(id) !== !!PART_FLIP[id]) { inner.rotation.y += Math.PI; b = box(); }
+  const c = b.getCenter(new THREE.Vector3()); inner.position.set(-c.x, -b.min.y, -c.z);
+  holder.scale.set(w / s.x, h / s.y, d / s.z); const g = new THREE.Group(); g.add(holder); return g;
+}
+const PART_FLIP = {};
+const SOCKETS = {
+  walls: (id) => { const o = fitBox(id, VW, VH, VD); o.position.set(0, 0, VZ); return o; },
+  roof: (id) => { const o = fitBox(id, VW + 0.9, 2.3, VD + 1.1); o.position.set(0, VH - 0.12, VZ); return o; },
+  porch: (id) => { const o = fitBox(id, VW + 0.2, VH + 0.1, 1.9); o.position.set(0, 0, VZ + VD / 2 + 0.85); return o; },
+};
+const villa = { walls: null, roof: null, porch: null }; const choice = { walls: 0, roof: 0, porch: 1 };
+for (const k of ['walls', 'roof', 'porch']) { const v = parseInt(params.get(k)); if (!Number.isNaN(v) && PARTS[k][v]) choice[k] = v; }
+function setPart(k, i, animate) {
+  if (villa[k]) island.remove(villa[k]); villa[k] = null; choice[k] = i; const id = PARTS[k][i][0];
+  if (id) { villa[k] = SOCKETS[k](id); island.add(villa[k]); if (animate) rising = { obj: villa[k], t: 0, y: villa[k].position.y }; }
+}
+['walls', 'roof', 'porch'].forEach((k) => setPart(k, choice[k], false));
 place('olive', 3.0, -5.1, -4.9, 0.4); place('olive', 2.7, 5.2, -5.0, 1.9);
 place('fountain', 1.9, -3.9, 3.2, FRONT);
 place('cafe', 2.3, 4.0, 3.0, FRONT + 0.3);
@@ -132,7 +157,7 @@ composer.addPass(new OutputPass());
 
 // ---------- camera ----------
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 1.4, 0); controls.enableDamping = true; controls.enablePan = false;
+controls.target.set(0, -0.6, 0.6); // aimed low so the plot sits above the build panel controls.enableDamping = true; controls.enablePan = false;
 controls.minDistance = 12; controls.maxDistance = 46; controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.3;
 controls.autoRotate = !SHOT; controls.autoRotateSpeed = 0.6;
 function frameCamera() { const portrait = innerHeight > innerWidth; camera.fov = portrait ? 44 : 32; camera.position.set(14, 12, 22).normalize().multiplyScalar(portrait ? 30 : 27); camera.updateProjectionMatrix(); }
@@ -141,9 +166,9 @@ if (params.get('cam')) { const c = params.get('cam').split(',').map(Number); cam
 controls.update();
 
 // ---------- UI ----------
-let tier = 1, rising = null, celebrate = 0, last = performance.now() / 1000; const t0 = last;
+let rising = null, celebrate = 0, last = performance.now() / 1000; const t0 = last;
 // the citizen strolls between spots on the plot and pauses at each
-const SPOTS = [[0, 5.4], [-2.6, 3.4], [-3.0, 0.6], [2.4, 1.6], [2.9, 4.4]].map(([x, z]) => new THREE.Vector3(x, 0, z));
+const SPOTS = [[0, 5.4], [-2.6, 3.8], [-1.6, 2.2], [2.4, 2.4], [2.9, 4.4]].map(([x, z]) => new THREE.Vector3(x, 0, z));
 let walk = { i: 0, wait: 2.5 }, current = 'Idle';
 function play(name) { if (!mixer || current === name || !actions[name]) return; actions[current]?.fadeOut(0.3); actions[name].reset().fadeIn(0.3).play(); current = name; }
 function stroll(dt) {
@@ -156,15 +181,26 @@ function stroll(dt) {
   const yaw = Math.atan2(d.x, d.z); let dy = yaw - citizen.rotation.y; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); citizen.rotation.y += dy * Math.min(1, dt * 8);
 }
 function toast(t) { $('toast').textContent = t; $('toast').style.opacity = 1; clearTimeout(toast.h); toast.h = setTimeout(() => ($('toast').style.opacity = 0), 1800); }
-$('upgrade').onclick = () => {
-  const up = tier === 1; tier = up ? 3 : 1; const show = up ? home3 : home1, hide = up ? home1 : home3;
-  hide.visible = false; show.visible = true; rising = { obj: show, t: 0 };
-  $('tier').textContent = up ? 'Tier 3 · Grand' : 'Tier 1'; $('upgrade').textContent = up ? 'Back to tier 1' : 'Upgrade villa';
-  if (up) { $('bolts').textContent = '240'; toast('⚡ Villa upgraded to Grand'); celebrate = 3.2; } else { $('bolts').textContent = '1,240'; }
-};
+// build panel: one row of chips per slot, priced in Bolts, against an earned balance
+const EARNED = 2000;
+function spent() { return Object.entries(choice).reduce((n, [k, i]) => n + PARTS[k][i][2], 0); }
+function refresh() {
+  const left = EARNED - spent(); $('bolts').textContent = left.toLocaleString();
+  $('tier').textContent = Object.entries(choice).filter(([k, i]) => PARTS[k][i][0]).map(([k, i]) => PARTS[k][i][1]).join(' · ');
+  document.querySelectorAll('.chip').forEach((c) => { const k = c.dataset.slot, i = +c.dataset.i; const on = choice[k] === i; c.setAttribute('aria-pressed', on);
+    c.disabled = !on && left - PARTS[k][i][2] + PARTS[k][choice[k]][2] < 0; });
+}
+for (const [k, opts] of Object.entries(PARTS)) {
+  const row = document.createElement('div'); row.className = 'slot'; row.innerHTML = `<span class="slot-name">${{ walls: 'Walls', roof: 'Roof', porch: 'Porch' }[k]}</span>`;
+  opts.forEach(([id, name, cost], i) => { const b = document.createElement('button'); b.className = 'chip'; b.id = `chip-${k}-${i}`; b.dataset.slot = k; b.dataset.i = i;
+    b.innerHTML = `${name}<small>${cost ? cost + ' ⚡' : 'Free'}</small>`;
+    b.onclick = () => { if (choice[k] === i) return; setPart(k, i, true); refresh(); if (id) { toast(`${name} ${k === 'walls' ? 'walls' : k} placed`); celebrate = 2.4; } };
+    row.appendChild(b); });
+  $('build').appendChild(row);
+}
+refresh();
 $('light').onclick = () => { mood = mood === 'gold' ? 'day' : 'gold'; applyLight(mood); };
 $('spin').onclick = () => { controls.autoRotate = !controls.autoRotate; $('spin').textContent = controls.autoRotate ? 'Pause spin' : 'Spin'; };
-if (params.get('tier') === '3') $('upgrade').onclick();
 if (params.get('light') === 'day') { mood = 'day'; applyLight('day'); }
 
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; frameCamera(); controls.update(); });
@@ -173,10 +209,10 @@ const tmp = new THREE.Vector3();
 function tick() {
   const now = performance.now() / 1000, dt = SHOT ? 1 / 30 : Math.min(now - last, 0.05), t = now - t0; last = now;
   stroll(dt); clouds.children.forEach((c, i) => { const a = c.userData.a + t * 0.01; c.position.x = Math.cos(a) * c.userData.r; c.position.z = Math.sin(a) * c.userData.r; c.rotation.y = -a; });
-  if (rising) { rising.t = Math.min(1, rising.t + dt * 1.4); const k = 1 - Math.pow(1 - rising.t, 3); rising.obj.scale.set(1, 0.2 + 0.8 * k, 1); rising.obj.position.y = -0.2 * (1 - k); if (rising.t >= 1) rising = null; }
+  if (rising) { rising.t = Math.min(1, rising.t + dt * 1.6); const k = 1 - Math.pow(1 - rising.t, 3); rising.obj.position.y = rising.y + 2.5 * (1 - k); rising.obj.scale.setScalar(0.9 + 0.1 * k); if (rising.t >= 1) rising = null; }
   flames.forEach((l, i) => (l.intensity = 2.6 + 0.6 * Math.sin(t * 11 + i * 2) + 0.3 * Math.sin(t * 23 + i)));
   mixer?.update(dt); controls.update();
-  const house = tier === 1 ? home1 : home3; tmp.set(0, house.children[0] ? new THREE.Box3().setFromObject(house).max.y + 0.6 : 6, -2.6).project(camera);
+  tmp.set(0, VH + 3.0, VZ).project(camera);
   $('plaque').style.transform = `translate(${(tmp.x * 0.5 + 0.5) * innerWidth}px, ${(-tmp.y * 0.5 + 0.5) * innerHeight}px) translate(-50%, -100%)`;
   composer.render();
   if (!SHOT) requestAnimationFrame(tick);
