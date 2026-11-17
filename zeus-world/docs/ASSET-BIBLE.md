@@ -127,7 +127,7 @@ An asset is accepted only when all of these pass:
 ### 1.10 Pipeline
 
 1. Concept image: Nano Banana 2.1 on fal, template prompt, 2K.
-2. Image to 3D: Trellis 2 on fal, or Meshy (3,000 credits available). Pick per item by a side-by-side test; record which was used.
+2. Image to 3D: **Trellis 2 on fal** is the default (chosen 17 Nov 2026 on the starter cottage: closest to the concept, keeps small details, matches the existing models). Hunyuan 3D 3.1 Pro on fal is the fallback when Trellis mangles an item; it is cleaner but drops small details and leaves plain backs. Record which was used.
 3. Clean-up: orientation, origin, scale, remove fragments, LOD.
 4. Characters: Meshy rigging, standard animation set merged into one file.
 5. Compress with gltf-transform, then run the acceptance checklist.

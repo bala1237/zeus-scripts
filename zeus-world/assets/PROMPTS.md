@@ -8,4 +8,4 @@ Item: a humble starter cottage for a new Olympian citizen, a cosy one-room singl
 
 Materials: cream plaster, terracotta tile, painted wood, rough stone, polished gold, bronze.
 
-Concept A chosen (wide front, stone base). 3D: Trellis 2 and Hunyuan 3D 3.1 Pro, normalised with `--fit 6.8,0,4.8 --yaw 0 --tris 30000 --tex 1024`.
+Concept A chosen (wide front, stone base). 3D: Trellis 2 chosen over Hunyuan 3D 3.1 Pro (both kept in models/ for reference). Normalised with `--fit 6.8,0,4.8 --yaw 0 --tris 30000 --tex 1024`.
