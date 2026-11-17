@@ -63,7 +63,7 @@ Every concept image starts from one of these fixed templates. Only the bracketed
 | Storey height | 3.0 m |
 | Grid cell | 2 × 2 m (proposed; see Part 3) |
 | Footprints | Whole grid cells. The villa body is 6.4 × 4.4 m and sits in a 4 × 3 cell slot with margin. |
-| Front | Every model faces +Z after import. Raw AI models face the diagonal and need a 45° yaw; that correction is baked into the file at export, not left to the scene code. |
+| Front | Every model faces +Z after import, baked into the file by `assets/normalize.mjs`, not left to scene code. Trellis 2 and Hunyuan 3D buildings already come out square and facing +Z (yaw 0); check every new model in the review scene's front view, which has a red +Z arrow. |
 | Origin | Bottom centre of the footprint, ground at Y = 0 |
 | Ground contact | Flat base, no floating parts, no ground plate unless the item is a plaza tile |
 
