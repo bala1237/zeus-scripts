@@ -7,6 +7,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createLife } from './life.js';
+import { createAmbient } from './ambient.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -55,9 +56,10 @@ async function get(url) {
 }
 const M = (n) => `./models/${n}.glb`, R = (n) => `./ref/${n}.glb`;
 // place a copy: position, yaw, optional uniform scale
+const sway = [];
 async function put(url, x, z, ry = 0, s = 1, parent = scene, y = 0) {
   const g = await get(url); const o = g.scene.clone(true);
-  o.position.set(x, y, z); o.rotation.y = ry; o.scale.setScalar(s); parent.add(o); return o;
+  o.position.set(x, y, z); o.rotation.y = ry; o.scale.setScalar(s); parent.add(o); if (/nature_(citizen-tree|cypress)/.test(url)) sway.push(o); return o;
 }
 // reference parts are stretched to their sockets, as the builder does
 async function fit(url, w, h, d, parent, y = 0, z = 0) {
@@ -112,7 +114,7 @@ const tickers = [], clock = new THREE.Clock();
 if (!q.has('shot')) renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); for (const f of tickers) f(t); controls.update(); renderer.render(scene, camera); });
 await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...['citizen'].map((n) => get(R(n)).then(tick))]);
 if (bar) bar.remove();
-const PI = Math.PI, P = (n, x, z, ry = 0, s = 1) => put(M(n), x, z, ry, s);
+const PI = Math.PI, placed = {}, P = async (n, x, z, ry = 0, s = 1) => { const o = await put(M(n), x, z, ry, s); (placed[n] ||= []).push(o); return o; };
 const rnd = (() => { let a = 7; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
 // ---------- agora: paved square, fountain, stoas, market
 for (let i = -6; i < 6; i++) for (let j = -6; j < 6; j++) await P('infra_tile_t1_plaza', i * 2 + 1, j * 2 + 1);
@@ -220,6 +222,9 @@ for (const [i, hx] of [[0, 18], [2, 44]]) { const [who, goal] = owners[i / 2], t
 if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
   let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.count()} citizens`; n = 0; t0 = now; } }); }
 
+// ---------- ambient motion: cloth, trees, smoke, fountain spray, boats, drifting clouds
+window.__ambient = createAmbient({ scene, tickers, placed, sway });
+
 // ---------- effects: moving water, glowing fire, lit lamps (found by material name, so new models get them for free)
 { // ripple normal map, tileable, made from a few crossing waves
   const N = 256, data = new Uint8Array(N * N * 4), W = [[1, 2, 0.5], [3, -1, 0.3], [-2, 5, 0.18], [6, 3, 0.1], [-5, -7, 0.07]];
@@ -263,7 +268,7 @@ if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssTe
   if (night) { const spots = glows.map((g) => g.position).filter((p) => Math.hypot(p.x, p.z) < 34 || Math.abs(p.x) < 6).slice(0, 14);
     for (const p of spots) { const l = new THREE.PointLight(0xffa85a, 60, 16, 1.6); l.position.copy(p); scene.add(l); } }
   window.__fx = { glows: glows.length, tickers: tickers.length };
-  if (q.has('shot')) for (const f of tickers) f(1.3);
+  if (q.has('shot')) for (let t = 0; t <= 8; t += 0.05) for (const f of tickers) f(t);   // a still shows the scene 8 seconds in
 }
 // the sun's shadows are drawn once: only people and effects move, and they don't cast any
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
