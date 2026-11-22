@@ -99,7 +99,7 @@ await P('water_stepping-stones', -30, 35); await P('water_pond', -30, 16); await
 await P('civic_amphitheatre', 38, -6, -PI / 2); await P('civic_bathhouse', 26, 24, 0); await P('civic_gymnasium', -38, -40, 0);
 for (let j = 0; j < 4; j++) await P('civic_aqueduct', -50, -58 + j * 8 + 4, PI / 2);
 // ---------- homes: villas north-east, cottages and a grand villa
-async function villa(x, z, ry, walls, roof, porch, upper) {
+async function home(x, z, ry, walls, roof, porch, upper) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g);
   await put(M(`home_villa-walls_${walls}`), 0, 0, 0, 1, g);
   let h = 3; if (upper) { await put(M(`home_villa-upper_${upper}`), 0, 0, 0, 1, g, 3); h = 6; }
@@ -110,8 +110,8 @@ async function villa(x, z, ry, walls, roof, porch, upper) {
 }
 const V = [['t1_stone', 't1_terracotta', 't2_doric', null], ['t2_ochre', 't1_terracotta', null, 't2_plaster'], ['t3_goldmarble', 't3_azure', 't3_ionic', null], ['t2_ochre', 't2_slate', 't2_doric', null],
   ['t3_goldmarble', 't4_gold', 't3_ionic', 't3_marble'], ['t1_stone', 't3_garden', null, null], ['t1_stone', 't2_slate', null, 't2_plaster'], ['t2_ochre', 't3_azure', 't3_ionic', null]];
-for (let i = 0; i < 4; i++) await villa([-46, -32, 22, 46][i], 47, PI, ...V[i]);
-for (let i = 0; i < 4; i++) await villa(18 + i * 13, -56, 0, ...V[4 + i]);
+for (let i = 0; i < 4; i++) await home([-46, -32, 22, 46][i], 47, PI, ...V[i]);
+for (let i = 0; i < 4; i++) await home(18 + i * 13, -56, 0, ...V[4 + i]);
 await P('home_grand-villa_t4', -22, 22, PI / 2); await P('home_cottage_t1', 36, 40, PI); await P('home_cottage_t2', 46, 40, PI); await P('home_cottage_t2', 44, 24, -PI / 2); await P('home_cottage_t1', 44, 14, -PI / 2);
 // ---------- city wall, towers and gate
 const X0 = -56, X1 = 56, Z0 = -68, Z1 = 60;
@@ -140,7 +140,7 @@ for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], pe
 if (L.lamp) for (const [x, y, z] of [[0, 3, 0], [0, 5, -31], [0, 3, 20], [0, 3, 34], [-22, 4, -18], [22, 4, -18], [66, 13, 40], [0, 4, 58]]) { const p = new THREE.PointLight(0xffb45a, 220, 40, 1.8); p.position.set(x, y, z); scene.add(p); }
 
 const cams = {
-  wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.6, 2.4, 33], [-0.5, 3.2, 8]], temple: [[10, 5, -14], [-2, 6, -44]],
+  wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.8, 3.2, 28.5], [-0.5, 3.0, 6]], temple: [[10, 5, -14], [-2, 6, -44]],
   harbour: [[98, 16, 46], [66, 3, 4]], river: [[-18, 9, 50], [2, 1.5, 33]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
 };
 camera.position.set(...cams[view][0]); camera.lookAt(...cams[view][1]);

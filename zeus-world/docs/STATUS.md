@@ -51,6 +51,11 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - Still generated, not scripted: trees, bushes, flowers, pots, cypress, café, cottage, citizens. They sit well beside the scripted pieces in the street test.
 - **Temple of Zeus** (`blender/temple.py`, sheet `assets/sheets/temple_of_zeus.jpg`): Doric temple with columns all round on a stone podium, 15 x 28 m and 12.3 m tall, in four build stages (21k, 28k, 33k, 52k triangles; 0.9 to 1.9 MB; budget 80k, 4 MB). Painted trim (azure triglyphs and pediment, red fillet, gold rosettes, bolt and roof ornaments) was taken as an idea from a low-poly city pack the owner showed; nothing from the pack is used. Flaws: brazier flames read as eggs; not yet placed in a scene.
 - City ideas noted from that pack for later: temple on a terraced hill with stairs, city wall with towers and a gate arch, market stalls with striped awnings, round shrine (tholos), fountain plaza, banners, curved paved paths, harbour edge.
+- **Everything scriptable is now scripted (owner's instruction, 22 Nov: build all Blender items, self-check, no approval needed).** About 90 scripted models: civic set (stoa, plaza fountain, library, council hall, bathhouse, gymnasium, amphitheatre, round shrine, lighthouse, aqueduct, city wall, tower, gate, bridge), monuments (obelisk, victory column, altar, sundial, shrine, banners, statue plinth, signpost), water kit (pond, river straight and bend, stepping stones, quay, pier, well, reflecting pool), homes (cottage tiers 1 and 2, insula tiers 1 to 3, grand villa, second-storey modules, slate and gold roofs, roof garden), businesses (taverna, bakery, flower shop, pottery, scroll shop, olive press, forge, four market stalls) and furniture (pergola, dining set, planter, garden bed, cart, barrels, brazier). Builders: `blender/parts.py` (shared columns, roofs, windows, doors, awnings, arches), `city.py`, `town.py`, `temple.py`. All within budget; the heaviest are the temple (52k triangles) and grand villa (48k).
+- The scripted taverna replaced the generated café (kept as `biz_cafe_t1.trellis.glb`); scripted cottages sit beside the generated one.
+- **Whole-city scene:** `assets/review/city.html` (views wide, plaza, street, temple, harbour, river, homes, civic, top; day and dusk), sheet `assets/sheets/city.jpg`. It takes about 3 minutes per still on this machine and has not been tested for frame rate on a phone.
+- Quality check: every model was rendered beside a citizen and the villa, and the city scene was checked from six views. Fixed along the way: stretched stone on round towers, egg-shaped brazier flames on the temple.
+- Remaining flaws seen: gymnasium roof has small notches at the corners; the amphitheatre's stage building hides the stage from the front; pergola vines are sparse; river bank stones are thin on the near side; water is flat blue until the game adds movement; dusk lamps are not yet lit by the models themselves.
 - Known flaws: the café's back wall is broken (visible from behind); boundary stones read a little like logs; some louvre slats catch the sun as white lines.
 
 ## Decisions taken
@@ -79,13 +84,12 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 ## Next
 
-1. **Owner review** of `assets/sheets/street_milestone.jpg` and the three wall styles.
-2. **Civic set, scripted:** agora (stoa, plaza, market stalls with awnings), water kit (pond and river banks, bridge, quay; water itself in code), amphitheatre, city wall and towers, round shrine.
-2b. **Wire the scripted villa parts into the builder** (`style-test/`): three more wall styles, new roofs and porches, at their real sizes rather than stretched.
-3. **Tier 2 cottage, apartment block, shops** by script, reusing the wall, door and window parts.
-4. **Stadium rising in code** behind the scaffolding kit.
-5. **Far-view LODs** for the generated plants and trees (the scripted models are already light).
-6. **More citizens** (the only place paid generation is still needed), and a look at Mesh2Motion for free rigging.
+1. **Owner review** of `assets/sheets/city.jpg`, `street_milestone.jpg` and `temple_of_zeus.jpg`.
+2. **Phone performance test** of a district, and far-view versions of the heaviest models.
+3. **Wire the scripted villa parts and new homes into the builder** (`style-test/`).
+4. **Build stages** for the other civic buildings (only the temple has them), and the stadium rising in code.
+5. **Water, fire and lamp effects in code** (the models only carry flat water and unlit flames).
+6. **Still needing generation or another route:** more trees (laurel, pomegranate, fig, plane, almond), rocks, vines, more citizens and outfits, statues, Zeya and Zeus figures. Look at Mesh2Motion for free rigging.
 
 Open: a cost ceiling per batch on fal, licence check for commercial on-stream use of each generator, what the four teaser mysteries become, and that the "First 100 become Founders" promise is honoured at launch.
 

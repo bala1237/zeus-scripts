@@ -24,12 +24,18 @@ Setup: `npm install`.
 - `zw.py`: shared helpers. Palette, textures (numpy-made marble and meander, and `tex_photo()` which grades CC0 Poly Haven scans towards the palette), boxes, prisms, cylinders, lathed shapes, rods, beams, rings, boolean cuts, the gold bolt, hand-made wobble, baked contact shadows, glTF export.
 - `villa_walls.py <stone|ochre|goldmarble>`, `villa_roof.py <terracotta|azure>`, `villa_porch.py <doric|ionic>`: the three villa parts, each built to its socket.
 - `bench.py`, `kit.py <item>`: bench; street, construction and garden pieces.
+- `parts.py`: shared building parts (materials by name, Doric and Ionic columns, tiled roofs, walls with windows and doors, awnings, banners, arches, curved seating).
+- `temple.py <stage>`, `city.py <item>`, `town.py <item>`: the Temple of Zeus; civic buildings, walls, monuments and water; homes, shops, stalls and furniture.
 - `fetch_textures.py`: downloads Poly Haven texture sets into `blender/textures/` (see the README there).
 - `build.sh [model name]`: builds everything, or one model, into `models/`.
 
 Setup once: `python3 -m venv bl && bl/bin/pip install bpy pillow` (Blender 5.3 as a Python module; no graphics card needed). Then `PY=bl/bin/python ./build.sh`.
 
 Scripted models are built at real size, facing the front, so the normaliser only compresses them.
+
+## Scenes
+
+`review/city.html` is the whole scripted city (`PAGE=city.html node shot.mjs renders/x.png "view=wide"`; about 3 minutes a still). `qc.sh` renders any set of models side by side for checking.
 
 ## Street test
 
