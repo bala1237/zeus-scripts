@@ -22,9 +22,10 @@ Not preinstalled. Once per session, from `zeus-world/assets/`:
 - Chromium and Playwright are preinstalled. `shot.mjs` uses them with software rendering.
 - Single model: `node shot.mjs renders/x.png "props&m=models/x.glb&view=3q"`.
 - City: `PAGE=city.html node shot.mjs renders/x.png "view=plaza&light=dusk"`.
-- **There is no graphics card.** A city still takes about four minutes. Two chained in one command can pass the ten-minute command limit; run one per command.
+- **There is no graphics card.** A city still at 1280 × 720 took about 22 seconds on 22 Nov 2026 (pass `1280 720` after the query). Earlier sessions recorded about four minutes at the default 1400 × 800, on a slower machine or before the memory fix; if it is slow again, run one still per command so it stays inside the ten-minute command limit.
 - **Motion cannot be watched here.** Anything that moves, and the frame rate, can only be checked by the owner on the preview. Say so when delivering.
 - A page error makes the render hang until timeout. Check the output of `shot.mjs` for "page error".
+- To compare two stills pixel by pixel, load both with Pillow and take the largest channel difference; two renders of unchanged code differ in under 100 pixels (moving particles), so anything in the thousands is a real change.
 - `renders/` is not committed.
 
 ## Connected services

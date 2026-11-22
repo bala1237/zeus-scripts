@@ -15,7 +15,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 | No. | Type | Title | Priority | Status | Reported |
 | --- | --- | --- | --- | --- | --- |
-| ZW-001 | Bug | Chrome uses a lot of memory when the city runs | High (proposed) | Open | 22 Nov 2026, owner |
+| ZW-001 | Bug | Chrome uses a lot of memory when the city runs | High | Fix shipped | 22 Nov 2026, owner |
 | ZW-002 | Bug | Flicker on the tower tops | Medium | Fix shipped | 22 Nov 2026, owner |
 | ZW-003 | Enhancement | Animals: cats, dogs, donkey with cart, goats | Medium | Blocked on spend approval | 22 Nov 2026 |
 | ZW-004 | Enhancement | Performance: frame rate, download size, a quality setting | High (proposed) | Open | 22 Nov 2026 |
@@ -38,15 +38,13 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 ### ZW-001: Chrome uses a lot of memory when the city runs
 
 - **Reported:** 22 Nov 2026, by the owner: "my chrome eats up lot of memory when i'm running zeus world".
-- **Not yet known:** how much memory, on which machine, and whether it grows over time or is high from the start. Ask the owner for the figure from Chrome's task manager (Shift+Esc) after one minute and after ten.
-- **Likely causes, from reading the code, not yet measured:**
-  - Every model is downloaded and kept at once: about 80 MB of files, 91 models.
-  - Textures are stored compressed on disk (WebP) but are unpacked in full in graphics memory. A 2048 texture takes about 21 MB there; the generated models (trees, bushes, trireme, citizens) carry the largest.
-  - The sun's shadow map is 8192 × 8192, about 256 MB on its own.
-  - Each of the roughly 58 citizens has its own copy of its materials.
-  - Every placed copy of a model is a separate object: about 340 road and plaza tiles alone.
-- **If it grows over time** it is a leak. Candidates: the lightning bolt builds new geometry on each strike and never frees it (`life.js`, `strike`).
-- **Plan:** measure first (see `knowledge/performance.md`), then fix the largest item, then measure again. Related: ZW-004.
+- **Measured 22 Nov 2026** (method and full figures in `knowledge/performance.md`): about 1.4 GB for the tab and 2.1 GB for the graphics process, high from the start, not growing. No leak.
+- **Causes found:**
+  - The same textures were loaded many times: 1,065 textures in memory, only 144 of them different. 1.3 GB of graphics memory, and as much again in the tab.
+  - The sun's shadow map took 512 MB.
+- **Fix shipped 22 Nov 2026:** identical textures are now loaded once (340 MB), and the shadow map is stored more compactly (192 MB). Measured after: about 0.7 GB for the tab and 0.8 GB for the graphics process. The picture is unchanged, checked by comparing stills of four views.
+- **Waiting on the owner:** the figures from Chrome's task manager (Shift+Esc) on the preview, for the tab and for "GPU Process", after one minute and after ten. Close when the owner is satisfied.
+- **Further reductions possible** (listed in `knowledge/performance.md`, "What is left"): compressed textures, freeing decoded copies, a smaller shadow map as a quality setting. Not started; some affect the look and need the owner's decision.
 
 ### ZW-002: Flicker on the tower tops
 
@@ -63,10 +61,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-004: Performance
 
-- Unmeasured. The city is about 80 MB and 110 models; 50 animated citizens are about a million triangles.
-- Likely work: far-view models, loading distant buildings last, fewer real lights, a quality setting, drawing repeated models in one go, not animating citizens who are off screen.
+- **Measured 22 Nov 2026:** every frame draws 5.0 million triangles in 2,320 draw calls, from 2,196 separate meshes. Redrawing the shadows costs about 1,800 more draw calls. The download is 57 MB of models plus 3 MB of sky. Frame rate itself cannot be measured on the build machine.
+- Likely work, in `knowledge/performance.md`, "What is left": drawing repeated models in one go, not animating or drawing citizens who are off screen, far-view models, a quality setting, loading distant buildings last.
 - Needed before the scene is used in OBS or on a phone.
-- Shares its measurements with ZW-001.
+- Memory was handled under ZW-001.
 
 ### ZW-005: Finish the look
 
