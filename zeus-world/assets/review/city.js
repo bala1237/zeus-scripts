@@ -19,6 +19,7 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadow
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
+const tickers = [];   // everything that moves registers a function here: (seconds) => {}
 const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.5, 2000);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.03).texture;
 // ?grade=soft is the old pale look; the default is graded for streaming (deeper sky and grass, harder sun, less fill)
@@ -39,7 +40,7 @@ const domes = [], envs = {};
 if (!SOFT) {   // real skies from Poly Haven (CC0): two photo domes that cross-fade, and their HDRs for light and reflections
   for (const k of ['day', 'dusk']) { const tex = await new THREE.TextureLoader().loadAsync(`./sky/${k}.jpg`); tex.colorSpace = THREE.SRGBColorSpace;
     const m = new THREE.Mesh(new THREE.SphereGeometry(k === 'day' ? 800 : 780, 48, 24), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false, transparent: k === 'dusk', toneMapped: false }));
-    m.scale.x = -1; m.rotation.y = LD[k].rot; m.renderOrder = k === 'day' ? -2 : -1; m.frustumCulled = false; scene.add(m); domes.push(m);
+    m.scale.z = -1; m.rotation.y = LD[k].rot; m.renderOrder = k === 'day' ? -2 : -1; m.frustumCulled = false; scene.add(m); domes.push(m);
     envs[k] = await new RGBELoader().loadAsync(`./sky/${k}.hdr`); envs[k].mapping = THREE.EquirectangularReflectionMapping; }
   scene.background = null; scene.environment = envs[dn.d > 0.5 ? 'dusk' : 'day']; scene.environmentRotation = new THREE.Euler(0, L.rot, 0);
 }
@@ -121,7 +122,7 @@ const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', or
 const PRE = ['biz_bakery_t1', 'biz_cafe_t1', 'biz_flower-shop_t1', 'biz_forge_t1', 'biz_olive-press_t1', 'biz_pottery_t1', 'biz_scroll-shop_t1', 'biz_stall_t1_cloth', 'biz_stall_t1_fish', 'biz_stall_t1_fruit', 'biz_stall_t1_pottery', 'build_crane_t1', 'build_crates_t1', 'build_timber-stack_t1', 'char_citizen_elder', 'char_citizen_woman', 'civic_amphitheatre', 'civic_aqueduct', 'civic_bathhouse', 'civic_council-hall', 'civic_fountain-plaza', 'civic_gymnasium', 'civic_library', 'civic_lighthouse', 'civic_stoa', 'civic_temple-zeus_stage4', 'civic_tholos', 'decor_altar', 'decor_banner_t1_azure', 'decor_banner_t1_red', 'decor_barrels_t1', 'decor_bench_t1_marble', 'decor_brazier_t1', 'decor_bust_t1_marble', 'decor_cart_t1', 'decor_dining-set_t1', 'decor_garden-bed_t1', 'decor_garden-gate_t1_azure', 'decor_garden-wall_t1_plaster', 'decor_lantern_t1_bronze', 'decor_obelisk', 'decor_pergola_t1', 'decor_planter_t1', 'decor_shrine', 'decor_statue-plinth_t1', 'decor_sundial', 'decor_victory-column', 'home_cottage_t1', 'home_cottage_t2', 'home_grand-villa_t4', 'home_insula_t1', 'home_insula_t2', 'home_insula_t3', 'home_villa-porch_t2_doric', 'home_villa-porch_t3_ionic', 'home_villa-roof_t1_terracotta', 'home_villa-roof_t2_slate', 'home_villa-roof_t3_azure', 'home_villa-roof_t3_garden', 'home_villa-roof_t4_gold', 'home_villa-upper_t2_plaster', 'home_villa-upper_t3_marble', 'home_villa-walls_t1_stone', 'home_villa-walls_t2_ochre', 'home_villa-walls_t3_goldmarble', 'infra_bridge', 'infra_city-wall', 'infra_signpost', 'infra_street-lamp_t1', 'infra_tile_t1_plaza', 'infra_tile_t1_road', 'infra_wall-gate', 'infra_wall-tower', 'landmark_trireme', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage1', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4', 'nature_cypress_t1', 'nature_rock_t1_boulder', 'nature_rock_t1_coast', 'nature_rock_t1_small', 'water_pier', 'water_pond', 'water_quay', 'water_reflecting-pool', 'water_river-straight', 'water_stepping-stones', 'water_well'];
 const bar = document.getElementById('load'); let done = 0;
 const tick = () => { done++; if (bar) bar.firstElementChild.style.width = `${Math.round(100 * done / (PRE.length + 3))}%`; };
-const tickers = [], clock = new THREE.Clock();
+const clock = new THREE.Clock();
 if (!q.has('shot')) renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); for (const f of tickers) f(t); controls.update(); renderer.render(scene, camera); });
 await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...['citizen'].map((n) => get(R(n)).then(tick))]);
 if (bar) bar.remove();
@@ -251,7 +252,7 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
     m.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
       sh.fragmentShader = 'uniform vec2 uA; uniform vec2 uB;\n' + sh.fragmentShader.replace('texture2D( normalMap, vNormalMapUv )',
         '( texture2D( normalMap, vNormalMapUv ) * 0.4 + texture2D( normalMap, mat2( 0.8, -0.6, 0.6, 0.8 ) * vNormalMapUv * 0.37 + uA ) * 0.35 + texture2D( normalMap, mat2( -0.28, 0.96, -0.96, -0.28 ) * vNormalMapUv * 0.113 + uB ) * 0.25 )'); };
-    tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); u.uA.value.set(-t * speed * 0.7, t * speed * 0.45); u.uB.value.set(t * speed * 0.3, -t * speed * 0.5); m.normalScale.setScalar(ns * (1 + 0.2 * Math.sin(t * 0.9))); });
+    tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); u.uA.value.set(-t * speed * 0.7, t * speed * 0.45); u.uB.value.set(t * speed * 0.3, -t * speed * 0.5); m.normalScale.setScalar(ns * (1 + 0.2 * Math.sin(t * 0.9)) * (1 - 0.65 * dn.d)); m.roughness = rough + 0.22 * dn.d; });   // calmer and softer under the low evening sun, which otherwise glitters harshly
     return m; };
   // small pools are calmer and less mirror-like: sharp ripples there catch every lamp and turn to sparkle
   const pondWater = water(0.22, 0.03, 0.26, 0.26), seaWater = water(90, 0.02, 0.08, 0.5);
