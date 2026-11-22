@@ -49,6 +49,8 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - **Milestone reached: the street test.** `assets/review/street.html` lays out six 16 x 12 m plots on a cobbled road from catalogue models only; sheet `assets/sheets/street_milestone.jpg` (views: wide, street, ochre, gold, site, villas; day and dusk).
 - The villa is now fully scripted: a complete house (walls, roof, porch) is about 57k to 60k triangles and 1.7 to 2.4 MB. The street test uses the scripted roofs and porches; the older Trellis roof and porch parts in `style-test/` are no longer needed for new work.
 - Still generated, not scripted: trees, bushes, flowers, pots, cypress, café, cottage, citizens. They sit well beside the scripted pieces in the street test.
+- **Temple of Zeus** (`blender/temple.py`, sheet `assets/sheets/temple_of_zeus.jpg`): Doric temple with columns all round on a stone podium, 15 x 28 m and 12.3 m tall, in four build stages (21k, 28k, 33k, 52k triangles; 0.9 to 1.9 MB; budget 80k, 4 MB). Painted trim (azure triglyphs and pediment, red fillet, gold rosettes, bolt and roof ornaments) was taken as an idea from a low-poly city pack the owner showed; nothing from the pack is used. Flaws: brazier flames read as eggs; not yet placed in a scene.
+- City ideas noted from that pack for later: temple on a terraced hill with stairs, city wall with towers and a gate arch, market stalls with striped awnings, round shrine (tholos), fountain plaza, banners, curved paved paths, harbour edge.
 - Known flaws: the café's back wall is broken (visible from behind); boundary stones read a little like logs; some louvre slats catch the sun as white lines.
 
 ## Decisions taken
@@ -78,7 +80,8 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 ## Next
 
 1. **Owner review** of `assets/sheets/street_milestone.jpg` and the three wall styles.
-2. **Wire the scripted villa parts into the builder** (`style-test/`): three more wall styles, new roofs and porches, at their real sizes rather than stretched.
+2. **Civic set, scripted:** agora (stoa, plaza, market stalls with awnings), water kit (pond and river banks, bridge, quay; water itself in code), amphitheatre, city wall and towers, round shrine.
+2b. **Wire the scripted villa parts into the builder** (`style-test/`): three more wall styles, new roofs and porches, at their real sizes rather than stretched.
 3. **Tier 2 cottage, apartment block, shops** by script, reusing the wall, door and window parts.
 4. **Stadium rising in code** behind the scaffolding kit.
 5. **Far-view LODs** for the generated plants and trees (the scripted models are already light).

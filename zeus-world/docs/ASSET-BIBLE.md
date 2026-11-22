@@ -228,7 +228,7 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | Stadium | Done (complete stage only) | P1 |
 | Founders wall | Done | P1 |
 | Agora (market square) | To build | P2 |
-| Temple of Zeus | To build | P2 |
+| Temple of Zeus | Done (scripted, 4 build stages) | P2 |
 | Amphitheatre | To build | P2 |
 | Library | To build | P3 |
 | Bathhouse | To build | P3 |
@@ -292,10 +292,10 @@ Counted by catalogue line. Many lines hold several models (the citizen's tree al
 
 | Status | Lines |
 | --- | --- |
-| Done | 43 |
+| Done | 44 |
 | Teaser, needs clean-up | 0 |
 | To build, P1 | 0 |
-| To build, P2 | 23 |
+| To build, P2 | 22 |
 | To build, P3 | 22 |
 
 ---

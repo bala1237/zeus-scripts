@@ -31,3 +31,7 @@ run home_villa-roof_t1_terracotta villa_roof.py  terracotta 30000 512
 run home_villa-roof_t3_azure      villa_roof.py  azure      30000 512
 run home_villa-porch_t2_doric     villa_porch.py doric      20000 512
 run home_villa-porch_t3_ionic     villa_porch.py ionic      20000 512
+run civic_temple-zeus_stage1 temple.py 1 80000 1024
+run civic_temple-zeus_stage2 temple.py 2 80000 1024
+run civic_temple-zeus_stage3 temple.py 3 80000 1024
+run civic_temple-zeus_stage4 temple.py 4 80000 1024
