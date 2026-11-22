@@ -19,7 +19,18 @@ Setup: `npm install`.
 
 ## Scripted models (Blender, free)
 
-`blender/` builds models by script, with no generation cost: `zw.py` (shared helpers: palette, tileable marble, stone, plank and meander textures made in numpy, boxes, prisms, boolean cuts, the gold bolt, glTF export), `bench.py`, `villa_walls_stone.py`. `blender/textures/` holds CC0 Poly Haven texture scans, which `zw.tex_photo()` grades towards the palette.
+`blender/` builds models by script, with no generation cost.
 
-Setup once: `python3 -m venv bl && bl/bin/pip install bpy pillow` (Blender 5.3 as a Python module; no graphics card needed).
-Build: `bl/bin/python blender/bench.py raw/bl_bench.glb`, then `node normalize.mjs raw/bl_bench.glb models/x.glb --fit 0,0,0 --yaw 0 --tris 5000 --tex 512`. Scripted models are already at real size and face the front, so the normaliser only compresses them.
+- `zw.py`: shared helpers. Palette, textures (numpy-made marble and meander, and `tex_photo()` which grades CC0 Poly Haven scans towards the palette), boxes, prisms, cylinders, lathed shapes, rods, beams, rings, boolean cuts, the gold bolt, hand-made wobble, baked contact shadows, glTF export.
+- `villa_walls.py <stone|ochre|goldmarble>`: the villa wall body for the walls socket.
+- `bench.py`, `kit.py <item>`: bench; street, construction and garden pieces.
+- `fetch_textures.py`: downloads Poly Haven texture sets into `blender/textures/` (see the README there).
+- `build.sh [model name]`: builds everything, or one model, into `models/`.
+
+Setup once: `python3 -m venv bl && bl/bin/pip install bpy pillow` (Blender 5.3 as a Python module; no graphics card needed). Then `PY=bl/bin/python ./build.sh`.
+
+Scripted models are built at real size, facing the front, so the normaliser only compresses them.
+
+## Street test
+
+`review/street.html` is the look test: six plots on a road, from catalogue models only. `PAGE=street.html node shot.mjs renders/x.png "view=wide&light=day"` (views: wide, street, villas, ochre, gold, site, garden). `review/main.js` also takes `m=asm:models/<walls>.glb` to show a wall body with a roof and porch.

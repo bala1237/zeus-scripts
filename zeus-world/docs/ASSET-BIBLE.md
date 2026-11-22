@@ -35,6 +35,8 @@ Every asset uses these families. A new colour needs a reason and an entry here.
 | Bronze | Lamps, braziers, statues, fittings | #9A6A3A |
 | Olive green | Foliage, accents | #6E8B3D |
 | Deep red | Cloth, banners, awnings | #A8322D |
+| Ochre | Painted plaster on the ochre villa (added 22 Nov 2026) | #D19E4D |
+| Cream | Plaster dressings on painted homes (added 22 Nov 2026) | #EDE3CC |
 
 Tier rule: higher tiers add marble, gold and azure; lower tiers are plaster, wood and terracotta. A viewer should be able to guess a building's tier from its materials alone.
 
@@ -128,6 +130,7 @@ An asset is accepted only when all of these pass:
 
 ### 1.10 Pipeline
 
+0. **Scripted route first (decided 22 Nov 2026 to cut cost).** Anything hard-edged or modular (walls, doors, furniture, street and construction pieces) is built free by Blender script in `assets/blender/`, with CC0 Poly Haven textures graded to the palette and contact shadows baked into vertex colours. These models meet the original triangle goals. Paid generation below is only for organic pieces: plants, trees, citizens, statues, landmarks.
 1. Concept image: Nano Banana 2.1 on fal, template prompt, 2K.
 2. Image to 3D: **Trellis 2 on fal** is the default (chosen 17 Nov 2026 on the starter cottage: closest to the concept, keeps small details, matches the existing models). Hunyuan 3D 3.1 Pro on fal is the fallback when Trellis mangles an item; it is cleaner but drops small details and leaves plain backs. Record which was used.
 3. Clean-up: orientation, origin, scale, remove fragments, LOD.
@@ -147,17 +150,17 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Item | Tiers / options | Status | Priority |
 | --- | --- | --- | --- |
 | Villa walls | Plaster, Marble | Done | P1 |
-| Villa walls | Stone, Painted (ochre), Gold-trim marble | To build | P1 |
+| Villa walls | Stone, Painted (ochre), Gold-trim marble | Done (scripted; doors and shutters built in) | P1 |
 | Villa roof | Terracotta, Azure | Done | P1 |
 | Villa roof | Slate grey, Gold tile, Roof garden (flat) | To build | P2 |
 | Villa porch | Doric, Ionic | Done | P1 |
 | Villa porch | Corinthian, Pergola with vines | To build | P2 |
-| Villa door | Blue double door | To build (the teaser's door is the bronze city-gate leaf, not a villa door) | P1 |
+| Villa door | Panelled double door, built into each scripted wall body (azure or olive) | Done | P1 |
 | Villa door | Wood, Bronze, Gold | To build | P2 |
 | Shutters and windows | Blue, Green, Arched | To build | P2 |
 | Second storey module | Plaster, Marble | To build | P2 |
 | Rooftop extras | Terrace, statue, chimney, banner | To build | P3 |
-| Starter cottage (tier 1 home) | One-room plaster house | To build | P1 |
+| Starter cottage (tier 1 home) | One-room plaster house | Done | P1 |
 | Apartment block (insula) | Tiers 1–4 | To build | P2 |
 | Grand villa (tier 4 home) | Two storeys, courtyard | To build | P3 |
 
@@ -187,7 +190,7 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Amphorae cluster | Done | P1 |
 | Bronze lantern on post | Done (light to add in code) | P1 |
 | Low garden wall and gate | Done | P1 |
-| Mosaic path tiles | To build | P1 |
+| Mosaic path tiles | Done (scripted) | P1 |
 | Pergola with vines | To build | P2 |
 | Outdoor dining table set | To build | P2 |
 | Garden beds and planters | To build | P2 |
@@ -242,20 +245,20 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | Bench (reuses decor) | Done (reuse) | P1 |
 | Lamp (reuses decor) | Done (reuse) | P1 |
 | Small fountain | Done (reuse) | P1 |
-| Name plaque that attaches to any gift | To build | P1 |
+| Name plaque that attaches to any gift | Done (scripted; text added in code) | P1 |
 
 ### G. Infrastructure and construction kit
 
 | Item | Status | Priority |
 | --- | --- | --- |
-| Paving tiles: road, plaza, path | To build | P1 |
-| Plot boundary marker (low stones) | To build | P1 |
-| Street lamp | To build | P1 |
+| Paving tiles: road, plaza, path (2 m, seamless) | Done (scripted) | P1 |
+| Plot boundary marker (low stones, 2 m run) | Done (scripted) | P1 |
+| Street lamp | Done (scripted) | P1 |
 | Signpost with district name | To build | P2 |
 | City wall segment, corner, tower | To build | P2 |
 | Bridge | To build | P3 |
-| Scaffolding (scales to footprint) | To build | P1 |
-| Crane, stone blocks, timber stack, crates | To build | P1 |
+| Scaffolding (2 m bays, stood side by side) | Done (scripted) | P1 |
+| Crane, stone blocks, timber stack, crates | Done (scripted) | P1 |
 
 ### H. Characters
 
@@ -289,9 +292,9 @@ Counted by catalogue line. Many lines hold several models (the citizen's tree al
 
 | Status | Lines |
 | --- | --- |
-| Done | 33 |
+| Done | 43 |
 | Teaser, needs clean-up | 0 |
-| To build, P1 | 10 |
+| To build, P1 | 0 |
 | To build, P2 | 23 |
 | To build, P3 | 22 |
 

@@ -38,11 +38,17 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - The "villa door" the bible listed as a teaser model is really the city-gate door leaf, so a villa door is still to build.
 - Not checked: dusk views, and the citizens' animations in motion after simplifying to 20k triangles (the clips are present).
 
-**Cost check and Blender proof (22 Nov)**
-- Measured on the fal balance: Trellis 2 at our settings is $0.35 a model; Tripo P2 (5k-triangle limit, PBR) is $1.10. The fal tools cannot report charges or the balance; the owner reads them off the dashboard.
-- Tripo P2 gave a cleaner bench (5k triangles, 118 KB, bolt kept) but at three times the price. Kept as `models/decor_bench_t1_marble.tripo.glb`.
-- The owner wants spend cut. Proof of the free route: a marble bench (2.6k triangles, 108 KB) and the stone villa walls (7.4k triangles, 327 KB) built by Blender script, in `models/*.blender.glb`, sheet `assets/sheets/blender_proof.jpg`. They are in palette and within budget but look plainer than the generated models. A second pass (`sheets/blender_proof_v2.jpg`) uses CC0 Poly Haven scans for the stone and the azure wood (`assets/blender/textures/`, graded to the palette by `zw.tex_photo`) and a richer marble; the wall file grew to 1.0 MB because of the 1K stone texture. A third pass (`sheets/blender_proof_v3.jpg`) adds real detail: baked contact shadows in vertex colours, slightly uneven walls, a stepped cornice with dentils, window surrounds with keystones and corbels, louvred shutters on hinges, panelled doors with studs and ring knockers, door columns, steps and a wall lantern; the bench gets scroll legs and clawed paws. Walls: 28.7k triangles, 1.4 MB (budget 30k, 1.5 MB), outer size 6.58 x 4.83 m against the 6.4 x 4.4 m socket because of steps, columns and shutters; not yet tried with a roof and porch. Bench: 6.3k triangles, 188 KB. Awaiting the owner's verdict on the look; nothing in the catalogue has been switched.
+**Cost check (22 Nov)**
+- Measured on the fal balance: Trellis 2 at our settings is $0.35 a model; Tripo P2 (5k-triangle limit, PBR) is $1.10. The fal tools cannot report charges or the balance; the owner reads them off the dashboard. Tripo gave a cleaner bench but at three times the price.
 - Mesh2Motion (free, open-source rigging in the browser) was raised by the owner as a possible replacement for paid Meshy rigging. Not evaluated.
+
+**Free Blender route (owner's decision, 22 Nov: "visual excellence is non-negotiable")**
+- Hard-edged and modular items are now built by script in `assets/blender/` (Blender 5.3 as a Python module), at no cost. `zw.py` holds the helpers; `villa_walls.py`, `bench.py` and `kit.py` build the models; `build.sh` builds everything into `assets/models/`. Textures are CC0 Poly Haven scans in `blender/textures/`, graded to the palette; soft contact shadows are baked into vertex colours.
+- Built this way: villa walls in stone, ochre and gold-trim marble (panelled double doors, louvred shutters, cornice with dentils, corner stones, wall lantern; 28.5k triangles each, 0.8 to 1.5 MB, tested under the existing roofs and behind the porches), marble bench, bronze lantern post, amphorae cluster, garden wall and gate (same height now, so they join), street lamp, name plaque, road, plaza and mosaic tiles, boundary stones, scaffolding bay, crane, stone blocks, timber stack, crates. All within the original budgets except the bench at 6.3k triangles (goal 5k).
+- The scripted bench, lantern, amphorae, garden wall and gate replaced the Trellis versions in the catalogue; the Trellis files are kept beside them as `*.trellis.glb`.
+- **Milestone reached: the street test.** `assets/review/street.html` lays out six 16 x 12 m plots on a cobbled road from catalogue models only; sheet `assets/sheets/street_milestone.jpg` (views: wide, street, ochre, gold, site, villas; day and dusk).
+- Still generated, not scripted: roofs, porches, trees, bushes, flowers, pots, cypress, café, citizens. They sit well beside the scripted pieces in the street test.
+- Known flaws: the café's back wall is broken (visible from behind); the Trellis roofs have a chipped tile and white gaps; boundary stones read a little like logs; some louvre slats catch the sun as white lines.
 
 ## Decisions taken
 
@@ -51,6 +57,7 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 | Plot size | 16 × 12 m on a 2 m grid |
 | Interiors | Exteriors only for now |
 | Concept images | Nano Banana 2.1 (`google/nano-banana-2.1`) on fal, 1:1, 2K, template prompt |
+| Hard-edged and modular items | Built free by Blender script (`assets/blender/`), not generated |
 | Image to 3D | Trellis 2 (`fal-ai/trellis-2`, resolution 1536, texture 2048, decimation 120000) is the default; Hunyuan 3D 3.1 Pro is the fallback |
 | Tried and rejected | Higgsfield 3D Jutsu (poor result on the cottage) |
 | Characters | Meshy rigging via fal (`fal-ai/meshy/rigging/multi-animation`) |
@@ -69,10 +76,12 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 ## Next
 
-1. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
-2. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
-3. **Far-view LODs** for batch 1 (see above).
-4. **First milestone:** one street of 6 plots built only from finished catalogue items, rendered in the review scene, to prove the style holds at scale.
+1. **Owner review** of `assets/sheets/street_milestone.jpg` and the three wall styles.
+2. **Scripted roofs and porches** (terracotta and azure roofs, Doric and Ionic porches), so the whole villa is free, within budget and free of the Trellis roof flaws.
+3. **Tier 2 cottage, apartment block, shops** by script, reusing the wall, door and window parts.
+4. **Stadium rising in code** behind the scaffolding kit.
+5. **Far-view LODs** for the generated plants and trees (the scripted models are already light).
+6. **More citizens** (the only place paid generation is still needed), and a look at Mesh2Motion for free rigging.
 
 Open: a cost ceiling per batch on fal, licence check for commercial on-stream use of each generator, what the four teaser mysteries become, and that the "First 100 become Founders" promise is honoured at launch.
 

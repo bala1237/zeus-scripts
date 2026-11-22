@@ -1,11 +1,14 @@
 # Textures
 
-CC0 texture scans from Poly Haven (polyhaven.com), 1K JPG, by Rob Tuytel. CC0 means free for any use, including commercial, with no attribution required.
+CC0 texture scans from Poly Haven (polyhaven.com), 1K JPG, diffuse and normal maps. CC0 means free for any use, including commercial, with no attribution required. Fetch more with `../fetch_textures.py <asset name>`.
 
-| Files | Poly Haven asset | Used for |
-| --- | --- | --- |
-| `castle_wall_slates_*` | castle_wall_slates | Stone villa walls |
-| `blue_painted_planks_*` | blue_painted_planks | Azure doors and shutters |
-| `marble_01_*`, `large_sandstone_blocks_*` | marble_01, large_sandstone_blocks | Downloaded as candidates, not used yet |
+| Files | Used for |
+| --- | --- |
+| `castle_wall_slates_*` | Stone villa walls, plinths, garden wall bases, boundary stones |
+| `painted_plaster_wall_*` | Ochre and cream plaster |
+| `marble_01_*` | Coursed marble walls on the gold-trim villa |
+| `blue_painted_planks_*` | Painted doors, shutters and gates (recoloured azure or olive) |
+| `brown_planks_09_*`, `old_planks_02_*` | Raw and aged timber: scaffolding, crane, crates, racks |
+| `cobblestone_floor_08_*`, `cobblestone_square_*`, `marble_mosaic_tiles_*` | Road, plaza and mosaic path tiles |
 
-`zw.tex_photo()` grades them towards the palette before use. The `_rough` maps are downloaded but not used.
+`zw.tex_photo()` grades them towards the palette before use.
