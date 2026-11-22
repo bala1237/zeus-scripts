@@ -5,15 +5,17 @@ sys.path.insert(0, os.path.dirname(__file__))
 import zw
 
 zw.reset()
-stone = zw.material('stone', *zw.tex_ashlar(1024), rough=0.85)
+# stone and wood are CC0 Poly Haven scans, graded to the palette (see textures/README.md)
+stone = zw.material('stone', *zw.tex_photo('castle_wall_slates', 'stone', 1024, tint=zw.PALETTE['stone'], mix=0.5, gain=0.98, contrast=1.0), rough=0.9)
+base = zw.material('stone_base', *zw.tex_photo('castle_wall_slates', 'stone_base', 512, tint=zw.PALETTE['stone'], mix=0.5, gain=0.74, contrast=1.0), rough=0.9)
 trim = zw.material('trim', *zw.tex_marble(512, seed=5), rough=0.4)
-wood = zw.material('azure_wood', *zw.tex_planks(256), rough=0.6)
+wood = zw.material('azure_wood', *zw.tex_photo('blue_painted_planks', 'azure_wood', 512, tint=zw.PALETTE['azure'], mix=0.85, gain=1.05, contrast=1.1, rot=True), rough=0.6)
 dark = zw.material('interior', (0.05, 0.06, 0.09), rough=0.9)
 bronze = zw.material('bronze', zw.PALETTE['bronze'], rough=0.35, metal=1.0)
 gold = zw.material('gold', zw.PALETTE['gold'], rough=0.25, metal=1.0)
 
 W, H, D, TH = 6.4, 3.0, 4.4, 0.32
-TILE = 1.5                                   # one stone tile = 1.5 m: blocks 0.75 x 0.375 m
+TILE = 3.4                                   # metres per stone tile: scaled up from the scan's 2.5 m for chunkier stones
 PL, CO = 0.30, 0.22                          # plinth and cornice heights
 body = zw.box('walls', (W - 0.12, D - 0.12, H - 0.04), (0, 0, (H - 0.04) / 2), stone, uv=TILE)
 
@@ -35,9 +37,9 @@ def ring(name, z, h, out, mat, bevel):
 ring('cornice', H - CO / 2, CO, 0.06, trim, 0.03)
 # the plinth is cut by the doorway, so it is built in pieces on the front
 for s in (-1, 1):
-    zw.box('plinth', (TH + 0.06, D, PL), (s * (W / 2 - TH / 2 - 0.03), 0, PL / 2), stone, bevel=0.03, uv=TILE * 1.6)
-    zw.box('plinth', ((W - DOOR_W) / 2 - 0.1, TH + 0.06, PL), (s * (DOOR_W / 2 + ((W - DOOR_W) / 2 - 0.1) / 2 + 0.1), -D / 2 + TH / 2 + 0.03, PL / 2), stone, bevel=0.03, uv=TILE * 1.6)
-zw.box('plinth', (W, TH + 0.06, PL), (0, D / 2 - TH / 2 - 0.03, PL / 2), stone, bevel=0.03, uv=TILE * 1.6)
+    zw.box('plinth', (TH + 0.06, D, PL), (s * (W / 2 - TH / 2 - 0.03), 0, PL / 2), base, bevel=0.03, uv=TILE)
+    zw.box('plinth', ((W - DOOR_W) / 2 - 0.1, TH + 0.06, PL), (s * (DOOR_W / 2 + ((W - DOOR_W) / 2 - 0.1) / 2 + 0.1), -D / 2 + TH / 2 + 0.03, PL / 2), base, bevel=0.03, uv=TILE)
+zw.box('plinth', (W, TH + 0.06, PL), (0, D / 2 - TH / 2 - 0.03, PL / 2), base, bevel=0.03, uv=TILE)
 
 # corner quoins: alternating long and short dressed blocks standing proud of the wall
 for sx in (-1, 1):
@@ -64,7 +66,7 @@ def window(x, y, face):
     put('bar', (0.05, 0.05, WIN_H), (0, -0.16, zc), wood)
     put('bar', (WIN_W, 0.05, 0.05), (0, -0.16, zc), wood)
     for s in (-1, 1):
-        put('shutter', (WIN_W / 2, 0.05, WIN_H), (s * (WIN_W / 2 + WIN_W / 4 + 0.03), 0.03, zc), wood, 0.012, 0.5)
+        put('shutter', (WIN_W / 2, 0.05, WIN_H), (s * (WIN_W / 2 + WIN_W / 4 + 0.03), 0.03, zc), wood, 0.012, 0.9)
 
 for x in front_x: window(x, -D / 2 + 0.06, 'F')
 for x in back_x: window(x, D / 2 - 0.06, 'B')
@@ -76,7 +78,7 @@ fy = -D / 2 + 0.06
 zd = PL - 0.02
 for s in (-1, 1):
     zw.box('jamb', (0.20, 0.16, DOOR_H), (s * (DOOR_W / 2 + 0.10), fy - 0.02, zd + DOOR_H / 2), trim, bevel=0.025)
-    zw.box('leaf', (DOOR_W / 2 - 0.01, 0.07, DOOR_H), (s * DOOR_W / 4, fy + 0.14, zd + DOOR_H / 2), wood, bevel=0.012, uv=0.5)
+    zw.box('leaf', (DOOR_W / 2 - 0.01, 0.07, DOOR_H), (s * DOOR_W / 4, fy + 0.14, zd + DOOR_H / 2), wood, bevel=0.012, uv=1.3)
     zw.blob('ring', (0.06, 0.03, 0.06), (s * 0.12, fy + 0.09, zd + 1.05), bronze)
 zw.box('door_lintel', (DOOR_W + 0.60, 0.20, 0.26), (0, fy - 0.03, zd + DOOR_H + 0.13), trim, bevel=0.03)
 zw.box('step', (DOOR_W + 0.5, 0.45, 0.14), (0, -D / 2 - 0.10, 0.07), trim, bevel=0.025)

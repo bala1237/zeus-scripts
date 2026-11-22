@@ -19,7 +19,7 @@ Setup: `npm install`.
 
 ## Scripted models (Blender, free)
 
-`blender/` builds models by script, with no generation cost: `zw.py` (shared helpers: palette, tileable marble, stone, plank and meander textures made in numpy, boxes, prisms, boolean cuts, the gold bolt, glTF export), `bench.py`, `villa_walls_stone.py`.
+`blender/` builds models by script, with no generation cost: `zw.py` (shared helpers: palette, tileable marble, stone, plank and meander textures made in numpy, boxes, prisms, boolean cuts, the gold bolt, glTF export), `bench.py`, `villa_walls_stone.py`. `blender/textures/` holds CC0 Poly Haven texture scans, which `zw.tex_photo()` grades towards the palette.
 
 Setup once: `python3 -m venv bl && bl/bin/pip install bpy pillow` (Blender 5.3 as a Python module; no graphics card needed).
 Build: `bl/bin/python blender/bench.py raw/bl_bench.glb`, then `node normalize.mjs raw/bl_bench.glb models/x.glb --fit 0,0,0 --yaw 0 --tris 5000 --tex 512`. Scripted models are already at real size and face the front, so the normaliser only compresses them.

@@ -75,13 +75,38 @@ def material(name, color, normal=None, rough=0.7, metal=0.0):
     return m
 
 
+TEX_DIR = os.path.join(os.path.dirname(__file__), 'textures')
+
+
+def tex_photo(asset, name, size=1024, tint=None, mix=0.0, gain=1.0, contrast=1.0, rot=False, nstrength=1.0):
+    """A CC0 Poly Haven texture set (textures/<asset>_diff.jpg and _nor.jpg), graded towards the palette:
+    tint/mix pull the colour to a palette family while keeping the photographed detail as light and dark,
+    gain and contrast set the overall value, rot turns the pattern a quarter turn."""
+    d = np.asarray(PILImage.open(os.path.join(TEX_DIR, f'{asset}_diff.jpg')).convert('RGB').resize((size, size)), dtype=np.float64) / 255
+    n = np.asarray(PILImage.open(os.path.join(TEX_DIR, f'{asset}_nor.jpg')).convert('RGB').resize((size, size)), dtype=np.float64) / 255
+    lum = d @ np.array([0.3, 0.59, 0.11]); mean = lum.mean()
+    if tint is not None:
+        flat = np.array(tint)[None, None, :] * (lum / mean)[..., None]
+        d = d * (1 - mix) + flat * mix
+    d = np.clip((d - mean) * contrast + mean, 0, 1) * gain
+    n = (n - 0.5) * np.array([nstrength, nstrength, 1.0]) + 0.5
+    if rot:
+        d = np.rot90(d).copy(); n = np.rot90(n).copy()
+        n = np.dstack([1 - n[..., 1], n[..., 0], n[..., 2]])
+    return image(name, d), image(name + '_n', n, srgb=False)
+
+
+
 def tex_marble(n=512, seed=1):
     f = fbm(n, seed, 3, 6); g = fbm(n, seed + 9, 2, 5)
-    vein = np.clip(1 - np.abs(np.sin((f * 2.0 + g * 1.4) * math.pi)) * 5.0, 0, 1) ** 1.6   # thin drifting veins
-    soft = fbm(n, seed + 3, 2, 4)
-    base = np.array(PALETTE['marble'])[None, None, :] * (0.93 + 0.09 * soft)[..., None]
-    col = base * (1 - 0.42 * vein[..., None]) + np.array([0.50, 0.50, 0.53])[None, None, :] * 0.42 * vein[..., None]
-    return image('marble', col), image('marble_n', normal_map(f * 0.15 - vein * 0.05, 1.0), srgb=False)
+    vein = np.clip(1 - np.abs(np.sin((f * 2.0 + g * 1.4) * math.pi)) * 5.0, 0, 1) ** 1.6     # thin drifting veins
+    fine = np.clip(1 - np.abs(np.sin((fbm(n, seed + 5, 5, 5) * 3.1 + f) * math.pi)) * 7.0, 0, 1) ** 2  # hairlines
+    cloud = fbm(n, seed + 3, 2, 4); warm = fbm(n, seed + 7, 3, 3)
+    base = np.array(PALETTE['marble'])[None, None, :] * (0.70 + 0.24 * cloud)[..., None]
+    base = base * (1 - 0.10 * warm[..., None] * np.array([0.0, 0.25, 1.0])[None, None, :])     # faint cream patches
+    k = np.clip(0.75 * vein + 0.35 * fine, 0, 1)[..., None]
+    col = base * (1 - k) + np.array([0.45, 0.46, 0.50])[None, None, :] * k
+    return image(f'marble{seed}', col), image(f'marble{seed}_n', normal_map(f * 0.15 - vein * 0.06, 1.0), srgb=False)
 
 
 def tex_ashlar(n=1024, rows=4, cols=2, seed=2, tint=PALETTE['stone']):

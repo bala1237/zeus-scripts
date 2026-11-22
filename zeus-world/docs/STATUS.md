@@ -41,7 +41,7 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 **Cost check and Blender proof (22 Nov)**
 - Measured on the fal balance: Trellis 2 at our settings is $0.35 a model; Tripo P2 (5k-triangle limit, PBR) is $1.10. The fal tools cannot report charges or the balance; the owner reads them off the dashboard.
 - Tripo P2 gave a cleaner bench (5k triangles, 118 KB, bolt kept) but at three times the price. Kept as `models/decor_bench_t1_marble.tripo.glb`.
-- The owner wants spend cut. Proof of the free route: a marble bench (2.6k triangles, 108 KB) and the stone villa walls (7.4k triangles, 327 KB) built by Blender script, in `models/*.blender.glb`, sheet `assets/sheets/blender_proof.jpg`. They are in palette and within the original budgets but look plainer than the generated models. Awaiting the owner's verdict on the look; nothing in the catalogue has been switched.
+- The owner wants spend cut. Proof of the free route: a marble bench (2.6k triangles, 108 KB) and the stone villa walls (7.4k triangles, 327 KB) built by Blender script, in `models/*.blender.glb`, sheet `assets/sheets/blender_proof.jpg`. They are in palette and within budget but look plainer than the generated models. A second pass (`sheets/blender_proof_v2.jpg`) uses CC0 Poly Haven scans for the stone and the azure wood (`assets/blender/textures/`, graded to the palette by `zw.tex_photo`) and a richer marble; the wall file grew to 1.0 MB because of the 1K stone texture. Awaiting the owner's verdict on the look; nothing in the catalogue has been switched.
 - Mesh2Motion (free, open-source rigging in the browser) was raised by the owner as a possible replacement for paid Meshy rigging. Not evaluated.
 
 ## Decisions taken
