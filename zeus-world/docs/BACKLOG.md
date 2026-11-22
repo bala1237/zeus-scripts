@@ -28,7 +28,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-011 | Enhancement | Housekeeping: model storage, licence check, protect the preview | Low | Open | 22 Nov 2026 |
 | ZW-012 | Bug | The women walk in a weird way | High | Fix shipped | 22 Nov 2026, owner |
 | ZW-013 | Enhancement | Houses should show a name, visible from above | Medium | Fix shipped | 22 Nov 2026, owner |
-| ZW-014 | Bug | The "idle" animation is a wide stride that turns round, not a standing pose | Low (proposed) | Open | 22 Nov 2026, found while fixing ZW-012 |
+| ZW-014 | Bug | The "idle" animation is a wide stride that turns round, not a standing pose | Medium | Fix shipped | 22 Nov 2026, found while fixing ZW-012; owner asked for the fix |
 
 ## Closed
 
@@ -132,7 +132,9 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-014: The "idle" animation is not a standing pose
 
-- **Found:** 22 Nov 2026, in the frame sheets made for ZW-012. Not reported by the owner.
-- The clip named `Idle`, which citizens play when they stop at a stall or a shop, has the character in a wide stride, turning the upper body round. It is the same for all three citizens, so it comes from the generator's animation set.
-- Options: pick a calmer clip if the rigging service offers one (may cost), or hold a still frame of the walk's passing pose and add a slow breathing sway in code (free).
-- Related, lower priority: the man's and the elder's bindings are coarse (the man's torso is rigid on his hips; the elder's cloak follows his arms). They look acceptable. `reskin.mjs` could be tried on the man; the elder has a different skeleton.
+- **Found:** 22 Nov 2026, in the frame sheets made for ZW-012. The owner asked for it to be fixed the same day.
+- **Problem:** the clip named `Idle`, which citizens play when they stop at a stall or a shop, has the character in a wide stride, turning the upper body round. It is the same for all three citizens, so it comes from the rigging service's animation set.
+- **Fix shipped 22 Nov 2026:** a standing pose made in code (`assets/review/stand.js`) replaces it for all three citizens: feet together, arms hanging, a slight breathing lean, arms drifting a little, a slow look from side to side over seven seconds. Free; no new animation was bought. Detail in `knowledge/characters.md`.
+- **Checked:** frame sheets of the pose for all three citizens, and a still of the plaza. The movement within the pose is small and cannot be judged from stills.
+- **Waiting on the owner:** does standing look natural on the preview, and is the movement too little or too much.
+- **Left as it is:** the man's and the elder's bindings are coarse (the man's torso is rigid on his hips; the elder's cloak follows his arms). They look acceptable.

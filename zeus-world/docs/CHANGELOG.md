@@ -4,10 +4,10 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 22 Nov 2026
 
+- **Citizens stand still properly (ZW-014).** The supplied idle animation was a wide, turning stride. A standing pose made in code replaces it for all three citizens: feet together, arms hanging, breathing, a slow look from side to side. `assets/review/stand.js`.
 - **The woman citizen walks properly (ZW-012).** Her rig from the generator had her upper body and head bound to her left forearm, so she folded and twisted as she walked. Her binding was rebuilt from her shape with a new tool, `assets/reskin.mjs`, at no cost. Checked with frame sheets of all four of her animations.
 - **Homes show their owner's name (ZW-013).** A plate above each finished home's roof, readable from the wide view. `assets/review/names.js`. Names are made up for the demo.
 - **Frame sheets for checking animation:** `assets/review/poses.html` draws a character at evenly spaced moments of a clip, since motion cannot be watched on the build machine.
-- **Found and logged:** the "idle" animation is a wide turning stride, not a standing pose (ZW-014).
 - **Memory use of the city roughly halved (ZW-001).** Measured first: 1.4 GB in the tab and 2.1 GB in the graphics process, with no leak. Two causes: the same textures loaded many times over (1,065 in memory, 144 different), and a 512 MB shadow map. Identical textures are now loaded once, and the shadow map is stored in 192 MB. After: 0.7 GB and 0.8 GB. The picture is unchanged, checked against stills of four views. Detail in `knowledge/performance.md`.
 - **Measuring tool added:** `assets/measure.mjs` reports what the city holds in memory, what a frame costs to draw, and whether anything grows over time. New skill `measure-memory`.
 - **Frame cost measured (ZW-004):** 5.0 million triangles and 2,320 draw calls a frame. Not yet worked on.

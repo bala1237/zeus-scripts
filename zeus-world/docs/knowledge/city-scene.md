@@ -10,6 +10,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `city.js` | Renderer, lighting and colour grade, skies, camera views and tour, model loading, the layout of the city, water, fire and lamp effects, time of day |
 | `life.js` | Citizens walking a route graph, building sites rising with Bolts labels, lightning on completion, birds |
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
+| `stand.js` | The standing pose citizens use when they stop, made in code (see `characters.md`) |
 | `names.js` | Name plates over the homes |
 | `poses.html`, `poses.js` | Frame sheet of a character's animation, for checking motion without watching it (see `characters.md`). Not part of the hosted build |
 | `street.js`, `main.js` | The six-plot street test and the single-model review scene. Older; still on the pale lighting (ZW-005) |
@@ -62,7 +63,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 - Three graphs: the town (gate, main street, shops, plaza, stalls, sacred way, library, council hall site), the quay, and one small graph per building site for its builders.
 - Each walker keeps to a lane offset from the line, so two-way traffic passes.
 - `height(x, z)` gives the ground height; the town graph uses it to climb the bridge.
-- Three citizen models, each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`. The models and their rigs are described in `characters.md`.
+- Three citizen models, each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`. `Idle` is the standing pose from `stand.js`, not the clip supplied with the model. The models and their rigs are described in `characters.md`.
 - `cheerNear()` makes everyone within a radius turn and cheer.
 
 ## Construction (`life.js`)

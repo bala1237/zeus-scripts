@@ -1,18 +1,19 @@
 // Contact sheet of an animation, since motion cannot be watched on the build machine: the character at evenly spaced
 // moments of one clip, seen from the side (top row) and the front (bottom row).
-// ?m=models/char_citizen_woman.glb&clip=Walk&n=8   node shot.mjs renders/x.png "m=...&clip=Walk" with PAGE=poses.html
+// ?m=models/char_citizen_woman.glb&clip=Walk&n=8   (clip: Walk, Idle, Cheer, Clap, Stand, none)   node shot.mjs renders/x.png "m=...&clip=Walk" with PAGE=poses.html
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { standClip } from './stand.js';
 const q = new URLSearchParams(location.search), url = './' + (q.get('m') || 'models/char_citizen_woman.glb'), clipName = q.get('clip') || 'Walk', n = Number(q.get('n') || 8);
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setSize(innerWidth, innerHeight); document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0xe9eef2);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.03).texture;
 const sun = new THREE.DirectionalLight(0xffffff, 2); sun.position.set(3, 6, 8); scene.add(sun);
 const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const g = await loader.loadAsync(url);
-const clip = g.animations.find((c) => c.name === clipName) || g.animations[0];
+const clip = clipName === 'Stand' ? standClip(g.scene) : g.animations.find((c) => c.name === clipName) || g.animations[0];   // Stand is the pose made in code (stand.js)
 document.getElementById('label').textContent = `${url.split('/').pop()} · ${clip.name} · ${clip.duration.toFixed(2)} s · clips: ${g.animations.map((c) => c.name).join(', ')}`;
 if (q.has('cut')) { renderer.localClippingEnabled = true; const cut = Number(q.get('cut')); g.scene.traverse((m) => { if (m.isMesh) { m.material = m.material.clone(); m.material.side = THREE.DoubleSide; m.material.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, 0, -1), cut)]; } }); }   // ?cut=0 slices the character open through the middle, seen from the side
 const gap = 1.25, rows = [[Math.PI / 2, 1.15], [0, -1.05]];

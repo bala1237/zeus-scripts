@@ -10,7 +10,7 @@ The citizens: where they come from, how their rigs work, and how to check and re
 | Woman | `assets/models/char_citizen_woman.glb` | 22 bones, same as the man | Binding rebuilt 22 Nov 2026 (ZW-012) |
 | Elder | `assets/models/char_citizen_elder.glb` | 24 bones, different order | Works. Cloak follows the arms |
 
-All three were generated, then rigged and animated by Meshy through fal. Each carries four clips with the same names and lengths: `Walk` (1.07 s), `Idle` (4.03 s), `Cheer` (9.03 s), `Clap` (13.70 s). The `Idle` clip is a wide stride that turns round, not a standing pose (ZW-014).
+All three were generated, then rigged and animated by Meshy through fal. Each carries four clips with the same names and lengths: `Walk` (1.07 s), `Idle` (4.03 s), `Cheer` (9.03 s), `Clap` (13.70 s). The supplied `Idle` clip is a wide stride that turns round, not a standing pose, so the city replaces it with one made in code (see "Standing still").
 
 In the city each citizen is a copy of one of these, tinted one of eight colours and scaled to between 1.66 and 1.82 m (`review/life.js`, `spawn`).
 
@@ -29,7 +29,7 @@ Motion cannot be watched on the build machine, so `review/poses.html` draws one 
 From `zeus-world/assets/`, with the review server running:
 
 - `PAGE=poses.html node shot.mjs renders/walk.png "m=models/char_citizen_woman.glb&clip=Walk&n=8" 1600 760`
-- `clip`: `Walk`, `Idle`, `Cheer`, `Clap`, or `none` for the rest pose. `n`: how many moments.
+- `clip`: `Walk`, `Idle` (the supplied one), `Cheer`, `Clap`, `Stand` (the pose made in code), or `none` for the rest pose. `n`: how many moments.
 - `cut=0` slices the character open through the middle, to see how the mesh is built inside.
 - Each render takes about ten seconds.
 
@@ -59,6 +59,20 @@ What was tried and dropped: binding each vertex to the nearest bone (hair went t
 Known compromise on the woman: in a long stride her feet show slightly ahead of or behind the hem, with nothing of the leg above the ankle.
 
 The step is part of the pipeline: `teaser.sh` runs `reskin.mjs` on the woman straight after normalising her.
+
+## Standing still: `review/stand.js`
+
+The supplied `Idle` clip is a turning stride, so it is not used. `standClip(model)` builds a clip called `Stand` from the model's rest pose, and `life.js` installs it under the name `Idle`, so everything that asks a citizen to idle gets it.
+
+- Legs and body stay in the rest pose, which is a straight stand.
+- The rest pose holds the arms out, so each upper arm is swung in until the hand hangs 0.2 radians from straight down. It is measured from shoulder to hand, because the elder's rest pose bends at the elbow and measuring to the elbow left his hands out.
+- Small movement over a seven-second loop: the head turns 0.22 radians each way with a slight nod, the arms drift, and the bone named `neck` leans a hundredth of a radian for breathing.
+- Rotations are worked out as seen from outside the character and converted to each bone's own frame, so the same code serves skeletons with different bone layouts. It needs bones named `LeftArm`, `RightArm`, `LeftHand`, `RightHand` and `Head`.
+- The clip has a track for every bone, and one for the hips' position, so nothing is left where the walk put it.
+- One clip is made per model and shared by all its copies.
+- To see it: `clip=Stand` on the frame sheet page.
+
+Tune it with the options of `standClip`: `seconds`, `steps`, `arm`.
 
 ## Adding a character
 

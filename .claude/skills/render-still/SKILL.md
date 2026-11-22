@@ -14,8 +14,8 @@ Run from `zeus-world/assets/`. Details in `zeus-world/docs/knowledge/environment
    - Street test: `PAGE=street.html node shot.mjs renders/<name>.png "view=wide&light=day"`.
    - One model: `node shot.mjs renders/<name>.png "m=models/<model>.glb&view=3q"`. Add `props&` in front for small items.
    - Several models side by side: `./qc.sh <name> <props|wide> <label> <model> <model> ...`.
-   - A character's animation as a frame sheet: `PAGE=poses.html node shot.mjs renders/<name>.png "m=models/<character>.glb&clip=Walk&n=8" 1600 760` (clips: `Walk`, `Idle`, `Cheer`, `Clap`, `none`). Use it for anything about how a citizen moves; see `zeus-world/docs/knowledge/characters.md`.
-4. Read the output for "page error" or "console error". An error makes the render hang until timeout.
+   - A character's animation as a frame sheet: `PAGE=poses.html node shot.mjs renders/<name>.png "m=models/<character>.glb&clip=Walk&n=8" 1600 760` (clips: `Walk`, `Idle`, `Cheer`, `Clap`, `Stand`, `none`). Use it for anything about how a citizen moves; see `zeus-world/docs/knowledge/characters.md`.
+4. Read the output for "page error" or "console error". An error makes the render hang until timeout; a syntax error hangs it silently, so run `node --check review/<file>.js` after editing a script and wrap renders in `timeout 200`.
 5. Open the image and look at it before reporting anything about it.
 
 Limits:
