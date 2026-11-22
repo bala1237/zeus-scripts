@@ -312,7 +312,7 @@ def lathe(name, profile, mat, centre=(0, 0, 0), segs=16, uv=1.0, tilt=None, flut
     o = obj_from_bm(name, bm, mat, 50)
     # wrap the texture round the pot instead of projecting it from the sides
     uvl = o.data.uv_layers.new(name='UVMap')
-    inv = m.inverted(); rep = round(max(1, 2 * math.pi * 0.25 / uv))
+    inv = m.inverted(); rep = round(max(1, 2 * math.pi * max(r for r, _ in profile) / uv))
     for p in o.data.polygons:
         c = inv @ p.center; ac = math.atan2(c.y, c.x)
         for li in p.loop_indices:
