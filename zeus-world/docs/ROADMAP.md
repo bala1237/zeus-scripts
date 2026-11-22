@@ -1,6 +1,6 @@
 # Zeus World: the bigger plan
 
-How the city grows from a showpiece into a game people stay for, built in phases. Written 22 Nov 2026 from the owner's direction. It is a plan to improvise on, not a contract: phases can be reordered, split or dropped. The ideas behind it are in `BRAINSTORM-GAME.md`; the numbered work is in `BACKLOG.md`.
+How the city grows from a showpiece into a game people stay for, built in phases. Written 22 Nov 2026 from the owner's direction. It is a plan to improvise on, not a contract: phases can be reordered, split or dropped. The ideas behind it are in `BRAINSTORM-GAME.md`; the numbered work is in `BACKLOG.md`. Research done after this was written (`reports/Zeus World game design research.md` at the repository root) has not yet been folded in; it is waiting for discussion with the owner.
 
 ## What the owner asked for
 
