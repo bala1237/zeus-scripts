@@ -4,11 +4,11 @@
 // Everything is made in code (no models), and nothing here damages the city: what a loss leaves behind is ZW-015's job.
 //
 //   const battle = createBattle({ scene, camera, tickers, gateZ: 60, wallTop: 6, towers: [[-28, 60], [28, 60]], onResult });
-//   battle.start({ rival: '@someone', seconds: 80 });   battle.setScore(ours, theirs);   battle.end();
+//   battle.start({ rival: '@someone', seconds: 80 });   battle.setScore(ours, theirs);   battle.end();   battle.filming(true);
 // Until real battle events are connected, city.js feeds it a made-up score.
 import * as THREE from 'three';
 
-export function createBattle({ scene, camera, tickers, gateZ = 60, wallTop = 6, towers = [], onResult = () => {} }) {
+export function createBattle({ scene, camera, controls = null, tickers, gateZ = 60, wallTop = 6, towers = [], onResult = () => {} }) {
   const rnd = (() => { let a = 2026; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
   const group = new THREE.Group(); group.visible = false; group.userData.dynamic = true; scene.add(group);
   const NEAR = gateZ + 9, FAR = gateZ + 46, CAMP = gateZ + 62, FILES = 24, RANKS = 3, GAP = 1.9;
@@ -26,7 +26,10 @@ export function createBattle({ scene, camera, tickers, gateZ = 60, wallTop = 6, 
     const parts = [
       [new THREE.CylinderGeometry(0.22, 0.3, 1.1, 8), std(c.tunic), local(0, 0.75, 0)],
       [new THREE.SphereGeometry(0.2, 10, 8), std(0xd9a57e), local(0, 1.48, 0)],
-      [new THREE.BoxGeometry(0.07, 0.2, 0.46), std(c.crest), local(0, 1.74, 0)],
+      [new THREE.SphereGeometry(0.225, 12, 6, 0, Math.PI * 2, 0, Math.PI * 0.55), std(side === 'us' ? 0xc9a04a : 0x4a4a52, { metalness: 0.7, roughness: 0.35 }), local(0, 1.5, 0)],
+      [new THREE.CylinderGeometry(0.075, 0.06, 0.36, 6), std(0xd9a57e), local(-0.11, 0.18, 0)],
+      [new THREE.CylinderGeometry(0.075, 0.06, 0.36, 6), std(0xd9a57e), local(0.11, 0.18, 0)],
+      [new THREE.BoxGeometry(0.05, 0.15, 0.36), std(c.crest), local(0, 1.76, 0)],
       [new THREE.CylinderGeometry(0.46, 0.46, 0.07, 14), std(c.shield, { metalness: 0.35, roughness: 0.45 }), local(-0.22, 1.0, 0.34, Math.PI / 2)],
       [new THREE.CylinderGeometry(0.1, 0.1, 0.09, 8), std(0xe2a92e, { metalness: 0.6, roughness: 0.35 }), local(-0.22, 1.0, 0.38, Math.PI / 2)],
       [new THREE.CylinderGeometry(0.03, 0.03, 2.5, 5), std(0x5d4630), local(0.3, 1.25, 0.55, 1.15)],
@@ -65,6 +68,30 @@ export function createBattle({ scene, camera, tickers, gateZ = 60, wallTop = 6, 
   const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);display:none;font:700 14px system-ui;color:#1d1a2e;background:rgba(255,255,255,.92);padding:9px 14px 10px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.3);text-align:center;min-width:min(74vw,430px)';
   hud.innerHTML = '<div class="t" style="margin-bottom:6px"></div><div style="display:flex;align-items:center;gap:8px"><span class="a" style="color:#1f5c9a"></span><div style="flex:1;height:12px;border-radius:6px;background:#a3262a;overflow:hidden"><div class="b" style="height:100%;width:50%;background:linear-gradient(90deg,#2f6fb0,#5aa0e0);transition:width .4s"></div></div><span class="r" style="color:#8f1f23"></span></div><div class="n" style="font-weight:600;font-size:12px;margin-top:5px"></div>';
   document.body.append(hud); const $ = (c) => hud.querySelector(c);
+
+  // ---------- the cinematic camera: a film crew's shots of the fight, each held a few seconds with a slow move, then a cut to the next.
+  // Every shot is placed from where the fighting line is now, so it stays on the action as the line moves.
+  // u runs 0 to 1 over the shot; f is the line's position. Each returns [camera position, what it looks at].
+  const SHOTS = {
+    line: (u, f, k) => [[k * (33 - 9 * u), 2.3, f + 0.3], [0, 1.5, f]],
+    clash: (u, f, k) => [[k * (29 - 5 * u), 2.3, f - 3.4], [k * 6, 1.4, f + 0.6]],
+    ours: (u, f, k) => [[k * (9 - 7 * u), 5.2, f - 17], [0, 1.6, f + 10]],
+    theirs: (u, f, k) => [[k * (11 - 6 * u), 4.6, f + 15], [0, 3.6, gateZ]],
+    engine: (u, f, k) => [[k * 18 + 5.5 - 2 * u, 3.6, CAMP + 3.5], [k * 18 - 5, 2.4, CAMP - 34]],
+    wall: (u, f, k) => [[k * (15 - 7 * u), wallTop + 3.2, gateZ - 3.5], [0, 0.6, f]],
+    high: (u, f, k) => { const a = k * (0.75 + 0.45 * u); return [[62 * Math.sin(a), 24, f + 50 * Math.cos(a)], [0, 2, f]]; },
+    gate: (u, f, k) => [[k * (16 - 5 * u), 3.2, gateZ + 20 - 4 * u], [0, 3.4, gateZ]],
+    rout: (u, f, k) => [[k * (10 - 4 * u), 4.2 + 2 * u, f - 16], [0, 2.5, CAMP - 6]],
+  };
+  const ORDER = ['line', 'clash', 'ours', 'engine', 'wall', 'theirs', 'clash', 'high'];
+  const cine = { on: false, name: null, i: -1, t0: 0, len: 7, k: 1, P: new THREE.Vector3(), T: new THREE.Vector3() };
+  function nextShot() { let name; if (st.phase === 'after') name = st.result === 'win' ? 'rout' : 'gate'; else { cine.i = (cine.i + 1) % ORDER.length; name = ORDER[cine.i];
+      // when we are being pushed back the story is at the gate and on the wall; when we lead it is at their camp
+      if (name === 'engine' && st.shown < 0.35) name = 'gate'; if (name === 'wall' && st.shown > 0.7) name = 'ours'; }
+    cine.name = name; cine.t0 = st.t; cine.len = name === 'high' ? 8 : 6 + rnd() * 2.5; cine.k = rnd() < 0.5 ? 1 : -1; }
+  function aim(name, u, k = 1) { const [p, q] = SHOTS[name](u, frontZ(), k); cine.P.set(...p); cine.T.set(...q); camera.position.copy(cine.P); if (controls) controls.target.copy(cine.T); else camera.lookAt(cine.T); }
+  function film() { if (!cine.on) return; if (cine.name === null || st.t - cine.t0 > cine.len || (st.phase === 'after' && cine.name !== 'rout' && cine.name !== 'gate')) nextShot();
+    const u = Math.min(1, (st.t - cine.t0) / cine.len); aim(cine.name, u * u * (3 - 2 * u) * 0.5 + u * 0.5, cine.k); }
 
   // ---------- running it
   const A = new THREE.Vector3(), B = new THREE.Vector3(); let volley = 0, shot = 0, dustAt = 0, last = null;
@@ -108,6 +135,7 @@ export function createBattle({ scene, camera, tickers, gateZ = 60, wallTop = 6, 
     for (const p of puffs) { if (p.age >= p.life) { p.s.visible = false; continue; } p.age += dt; const k = p.age / p.life; p.s.position.set(p.x, p.y + p.rise * k, p.z); p.s.scale.setScalar(p.size * (0.5 + k)); p.s.material.opacity = 0.6 * (1 - k); }
     $('.b').style.width = `${Math.round(st.shown * 100)}%`;
     if (st.phase === 'fight') { const s = Math.ceil(st.left); $('.n').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} left · ${st.shown > 0.56 ? 'We are pushing them back' : st.shown < 0.44 ? 'They are at our gate. Hold the line!' : 'The line is holding'}`; }
+    film();
     if (st.phase === 'after' && st.t - st.endAt > 13) stop();
   }
   tickers.push(tick);
@@ -119,8 +147,10 @@ export function createBattle({ scene, camera, tickers, gateZ = 60, wallTop = 6, 
   function end() { if (st.phase !== 'fight') return; st.phase = 'after'; st.endAt = st.t; st.result = st.share >= 0.5 ? 'win' : 'loss'; st.share = st.result === 'win' ? 0.95 : 0.06;
     $('.t').textContent = st.result === 'win' ? '🏆 Victory at the South Gate!' : 'The gate is battered, but the city stands'; $('.n').textContent = st.result === 'win' ? `${st.rival} is driven from the field` : 'The builders will be needed at dawn';
     onResult(st.result, st); }
-  function stop() { st.on = false; st.phase = 'idle'; group.visible = false; hud.style.display = 'none'; }
+  function stop() { st.on = false; st.phase = 'idle'; group.visible = false; hud.style.display = 'none'; cine.on = false; cine.name = null; cine.i = -1; }
+  // the cinematic camera takes over the view until filming(false), the battle's end, or the viewer grabbing the view
+  const filming = (on) => { cine.on = on; if (on) cine.name = null; };
   // a single frame of the fight at a given share, for stills
-  function pose(share, t = 8) { start({ rival: '@rival_city', seconds: 80, share }); st.enter = 1; st.left = 47; last = null; for (let x = 0; x <= t; x += 0.05) tick(x); }
-  return { start, setShare, setScore, end, stop, pose, state: st };
+  function pose(share, t = 8, shot = null) { start({ rival: '@rival_city', seconds: 80, share }); st.enter = 1; st.left = 47; last = null; for (let x = 0; x <= t; x += 0.05) tick(x); if (shot && SHOTS[shot]) aim(shot, 0.5); }
+  return { start, setShare, setScore, end, stop, pose, filming, shots: Object.keys(SHOTS), state: st, cine };
 }

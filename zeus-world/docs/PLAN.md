@@ -11,7 +11,8 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
-| Live battle against the rival | ZW-018 | First version shipped 22 Nov: the siege at the south gate, on a made-up score. Waiting for the owner to watch it |
+| Live battle against the rival | ZW-018 | Approved by the owner 22 Nov. Real TikTok battle events (five minutes, score-driven) still to connect |
+| Cinematic battle camera | ZW-019 | Shipped 22 Nov. Waiting for the owner to watch it |
 | Make the city feel like a game | ZW-017 | Brainstorm written 22 Nov (`BRAINSTORM-GAME.md`). Waiting for the owner's choices. Nothing to be built yet |
 | Frame rate | ZW-004 | First batch shipped 22 Nov: draw calls and triangles roughly halved. Waiting for the owner's frame rate on the preview before deciding the next batch |
 | The women walk in a weird way | ZW-012 | Fix shipped 22 Nov. Waiting for the owner to watch her on the preview |
@@ -42,7 +43,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
    - **Day cycle and tour.** Is the change smooth; any stutter; cycle length; tour pace and stops; does any stop start inside a building.
    - **Frame rate** on a computer and a phone, day and dusk (counter is top right).
 3. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
-4. **ZW-018.** Press the Battle button on the preview. Does it feel like a battle; is the moving line readable; pace and length; the look of the soldiers, tents and catapults; the wording on the bar.
+4. **ZW-019.** Press the Battle button and watch the new camera. Does it feel cinematic; is any shot too close, too far or too long; are the cuts too frequent.
 5. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
 6. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
 7. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.

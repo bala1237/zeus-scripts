@@ -24,7 +24,30 @@ Source: `assets/review/battle.js`, wired up in `assets/review/city.js` (search f
 | `?view=battle` | The camera position for the field |
 | `?shot&battle=0.3&view=battle` | A still with our share of the score at 0.3 |
 
-The camera returns to where it was, and the tour resumes, when the field clears. Touching the view stops the camera move.
+The camera returns to where it was, and the tour resumes, when the field clears. Touching the view stops the camera move and the cinematic camera.
+
+## The cinematic camera (ZW-019)
+
+Five seconds into a battle, once the camera has flown to the field, a film-style camera takes over: a close shot held for six to eight seconds with a slow move, then a cut to the next.
+
+| Shot | What it shows |
+| --- | --- |
+| `line` | Down the corridor between the two front ranks |
+| `clash` | Across the front ranks from the flank |
+| `ours` | Over our ranks towards the rival and their camp |
+| `theirs` | From behind the rival towards our gate and the city |
+| `engine` | Past a catapult to the fight and the wall |
+| `wall` | Down from our wall onto the field |
+| `high` | A slow arc high over the field |
+| `gate` | The gate under pressure. Replaces `engine` when we are far behind, and is the closing shot of a loss |
+| `rout` | Behind our line as the rival falls back. The closing shot of a win |
+
+- Every shot is placed from where the fighting line is at that moment, so it stays on the action as the line moves.
+- The order is fixed (`ORDER` in `battle.js`), with the side of the field chosen at random each time, and two swaps that follow the story: the gate when we are losing badly, our ranks instead of the wall when we are well ahead.
+- Touching the view hands the camera back to the viewer for the rest of the battle. `?cine=0` turns the cinematic camera off, leaving the single wide view.
+- For a still of one shot: `?shot&view=battle&battle=0.5&cine=line`.
+- For the closer shots the soldiers gained legs, a bronze helmet and a smaller crest. They still have no arms; the closest shots keep a few metres away for that reason.
+- To add a shot, add a function to `SHOTS` (it receives progress through the shot from 0 to 1, the line's position, and which side), then put its name in `ORDER`.
 
 ## How it is driven
 
@@ -47,7 +70,7 @@ The demo in `city.js` is a few lines that call `setShare` from a wave that swing
 
 ## Known limits and next steps
 
-- **Not seen in motion.** Checked as stills at three scores and by stepping a whole demo battle through in a headless browser (phases and timing correct, no errors). The owner judges the movement on the preview.
+- **Seen in motion only by the owner**, who approved the battle on 22 Nov 2026. On the build machine it is checked as stills (three scores, each camera shot) and by stepping a whole demo battle through in a headless browser, which confirms the phases, the timing and the sequence of shots.
 - The soldiers are stylised pegs. Marching, fighting figures need models and animations from the rigging service, which costs money.
 - The tents and catapults are plain. Scripted Blender models would match the rest of the city better.
 - No sound.

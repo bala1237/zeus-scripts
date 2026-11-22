@@ -29,6 +29,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `grade` | `soft` gives the old pale look | stream grade |
 | `names` | `0` hides the name plates over the homes | shown |
 | `battle` | present: demo battles at the south gate on a loop. With `shot`, a number sets our share of the score for a still | absent |
+| `cine` | `0` turns the battle's cinematic camera off. With `shot` and `battle`, the name of one shot to pose | on |
 | `far` | `0` turns the far-view models off | on |
 | `peoplefar`, `plantfar` | distance in metres beyond which citizens and plants switch to their far-view model | 45, 70 |
 | `shot` | present: render one still frame, 8 seconds in, no animation loop | absent |
