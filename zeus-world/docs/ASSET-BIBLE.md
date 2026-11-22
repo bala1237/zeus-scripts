@@ -99,11 +99,13 @@ Everything has to run on a mid-range phone and on the live-stream scene with hun
 
 | Item | Triangles | Texture | File size |
 | --- | --- | --- | --- |
-| Small prop (bench, amphora, lamp) | ≤ 5k | 512 | ≤ 300 KB |
-| Tree, plant | ≤ 10k | 512–1024 | ≤ 600 KB |
+| Small prop (bench, amphora, lamp) | ≤ 30k (goal 5k) | 512 | ≤ 1.3 MB (goal 300 KB) |
+| Tree, plant | ≤ 60k (goal 10k) | 512–1024 | ≤ 2.8 MB (goal 600 KB) |
 | Building part / small building | ≤ 30k | 1024 | ≤ 1.5 MB |
 | Civic structure | ≤ 80k | 2048 | ≤ 4 MB |
 | Character (rigged) | ≤ 20k | 1024 | ≤ 2 MB |
+
+Prop and plant budgets were raised on 22 Nov 2026 after batch 1. Trellis 2 output cannot be simplified to the original goals without falling apart (the hedge lost its leaves at 11k triangles), and asking Trellis for a 5k-triangle mesh gave a broken bush and a blotchy pot. File size follows triangle count; the textures are already small. The original goals stay as targets if a better route appears (leaf cards, another generator). Until then the far-away LOD below is required, not optional, for these items.
 
 All models: glTF binary, meshopt geometry, WebP textures, PBR metal/rough. Far-away LOD (a simplified version at about 10% of the triangles) for anything that appears in the full-city live view.
 
@@ -180,11 +182,11 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Fountain | Done | P1 |
 | Statue (citizen on plinth) | Done | P1 |
 | Brazier | Done | P1 |
-| Marble bench | To build | P1 |
-| Potted plants (3 sizes) | To build | P1 |
-| Amphorae cluster | To build | P1 |
-| Bronze lantern on post | To build | P1 |
-| Low garden wall and gate | To build | P1 |
+| Marble bench | Done | P1 |
+| Potted plants (3 sizes) | Done | P1 |
+| Amphorae cluster | Done | P1 |
+| Bronze lantern on post | Done (light to add in code) | P1 |
+| Low garden wall and gate | Done | P1 |
 | Mosaic path tiles | To build | P1 |
 | Pergola with vines | To build | P2 |
 | Outdoor dining table set | To build | P2 |
@@ -202,14 +204,14 @@ Indoor furniture is listed as a decision in Part 3; it is not in this list yet.
 | --- | --- | --- |
 | Olive tree | Done | P1 |
 | Cypress | Teaser | P1 |
-| **Citizen's tree**: growth stages sapling, young, mature, grand, plus a leaning "resting" pose for each (constitution) | To build | P1 |
+| **Citizen's tree**: growth stages sapling, young, mature, grand, plus a leaning "resting" pose for each (constitution). An oak. | Done (4 stages; resting pose in code) | P1 |
 | Laurel tree | To build | P2 |
 | Pomegranate tree | To build | P2 |
 | Fig tree | To build | P3 |
 | Plane tree (big shade tree for squares) | To build | P2 |
 | Flowering almond (seasonal) | To build | P3 |
-| Bushes and hedges (3) | To build | P1 |
-| Flowers and grass tufts | To build | P1 |
+| Bushes and hedges (3) | Done | P1 |
+| Flowers and grass tufts | Done | P1 |
 | Rocks (3) | To build | P2 |
 | Grape vines | To build | P3 |
 
@@ -237,8 +239,8 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | Item | Status | Priority |
 | --- | --- | --- |
 | Tree (reuses nature items) | Partly done | P1 |
-| Bench (reuses decor) | To build | P1 |
-| Lamp (reuses decor) | To build | P1 |
+| Bench (reuses decor) | Done (reuse) | P1 |
+| Lamp (reuses decor) | Done (reuse) | P1 |
 | Small fountain | Done (reuse) | P1 |
 | Name plaque that attaches to any gift | To build | P1 |
 
@@ -287,9 +289,9 @@ Counted by catalogue line. Many lines hold several models (the citizen's tree al
 
 | Status | Lines |
 | --- | --- |
-| Done | 12 |
+| Done | 22 |
 | Teaser, needs clean-up | 12 |
-| To build, P1 | 19 |
+| To build, P1 | 9 |
 | To build, P2 | 23 |
 | To build, P3 | 22 |
 

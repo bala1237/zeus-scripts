@@ -27,7 +27,8 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 **Batch 1: P1 small items (22 Nov)**
 - 17 models built from owner-approved concepts with Trellis 2: myrtle bush, oleander bush, box hedge segment, wildflowers, grass tuft, marble bench, bronze lantern, three pots, amphorae cluster, garden wall segment, garden gate, and the citizen's tree (an oak) at 4 stages. Concepts in `assets/concepts/batch1/`, models in `assets/models/`, sheets in `assets/sheets/`, settings in `assets/batch1.sh`.
 - All face +Z, sit at the origin and are scaled to real size (tree stages 0.9, 2.5, 5 and 7 m). Checked in day and dusk.
-- **Not yet accepted: every model is over budget.** Props are 11k to 31k triangles and 0.5 to 1.3 MB (budget 5k, 300 KB); plants and trees are 14k to 61k triangles and 0.5 to 2.7 MB (budget 10k, 600 KB). Trellis cuts the texture into many small pieces and simplification cannot cross their edges; pushing harder strips the leaves (the hedge fell apart at 11k). Options: raise the budgets and rely on far-view LODs, regenerate at a lower Trellis `decimation_target`, or rebuild foliage as flat leaf cards. Owner to decide.
+- **Budgets raised (owner agreed, 22 Nov).** The models are 11k to 31k triangles and 0.5 to 1.3 MB for props, 14k to 61k and 0.5 to 2.7 MB for plants and trees, against original goals of 5k and 10k. Simplifying further strips the leaves, and a test of Trellis at `decimation_target` 5000 (one bush, one pot) gave a broken bush and a blotchy pot. The asset bible now carries the higher limits with the old ones as goals, and the batch is marked Done there.
+- **Owed: far-view LODs** for all 17, before the full-city live view. Ordinary simplification cannot make them; try meshopt's sloppy simplifier or flat cards.
 - Other open points: the gate posts are 1.1 m against the wall's 0.9 m, the bench marble lost most of its veining, the grand tree's gold leaves read pale yellow, the lantern has no light source yet (add in code).
 - `normalize.mjs` gained `--maxerr` and repeated simplification passes; the review scene gained `?props`.
 
@@ -56,10 +57,10 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 ## Next
 
-1. **Close batch 1:** get the owner's decision on the budget problem above, apply it, then mark the items Done in the asset bible.
-2. **Clean up the 12 teaser models** (gate, door, stadium, Founders wall, café building, cypress, two citizens, colossus, sky island, trireme, vault): run them through `normalize.mjs` and the checklist. Code only, no generation cost.
-3. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
-4. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
+1. **Clean up the 12 teaser models** (gate, door, stadium, Founders wall, café building, cypress, two citizens, colossus, sky island, trireme, vault): run them through `normalize.mjs` and the checklist. Code only, no generation cost.
+2. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
+3. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
+4. **Far-view LODs** for batch 1 (see above).
 5. **First milestone:** one street of 6 plots built only from finished catalogue items, rendered in the review scene, to prove the style holds at scale.
 
 Open: a cost ceiling per batch on fal, licence check for commercial on-stream use of each generator, what the four teaser mysteries become, and that the "First 100 become Founders" promise is honoured at launch.
