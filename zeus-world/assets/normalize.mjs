@@ -6,6 +6,8 @@
 //   --yaw   degrees to turn about Y so the front faces +Z (raw image-to-3D models face the diagonal: 45)
 //   --tris  triangle budget; the mesh is simplified only if it is over budget
 //   --tex   maximum texture size
+//   --rescale  extra scale factor. Rigged characters need it: the fit box is measured on the unposed mesh,
+//             which a skeleton can render at another size; set it from the size the review scene reports.
 //   --maxerr  largest simplification error allowed, as a fraction of the model size (default 0.01).
 //             Use about 0.003 for foliage: leaves are small, and a looser limit strips them off.
 //             The budget is a target: the model stays over it rather than lose its shape.
@@ -15,7 +17,7 @@ import { getBounds, cloneDocument, simplify, weld, dedup, prune, textureCompress
 import { MeshoptSimplifier, MeshoptEncoder, MeshoptDecoder } from 'meshoptimizer';
 
 const [inp, out, ...rest] = process.argv.slice(2);
-const opt = { yaw: 45, tris: 30000, tex: 1024, fit: '0,0,0', maxerr: 0.01 };
+const opt = { yaw: 45, tris: 30000, tex: 1024, fit: '0,0,0', maxerr: 0.01, rescale: 1 };
 for (let i = 0; i < rest.length; i += 2) opt[rest[i].replace(/^--/, '')] = rest[i + 1];
 const [W, H, D] = String(opt.fit).split(',').map(Number);
 
@@ -35,7 +37,7 @@ root.setRotation([0, Math.sin(a / 2), 0, Math.cos(a / 2)]);
 const b = getBounds(scene);
 const size = [0, 1, 2].map(i => b.max[i] - b.min[i]);
 const ratios = [[W, size[0]], [H, size[1]], [D, size[2]]].filter(([t]) => t > 0).map(([t, s]) => t / s);
-const s = ratios.length ? Math.min(...ratios) : 1;
+const s = (ratios.length ? Math.min(...ratios) : 1) * Number(opt.rescale);
 const cx = (b.min[0] + b.max[0]) / 2, cz = (b.min[2] + b.max[2]) / 2;
 root.setScale([s, s, s]);
 root.setTranslation([-cx * s, -b.min[1] * s, -cz * s]);

@@ -67,8 +67,8 @@ function slot(x) {
 
 const ref = await villa(); ref.position.x = -8; scene.add(ref); slot(-8);
 const props = q.has('props'), gap = props ? 0.6 : 3;
-const xs = []; let x = 0, top = 1.75;
-for (const url of items) { const o = await load(url); const b = boxOf(o); x += -b.min.x; o.position.x = x; scene.add(o); if (!props) slot(x); xs.push(x); x += b.max.x + gap; top = Math.max(top, b.max.y); }
+const xs = []; let x = 0, top = 1.75; window.sizes = {}; // rendered size of each item, for checks from scripts
+for (const url of items) { const o = await load(url); const b = boxOf(o); window.sizes[url] = b.getSize(new THREE.Vector3()).toArray(); x += -b.min.x; o.position.x = x; scene.add(o); if (!props) slot(x); xs.push(x); x += b.max.x + gap; top = Math.max(top, b.max.y); }
 const cit = await load('./ref/citizen.glb'); { const b = boxOf(cit); const s = 1.75 / (b.max.y - b.min.y); cit.scale.setScalar(s); cit.position.set(props ? -1.2 : (xs[0] ?? 0) + 2.2, -b.min.y * s, props ? 0 : 3.4); scene.add(cit); }
 
 const minX = props ? -1.8 : -11.6, maxX = x - gap, cx = (minX + maxX) / 2, span = Math.max(maxX - minX, props ? top * 1.6 : 0);

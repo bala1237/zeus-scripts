@@ -152,7 +152,7 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Villa roof | Slate grey, Gold tile, Roof garden (flat) | To build | P2 |
 | Villa porch | Doric, Ionic | Done | P1 |
 | Villa porch | Corinthian, Pergola with vines | To build | P2 |
-| Villa door | Blue double door | Teaser | P1 |
+| Villa door | Blue double door | To build (the teaser's door is the bronze city-gate leaf, not a villa door) | P1 |
 | Villa door | Wood, Bronze, Gold | To build | P2 |
 | Shutters and windows | Blue, Green, Arched | To build | P2 |
 | Second storey module | Plaster, Marble | To build | P2 |
@@ -165,7 +165,7 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 
 | Item | Notes | Status | Priority |
 | --- | --- | --- | --- |
-| Café building | Taverna with awning | Teaser | P1 |
+| Café building | Taverna with awning | Done | P1 |
 | Café terrace set | Tables, chairs, umbrella | Done | P1 |
 | Bakery | Oven, bread display | To build | P2 |
 | Market stall | Fruit, cloth, pottery versions | To build | P2 |
@@ -203,7 +203,7 @@ Indoor furniture is listed as a decision in Part 3; it is not in this list yet.
 | Item | Status | Priority |
 | --- | --- | --- |
 | Olive tree | Done | P1 |
-| Cypress | Teaser | P1 |
+| Cypress | Done | P1 |
 | **Citizen's tree**: growth stages sapling, young, mature, grand, plus a leaning "resting" pose for each (constitution). An oak. | Done (4 stages; resting pose in code) | P1 |
 | Laurel tree | To build | P2 |
 | Pomegranate tree | To build | P2 |
@@ -221,9 +221,9 @@ Each one needs construction stages so it can rise during the live: foundation, f
 
 | Item | Status | Priority |
 | --- | --- | --- |
-| City gate | Teaser | P1 |
-| Stadium | Teaser (complete stage only) | P1 |
-| Founders wall | Teaser | P1 |
+| City gate, with its bronze door leaf | Done (complete stage only) | P1 |
+| Stadium | Done (complete stage only) | P1 |
+| Founders wall | Done | P1 |
 | Agora (market square) | To build | P2 |
 | Temple of Zeus | To build | P2 |
 | Amphitheatre | To build | P2 |
@@ -262,24 +262,24 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | Item | Status | Priority |
 | --- | --- | --- |
 | Citizen, young adult | Done (rigged) | P1 |
-| Citizen, young woman | Teaser (rigged) | P1 |
-| Citizen, elder | Teaser (rigged) | P1 |
+| Citizen, young woman | Done (rigged) | P1 |
+| Citizen, elder | Done (rigged) | P1 |
 | More citizen variety (8 to 12 looks, mixed ages and skin tones) | To build | P2 |
 | Occupation outfits: builder, merchant, smith, steward, general | To build | P3 |
 | Zeya in-world avatar | To build | P3 |
 | Zeus in-world figure | To build | P3 |
 
-Standard animation set for every character: idle, walk, cheer, wave, sit, work (hammer), clap. Done so far: idle, walk, cheer.
+Standard animation set for every character: idle, walk, cheer, wave, sit, work (hammer), clap. Done so far: idle, walk, cheer, clap.
 
 ### I. World landmarks and teaser mysteries
 
 | Item | Status | Notes |
 | --- | --- | --- |
 | Mount Olympus backdrop | Done (procedural) | |
-| Veiled colossus | Teaser | Future community build |
-| Floating sky temple | Teaser | Future reveal |
-| Trireme and harbour | Teaser | Future district |
-| Sealed lightning vault | Teaser | Future event |
+| Veiled colossus | Done | Future community build |
+| Floating sky temple | Done | Future reveal |
+| Trireme and harbour | Done (trireme only) | Future district |
+| Sealed lightning vault | Done | Future event |
 
 These were promised as "coming soon" in the teaser, so each needs a plan for what it becomes.
 
@@ -289,9 +289,9 @@ Counted by catalogue line. Many lines hold several models (the citizen's tree al
 
 | Status | Lines |
 | --- | --- |
-| Done | 22 |
-| Teaser, needs clean-up | 12 |
-| To build, P1 | 9 |
+| Done | 33 |
+| Teaser, needs clean-up | 0 |
+| To build, P1 | 10 |
 | To build, P2 | 23 |
 | To build, P3 | 22 |
 

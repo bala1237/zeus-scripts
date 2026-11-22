@@ -32,6 +32,12 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - Other open points: the gate posts are 1.1 m against the wall's 0.9 m, the bench marble lost most of its veining, the grand tree's gold leaves read pale yellow, the lantern has no light source yet (add in code).
 - `normalize.mjs` gained `--maxerr` and repeated simplification passes; the review scene gained `?props`.
 
+**Teaser models cleaned up (22 Nov)**
+- The 12 teaser models are now catalogue models in `assets/models/` (settings in `assets/teaser.sh`, sheet `assets/sheets/teaser_models_review.jpg`): city gate 12 m, its bronze door leaf, stadium 15 m high and 32 m across, Founders wall 6 m, café 5 m, cypress 7 m, colossus 24 m, sky temple 30 m, trireme 24 m long, vault 10 m, citizen woman and elder at 1.75 m with Walk, Idle, Cheer, Clap. All face +Z and are within budget. The sizes are first proposals, not owner-approved.
+- The teaser itself still loads its own copies in `teaser-3d/public/models/`; nothing there changed.
+- The "villa door" the bible listed as a teaser model is really the city-gate door leaf, so a villa door is still to build.
+- Not checked: dusk views, and the citizens' animations in motion after simplifying to 20k triangles (the clips are present).
+
 ## Decisions taken
 
 | Topic | Decision |
@@ -57,11 +63,10 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 ## Next
 
-1. **Clean up the 12 teaser models** (gate, door, stadium, Founders wall, café building, cypress, two citizens, colossus, sky island, trireme, vault): run them through `normalize.mjs` and the checklist. Code only, no generation cost.
-2. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
-3. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
-4. **Far-view LODs** for batch 1 (see above).
-5. **First milestone:** one street of 6 plots built only from finished catalogue items, rendered in the review scene, to prove the style holds at scale.
+1. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
+2. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
+3. **Far-view LODs** for batch 1 (see above).
+4. **First milestone:** one street of 6 plots built only from finished catalogue items, rendered in the review scene, to prove the style holds at scale.
 
 Open: a cost ceiling per batch on fal, licence check for commercial on-stream use of each generator, what the four teaser mysteries become, and that the "First 100 become Founders" promise is honoured at launch.
 
