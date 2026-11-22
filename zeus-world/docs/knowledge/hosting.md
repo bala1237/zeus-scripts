@@ -11,7 +11,7 @@
 ## Deploying
 
 - Vercel builds a preview deployment for every branch pushed, at its own address.
-- The main link above shows the production deployment. Vercel makes one when the production branch is pushed. Before 22 Nov 2026 the work was on other branches, so each update was deployed by hand.
+- The main link above shows the production deployment. Vercel's production branch is the repository's default branch, so **merging into the default branch deploys to the main link automatically** (confirmed 22 Nov 2026 with the first merge). Before that the work was on other branches, so each update was deployed by hand.
 - To deploy by hand, use the Vercel tools: `create_deployment` with `gitSource` (type github, org `bala1237`, repo `zeus-scripts`, the branch as `ref`, the commit `sha`) and `target: production`. The `deploy-preview` skill has the steps.
 - After any deploy, check that the deployment reached `READY` and that the page loads.
 
