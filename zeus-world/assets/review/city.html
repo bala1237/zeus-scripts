@@ -17,6 +17,7 @@
   <div id="body">
     <div id="nav" class="row"></div>
     <div class="row">
+      <button id="tour">🎥 Tour: on</button>
       <button id="spin">⟳ Rotate: on</button>
       <button data-z="-1" title="Zoom in">＋</button><button data-z="1" title="Zoom out">－</button>
       <button data-p="-1,0" title="Pan left">←</button><button data-p="0,1" title="Pan forward">↑</button><button data-p="0,-1" title="Pan back">↓</button><button data-p="1,0" title="Pan right">→</button>
@@ -34,7 +35,7 @@
   // view links; the rest of the panel is wired up in city.js
   const q = new URLSearchParams(location.search), nav = document.getElementById('nav'), panel = document.getElementById('panel');
   const link = (t, k, v, d) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; if ((q.get(k) || d) === v) a.className = 'on'; nav.append(a); };
-  if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'top']) link(v, 'view', v, 'wide'); link('day', 'light', 'day', 'day'); link('dusk', 'light', 'dusk', 'day'); }
+  if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'top']) link(v, 'view', v, q.has('view') ? 'wide' : ''); link('☀ ↔ 🌙 cycle', 'light', 'cycle', 'cycle'); link('day', 'light', 'day', 'cycle'); link('dusk', 'light', 'dusk', 'cycle'); }
   document.getElementById('fold')?.addEventListener('click', () => { panel.classList.toggle('shut'); try { localStorage.setItem('zw-panel', panel.classList.contains('shut') ? '1' : ''); } catch {} });
   try { if (localStorage.getItem('zw-panel')) panel.classList.add('shut'); } catch {}
 </script>

@@ -11,7 +11,7 @@ import { createAmbient } from './ambient.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
-const view = q.get('view') || 'wide', light = q.get('light') || 'day';
+const view = q.get('view') || 'wide', light = q.get('light') || (q.has('shot') || q.get('grade') === 'soft' ? 'day' : 'cycle');
 document.getElementById('label').textContent = q.get('label') || `City · ${view} · ${light}`;
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
@@ -19,29 +19,31 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadow
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.5, 900);
+const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.5, 2000);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.03).texture;
 // ?grade=soft is the old pale look; the default is graded for streaming (deeper sky and grass, harder sun, less fill)
 const SOFT = q.get('grade') === 'soft';
-const L = (SOFT ? {
-  day: { sky: 0xbfd9ee, ground: 0x86a85f, sun: 0xfff1dc, sunI: 2.9, sunPos: [-60, 90, 70], hemi: 0.75, env: 0.5, exp: 1.0, lamp: 0 },
-  dusk: { sky: 0xe9a878, ground: 0x6f8c52, sun: 0xff9a55, sunI: 1.9, sunPos: [-100, 30, 50], hemi: 0.4, env: 0.3, exp: 1.0, lamp: 1 },
+const LD = SOFT ? {
+  day: { sky: 0xbfd9ee, ground: 0x86a85f, sun: 0xfff1dc, sunI: 2.9, sunPos: [-60, 90, 70], hemi: 0.75, env: 0.5, exp: 1.0, fog: 0xbfd9ee, water: 0x2f7fa6, bg: 1, rot: 2.2 },
+  dusk: { sky: 0xe9a878, ground: 0x6f8c52, sun: 0xff9a55, sunI: 1.9, sunPos: [-100, 30, 50], hemi: 0.4, env: 0.3, exp: 1.0, fog: 0xe9a878, water: 0x3d6590, bg: 1, rot: 3.9 },
 } : {
-  day: { sky: 0x5aa6e0, ground: 0x6f8f4c, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.42, env: 0.3, exp: 0.9, lamp: 0 },
-  dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 1.5, sunPos: [-100, 22, 50], hemi: 0.12, env: 0.2, exp: 0.8, lamp: 1 },
-})[light];
+  day: { sky: 0x5aa6e0, ground: 0x6f8f4c, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.42, env: 0.6, exp: 0.9, fog: 0xa9c8e6, water: 0x2a86b4, bg: 1, rot: 2.2 },
+  dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 1.5, sunPos: [-100, 22, 50], hemi: 0.12, env: 0.45, exp: 0.8, fog: 0xd99a78, water: 0x3d6590, bg: 0.75, rot: 3.9 },
+};
+const L = LD[light === 'dusk' ? 'dusk' : 'day'];
+const dn = { d: light === 'dusk' ? 1 : 0, v: light === 'dusk' ? 1 : 0 };   // d: 0 day to 1 dusk; v: how far the lamps are lit
 if (!SOFT) renderer.domElement.style.filter = 'saturate(1.18) contrast(1.1)';
-scene.background = new THREE.Color(L.sky); scene.fog = new THREE.Fog(L.sky, 160, 520);
+scene.background = new THREE.Color(L.sky); scene.fog = new THREE.Fog(L.fog, SOFT ? 160 : 220, SOFT ? 520 : 700);
 scene.environmentIntensity = L.env; renderer.toneMappingExposure = L.exp;
-if (!SOFT && light === 'dusk') scene.backgroundIntensity = 0.75;
-if (!SOFT) {   // real sky from Poly Haven (CC0): a photo for the backdrop, its HDR for light and reflections
-  const bg = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); bg.mapping = THREE.EquirectangularReflectionMapping; bg.colorSpace = THREE.SRGBColorSpace;
-  scene.background = bg; scene.backgroundRotation = new THREE.Euler(0, light === 'day' ? 2.2 : 3.9, 0);
-  const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = env; scene.environmentRotation = scene.backgroundRotation; scene.environmentIntensity = light === 'day' ? 0.6 : 0.45;
-  scene.fog = new THREE.Fog(light === 'day' ? 0xa9c8e6 : 0xd99a78, 220, 700);
+const domes = [], envs = {};
+if (!SOFT) {   // real skies from Poly Haven (CC0): two photo domes that cross-fade, and their HDRs for light and reflections
+  for (const k of ['day', 'dusk']) { const tex = await new THREE.TextureLoader().loadAsync(`./sky/${k}.jpg`); tex.colorSpace = THREE.SRGBColorSpace;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(k === 'day' ? 800 : 780, 48, 24), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false, transparent: k === 'dusk', toneMapped: false }));
+    m.scale.x = -1; m.rotation.y = LD[k].rot; m.renderOrder = k === 'day' ? -2 : -1; m.frustumCulled = false; scene.add(m); domes.push(m);
+    envs[k] = await new RGBELoader().loadAsync(`./sky/${k}.hdr`); envs[k].mapping = THREE.EquirectangularReflectionMapping; }
+  scene.background = null; scene.environment = envs[dn.d > 0.5 ? 'dusk' : 'day']; scene.environmentRotation = new THREE.Euler(0, L.rot, 0);
 }
-scene.add(new THREE.HemisphereLight(SOFT ? 0xffffff : 0xfff4e0, 0x7a6a48, L.hemi));
+const hemi = new THREE.HemisphereLight(SOFT ? 0xffffff : 0xfff4e0, 0x7a6a48, L.hemi); scene.add(hemi);
 const sun = new THREE.DirectionalLight(L.sun, L.sunI); sun.position.set(...L.sunPos); sun.castShadow = true;
 sun.shadow.mapSize.set(8192, 8192); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.05;
 Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 100, bottom: -100, near: 1, far: 400 }); scene.add(sun);
@@ -85,7 +87,6 @@ async function citizen(url, x, z, ry, clip = 'Idle', t = 0.4, parent = scene) {
   const a = g.animations.find((c) => c.name === clip); if (a) { const mx = new THREE.AnimationMixer(o); mx.clipAction(a).play(); mx.setTime(t); }
   hold.position.set(x, 0, z); hold.rotation.y = ry; parent.add(hold); return hold;
 }
-function lampLight(x, y, z) { if (!L.lamp) return; const p = new THREE.PointLight(0xffb45a, 14, 12, 1.8); p.position.set(x, y, z); scene.add(p); }
 
 
 const cams = {
@@ -98,9 +99,19 @@ const controls = new OrbitControls(camera, renderer.domElement); controls.target
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.49; controls.minDistance = 4; controls.maxDistance = 420;
 controls.autoRotate = !q.has('shot') && q.get('spin') !== '0'; controls.autoRotateSpeed = 0.7;
 window.__cam = () => camera.position.toArray();
+// camera tour: glide between the lively spots, turning slowly at each; grabbing the view or picking one stops it
+const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', order: ['wide', 'plaza', 'civic', 'street', 'temple', 'harbour', 'river'], i: 0, phase: 'dwell', t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], spin: true };
 { const $ = (id) => document.getElementById(id), home = [camera.position.clone(), controls.target.clone()];
   const spin = $('spin'), label = () => { if (spin) spin.textContent = `⟳ Rotate: ${controls.autoRotate ? 'on' : 'off'}`; }; label();
-  spin?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; label(); });
+  spin?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; tour.spin = controls.autoRotate; label(); });
+  const tb = $('tour'), tl = () => { if (tb) tb.textContent = `🎥 Tour: ${tour.on ? 'on' : 'off'}`; }; tl(); tour.spin = controls.autoRotate;
+  tb?.addEventListener('click', () => { tour.on = !tour.on; tour.t0 = null; tour.phase = 'dwell'; controls.autoRotate = tour.spin; tl(); });
+  renderer.domElement.addEventListener('pointerdown', () => { if (tour.on) { tour.on = false; controls.autoRotate = tour.spin; tl(); } });
+  const name = $('label'), smooth = (k) => k * k * (3 - 2 * k);
+  tickers.push((t) => { if (!tour.on) return; if (tour.t0 === null) tour.t0 = t; const e = t - tour.t0;
+    if (tour.phase === 'dwell' && e > 13) { tour.i = (tour.i + 1) % tour.order.length; tour.from[0].copy(camera.position); tour.from[1].copy(controls.target); tour.phase = 'move'; tour.t0 = t; controls.autoRotate = false; if (name) name.textContent = `City · ${tour.order[tour.i]}`; }
+    else if (tour.phase === 'move') { const k = smooth(Math.min(1, e / 5)), c = cams[tour.order[tour.i]]; camera.position.lerpVectors(tour.from[0], new THREE.Vector3(...c[0]), k); controls.target.lerpVectors(tour.from[1], new THREE.Vector3(...c[1]), k);
+      if (e >= 5) { tour.phase = 'dwell'; tour.t0 = t; controls.autoRotate = tour.spin; } } });
   $('reset')?.addEventListener('click', () => { camera.position.copy(home[0]); controls.target.copy(home[1]); });
   const hold = (el, fn) => { let t; const stop = () => clearInterval(t); el.addEventListener('pointerdown', () => { fn(); t = setInterval(fn, 40); }); for (const e of ['pointerup', 'pointerleave', 'pointercancel']) el.addEventListener(e, stop); };
   for (const b of document.querySelectorAll('[data-z]')) hold(b, () => { const d = camera.position.clone().sub(controls.target); const k = 1 + 0.03 * Number(b.dataset.z); if (d.length() * k > controls.minDistance && d.length() * k < controls.maxDistance) camera.position.copy(controls.target).add(d.multiplyScalar(k)); });
@@ -233,8 +244,8 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
   const ripple = (rep) => { const t = new THREE.DataTexture(data, N, N); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep);
     // smooth sampling with mipmaps: the default for raw textures is blocky, which made the water grainy
     t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.needsUpdate = true; return t; };
-  const waterCol = light === 'day' ? 0x2a86b4 : 0x3d6590;
-  const water = (rep, speed, rough, ns) => { const m = new THREE.MeshStandardMaterial({ name: 'water', color: waterCol, roughness: rough, metalness: 0.35, normalMap: ripple(rep), normalScale: new THREE.Vector2(ns, ns), envMapIntensity: 1.2 });
+  const waterCol = L.water, waterMats = [];
+  const water = (rep, speed, rough, ns) => { const m = new THREE.MeshStandardMaterial({ name: 'water', color: waterCol, roughness: rough, metalness: 0.35, normalMap: ripple(rep), normalScale: new THREE.Vector2(ns, ns), envMapIntensity: 1.2 }); waterMats.push(m);
     // three layers of the same ripples at unrelated sizes, turned and drifting different ways, so no repeat shows
     const u = { uA: { value: new THREE.Vector2() }, uB: { value: new THREE.Vector2() } };
     m.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
@@ -247,26 +258,43 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
   // soft round glow for fires and lamps
   const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
   gr.addColorStop(0, 'rgba(255,214,150,1)'); gr.addColorStop(0.25, 'rgba(255,160,70,0.55)'); gr.addColorStop(1, 'rgba(255,120,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
-  const glowTex = new THREE.CanvasTexture(cv), night = L.lamp ? 1 : 0, seen = new Set(), clusters = new Map(), glows = [];
+  const glowTex = new THREE.CanvasTexture(cv), seen = new Set(), clusters = new Map(), glows = [];
   scene.updateMatrixWorld(true);
   scene.traverse((o) => {
     if (!o.isMesh) return; const n = o.material.name;
     if (n === 'water') { o.material = o === sea ? seaWater : pondWater; o.castShadow = false; return; }
     if (n !== 'flame' && n !== 'coal') return;
     o.castShadow = false;
-    if (!seen.has(o.material)) { seen.add(o.material); const m = o.material; m.emissive = new THREE.Color(n === 'flame' ? 0xffa040 : 0xff4a10); m.emissiveIntensity = n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night; m.toneMapped = false;
-      tickers.push((t) => { m.emissiveIntensity = (n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night) * (0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 7.3)); }); }
+    if (!seen.has(o.material)) { seen.add(o.material); const m = o.material; m.emissive = new THREE.Color(n === 'flame' ? 0xffa040 : 0xff4a10); m.toneMapped = false;
+      tickers.push((t) => { m.emissiveIntensity = (n === 'flame' ? 2.2 + 2.5 * dn.v : 1.6 + 1.5 * dn.v) * (0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 7.3)); }); }
     if (n !== 'flame' || o.userData.site) return;   // no halo on a building that is still going up
     // one glow per separate flame: a street lamp's two lanterns share a mesh, so group its points by position
     if (!clusters.has(o.geometry)) { const pos = o.geometry.attributes.position, cells = new Map(), v = new THREE.Vector3();
       for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i); const k = `${Math.round(v.x / 0.9)},${Math.round(v.y / 0.9)},${Math.round(v.z / 0.9)}`; const c = cells.get(k) || { sum: new THREE.Vector3(), n: 0, min: v.clone(), max: v.clone() }; c.sum.add(v); c.n++; c.min.min(v); c.max.max(v); cells.set(k, c); }
       clusters.set(o.geometry, [...cells.values()].map((c) => ({ p: c.sum.divideScalar(c.n), r: Math.max(0.12, c.max.distanceTo(c.min) / 2) }))); }
-    for (const c of clusters.get(o.geometry)) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.45 + 0.5 * night, fog: false, toneMapped: false }));
-      const w = c.p.clone().applyMatrix4(o.matrixWorld), sc = new THREE.Vector3().setFromMatrixScale(o.matrixWorld).x; sp.position.copy(w); sp.userData = { s: Math.max(0.5, c.r * sc * (5 + 5 * night)), ph: w.x * 1.7 + w.z * 2.3 }; sp.scale.setScalar(sp.userData.s); scene.add(sp); glows.push(sp); }
+    for (const c of clusters.get(o.geometry)) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.45, fog: false, toneMapped: false }));
+      const w = c.p.clone().applyMatrix4(o.matrixWorld), sc = new THREE.Vector3().setFromMatrixScale(o.matrixWorld).x; sp.position.copy(w); sp.userData = { r: c.r * sc, ph: w.x * 1.7 + w.z * 2.3 }; scene.add(sp); glows.push(sp); }
   });
-  tickers.push((t) => { for (const sp of glows) { const f = 0.9 + 0.1 * Math.sin(t * 9 + sp.userData.ph) * Math.sin(t * 5.7 + sp.userData.ph * 0.7); sp.scale.setScalar(sp.userData.s * f); sp.material.opacity = (0.45 + 0.5 * night) * (0.8 + 0.2 * f); } });
-  if (night) { const spots = glows.map((g) => g.position).filter((p) => Math.hypot(p.x, p.z) < 34 || Math.abs(p.x) < 6).slice(0, 14);
-    for (const p of spots) { const l = new THREE.PointLight(0xffa85a, 60, 16, 1.6); l.position.copy(p); scene.add(l); } }
+  tickers.push((t) => { for (const sp of glows) { const f = 0.9 + 0.1 * Math.sin(t * 9 + sp.userData.ph) * Math.sin(t * 5.7 + sp.userData.ph * 0.7); sp.scale.setScalar(Math.max(0.5, sp.userData.r * (5 + 5 * dn.v)) * f); sp.material.opacity = (0.45 + 0.5 * dn.v) * (0.8 + 0.2 * f); } });
+  // lamps near the centre cast real light once it gets dark
+  const lamps = glows.map((g) => g.position).filter((p) => Math.hypot(p.x, p.z) < 34 || Math.abs(p.x) < 6).slice(0, 14).map((p) => { const l = new THREE.PointLight(0xffa85a, 0, 16, 1.6); l.position.copy(p); l.visible = false; scene.add(l); return l; });
+
+  // ---------- time of day: everything that differs between day and dusk, blended by dn.d
+  const A = LD.day, B = LD.dusk, ca = new THREE.Color(), cb = new THREE.Color(), mix = (x, y, k) => x + (y - x) * k, col = (x, y, k) => ca.set(x).lerp(cb.set(y), k);
+  let shadowAt = -1, lit = null;
+  const setTime = (d) => { dn.d = d; dn.v = Math.min(1, Math.max(0, (d - 0.3) / 0.55)); dn.v = dn.v * dn.v * (3 - 2 * dn.v);
+    sun.color.copy(col(A.sun, B.sun, d)); sun.intensity = mix(A.sunI, B.sunI, d); sun.position.set(mix(A.sunPos[0], B.sunPos[0], d), mix(A.sunPos[1], B.sunPos[1], d), mix(A.sunPos[2], B.sunPos[2], d));
+    hemi.intensity = mix(A.hemi, B.hemi, d); renderer.toneMappingExposure = mix(A.exp, B.exp, d); ground.material.color.copy(col(A.ground, B.ground, d)); scene.fog.color.copy(col(A.fog, B.fog, d));
+    for (const m of waterMats) m.color.copy(col(A.water, B.water, d));
+    if (domes.length) { domes[1].material.opacity = d; domes[1].visible = d > 0.001; domes[0].material.color.setScalar(mix(1, 0.8, d)); domes[1].material.color.setScalar(B.bg);
+      const k = d > 0.5 ? 'dusk' : 'day'; if (scene.environment !== envs[k]) { scene.environment = envs[k]; scene.environmentRotation.y = LD[k].rot; }
+      scene.environmentIntensity = mix(A.env, B.env, d) * (0.55 + 0.45 * Math.abs(2 * d - 1)); }   // dips at the swap so the change of sky light does not pop
+    const on = dn.v > 0.02; if (on !== lit) { lit = on; for (const l of lamps) l.visible = on; } for (const l of lamps) l.intensity = 60 * dn.v;
+    if (Math.abs(d - shadowAt) > 0.12 || (d === 0 || d === 1) && shadowAt !== d) { shadowAt = d; sun.shadow.needsUpdate = true; } };
+  setTime(dn.d);
+  if (light === 'cycle') { const DAY = 40, RAMP = 16, DUSK = 30, T = DAY + DUSK + 2 * RAMP;   // seconds
+    tickers.push((t) => { const u = t % T, d = u < DAY ? 0 : u < DAY + RAMP ? (u - DAY) / RAMP : u < DAY + RAMP + DUSK ? 1 : 1 - (u - DAY - RAMP - DUSK) / RAMP; if (d !== dn.d) setTime(d * d * (3 - 2 * d)); }); }
+  tickers.push(() => { for (const m of domes) { m.position.copy(camera.position); m.rotation.y += 0.00004; } });
   window.__fx = { glows: glows.length, tickers: tickers.length };
   if (q.has('shot')) for (let t = 0; t <= 8; t += 0.05) for (const f of tickers) f(t);   // a still shows the scene 8 seconds in
 }
