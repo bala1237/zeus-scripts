@@ -22,6 +22,7 @@ Then read whatever the task touches:
 | What changed and when | `zeus-world/docs/CHANGELOG.md` |
 | Decisions already taken, and open questions | `zeus-world/docs/DECISIONS.md` |
 | Product rules | `zeus-world/docs/CONSTITUTION.md` |
+| Ideas for making it a game (not decided) | `zeus-world/docs/BRAINSTORM-GAME.md` |
 | Art style and model catalogue | `zeus-world/docs/ASSET-BIBLE.md` |
 | Asset pipeline commands | `zeus-world/assets/README.md` |
 

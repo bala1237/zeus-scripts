@@ -11,6 +11,7 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
+| Make the city feel like a game | ZW-017 | Brainstorm written 22 Nov (`BRAINSTORM-GAME.md`). Waiting for the owner's choices. Nothing to be built yet |
 | Frame rate | ZW-004 | First batch shipped 22 Nov: draw calls and triangles roughly halved. Waiting for the owner's frame rate on the preview before deciding the next batch |
 | The women walk in a weird way | ZW-012 | Fix shipped 22 Nov. Waiting for the owner to watch her on the preview |
 | Idle animation is a turning stride | ZW-014 | Fix shipped 22 Nov: a standing pose made in code. Waiting for the owner to watch it |
@@ -32,21 +33,22 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:
+1. **ZW-017, the game brainstorm.** Read `BRAINSTORM-GAME.md`, answer its seven questions and pick the ideas to pursue. ZW-015 (battle damage) and ZW-016 (victory celebration) are logged and wait on the same conversation.
+2. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:
    - **People.** Natural walking, no sliding or walking through stalls, lamps or buildings; correct height over the bridge; is 44 the right number.
    - **Construction.** Does the council hall rise convincingly; do the Bolts labels stay on their buildings; is the lightning and flash too strong.
    - **Ambient.** Is the cloth ripple visible enough; tree sway; smoke amount; does the fountain spray read as water; the sailing boat.
    - **Day cycle and tour.** Is the change smooth; any stutter; cycle length; tour pace and stops; does any stop start inside a building.
    - **Frame rate** on a computer and a phone, day and dusk (counter is top right).
-2. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
-3. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
-4. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
-5. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
-6. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
-7. **ZW-002.** Is the flicker on the tower tops gone.
-8. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
-9. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
-10. The open questions in `DECISIONS.md`.
+3. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
+4. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
+5. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
+6. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
+7. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
+8. **ZW-002.** Is the flicker on the tower tops gone.
+9. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
+10. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
+11. The open questions in `DECISIONS.md`.
 
 ## What exists
 
