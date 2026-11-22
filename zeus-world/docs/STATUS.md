@@ -60,6 +60,9 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - Remaining flaws seen: gymnasium roof has small notches at the corners; the amphitheatre's stage building hides the stage from the front; pergola vines are sparse; river bank stones are thin on the near side; water is flat blue until the game adds movement; dusk lamps are not yet lit by the models themselves.
 - Known flaws: the café's back wall is broken (visible from behind); boundary stones read a little like logs; some louvre slats catch the sun as white lines.
 
+**Hosted preview (Vercel)**
+- Project `zeus-world-preview` (team Bala), linked to this repo with root `zeus-world/assets`, build `npm run build`, output `dist`. Live at https://zeus-world-preview-bala-0416.vercel.app/city.html (also `street.html`, and `index.html?m=models/<file>.glb` for single models). The link is public. Pushes to the linked repo redeploy.
+
 ## Decisions taken
 
 | Topic | Decision |
