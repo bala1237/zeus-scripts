@@ -9,6 +9,7 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createLife } from './life.js';
 import { createAmbient } from './ambient.js';
 import { createNames } from './names.js';
+import { createBattle } from './battle.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -124,7 +125,7 @@ async function citizen(url, x, z, ry, clip = 'Idle', t = 0.4, parent = scene) {
 
 const cams = {
   wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.8, 3.2, 28.5], [-0.5, 3.0, 6]], temple: [[10, 5, -14], [-2, 6, -44]],
-  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-39, 5, 41.5], [-31, 0.3, 35]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
+  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-39, 5, 41.5], [-31, 0.3, 35]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]], battle: [[66, 40, 168], [-4, 2, 94]],
 };
 camera.position.set(...cams[view][0]); camera.lookAt(...cams[view][1]);
 const controls = new OrbitControls(camera, renderer.domElement); controls.target.set(...cams[view][1]); controls.update();
@@ -272,6 +273,26 @@ if (q.get('names') !== '0') { const names = createNames({ scene, camera, rendere
 if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
   let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.shown()} of ${life.count()} citizens in view · ${renderer.info.render.calls} draws`; n = 0; t0 = now; } }); }
 
+// ---------- the siege at the south gate (ZW-018). Until real battle events are connected the score is made up:
+// ?battle runs a demo battle on a loop, the Battle button starts one, and ?battle=0.3 with ?shot poses a still at that share of the score.
+const battle = createBattle({ scene, camera, tickers, gateZ: Z1, wallTop: new THREE.Box3().setFromObject((await get(M('infra_city-wall'))).scene).max.y, towers: [[-28, Z1], [28, Z1]],
+  onResult: (result) => { if (result !== 'win') return; life.cheerNear(0, 44, 46, 9); for (const [i, x] of [-14, 9, -2].entries()) setTimeout(() => life.strike(x, 0, Z1 + 52 + i * 4), 900 + i * 1100); } });
+{ const fly = { on: false, t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], to: null, back: null }, ease = (k) => k * k * (3 - 2 * k);
+  const go = (to) => { fly.on = true; fly.t0 = null; fly.from[0].copy(camera.position); fly.from[1].copy(controls.target); fly.to = to; };
+  tickers.push((t) => { if (!fly.on) return; if (fly.t0 === null) fly.t0 = t; const k = ease(Math.min(1, (t - fly.t0) / 4)); camera.position.lerpVectors(fly.from[0], new THREE.Vector3(...fly.to[0]), k); controls.target.lerpVectors(fly.from[1], new THREE.Vector3(...fly.to[1]), k); if (k >= 1) fly.on = false; });
+  renderer.domElement.addEventListener('pointerdown', () => { fly.on = false; });
+  // a made-up score that swings both ways; `wins` decides which side it ends on
+  let demo = null; const wave = (u, wins) => 0.5 + 0.3 * Math.sin(u * 5.2 + 0.6) * (1 - u * 0.5) + 0.12 * Math.sin(u * 17) + (wins ? 0.26 : -0.26) * u * u;
+  const begin = (wins) => { if (battle.state.on) return; demo = { wins, seconds: 75 }; fly.back = { tour: tour.on, spin: controls.autoRotate, cam: [camera.position.toArray(), controls.target.toArray()] }; tour.on = false; controls.autoRotate = false;
+    battle.start({ rival: '@rival_city', seconds: demo.seconds, share: 0.5 }); go(cams.battle); };
+  let next = q.has('battle') && !q.has('shot') ? 10 : Infinity, wins = true;
+  tickers.push((t) => { const s = battle.state;
+    if (!s.on && demo && fly.back) { tour.on = fly.back.tour; controls.autoRotate = fly.back.spin; if (!tour.on) go(fly.back.cam); fly.back = null; demo = null; next = q.has('battle') ? t + 30 : Infinity; }
+    if (!s.on && t > next) { begin(wins); wins = !wins; }
+    if (s.on && s.phase === 'fight' && demo) battle.setShare(wave(1 - s.left / demo.seconds, demo.wins)); });
+  document.getElementById('battle')?.addEventListener('click', () => { begin(wins); wins = !wins; });
+  if (q.has('shot') && q.has('battle')) battle.pose(Number(q.get('battle')) || 0.5); }
+
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
 // Left alone: anything that moves or changes (marked dynamic), buildings under construction, people, and the materials the effects below
@@ -354,5 +375,5 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
 // the sun's shadows are drawn once: only people and effects move, and they don't cast any
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
 if (q.has('shot')) renderer.render(scene, camera);
-window.__zw = { renderer, scene, camera, tickers, sun, cache };   // for measure.mjs
+window.__zw = { renderer, scene, camera, tickers, sun, cache, battle };   // for measure.mjs
 window.ready = true;
