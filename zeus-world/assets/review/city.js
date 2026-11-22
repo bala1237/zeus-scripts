@@ -26,16 +26,17 @@ const L = (SOFT ? {
   dusk: { sky: 0xe9a878, ground: 0x6f8c52, sun: 0xff9a55, sunI: 1.9, sunPos: [-100, 30, 50], hemi: 0.4, env: 0.3, exp: 1.0, lamp: 1 },
 } : {
   day: { sky: 0x5aa6e0, ground: 0x6f8f4c, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.42, env: 0.3, exp: 0.9, lamp: 0 },
-  dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 2.6, sunPos: [-100, 26, 50], hemi: 0.22, env: 0.2, exp: 0.92, lamp: 1 },
+  dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 1.5, sunPos: [-100, 22, 50], hemi: 0.12, env: 0.2, exp: 0.8, lamp: 1 },
 })[light];
 if (!SOFT) renderer.domElement.style.filter = 'saturate(1.18) contrast(1.1)';
 scene.background = new THREE.Color(L.sky); scene.fog = new THREE.Fog(L.sky, 160, 520);
 scene.environmentIntensity = L.env; renderer.toneMappingExposure = L.exp;
+if (!SOFT && light === 'dusk') scene.backgroundIntensity = 0.75;
 if (!SOFT) {   // real sky from Poly Haven (CC0): a photo for the backdrop, its HDR for light and reflections
   const bg = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); bg.mapping = THREE.EquirectangularReflectionMapping; bg.colorSpace = THREE.SRGBColorSpace;
   scene.background = bg; scene.backgroundRotation = new THREE.Euler(0, light === 'day' ? 2.2 : 3.9, 0);
   const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = env; scene.environmentRotation = scene.backgroundRotation; scene.environmentIntensity = light === 'day' ? 0.6 : 1.1;
+  scene.environment = env; scene.environmentRotation = scene.backgroundRotation; scene.environmentIntensity = light === 'day' ? 0.6 : 0.45;
   scene.fog = new THREE.Fog(light === 'day' ? 0xa9c8e6 : 0xd99a78, 220, 700);
 }
 scene.add(new THREE.HemisphereLight(SOFT ? 0xffffff : 0xfff4e0, 0x7a6a48, L.hemi));
@@ -106,7 +107,8 @@ window.__cam = () => camera.position.toArray();
 const PRE = ['biz_bakery_t1', 'biz_cafe_t1', 'biz_flower-shop_t1', 'biz_forge_t1', 'biz_olive-press_t1', 'biz_pottery_t1', 'biz_scroll-shop_t1', 'biz_stall_t1_cloth', 'biz_stall_t1_fish', 'biz_stall_t1_fruit', 'biz_stall_t1_pottery', 'build_crane_t1', 'build_crates_t1', 'build_timber-stack_t1', 'char_citizen_elder', 'char_citizen_woman', 'civic_amphitheatre', 'civic_aqueduct', 'civic_bathhouse', 'civic_council-hall', 'civic_fountain-plaza', 'civic_gymnasium', 'civic_library', 'civic_lighthouse', 'civic_stoa', 'civic_temple-zeus_stage4', 'civic_tholos', 'decor_altar', 'decor_banner_t1_azure', 'decor_banner_t1_red', 'decor_barrels_t1', 'decor_bench_t1_marble', 'decor_brazier_t1', 'decor_bust_t1_marble', 'decor_cart_t1', 'decor_dining-set_t1', 'decor_garden-bed_t1', 'decor_garden-gate_t1_azure', 'decor_garden-wall_t1_plaster', 'decor_lantern_t1_bronze', 'decor_obelisk', 'decor_pergola_t1', 'decor_planter_t1', 'decor_shrine', 'decor_statue-plinth_t1', 'decor_sundial', 'decor_victory-column', 'home_cottage_t1', 'home_cottage_t2', 'home_grand-villa_t4', 'home_insula_t1', 'home_insula_t2', 'home_insula_t3', 'home_villa-porch_t2_doric', 'home_villa-porch_t3_ionic', 'home_villa-roof_t1_terracotta', 'home_villa-roof_t2_slate', 'home_villa-roof_t3_azure', 'home_villa-roof_t3_garden', 'home_villa-roof_t4_gold', 'home_villa-upper_t2_plaster', 'home_villa-upper_t3_marble', 'home_villa-walls_t1_stone', 'home_villa-walls_t2_ochre', 'home_villa-walls_t3_goldmarble', 'infra_bridge', 'infra_city-wall', 'infra_signpost', 'infra_street-lamp_t1', 'infra_tile_t1_plaza', 'infra_tile_t1_road', 'infra_wall-gate', 'infra_wall-tower', 'landmark_trireme', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage1', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4', 'nature_cypress_t1', 'nature_rock_t1_boulder', 'nature_rock_t1_coast', 'nature_rock_t1_small', 'water_pier', 'water_pond', 'water_quay', 'water_reflecting-pool', 'water_river-straight', 'water_stepping-stones', 'water_well'];
 const bar = document.getElementById('load'); let done = 0;
 const tick = () => { done++; if (bar) bar.firstElementChild.style.width = `${Math.round(100 * done / (PRE.length + 3))}%`; };
-if (!q.has('shot')) renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+const tickers = [], clock = new THREE.Clock();
+if (!q.has('shot')) renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); for (const f of tickers) f(t); controls.update(); renderer.render(scene, camera); });
 await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...['citizen'].map((n) => get(R(n)).then(tick))]);
 if (bar) bar.remove();
 const PI = Math.PI, P = (n, x, z, ry = 0, s = 1) => put(M(n), x, z, ry, s);
@@ -160,7 +162,7 @@ for (let z = Z0 + 4; z < Z1; z += 8) { await P('infra_city-wall', X0, z, -PI / 2
 await P('infra_wall-gate', X1, 8, PI / 2);
 for (const [x, z] of [[X0, Z0], [X1, Z0], [X0, Z1], [X1, Z1], [X0, -4], [X1, -28], [-28, Z0], [28, Z0], [-28, Z1], [28, Z1]]) await P('infra_wall-tower', x, z);
 // ---------- harbour to the east: sea, quay, pier, lighthouse, trireme
-const sea = new THREE.Mesh(new THREE.PlaneGeometry(300, 400), new THREE.MeshStandardMaterial({ color: light === 'day' ? 0x2f7fa6 : 0x3b5f86, roughness: 0.08, metalness: 0.3 }));
+const sea = new THREE.Mesh(new THREE.PlaneGeometry(300, 400), new THREE.MeshStandardMaterial({ name: 'water', color: 0x2f7fa6 }));
 sea.rotation.x = -PI / 2; sea.position.set(72 + 150, 0.4, 0); sea.receiveShadow = true; scene.add(sea);
 for (let z = -34; z <= 46; z += 4) await P('water_quay', 70.8, z, PI / 2);
 for (let i = 0; i < 6; i++) for (let j = 0; j < 22; j++) await P('infra_tile_t1_road', 58 + i * 2 + 1, -35 + j * 2 + 1 + (j > 20 ? 0 : 0));
@@ -181,7 +183,42 @@ const C = [M('char_citizen_woman'), M('char_citizen_elder'), R('citizen')];
 const people = [[2, 4, 1, 'Idle'], [-3, -4, 2.5, 'Idle'], [-6, -5.6, 0, 'Idle'], [4.5, -5.8, 0.4, 'Cheer'], [0.6, 18, 3.1, 'Walk'], [-0.7, 26, 0, 'Walk'], [0.5, -20, 0, 'Walk'], [-1, -30.8, 0, 'Cheer'], [-12, 1, 1.6, 'Idle'], [12, -2, -1.6, 'Idle'],
   [-4.6, 17, 1.6, 'Idle'], [4.4, 23, -1.6, 'Idle'], [0.4, 35, 3.1, 'Walk'], [64, 6, 1.6, 'Idle'], [-28, 11, 0, 'Idle'], [30, -6, 1.6, 'Clap'], [0.8, 48, 3.1, 'Walk'], [-1.2, 6.5, 0.3, 'Clap']];
 for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], people[i][1], people[i][2], people[i][3], 0.13 * i);
-if (L.lamp) for (const [x, y, z] of [[0, 3, 0], [0, 5, -31], [0, 3, 20], [0, 3, 34], [-22, 4, -18], [22, 4, -18], [66, 13, 40], [0, 4, 58]]) { const p = new THREE.PointLight(0xffb45a, 220, 40, 1.8); p.position.set(x, y, z); scene.add(p); }
 
+// ---------- effects: moving water, glowing fire, lit lamps (found by material name, so new models get them for free)
+{ // ripple normal map, tileable, made from a few crossing waves
+  const N = 256, data = new Uint8Array(N * N * 4), W = [[1, 2, 0.5], [3, -1, 0.3], [-2, 5, 0.18], [6, 3, 0.1], [-5, -7, 0.07]];
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let dx = 0, dy = 0; for (const [a, b, k] of W) { const c = Math.cos((a * x + b * y) / N * 2 * PI + a) * k; dx += a * c; dy += b * c; }
+    const i = (y * N + x) * 4, l = Math.hypot(dx * 0.35, dy * 0.35, 1); data[i] = 128 + 127 * dx * 0.35 / l; data[i + 1] = 128 + 127 * dy * 0.35 / l; data[i + 2] = 255 / l; data[i + 3] = 255; }
+  const ripple = (rep) => { const t = new THREE.DataTexture(data, N, N); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.needsUpdate = true; return t; };
+  const waterCol = light === 'day' ? 0x2a86b4 : 0x3d6590;
+  const water = (rep, speed) => { const m = new THREE.MeshStandardMaterial({ name: 'water', color: waterCol, roughness: 0.07, metalness: 0.35, normalMap: ripple(rep), normalScale: new THREE.Vector2(0.3, 0.3), envMapIntensity: 1.2 });
+    tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); m.normalScale.setScalar(0.28 + 0.07 * Math.sin(t * 0.9)); }); return m; };
+  const pondWater = water(0.5, 0.035), seaWater = water(110, 0.02);
+  // soft round glow for fires and lamps
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,214,150,1)'); gr.addColorStop(0.25, 'rgba(255,160,70,0.55)'); gr.addColorStop(1, 'rgba(255,120,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  const glowTex = new THREE.CanvasTexture(cv), night = L.lamp ? 1 : 0, seen = new Set(), clusters = new Map(), glows = [];
+  scene.updateMatrixWorld(true);
+  scene.traverse((o) => {
+    if (!o.isMesh) return; const n = o.material.name;
+    if (n === 'water') { o.material = o === sea ? seaWater : pondWater; o.castShadow = false; return; }
+    if (n !== 'flame' && n !== 'coal') return;
+    o.castShadow = false;
+    if (!seen.has(o.material)) { seen.add(o.material); const m = o.material; m.emissive = new THREE.Color(n === 'flame' ? 0xffa040 : 0xff4a10); m.emissiveIntensity = n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night; m.toneMapped = false;
+      tickers.push((t) => { m.emissiveIntensity = (n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night) * (0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 7.3)); }); }
+    if (n !== 'flame') return;
+    // one glow per separate flame: a street lamp's two lanterns share a mesh, so group its points by position
+    if (!clusters.has(o.geometry)) { const pos = o.geometry.attributes.position, cells = new Map(), v = new THREE.Vector3();
+      for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i); const k = `${Math.round(v.x / 0.9)},${Math.round(v.y / 0.9)},${Math.round(v.z / 0.9)}`; const c = cells.get(k) || { sum: new THREE.Vector3(), n: 0, min: v.clone(), max: v.clone() }; c.sum.add(v); c.n++; c.min.min(v); c.max.max(v); cells.set(k, c); }
+      clusters.set(o.geometry, [...cells.values()].map((c) => ({ p: c.sum.divideScalar(c.n), r: Math.max(0.12, c.max.distanceTo(c.min) / 2) }))); }
+    for (const c of clusters.get(o.geometry)) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.45 + 0.5 * night, fog: false, toneMapped: false }));
+      const w = c.p.clone().applyMatrix4(o.matrixWorld), sc = new THREE.Vector3().setFromMatrixScale(o.matrixWorld).x; sp.position.copy(w); sp.userData = { s: Math.max(0.5, c.r * sc * (5 + 5 * night)), ph: w.x * 1.7 + w.z * 2.3 }; sp.scale.setScalar(sp.userData.s); scene.add(sp); glows.push(sp); }
+  });
+  tickers.push((t) => { for (const sp of glows) { const f = 0.9 + 0.1 * Math.sin(t * 9 + sp.userData.ph) * Math.sin(t * 5.7 + sp.userData.ph * 0.7); sp.scale.setScalar(sp.userData.s * f); sp.material.opacity = (0.45 + 0.5 * night) * (0.8 + 0.2 * f); } });
+  if (night) { const spots = glows.map((g) => g.position).filter((p) => Math.hypot(p.x, p.z) < 34 || Math.abs(p.x) < 6).slice(0, 14);
+    for (const p of spots) { const l = new THREE.PointLight(0xffa85a, 60, 16, 1.6); l.position.copy(p); scene.add(l); } }
+  window.__fx = { glows: glows.length, tickers: tickers.length };
+  if (q.has('shot')) for (const f of tickers) f(1.3);
+}
 if (q.has('shot')) renderer.render(scene, camera);
 window.ready = true;
