@@ -15,7 +15,7 @@ const view = q.get('view') || 'wide', light = q.get('light') || (q.has('shot') |
 document.getElementById('label').textContent = q.get('label') || `City · ${view} · ${light}`;
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;   // three now treats the old soft type as this one
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
@@ -47,14 +47,33 @@ if (!SOFT) {   // real skies from Poly Haven (CC0): two photo domes that cross-f
 const hemi = new THREE.HemisphereLight(SOFT ? 0xffffff : 0xfff4e0, 0x7a6a48, L.hemi); scene.add(hemi);
 const sun = new THREE.DirectionalLight(L.sun, L.sunI); sun.position.set(...L.sunPos); sun.castShadow = true;
 sun.shadow.mapSize.set(8192, 8192); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.05;
-Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 100, bottom: -100, near: 1, far: 400 }); scene.add(sun);
+// Make the shadow map ourselves. Left to three it gets a full colour layer that is never read and 32-bit depth: 512 MB at this size.
+// With a one-byte colour layer and 16-bit depth it is 192 MB. Checked against stills: 16-bit depth steps are 6 mm over this range, far below the shadow bias.
+{ const S = Math.min(8192, renderer.capabilities.maxTextureSize); sun.shadow.mapSize.set(S, S);
+  sun.shadow.map = new THREE.WebGLRenderTarget(S, S, { format: THREE.RedFormat, type: THREE.UnsignedByteType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, generateMipmaps: false });
+  const dt = new THREE.DepthTexture(S, S, THREE.UnsignedShortType); dt.format = THREE.DepthFormat; dt.compareFunction = THREE.LessEqualCompare; dt.minFilter = dt.magFilter = THREE.LinearFilter; sun.shadow.map.depthTexture = dt; }
+Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 100, bottom: -100, near: 1, far: 400 }); sun.shadow.camera.updateProjectionMatrix(); scene.add(sun);   // three only does this update when it makes the map itself
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ color: L.ground, roughness: 1 }));
 ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 
 const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
 const cache = {};
+// Every scripted model carries its own copy of the shared textures (the same marble is in 42 files). Loaded as they come,
+// that is over 1000 textures and 1.2 GB of graphics memory. Here each distinct image is kept once: a texture whose image
+// bytes match one already loaded is pointed at that image, and its own decoded copy is freed before it is ever uploaded.
+const images = new Map(), SLOTS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'alphaMap', 'bumpMap'];
+async function shareTextures(g) {
+  const { parser } = g, { json } = parser, hashes = new Map(), todo = new Set();
+  g.scene.traverse((o) => { if (o.isMesh) for (const m of [].concat(o.material)) for (const k of SLOTS) if (m[k]) todo.add(m[k]); });
+  for (const t of todo) { const a = parser.associations.get(t), def = a && json.textures?.[a.textures]; if (!def) continue;
+    const src = def.extensions?.EXT_texture_webp?.source ?? def.source, view = json.images?.[src]?.bufferView; if (view === undefined) continue;
+    if (!hashes.has(src)) hashes.set(src, parser.getDependency('bufferView', view).then((buf) => crypto.subtle.digest('SHA-1', buf)).then((h) => String.fromCharCode(...new Uint8Array(h))));
+    const key = await hashes.get(src), have = images.get(key);
+    if (!have) images.set(key, t.source); else if (have !== t.source) { const old = t.source; t.source = have; old.data?.close?.(); } }
+}
 async function get(url) {
-  if (!cache[url]) cache[url] = loader.loadAsync(url).then((g) => { g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); return g; });
+  if (!cache[url]) cache[url] = loader.loadAsync(url).then(async (g) => { g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
+    try { await shareTextures(g); } catch (e) { console.warn('textures not shared for', url, e); } return g; });
   return cache[url];
 }
 const M = (n) => `./models/${n}.glb`, R = (n) => `./ref/${n}.glb`;
@@ -302,4 +321,5 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
 // the sun's shadows are drawn once: only people and effects move, and they don't cast any
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
 if (q.has('shot')) renderer.render(scene, camera);
+window.__zw = { renderer, scene, camera, tickers, sun, cache };   // for measure.mjs
 window.ready = true;

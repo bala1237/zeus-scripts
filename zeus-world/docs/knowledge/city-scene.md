@@ -32,6 +32,8 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 
 **Loading.** Every model in the `PRE` list is downloaded before anything is placed, behind the loading bar. `get(url)` caches each file; `put()` and `P()` place a copy (a full clone of the model's objects, sharing geometry and materials). `P()` also records the copy in `placed[name]`, which the ambient effects use to find chimneys, fountains and ships.
 
+**Shared textures.** Model files each carry their own copies of the common textures. `shareTextures()` in `get()` keeps one copy of each distinct image, matched by the image's bytes (see `performance.md`). Anything that loads models another way would bring the duplicates back.
+
 **Layout.** The city is laid out by hand in `city.js`, section by section: agora, sacred way, main street, river, civic buildings, homes, wall, harbour, greenery. Coordinates are metres; the plaza centre is the origin; north is negative z; the sea is to the east (positive x). The wall runs from x −56 to 56 and z −68 to 60.
 
 **Homes.** `home()` assembles a villa from parts (walls, optional upper storey, roof, optional porch) and adds a garden. `userData.parts` holds the building without its garden, for construction.
@@ -47,7 +49,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 
 **Time of day.** `setTime(d)` blends everything between day (0) and dusk (1). In `cycle` mode: 40 s day, 16 s change, 30 s dusk, 16 s back. The environment light swaps at the halfway point and dips there so the swap does not pop.
 
-**Shadows.** The sun's shadow map is drawn once, because only people and effects move and they cast none. It is redrawn about eight times during a change of light. Citizens get a soft blob under them instead of a real shadow.
+**Shadows.** The scene creates the sun's shadow map itself, in a compact form (see `performance.md` for why, and for the trap with the shadow camera). It is drawn once, because only people and effects move and they cast none. It is redrawn about eight times during a change of light. Citizens get a soft blob under them instead of a real shadow.
 
 **Camera tour.** Glides between seven views, 13 s at each and 5 s moving. Touching the view or choosing one stops it.
 

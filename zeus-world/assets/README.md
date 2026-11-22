@@ -39,6 +39,8 @@ Scripted models are built at real size, facing the front, so the normaliser only
 
 `review/life.js` (citizens, building sites, birds) and `review/ambient.js` (cloth, trees, smoke, spray, boats) add the motion; `review/city.js` holds layout, lighting, time of day and effects. Page options and how the scene works are in `docs/knowledge/city-scene.md`. `npm run build` makes the hosted version in `dist/`.
 
+`measure.mjs` reports what the city holds in memory and what a frame costs: `node measure.mjs renders/measure.json 10` with the review server running. See `docs/knowledge/performance.md`.
+
 ## Street test
 
 `review/street.html` is the look test: six plots on a road, from catalogue models only. `PAGE=street.html node shot.mjs renders/x.png "view=wide&light=day"` (views: wide, street, villas, ochre, gold, site, garden). `review/main.js` also takes `m=asm:models/<walls>.glb` to show a wall body with a roof and porch.

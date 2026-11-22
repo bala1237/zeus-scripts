@@ -11,13 +11,13 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
-| Chrome uses a lot of memory when the city runs | ZW-001 | Next up. Measure first, then fix |
+| Chrome uses a lot of memory when the city runs | ZW-001 | Measured and fix shipped 22 Nov: memory roughly halved, picture unchanged. Waiting for the owner's figures from the preview |
 
 ## Next, in order
 
 The owner sets the order. This is the current proposal; the numbers point to `BACKLOG.md`.
 
-1. **ZW-001 and ZW-004, memory and performance.** They are the same work: measure what the page holds in memory, then reduce it.
+1. **ZW-004, frame rate.** Measured at 5.0 million triangles and 2,320 draw calls a frame. Start with drawing repeated models in one go and skipping citizens who are off screen. Further memory cuts under ZW-001 if the owner's figures are still too high.
 2. **Owner feedback on batches 1, 2, 3 and 5** (see "Waiting on the owner"), fixed in one pass.
 3. **ZW-005, finish the look.**
 4. **ZW-007, construction loop**, and **ZW-008, cloth.**
@@ -34,10 +34,11 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
    - **Ambient.** Is the cloth ripple visible enough; tree sway; smoke amount; does the fountain spray read as water; the sailing boat.
    - **Day cycle and tour.** Is the change smooth; any stutter; cycle length; tour pace and stops; does any stop start inside a building.
    - **Frame rate** on a computer and a phone, day and dusk (counter is top right).
-2. **ZW-002.** Is the flicker on the tower tops gone.
-3. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
-4. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
-5. The open questions in `DECISIONS.md`.
+2. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
+3. **ZW-002.** Is the flicker on the tower tops gone.
+4. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
+5. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
+6. The open questions in `DECISIONS.md`.
 
 ## What exists
 
