@@ -202,7 +202,7 @@ for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], pe
     tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); u.uA.value.set(-t * speed * 0.7, t * speed * 0.45); u.uB.value.set(t * speed * 0.3, -t * speed * 0.5); m.normalScale.setScalar(ns * (1 + 0.2 * Math.sin(t * 0.9))); });
     return m; };
   // small pools are calmer and less mirror-like: sharp ripples there catch every lamp and turn to sparkle
-  const pondWater = water(0.22, 0.02, 0.3, 0.16), seaWater = water(90, 0.02, 0.08, 0.5);
+  const pondWater = water(0.22, 0.03, 0.26, 0.26), seaWater = water(90, 0.02, 0.08, 0.5);
   // soft round glow for fires and lamps
   const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
   gr.addColorStop(0, 'rgba(255,214,150,1)'); gr.addColorStop(0.25, 'rgba(255,160,70,0.55)'); gr.addColorStop(1, 'rgba(255,120,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
