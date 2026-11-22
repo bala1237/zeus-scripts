@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 22 Nov 2026
 
+- **Logged ZW-018:** showing a live battle between our city and the rival's during a TikTok battle. Idea only.
 - **Game direction logged and brainstormed.** ZW-015 (losing a battle damages a building, the community repairs it), ZW-016 (winning triggers a surprise celebration) and ZW-017 (make the city feel like a game: levels that unlock things, a world to explore). Ideas written up in `BRAINSTORM-GAME.md`. Nothing built.
 - **Each frame now costs about half as much to draw (ZW-004, first batch).** Repeated pieces (tiles, walls, river and quay sections) are drawn in one go; citizens outside the view are skipped; the man model was three times heavier than the others and is now the same; distant citizens, trees and bushes use lighter far-view models. Wide view: 2,330 to 1,154 draw calls, 5.0 to 2.2 million triangles. Frame rate itself is for the owner to read on the preview.
 - **Tools added:** `assets/lod.mjs` and `far.sh` make the far-view models; `measure.mjs` now lists what each model costs in the scene.
