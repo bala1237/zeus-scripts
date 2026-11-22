@@ -32,7 +32,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-015 | Enhancement | Losing a TikTok battle damages the city | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
 | ZW-016 | Enhancement | Winning a battle triggers a surprise celebration | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
 | ZW-017 | Brainstorm | Make the city feel like a game | High (proposed) | Brainstorm written; waiting for the owner's choices | 22 Nov 2026, owner |
-| ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium (proposed) | Open, idea only | 22 Nov 2026, owner |
+| ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium | First version shipped (siege at the gate, demo score) | 22 Nov 2026, owner |
 
 ## Closed
 
@@ -178,13 +178,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-018: Show a live battle between our city and the rival's
 
-- **Asked:** 22 Nov 2026, by the owner: "during battles, can we simulate a battle between us and the rivals?" An idea under discussion; nothing to be built yet.
-- **Answer given:** yes. The fight on screen would be driven by the live score of the TikTok battle, so the community sees itself winning or losing as it happens, and the result leads into ZW-015 (damage and repair) or ZW-016 (celebration).
-- **What it needs:**
-  - The live scores of both sides and the time left. Whether the capture path provides them is not confirmed; it is one of the constitution's open questions.
-  - A way to show the fight. Options discussed: a siege at the south gate with a front line that moves with the score; a sea battle in the harbour; a duel of champions in the stadium; Zeus against the rival's god in the sky.
-  - A rival to show. Their name would pass the same moderation as any display name.
-- **Cheapest first version:** the siege at the gate, told with things that can be scripted for free: banners in formation, volleys of arrows, catapults and their shots, dust and fire, the front line moving. No new character animations. It can be built and tuned against made-up scores before real battle events are connected.
-- **Fuller version, costs money:** soldiers who march and fight need new models and animations from the rigging service.
-- **Constitution:** the rival starts as an off-screen cause and may later be a second city under the same rules; no permanent loss for either side; scores shown as strength, never as coins or gift values; taking part must count for everyone, not only for gifts.
-- **Depends on:** real battle events (ZW-009). Related: ZW-015, ZW-016, ZW-017.
+- **Asked:** 22 Nov 2026, by the owner: "during battles, can we simulate a battle between us and the rivals?" Then: "go ahead with the siege at the gate."
+- **First version shipped 22 Nov 2026:** a siege at the south gate. Two armies of hoplites face each other outside the wall, and the line between them moves with our share of the score. Arrows, catapult stones, dust, a rival camp, guards on the wall, and a strength bar with the time left. A win ends with the rival driven off, lightning and cheering; a loss with our army falling back through the gate. Detail in `knowledge/battle.md`.
+- **It runs on a made-up score.** The Battle button in the controls starts one; `?battle` loops them. Real battle events are not connected (ZW-009), and whether the capture path provides both scores and the time left is still unconfirmed.
+- **Built free**, entirely in code. The soldiers are simple stylised figures that read at the battle camera's distance, not close-up characters.
+- **Checked:** stills at three scores, by day and dusk, and a whole demo battle stepped through without errors. Not seen in motion.
+- **Waiting on the owner:** does it feel like a battle; is the line's movement readable; pace and length; the look of the soldiers, tents and catapults; the wording on the bar.
+- **Possible next steps:** proper marching and fighting soldiers (costs money); scripted models for tents and catapults; sound; damage after a loss (ZW-015) and the surprise celebration after a win (ZW-016), which hook into the battle's result; the other settings discussed (sea battle, duel in the stadium, Zeus against the rival's god).
+- **Constitution:** no permanent loss for either side; strength shown, never coins or gift values; taking part must count for everyone.

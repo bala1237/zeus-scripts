@@ -131,5 +131,5 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
     for (const b of birds) { const a = b.ph + t * b.sp; b.g.position.set(b.cx + Math.cos(a) * b.rad, b.y + Math.sin(t * 0.4 + b.ph) * 1.5, b.cz + Math.sin(a) * b.rad); b.g.rotation.y = -a + (b.sp > 0 ? Math.PI : 0);
       const f = Math.sin(t * b.flap + b.ph) * 0.7; b.l.rotation.z = f; b.r.rotation.z = -f; } });
 
-  return { addWalkers, construct, cheerNear, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
+  return { addWalkers, construct, cheerNear, strike, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
 }

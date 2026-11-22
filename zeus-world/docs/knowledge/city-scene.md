@@ -11,6 +11,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `life.js` | Citizens walking a route graph, building sites rising with Bolts labels, lightning on completion, birds |
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
 | `stand.js` | The standing pose citizens use when they stop, made in code (see `characters.md`) |
+| `battle.js` | The siege at the south gate during a battle (see `battle.md`) |
 | `names.js` | Name plates over the homes |
 | `poses.html`, `poses.js` | Frame sheet of a character's animation, for checking motion without watching it (see `characters.md`). Not part of the hosted build |
 | `street.js`, `main.js` | The six-plot street test and the single-model review scene. Older; still on the pale lighting (ZW-005) |
@@ -20,13 +21,14 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 
 | Option | Values | Default |
 | --- | --- | --- |
-| `view` | `wide`, `plaza`, `street`, `temple`, `harbour`, `river`, `homes`, `civic`, `top` | `wide` |
+| `view` | `wide`, `plaza`, `street`, `temple`, `harbour`, `river`, `homes`, `civic`, `battle`, `top` | `wide` |
 | `light` | `cycle`, `day`, `dusk` | `cycle` |
 | `people` | 0 to 120 | 44 (plus one seventh as many on the quay, plus builders) |
 | `tour` | `0` turns the camera tour off | on, unless a view is chosen |
 | `spin` | `0` turns the slow rotation off | on |
 | `grade` | `soft` gives the old pale look | stream grade |
 | `names` | `0` hides the name plates over the homes | shown |
+| `battle` | present: demo battles at the south gate on a loop. With `shot`, a number sets our share of the score for a still | absent |
 | `far` | `0` turns the far-view models off | on |
 | `peoplefar`, `plantfar` | distance in metres beyond which citizens and plants switch to their far-view model | 45, 70 |
 | `shot` | present: render one still frame, 8 seconds in, no animation loop | absent |
