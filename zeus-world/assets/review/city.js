@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -24,13 +25,20 @@ const L = (SOFT ? {
   day: { sky: 0xbfd9ee, ground: 0x86a85f, sun: 0xfff1dc, sunI: 2.9, sunPos: [-60, 90, 70], hemi: 0.75, env: 0.5, exp: 1.0, lamp: 0 },
   dusk: { sky: 0xe9a878, ground: 0x6f8c52, sun: 0xff9a55, sunI: 1.9, sunPos: [-100, 30, 50], hemi: 0.4, env: 0.3, exp: 1.0, lamp: 1 },
 } : {
-  day: { sky: 0x5aa6e0, ground: 0x6a9446, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.38, env: 0.3, exp: 0.86, lamp: 0 },
+  day: { sky: 0x5aa6e0, ground: 0x6f8f4c, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.42, env: 0.3, exp: 0.9, lamp: 0 },
   dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 2.6, sunPos: [-100, 26, 50], hemi: 0.22, env: 0.2, exp: 0.92, lamp: 1 },
 })[light];
 if (!SOFT) renderer.domElement.style.filter = 'saturate(1.18) contrast(1.1)';
 scene.background = new THREE.Color(L.sky); scene.fog = new THREE.Fog(L.sky, 160, 520);
 scene.environmentIntensity = L.env; renderer.toneMappingExposure = L.exp;
-scene.add(new THREE.HemisphereLight(0xffffff, 0x7a6a48, L.hemi));
+if (!SOFT) {   // real sky from Poly Haven (CC0): a photo for the backdrop, its HDR for light and reflections
+  const bg = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); bg.mapping = THREE.EquirectangularReflectionMapping; bg.colorSpace = THREE.SRGBColorSpace;
+  scene.background = bg; scene.backgroundRotation = new THREE.Euler(0, light === 'day' ? 2.2 : 3.9, 0);
+  const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping;
+  scene.environment = env; scene.environmentRotation = scene.backgroundRotation; scene.environmentIntensity = light === 'day' ? 0.6 : 1.1;
+  scene.fog = new THREE.Fog(light === 'day' ? 0xa9c8e6 : 0xd99a78, 220, 700);
+}
+scene.add(new THREE.HemisphereLight(SOFT ? 0xffffff : 0xfff4e0, 0x7a6a48, L.hemi));
 const sun = new THREE.DirectionalLight(L.sun, L.sunI); sun.position.set(...L.sunPos); sun.castShadow = true;
 sun.shadow.mapSize.set(8192, 8192); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.05;
 Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 100, bottom: -100, near: 1, far: 400 }); scene.add(sun);
@@ -127,7 +135,7 @@ for (let z = Z0 + 4; z < Z1; z += 8) { await P('infra_city-wall', X0, z, -PI / 2
 await P('infra_wall-gate', X1, 8, PI / 2);
 for (const [x, z] of [[X0, Z0], [X1, Z0], [X0, Z1], [X1, Z1], [X0, -4], [X1, -28], [-28, Z0], [28, Z0], [-28, Z1], [28, Z1]]) await P('infra_wall-tower', x, z);
 // ---------- harbour to the east: sea, quay, pier, lighthouse, trireme
-const sea = new THREE.Mesh(new THREE.PlaneGeometry(300, 400), new THREE.MeshStandardMaterial({ color: 0x2f7fa6, roughness: 0.12, metalness: 0.1 }));
+const sea = new THREE.Mesh(new THREE.PlaneGeometry(300, 400), new THREE.MeshStandardMaterial({ color: light === 'day' ? 0x2f7fa6 : 0x3b5f86, roughness: 0.08, metalness: 0.3 }));
 sea.rotation.x = -PI / 2; sea.position.set(72 + 150, 0.4, 0); sea.receiveShadow = true; scene.add(sea);
 for (let z = -34; z <= 46; z += 4) await P('water_quay', 70.8, z, PI / 2);
 for (let i = 0; i < 6; i++) for (let j = 0; j < 22; j++) await P('infra_tile_t1_road', 58 + i * 2 + 1, -35 + j * 2 + 1 + (j > 20 ? 0 : 0));
@@ -139,6 +147,11 @@ const spots = [[-12, -22], [12, -22], [-9, -40], [9, -40], [-16, -52], [16, -52]
 for (let i = 0; i < spots.length; i++) await P(T[i % T.length], spots[i][0] + rnd() * 2, spots[i][1] + rnd() * 2, rnd() * 6, 0.9 + rnd() * 0.3);
 for (let i = 0; i < 9; i++) for (const s of [-1, 1]) await P('nature_cypress_t1', s * 4.2, -14 - i * 2 - 0.5, i, 0.75);
 await P('decor_shrine', -4.5, 30.5, PI / 2); await P('decor_sundial', 22, -12); await P('decor_statue-plinth_t1', -22, -12); await P('decor_brazier_t1', -2.6, -27.5); await P('decor_brazier_t1', 2.6, -27.5);
+// rocks, bust and lion heads from Poly Haven scans
+for (const [x, z, r, sc] of [[-34, 18.5, 0.5, 0.8], [-26.5, 13, 2.2, 0.6], [-20, 33, 1, 0.7], [12, 37.3, 3, 0.6], [30, 33, 0, 0.8], [-44, 37, 2, 1], [48, -12, 1, 1.2], [-42, -22, 4, 1.1]]) await P('nature_rock_t1_boulder', x, z, r, sc);
+for (const [x, z, r] of [[-33, 36.8, 0], [18, 33.2, 3], [40, 36.6, 1], [-12, 33.3, 2]]) await P('nature_rock_t1_small', x, z, r);
+for (const [x, z, r] of [[78, 52, 0], [80, -42, 2], [76, 58, 4]]) await P('nature_rock_t1_coast', x, z, r, 1.3);
+await put(M('decor_bust_t1_marble'), -22, -12, 0, 1.1, scene, 1.38);
 const C = [M('char_citizen_woman'), M('char_citizen_elder'), R('citizen')];
 const people = [[2, 4, 1, 'Idle'], [-3, -4, 2.5, 'Idle'], [-6, -5.6, 0, 'Idle'], [4.5, -5.8, 0.4, 'Cheer'], [0.6, 18, 3.1, 'Walk'], [-0.7, 26, 0, 'Walk'], [0.5, -20, 0, 'Walk'], [-1, -30.8, 0, 'Cheer'], [-12, 1, 1.6, 'Idle'], [12, -2, -1.6, 'Idle'],
   [-4.6, 17, 1.6, 'Idle'], [4.4, 23, -1.6, 'Idle'], [0.4, 35, 3.1, 'Walk'], [64, 6, 1.6, 'Idle'], [-28, 11, 0, 'Idle'], [30, -6, 1.6, 'Clap'], [0.8, 48, 3.1, 'Walk'], [-1.2, 6.5, 0.3, 'Clap']];
@@ -147,7 +160,7 @@ if (L.lamp) for (const [x, y, z] of [[0, 3, 0], [0, 5, -31], [0, 3, 20], [0, 3, 
 
 const cams = {
   wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.8, 3.2, 28.5], [-0.5, 3.0, 6]], temple: [[10, 5, -14], [-2, 6, -44]],
-  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-18, 9, 50], [2, 1.5, 33]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
+  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-39, 5, 41.5], [-31, 0.3, 35]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
 };
 camera.position.set(...cams[view][0]); camera.lookAt(...cams[view][1]);
 const controls = new OrbitControls(camera, renderer.domElement); controls.target.set(...cams[view][1]); controls.update();
