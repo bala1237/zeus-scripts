@@ -2,6 +2,7 @@
 // Everything here is a timed demo loop; in the real game the simulation would drive the same pieces.
 import * as THREE from 'three';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { standClip } from './stand.js';
 
 export function createLife({ scene, camera, renderer, get, tickers }) {
   const rnd = (() => { let a = 99; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
@@ -24,6 +25,7 @@ export function createLife({ scene, camera, renderer, get, tickers }) {
     const blob = new THREE.Mesh(blobGeo, new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false })); blob.position.y = 0.03; w.add(blob);
     scene.add(w);
     const mixer = new THREE.AnimationMixer(o), acts = {}; for (const c of g.animations) acts[c.name] = mixer.clipAction(c);
+    acts.Idle = mixer.clipAction(standClip(g.scene));   // the supplied Idle is a turning stride; standing still uses the pose made in stand.js
     const me = { w, mixer, acts, cur: null, yaw: 0,
       play(name, scale = 1) { const a = acts[name] || acts.Idle; if (!a) return; a.timeScale = scale; if (this.cur === a) return; if (this.cur) this.cur.fadeOut(0.3); a.reset().fadeIn(0.3).play(); this.cur = a; } };
     mixer.setTime(rnd() * 3);

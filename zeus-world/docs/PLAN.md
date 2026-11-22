@@ -12,6 +12,7 @@ Last updated: 22 Nov 2026.
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | The women walk in a weird way | ZW-012 | Fix shipped 22 Nov. Waiting for the owner to watch her on the preview |
+| Idle animation is a turning stride | ZW-014 | Fix shipped 22 Nov: a standing pose made in code. Waiting for the owner to watch it |
 | Houses should show a name | ZW-013 | Shipped 22 Nov as plates above the roofs. Waiting for the owner's view on size, style and which buildings |
 | Chrome uses a lot of memory when the city runs | ZW-001 | Measured and fix shipped 22 Nov: memory roughly halved, picture unchanged. Waiting for the owner's figures from the preview |
 
@@ -39,10 +40,11 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 2. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
 3. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
 4. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
-5. **ZW-002.** Is the flicker on the tower tops gone.
-6. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
-7. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
-8. The open questions in `DECISIONS.md`.
+5. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
+6. **ZW-002.** Is the flicker on the tower tops gone.
+7. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
+8. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
+9. The open questions in `DECISIONS.md`.
 
 ## What exists
 
