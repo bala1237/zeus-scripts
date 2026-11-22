@@ -28,7 +28,7 @@ Rockstar's own account is "build a fun place first, then hang content on it": a 
 ### Gaps
 - I found no authoritative developer source on GTA's satire and tone as a design principle, and none quantifying GTA's pedestrian or ambient-activity systems. Claims about satire being central to GTA's appeal are common in criticism but I did not retrieve a citable one.
 - The frequently repeated "each RDR2 NPC has an 80-page script" claim comes from a headline; Houser reportedly clarified his remarks to Kotaku and I could not retrieve the clarification, so treat it as unverified. — [Wccftech](https://wccftech.com/rockstar-worked-100-hours-weeks-rdr2/)
-- RDR2 team size: a figure of 1,600 appears only via a Wikipedia talk page; not confirmed from a primary source. — [Wikipedia talk page](https://en.wikipedia.com/wiki/Talk:Development_of_Grand_Theft_Auto_V)
+- RDR2 team size: a figure of 1,600 appears only via a Wikipedia talk page; not confirmed from a primary source. — [Wikipedia talk page](https://en.wikipedia.com/wiki/Talk:Development_of_Red_Dead_Redemption_2)
 - No academic game-studies paper on GTA's appeal was retrieved in this pass.
 
 ## 2. How do living-world simulations create emergent stories that are fun to watch?
