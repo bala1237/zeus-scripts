@@ -270,6 +270,67 @@ def torus(name, R, r, centre, mat, axis='Y', seg=16, tube=8):
     return o
 
 
+def rod(name, p0, p1, r, mat, segs=8, r2=None, uv=1.0):
+    """A pole, beam or rope between two points."""
+    p0, p1 = Vector(p0), Vector(p1); d = p1 - p0
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, segments=segs, radius1=r, radius2=r if r2 is None else r2, depth=d.length)
+    rot = Vector((0, 0, 1)).rotation_difference(d.normalized()).to_matrix().to_4x4()
+    bmesh.ops.transform(bm, matrix=Matrix.Translation((p0 + p1) / 2) @ rot, verts=bm.verts[:])
+    o = obj_from_bm(name, bm, mat, 50); box_uv(o, uv)
+    return o
+
+
+def beam(name, p0, p1, w, h, mat, bevel=0.0, uv=1.0):
+    """A squared timber between two points (w across, h up when it lies flat)."""
+    p0, p1 = Vector(p0), Vector(p1); d = p1 - p0
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1, matrix=Matrix.Diagonal((w, h, d.length, 1)))
+    if bevel > 0: bmesh.ops.bevel(bm, geom=bm.edges[:], offset=bevel, segments=1, affect='EDGES', profile=0.5)
+    rot = Vector((0, 0, 1)).rotation_difference(d.normalized()).to_matrix().to_4x4()
+    bmesh.ops.transform(bm, matrix=Matrix.Translation((p0 + p1) / 2) @ rot, verts=bm.verts[:])
+    o = obj_from_bm(name, bm, mat); box_uv(o, uv)
+    return o
+
+
+def lathe(name, profile, mat, centre=(0, 0, 0), segs=16, uv=1.0, tilt=None):
+    """Spin a (radius, height) profile about the vertical axis: pots, amphorae, column drums, finials."""
+    bm = bmesh.new(); rings = []
+    for r, z in profile:
+        rings.append([bm.verts.new((r * math.cos(2 * math.pi * i / segs), r * math.sin(2 * math.pi * i / segs), z)) for i in range(segs)])
+    for a, b in zip(rings, rings[1:]):
+        for i in range(segs):
+            bm.faces.new([a[i], a[(i + 1) % segs], b[(i + 1) % segs], b[i]])
+    if profile[0][0] > 1e-6: bm.faces.new(rings[0][::-1])
+    if profile[-1][0] > 1e-6: bm.faces.new(rings[-1])
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-5)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    m = Matrix.Translation(centre)
+    if tilt: m = m @ Matrix.Rotation(tilt[0], 4, tilt[1])
+    bmesh.ops.transform(bm, matrix=m, verts=bm.verts[:])
+    o = obj_from_bm(name, bm, mat, 50)
+    # wrap the texture round the pot instead of projecting it from the sides
+    uvl = o.data.uv_layers.new(name='UVMap')
+    inv = m.inverted(); rep = round(max(1, 2 * math.pi * 0.25 / uv))
+    for p in o.data.polygons:
+        c = inv @ p.center; ac = math.atan2(c.y, c.x)
+        for li in p.loop_indices:
+            co = inv @ o.data.vertices[o.data.loops[li].vertex_index].co
+            a = math.atan2(co.y, co.x) if (co.x * co.x + co.y * co.y) > 1e-10 else ac
+            if a - ac > math.pi: a -= 2 * math.pi
+            if a - ac < -math.pi: a += 2 * math.pi
+            uvl.data[li].uv = (a / (2 * math.pi) * rep, co.z / uv)
+    return o
+
+
+def tex_mottled(name, color, n=256, seed=1, amount=0.22, grain=0.08, bump=0.5):
+    """A palette colour with soft blotches and fine grain: terracotta, bronze patina, painted metal, rope."""
+    blot = fbm(n, seed, 3, 5); fine = fbm(n, seed + 1, 24, 3)
+    v = 1 - amount / 2 + amount * blot + grain * (fine - 0.5)
+    c = np.array(color)[None, None, :] * v[..., None]
+    return image(name, c), image(name + '_n', normal_map(blot * 0.3 + fine * 0.25, bump), srgb=False)
+
+
 def refine(o, max_len=0.35):
     """Split long edges so there are enough points for baked shading and for hand-made wobble."""
     bm = bmesh.new(); bm.from_mesh(o.data)
@@ -328,6 +389,15 @@ def bake_shading(samples=40, dist=0.75, floor=0.38):
                 a = floor + (1 - floor) * cache[key]
                 col.data[li].color = (a, a, a, 1)
         me.color_attributes.active_color = col
+
+
+def turn(o, x=0.0, y=0.0, z=0.0):
+    """Rotate an object about its own centre (models are built in world space, so a plain rotation would
+    swing it round the scene origin instead)."""
+    from mathutils import Euler
+    c = sum((v.co for v in o.data.vertices), Vector()) / len(o.data.vertices)
+    o.data.transform(Matrix.Translation(c) @ Euler((x, y, z)).to_matrix().to_4x4() @ Matrix.Translation(-c))
+    return o
 
 
 def apply_transforms():
