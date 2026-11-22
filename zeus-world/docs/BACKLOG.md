@@ -5,11 +5,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 ## How to use this file
 
 - **Adding.** Take the next number (`ZW-` plus three digits; numbers are never reused). Add a row to the open table and a detail section below it. Record the date, who reported it, and the owner's own words where they matter.
-- **Type.** `Bug` (something is wrong) or `Enhancement` (something new or better).
+- **Type.** `Bug` (something is wrong), `Enhancement` (something new or better), or `Brainstorm` (ideas to work out and choose from before anything is built; the entry points to a document).
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-015.**
+- **Next number: ZW-018.**
 
 ## Open
 
@@ -29,6 +29,9 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-012 | Bug | The women walk in a weird way | High | Fix shipped | 22 Nov 2026, owner |
 | ZW-013 | Enhancement | Houses should show a name, visible from above | Medium | Fix shipped | 22 Nov 2026, owner |
 | ZW-014 | Bug | The "idle" animation is a wide stride that turns round, not a standing pose | Medium | Fix shipped | 22 Nov 2026, found while fixing ZW-012; owner asked for the fix |
+| ZW-015 | Enhancement | Losing a TikTok battle damages the city | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
+| ZW-016 | Enhancement | Winning a battle triggers a surprise celebration | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
+| ZW-017 | Brainstorm | Make the city feel like a game | High (proposed) | Brainstorm written; waiting for the owner's choices | 22 Nov 2026, owner |
 
 ## Closed
 
@@ -144,3 +147,30 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Checked:** frame sheets of the pose for all three citizens, and a still of the plaza. The movement within the pose is small and cannot be judged from stills.
 - **Waiting on the owner:** does standing look natural on the preview, and is the movement too little or too much.
 - **Left as it is:** the man's and the elder's bindings are coarse (the man's torso is rigid on his hips; the elder's cloak follows his arms). They look acceptable.
+
+### ZW-015: Losing a TikTok battle damages the city
+
+- **Reported:** 22 Nov 2026, by the owner. Logged only; the owner said not to start building yet.
+- **Idea:** when we lose a battle, a community building takes visible damage, and the community then repairs it.
+- **Open points from the owner:** which buildings can be hit; how bad the damage is; how repair is paid for (Bolts?).
+- **What the constitution already says** (`CONSTITUTION.md`, "Battles"): a loss sets temporary conditions, and its size sets how severe. A close loss brings a storm and a damaged gate; a heavy loss cracks walls and opens a rebuilding quest. Damage is a visual layer on top of a building, never a change to it, because permanent achievements are never erased. It is capped, and it fades by itself over days so nobody is held hostage. Repair is a shared project needing at least two roles.
+- **So the remaining decisions are:** the list of buildings that can be hit; what each level of damage looks like (cracks, scorch marks, scaffolding, a fallen column); whether repair costs Bolts, participation, or both; how long unrepaired damage takes to fade.
+- **Depends on:** real battle events from TikTok (ZW-009), and damage overlays for the chosen buildings.
+- Related: ZW-016, ZW-017.
+
+### ZW-016: Winning a battle triggers a surprise celebration
+
+- **Reported:** 22 Nov 2026, by the owner. Logged only; not to be built yet.
+- **Idea:** a premium, awesome animation that nobody is expecting, so the community wants to take part and see it again.
+- **Open points from the owner:** what the celebration is; whether it changes each time so it stays a surprise; how rare it is.
+- **What the constitution already says:** a win adds a dated victory banner, a monument on the first major win of a season, and a prosperity condition for the rest of the stream. A surprise celebration is an addition to that, not a conflict.
+- **First thoughts, not decided:** a pool of celebrations drawn at random, with rarer ones for bigger wins or winning streaks (Zeus appearing in the sky, fireworks over the harbour, the colossus lighting up, a golden rain, every citizen running to the plaza). The lightning strike and cheering that already exist for a finished building are a small version of this.
+- **Depends on:** real battle events from TikTok (ZW-009).
+- Related: ZW-015, ZW-017.
+
+### ZW-017: Make the city feel like a game
+
+- **Reported:** 22 Nov 2026, by the owner: "what we have is the bare minimum. It should keep people glued to see what happens next." "We need to bring in the gaming kind of approach. Different levels lock different things. That way people get motivated. It's just a community-driven game and not a single person playing." "Let's brainstorm on making this game interesting where people want to see and explore the world."
+- **This is a brainstorm, not a build task.** The ideas are in `BRAINSTORM-GAME.md`.
+- **Summary of the document:** one shared city level that the community raises together, with locked things visible in the city before they open; twenty ideas for exploring, for "what happens next", and for each person's place in the shared game; what the constitution rules in or out; seven questions for the owner; a possible first slice.
+- **Next step:** the owner answers the questions and picks ideas. Each chosen idea then becomes its own backlog entry.
