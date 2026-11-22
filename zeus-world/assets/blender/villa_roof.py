@@ -16,8 +16,14 @@ if STYLE == 'terracotta':
 elif STYLE == 'azure':
     tiles = [zw.material(f'tile{i}', *zw.tex_mottled(f'tile{i}', tuple(c * g for c in P['azure']), seed=30 + i, amount=0.25, grain=0.08), rough=0.35) for i, g in enumerate((1.0, 0.88, 1.12))]
     ridge_mat, finial = gold, gold
+elif STYLE == 'slate':
+    tiles = [zw.material(f'tile{i}', *zw.tex_mottled(f'tile{i}', tuple(c * g for c in (0.42, 0.45, 0.50)), seed=40 + i, amount=0.3, grain=0.15), rough=0.6) for i, g in enumerate((1.0, 0.88, 1.12))]
+    ridge_mat, finial = tiles[1], tiles[0]
+elif STYLE == 'gold':
+    tiles = [zw.material(f'tile{i}', *zw.tex_mottled(f'tile{i}', tuple(min(1, c * g) for c in P['gold']), seed=50 + i, amount=0.2, grain=0.06, bump=0.2), rough=0.3, metal=1.0) for i, g in enumerate((1.0, 0.9, 1.08))]
+    ridge_mat, finial = gold, gold
 else:
-    raise SystemExit('style must be terracotta or azure')
+    raise SystemExit('style must be terracotta, azure, slate or gold')
 
 FW, FD = 7.3, 5.5                         # footprint
 BW, BD = 6.5, 4.5                         # entablature body, just outside the walls
@@ -43,7 +49,7 @@ for s in (-1, 1):
         for k in (-1, 0, 1):
             zw.box('triglyph', (0.03, 0.035, 0.15), (s * (BW / 2 - 0.005), y + k * 0.045, 0.255), marble)
 zw.box('cornice', (FW - 0.10, FD - 0.10, 0.07), (0, 0, 0.365), marble, bevel=0.012, segs=1, uv=1.2)
-zw.box('cornice', (FW, FD, 0.06), (0, 0, 0.42), gold if STYLE == 'azure' else marble, bevel=0.015, segs=1, uv=1.2)
+zw.box('cornice', (FW, FD, 0.06), (0, 0, 0.42), gold if STYLE in ('azure', 'gold') else marble, bevel=0.015, segs=1, uv=1.2)
 for s in (-1, 1):
     for i in range(22):
         zw.box('mutule', (0.14, 0.26, 0.04), ((i - 10.5) * 0.32, s * (BD / 2 + 0.20), 0.325), marble)
@@ -84,7 +90,7 @@ for s in (-1, 1):
     for t in (-1, 1):
         r = zw.box('rake', (0.42, SL + 0.10, 0.12), (0, SL / 2 - 0.02, -0.05), marble, bevel=0.015, segs=1, uv=1.2)
         r.data.transform(Matrix.Translation((s * (FW / 2 - 0.20), 0, 0))); on_slope(r, t)
-        g = zw.box('rake_trim', (0.46, SL + 0.12, 0.035), (0, SL / 2 - 0.02, 0.022), gold if STYLE == 'azure' else marble, uv=1.2)
+        g = zw.box('rake_trim', (0.46, SL + 0.12, 0.035), (0, SL / 2 - 0.02, 0.022), gold if STYLE in ('azure', 'gold') else marble, uv=1.2)
         g.data.transform(Matrix.Translation((s * (FW / 2 - 0.20), 0, 0))); on_slope(g, t)
     b = zw.bolt('bolt', 0.52, (0, 0, 0), gold, depth=0.04)
     zw.turn(b, z=s * math.pi / 2); b.data.transform(Matrix.Translation((s * (BW / 2 + 0.035), 0, E + TZ * 0.42)))

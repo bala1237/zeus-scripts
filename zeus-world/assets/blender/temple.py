@@ -155,7 +155,9 @@ if STAGE >= 4:
         for a in (0.5, 2.6, 4.7):
             zw.rod('tripod', (c[0] + 0.34 * math.cos(a), c[1] + 0.34 * math.sin(a), c[2]), (c[0] + 0.12 * math.cos(a), c[1] + 0.12 * math.sin(a), c[2] + 0.95), 0.035, bronze, segs=6)
         zw.lathe('bowl', [(0.10, 0.80), (0.30, 0.92), (0.44, 1.10), (0.46, 1.18), (0.40, 1.18), (0.0, 1.06)], bronze, centre=c, segs=14, uv=0.5)
-        f = zw.blob('fire', (0.26, 0.26, 0.42), (c[0], c[1], c[2] + 1.36), flame, 8, 6); zw.wobble(f, 0.06, 4.0, 3)
+        zw.blob('coals', (0.34, 0.34, 0.09), (c[0], c[1], c[2] + 1.14), zw.material('coal', (1.0, 0.42, 0.12), rough=0.7) if s < 0 else bpy.data.materials['coal'], 8, 4)
+        for dx, dy, hh in ((0, 0, 1.5), (0.4, 0.2, 1.0), (-0.35, 0.25, 0.9), (0.1, -0.4, 1.1), (-0.3, -0.3, 0.75)):
+            zw.lathe('flame', [(0, 0), (0.12, 0.085 * hh), (0.09, 0.24 * hh), (0.03, 0.41 * hh), (0, 0.51 * hh)], flame, centre=(c[0] + dx * 0.34, c[1] + dy * 0.34, c[2] + 1.14), segs=6, uv=0.5)
 
 zw.bake_shading(dist=1.4, keep=('pan', 'lip', 'ent', 'cornice', 'rake', 'rake_trim', 'platform', 'kerb', 'stair', 'hall', 'hall_base', 'hall_band', 'hall_cap', 'tympanum'))
 zw.export(OUT)

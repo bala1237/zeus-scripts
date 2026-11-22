@@ -152,31 +152,31 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Villa walls | Plaster, Marble | Done | P1 |
 | Villa walls | Stone, Painted (ochre), Gold-trim marble | Done (scripted; doors and shutters built in) | P1 |
 | Villa roof | Terracotta, Azure | Done (scripted versions replace the generated ones) | P1 |
-| Villa roof | Slate grey, Gold tile, Roof garden (flat) | To build | P2 |
+| Villa roof | Slate grey, Gold tile, Roof garden (flat) | Done (scripted) | P2 |
 | Villa porch | Doric, Ionic | Done (scripted versions replace the generated ones) | P1 |
-| Villa porch | Corinthian, Pergola with vines | To build | P2 |
+| Villa porch | Corinthian, Pergola with vines | To build (a free-standing pergola exists in decor) | P2 |
 | Villa door | Panelled double door, built into each scripted wall body (azure or olive) | Done | P1 |
-| Villa door | Wood, Bronze, Gold | To build | P2 |
-| Shutters and windows | Blue, Green, Arched | To build | P2 |
-| Second storey module | Plaster, Marble | To build | P2 |
-| Rooftop extras | Terrace, statue, chimney, banner | To build | P3 |
-| Starter cottage (tier 1 home) | One-room plaster house | Done | P1 |
-| Apartment block (insula) | Tiers 1–4 | To build | P2 |
-| Grand villa (tier 4 home) | Two storeys, courtyard | To build | P3 |
+| Villa door | Wood, Bronze, Gold | Covered by the wall styles (azure, olive, gold-fitted doors built in) | P2 |
+| Shutters and windows | Blue, Green, Arched | Blue and green built into the wall styles; arched to build | P2 |
+| Second storey module | Plaster, Marble | Done (scripted) | P2 |
+| Rooftop extras | Terrace, statue, chimney, banner | Terrace done as the roof garden; rest to build | P3 |
+| Starter cottage | Tier 1 and tier 2, scripted (the generated tier 1 is kept as `.trellis`) | Done | P1 |
+| Apartment block (insula) | Tiers 1–3 | Done (scripted); tier 4 to build | P2 |
+| Grand villa (tier 4 home) | Two storeys, courtyard | Done (scripted) | P3 |
 
 ### B. Businesses on a plot
 
 | Item | Notes | Status | Priority |
 | --- | --- | --- | --- |
-| Café building | Taverna with awning | Done | P1 |
+| Café building | Taverna with awning and terrace | Done (scripted; replaces the generated one, whose back wall was broken) | P1 |
 | Café terrace set | Tables, chairs, umbrella | Done | P1 |
-| Bakery | Oven, bread display | To build | P2 |
-| Market stall | Fruit, cloth, pottery versions | To build | P2 |
-| Flower shop | Pots and garlands | To build | P2 |
-| Pottery workshop | Wheel, kiln, amphorae | To build | P3 |
-| Forge | Anvil, glowing hearth (ties to the smith role) | To build | P3 |
-| Olive press | Ties to the grain and timber resources | To build | P3 |
-| Scroll shop / small library | | To build | P3 |
+| Bakery | Oven, bread display | Done (scripted) | P2 |
+| Market stall | Fruit, cloth, pottery, fish | Done (scripted) | P2 |
+| Flower shop | Pots and garlands | Done (scripted) | P2 |
+| Pottery workshop | Wheel, kiln, amphorae | Done (scripted) | P3 |
+| Forge | Anvil, glowing hearth (ties to the smith role) | Done (scripted) | P3 |
+| Olive press | Ties to the grain and timber resources | Done (scripted) | P3 |
+| Scroll shop / small library | | Done (scripted) | P3 |
 
 ### C. Plot decor and furniture (outdoor)
 
@@ -191,13 +191,13 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | Bronze lantern on post | Done (light to add in code) | P1 |
 | Low garden wall and gate | Done | P1 |
 | Mosaic path tiles | Done (scripted) | P1 |
-| Pergola with vines | To build | P2 |
-| Outdoor dining table set | To build | P2 |
-| Garden beds and planters | To build | P2 |
-| Small shrine | To build | P2 |
-| Reflecting pool | To build | P3 |
-| Sundial | To build | P3 |
-| Banners and flags | To build | P3 |
+| Pergola with vines | Done (scripted) | P2 |
+| Outdoor dining table set | Done (scripted) | P2 |
+| Garden beds and planters | Done (scripted) | P2 |
+| Small shrine | Done (scripted) | P2 |
+| Reflecting pool | Done (scripted) | P3 |
+| Sundial | Done (scripted) | P3 |
+| Banners and flags | Done (scripted) | P3 |
 
 Indoor furniture is listed as a decision in Part 3; it is not in this list yet.
 
@@ -227,15 +227,15 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | City gate, with its bronze door leaf | Done (complete stage only) | P1 |
 | Stadium | Done (complete stage only) | P1 |
 | Founders wall | Done | P1 |
-| Agora (market square) | To build | P2 |
+| Agora (stoa, plaza fountain, stalls) | Done (scripted) | P2 |
 | Temple of Zeus | Done (scripted, 4 build stages) | P2 |
-| Amphitheatre | To build | P2 |
-| Library | To build | P3 |
-| Bathhouse | To build | P3 |
-| Gymnasium | To build | P3 |
-| Council hall | To build | P3 |
-| Lighthouse | To build | P3 |
-| Aqueduct segment | To build | P3 |
+| Amphitheatre | Done (scripted) | P2 |
+| Library | Done (scripted) | P3 |
+| Bathhouse | Done (scripted) | P3 |
+| Gymnasium | Done (scripted) | P3 |
+| Council hall | Done (scripted) | P3 |
+| Lighthouse | Done (scripted) | P3 |
+| Aqueduct segment | Done (scripted) | P3 |
 
 ### F. Public gifts (small items one citizen gifts to the district)
 
@@ -254,11 +254,22 @@ Each one needs construction stages so it can rise during the live: foundation, f
 | Paving tiles: road, plaza, path (2 m, seamless) | Done (scripted) | P1 |
 | Plot boundary marker (low stones, 2 m run) | Done (scripted) | P1 |
 | Street lamp | Done (scripted) | P1 |
-| Signpost with district name | To build | P2 |
-| City wall segment, corner, tower | To build | P2 |
-| Bridge | To build | P3 |
+| Signpost with district name | Done (scripted) | P2 |
+| City wall segment, tower, gate (corners are towers) | Done (scripted) | P2 |
+| Bridge | Done (scripted) | P3 |
 | Scaffolding (2 m bays, stood side by side) | Done (scripted) | P1 |
 | Crane, stone blocks, timber stack, crates | Done (scripted) | P1 |
+
+### G2. Water and extras (added 22 Nov 2026, all scripted)
+
+| Item | Status |
+| --- | --- |
+| Pond, river (straight run, bend), stepping stones | Done |
+| Harbour quay, timber pier, well | Done |
+| Round shrine (tholos), obelisk, victory column, altar, statue plinth | Done |
+| Hand cart, barrels, brazier | Done |
+
+Water surfaces are flat blue in the models; movement and reflection are added in code.
 
 ### H. Characters
 
@@ -288,15 +299,7 @@ These were promised as "coming soon" in the teaser, so each needs a plan for wha
 
 ### Totals
 
-Counted by catalogue line. Many lines hold several models (the citizen's tree alone is eight), so the model count is roughly double.
-
-| Status | Lines |
-| --- | --- |
-| Done | 44 |
-| Teaser, needs clean-up | 0 |
-| To build, P1 | 0 |
-| To build, P2 | 22 |
-| To build, P3 | 22 |
+After the scripted build of 22 Nov 2026 the catalogue holds about 150 models in `assets/models/`. Still to build: Corinthian porch, arched windows, rooftop statue, chimney and banner extras, insula tier 4, laurel, pomegranate, fig, plane and almond trees, rocks, grape vines, more citizens and outfits, Zeya and Zeus figures, and build stages for the civic buildings other than the temple. The trees and characters need generation or another route; the rest can be scripted.
 
 ---
 
