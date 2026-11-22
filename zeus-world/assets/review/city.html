@@ -12,12 +12,31 @@
 <body>
 <div id="label"></div>
 <div id="load" style="position:fixed;left:50%;top:50%;width:min(60vw,420px);height:10px;margin:-5px 0 0 calc(min(60vw,420px) / -2);background:rgba(255,255,255,.6);border-radius:6px;overflow:visible"><div style="border-radius:6px;height:100%;width:2%;background:#2f6fb0;transition:width .2s"></div><div style="position:absolute;top:18px;left:0;right:0;text-align:center;font:600 14px system-ui;color:#1d1a2e">Building the city…</div></div>
-<div id="nav" style="position:fixed;left:16px;bottom:14px;display:flex;flex-wrap:wrap;gap:6px;font:600 13px system-ui"></div>
+<div id="panel" style="position:fixed;left:16px;bottom:14px;font:600 13px system-ui;color:#1d1a2e;max-width:calc(100vw - 32px)">
+  <button id="fold" title="Hide or show controls">☰ Controls</button>
+  <div id="body">
+    <div id="nav" class="row"></div>
+    <div class="row">
+      <button id="spin">⟳ Rotate: on</button>
+      <button data-z="-1" title="Zoom in">＋</button><button data-z="1" title="Zoom out">－</button>
+      <button data-p="-1,0" title="Pan left">←</button><button data-p="0,1" title="Pan forward">↑</button><button data-p="0,-1" title="Pan back">↓</button><button data-p="1,0" title="Pan right">→</button>
+      <button id="reset">Reset</button>
+    </div>
+  </div>
+</div>
+<style>
+  #panel .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  #panel button, #panel a { background: rgba(255,255,255,.85); color: #1d1a2e; padding: 7px 11px; border-radius: 8px; text-decoration: none; border: 0; font: inherit; cursor: pointer; min-width: 34px; }
+  #panel a.on { background: #2f6fb0; color: #fff; }
+  #panel.shut #body { display: none; }
+</style>
 <script>
-  // quick links between views; drag to orbit, scroll to zoom
-  const q = new URLSearchParams(location.search), nav = document.getElementById('nav');
-  const link = (t, k, v) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; a.style.cssText = 'background:rgba(255,255,255,.8);color:#1d1a2e;padding:6px 10px;border-radius:8px;text-decoration:none'; nav.append(a); };
-  if (!q.has('shot')) { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'top']) link(v, 'view', v); link('day', 'light', 'day'); link('dusk', 'light', 'dusk'); }
+  // view links; the rest of the panel is wired up in city.js
+  const q = new URLSearchParams(location.search), nav = document.getElementById('nav'), panel = document.getElementById('panel');
+  const link = (t, k, v, d) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; if ((q.get(k) || d) === v) a.className = 'on'; nav.append(a); };
+  if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'top']) link(v, 'view', v, 'wide'); link('day', 'light', 'day', 'day'); link('dusk', 'light', 'dusk', 'day'); }
+  document.getElementById('fold')?.addEventListener('click', () => { panel.classList.toggle('shut'); try { localStorage.setItem('zw-panel', panel.classList.contains('shut') ? '1' : ''); } catch {} });
+  try { if (localStorage.getItem('zw-panel')) panel.classList.add('shut'); } catch {}
 </script>
 <script type="module" src="./city.js"></script>
 </body>
