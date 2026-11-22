@@ -37,6 +37,8 @@ Scripted models are built at real size, facing the front, so the normaliser only
 
 `review/city.html` is the whole scripted city (`PAGE=city.html node shot.mjs renders/x.png "view=wide"`; about 3 minutes a still). `qc.sh` renders any set of models side by side for checking.
 
+`review/life.js` (citizens, building sites, birds) and `review/ambient.js` (cloth, trees, smoke, spray, boats) add the motion; `review/city.js` holds layout, lighting, time of day and effects. Page options are listed in `docs/STATUS.md`. `npm run build` makes the hosted version in `dist/`.
+
 ## Street test
 
 `review/street.html` is the look test: six plots on a road, from catalogue models only. `PAGE=street.html node shot.mjs renders/x.png "view=wide&light=day"` (views: wide, street, villas, ochre, gold, site, garden). `review/main.js` also takes `m=asm:models/<walls>.glb` to show a wall body with a roof and porch.

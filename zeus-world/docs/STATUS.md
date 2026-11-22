@@ -1,72 +1,85 @@
 # Zeus World: where we stand
 
-Handoff for a new session, 22 Nov 2026. Latest work is on branch `claude/eager-faraday-svkb22` (continues `claude/dazzling-mendel-y9qquo`) of `bala1237/zeus-scripts`, folder `zeus-world/`.
+Handoff for a new session, written 22 Nov 2026. Repository `bala1237/zeus-scripts`, folder `zeus-world/`.
 
-Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially the 15 Nov addendum), `docs/ASSET-BIBLE.md` (3D style rules and catalogue), `assets/README.md` (pipeline).
+**Branch:** all current work is on `claude/eager-faraday-svkb22`. It continues `claude/dazzling-mendel-y9qquo` and has not been merged anywhere. Start from it.
 
-## Done
+**Read in this order:** this file, `docs/CONSTITUTION.md` (product rules, especially the 15 Nov addendum on Bolts), `docs/ASSET-BIBLE.md` (style rules and catalogue), `assets/README.md` (pipeline and commands).
 
-**Product**
-- Constitution with the 15 Nov addendum: Bolts ⚡ earned from all participation, personal plots (citizens see only their own; the full world is shown on the live), community builds (pledges, doubling at 10 people, 20% cap per person, names without amounts), account linking by typing a one-time code in the live chat. TikTok login dropped.
+**Live preview:** https://zeus-world-preview-bala-0416.vercel.app/city.html (public link; see "Hosted preview").
 
-**Teaser** (`teaser-3d/`)
-- 32.5 s vertical teaser in Three.js, beat-synced to Mythic Dawn, with the AI-generated model kit: comments become citizens, phone builder, upgrade montage, Featured on Zeus LIVE, stadium, four "coming soon" mysteries, First 100 Founders wall, title card.
-- Zeya voiceover from ElevenLabs (voice "Zeya-Seductive", mixed delivery), fitted and ducked: `scripts/voice.py` then `scripts/mix.sh` (seconds, no re-render). Rendered videos live in `out/`, which is not committed.
-- Known nit: a blue streak (the sea) crosses the bottom of the Founders shot. Moving that camera needs a 1.5 h re-record.
+## What exists
 
-**Style test** (`style-test/`)
-- One plot with a modular villa: walls (Plaster, Marble), roof (Terracotta, Azure), porch (None, Doric, Ionic) snapping to fixed sockets. Published page: https://claude.ai/artifact/RK9YuFhmNptF6VPBHKTSLh
+| Area | State |
+| --- | --- |
+| Product rules | Constitution with Bolts, personal plots, community builds, account linking by chat code |
+| Teaser | 32.5 s vertical teaser in `teaser-3d/` with Zeya voiceover. Untouched this round |
+| Catalogue | 124 files in `assets/models/` (about 115 distinct models plus kept alternates) |
+| Scripted models | 87 built by Blender script, free, via `assets/build.sh` |
+| Scenes | Single-model review, six-plot street, whole walled city with harbour |
+| City scene | Lit, graded for streaming, alive: people, construction, ambient motion, day-to-dusk cycle, camera tour |
+| Hosting | Vercel preview of the review scenes |
 
-**Asset bible and pipeline** (`docs/ASSET-BIBLE.md`, `assets/`)
-- Style rules: look, palette, gold-bolt motif, fixed prompt templates, scale (1 unit = 1 m, citizen 1.75 m, 2 m grid), +Z front, tiers 1–4, budgets, naming, 8-point acceptance checklist.
-- Catalogue of about 90 lines with status and priority (P1/P2/P3).
-- `assets/normalize.mjs`: raw model to catalogue model (orientation, origin, fit-to-box scale, triangle budget, WebP, meshopt).
-- `assets/review/` + `assets/shot.mjs`: review scene that renders an item beside the reference villa and a citizen on the 2 m grid, day or dusk.
-- First catalogue item done: **starter cottage** (`home_cottage_t1`). Concept A, built with Trellis 2 and Hunyuan 3D 3.1 Pro; the owner chose **Trellis 2**.
+### Models, by how they were made
 
-**Batch 1: P1 small items (22 Nov)**
-- 17 models built from owner-approved concepts with Trellis 2: myrtle bush, oleander bush, box hedge segment, wildflowers, grass tuft, marble bench, bronze lantern, three pots, amphorae cluster, garden wall segment, garden gate, and the citizen's tree (an oak) at 4 stages. Concepts in `assets/concepts/batch1/`, models in `assets/models/`, sheets in `assets/sheets/`, settings in `assets/batch1.sh`.
-- All face +Z, sit at the origin and are scaled to real size (tree stages 0.9, 2.5, 5 and 7 m). Checked in day and dusk.
-- **Budgets raised (owner agreed, 22 Nov).** The models are 11k to 31k triangles and 0.5 to 1.3 MB for props, 14k to 61k and 0.5 to 2.7 MB for plants and trees, against original goals of 5k and 10k. Simplifying further strips the leaves, and a test of Trellis at `decimation_target` 5000 (one bush, one pot) gave a broken bush and a blotchy pot. The asset bible now carries the higher limits with the old ones as goals, and the batch is marked Done there.
-- **Owed: far-view LODs** for all 17, before the full-city live view. Ordinary simplification cannot make them; try meshopt's sloppy simplifier or flat cards.
-- Other open points: the gate posts are 1.1 m against the wall's 0.9 m, the bench marble lost most of its veining, the grand tree's gold leaves read pale yellow, the lantern has no light source yet (add in code).
-- `normalize.mjs` gained `--maxerr` and repeated simplification passes; the review scene gained `?props`.
+- **Scripted in Blender (free).** Villa parts (walls: stone, ochre, gold-trim marble; roofs: terracotta, azure, slate, gold, roof garden; porches: Doric, Ionic; second storey: plaster, marble), cottages tier 1 and 2, apartment blocks tier 1 to 3, grand villa, Temple of Zeus in four build stages, stoa, library, council hall, bathhouse, gymnasium, amphitheatre, round shrine, lighthouse, aqueduct, city wall, tower, gate, bridge, plaza fountain, taverna, bakery, flower shop, pottery, scroll shop, olive press, forge, four market stalls, street lamp, lantern post, tiles (road, plaza, mosaic), boundary stones, signpost, plaque, obelisk, victory column, altar, sundial, shrine, banners, statue plinth, bench, amphorae, garden wall and gate, pergola, dining set, planter, garden bed, cart, barrels, brazier, scaffolding, crane, stone blocks, timber stack, crates, pond, river (straight, bend), stepping stones, quay, pier, well, reflecting pool.
+- **Generated on fal (Trellis 2).** Bushes, hedge, flowers, grass tuft, three pots, citizen's tree (an oak) at four stages, and the cleaned-up teaser models: city gate and its door leaf, stadium, Founders wall, cypress, colossus, sky temple, trireme, vault, two rigged citizens.
+- **Poly Haven scans (CC0, free).** Three rock sets, a marble bust, a lion head.
+- **Kept alternates.** Files ending `.trellis.glb`, `.tripo.glb`, `.hunyuan.glb` are earlier versions kept for comparison; the plain name is the catalogue model.
 
-**Teaser models cleaned up (22 Nov)**
-- The 12 teaser models are now catalogue models in `assets/models/` (settings in `assets/teaser.sh`, sheet `assets/sheets/teaser_models_review.jpg`): city gate 12 m, its bronze door leaf, stadium 15 m high and 32 m across, Founders wall 6 m, café 5 m, cypress 7 m, colossus 24 m, sky temple 30 m, trireme 24 m long, vault 10 m, citizen woman and elder at 1.75 m with Walk, Idle, Cheer, Clap. All face +Z and are within budget. The sizes are first proposals, not owner-approved.
-- The teaser itself still loads its own copies in `teaser-3d/public/models/`; nothing there changed.
-- The "villa door" the bible listed as a teaser model is really the city-gate door leaf, so a villa door is still to build.
-- Not checked: dusk views, and the citizens' animations in motion after simplifying to 20k triangles (the clips are present).
+Status and remaining gaps per catalogue line are in `docs/ASSET-BIBLE.md`, Part 2.
 
-**Cost check (22 Nov)**
-- Measured on the fal balance: Trellis 2 at our settings is $0.35 a model; Tripo P2 (5k-triangle limit, PBR) is $1.10. The fal tools cannot report charges or the balance; the owner reads them off the dashboard. Tripo gave a cleaner bench but at three times the price.
-- Mesh2Motion (free, open-source rigging in the browser) was raised by the owner as a possible replacement for paid Meshy rigging. Not evaluated.
+### The city scene (`assets/review/`)
 
-**Free Blender route (owner's decision, 22 Nov: "visual excellence is non-negotiable")**
-- Hard-edged and modular items are now built by script in `assets/blender/` (Blender 5.3 as a Python module), at no cost. `zw.py` holds the helpers; `villa_walls.py`, `bench.py` and `kit.py` build the models; `build.sh` builds everything into `assets/models/`. Textures are CC0 Poly Haven scans in `blender/textures/`, graded to the palette; soft contact shadows are baked into vertex colours.
-- Built this way: villa walls in stone, ochre and gold-trim marble (panelled double doors, louvred shutters, cornice with dentils, corner stones, wall lantern; 28.5k triangles each, 0.8 to 1.5 MB, tested under the existing roofs and behind the porches), terracotta and azure roofs (17k triangles), Doric and Ionic porches (11k and 14k), marble bench, bronze lantern post, amphorae cluster, garden wall and gate (same height now, so they join), street lamp, name plaque, road, plaza and mosaic tiles, boundary stones, scaffolding bay, crane, stone blocks, timber stack, crates. All within the original budgets except the bench at 6.3k triangles (goal 5k).
-- The scripted bench, lantern, amphorae, garden wall and gate replaced the Trellis versions in the catalogue; the Trellis files are kept beside them as `*.trellis.glb`.
-- **Milestone reached: the street test.** `assets/review/street.html` lays out six 16 x 12 m plots on a cobbled road from catalogue models only; sheet `assets/sheets/street_milestone.jpg` (views: wide, street, ochre, gold, site, villas; day and dusk).
-- The villa is now fully scripted: a complete house (walls, roof, porch) is about 57k to 60k triangles and 1.7 to 2.4 MB. The street test uses the scripted roofs and porches; the older Trellis roof and porch parts in `style-test/` are no longer needed for new work.
-- Still generated, not scripted: trees, bushes, flowers, pots, cypress, café, cottage, citizens. They sit well beside the scripted pieces in the street test.
-- **Temple of Zeus** (`blender/temple.py`, sheet `assets/sheets/temple_of_zeus.jpg`): Doric temple with columns all round on a stone podium, 15 x 28 m and 12.3 m tall, in four build stages (21k, 28k, 33k, 52k triangles; 0.9 to 1.9 MB; budget 80k, 4 MB). Painted trim (azure triglyphs and pediment, red fillet, gold rosettes, bolt and roof ornaments) was taken as an idea from a low-poly city pack the owner showed; nothing from the pack is used. Flaws: brazier flames read as eggs; not yet placed in a scene.
-- City ideas noted from that pack for later: temple on a terraced hill with stairs, city wall with towers and a gate arch, market stalls with striped awnings, round shrine (tholos), fountain plaza, banners, curved paved paths, harbour edge.
-- **Everything scriptable is now scripted (owner's instruction, 22 Nov: build all Blender items, self-check, no approval needed).** About 90 scripted models: civic set (stoa, plaza fountain, library, council hall, bathhouse, gymnasium, amphitheatre, round shrine, lighthouse, aqueduct, city wall, tower, gate, bridge), monuments (obelisk, victory column, altar, sundial, shrine, banners, statue plinth, signpost), water kit (pond, river straight and bend, stepping stones, quay, pier, well, reflecting pool), homes (cottage tiers 1 and 2, insula tiers 1 to 3, grand villa, second-storey modules, slate and gold roofs, roof garden), businesses (taverna, bakery, flower shop, pottery, scroll shop, olive press, forge, four market stalls) and furniture (pergola, dining set, planter, garden bed, cart, barrels, brazier). Builders: `blender/parts.py` (shared columns, roofs, windows, doors, awnings, arches), `city.py`, `town.py`, `temple.py`. All within budget; the heaviest are the temple (52k triangles) and grand villa (48k).
-- The scripted taverna replaced the generated café (kept as `biz_cafe_t1.trellis.glb`); scripted cottages sit beside the generated one.
-- **Whole-city scene:** `assets/review/city.html` (views wide, plaza, street, temple, harbour, river, homes, civic, top; day and dusk), sheet `assets/sheets/city.jpg`. It takes about 3 minutes per still on this machine and has not been tested for frame rate on a phone.
-- **Colour grade for streaming (owner found the scenes too pale for OBS):** `review/city.js` now defaults to a deeper sky and grass, a harder sun with less fill light, lower exposure and a saturation and contrast boost on the canvas; `?grade=soft` gives the old look. Before and after in `assets/sheets/city_grade_before_after.jpg`. This is scene lighting only: the models are unchanged, and `street.js`, `main.js` and the game renderer still use the pale settings. The sky is a flat colour and wants a gradient or clouds.
-- **Poly Haven trial (CC0, free):** the city scene now uses a photographed sky for backdrop and light (`assets/review/public/sky/`: kloofendal_48d_partly_cloudy_puresky for day, belfast_sunset_puresky for dusk). Five scanned models were slimmed to budget and added to the catalogue: `nature_rock_t1_boulder` (4k triangles), `nature_rock_t1_coast` (8k), `nature_rock_t1_small` (5k), `decor_bust_t1_marble` (6k), `decor_lion-head_t1` (5k). Sheet `assets/sheets/polyhaven_trial.jpg`. Findings: the sky is a clear gain; the boulder works; the small-rocks scan carries a patch of sand ground and reads as a flat photo; the lion head turned into a dark blob at fountain size and was taken out of the scene; marble still reads slightly cool under the sky light. Poly Haven has no Greek buildings and its trees are 0.3 to 7.8 million polygons with no olive, cypress, laurel or fig.
-- **Effects in the city scene (`review/city.js`):** water gets a moving ripple and sky reflections, flames and coals glow and flicker with a soft halo, and at dusk the lamps and braziers near the centre cast real light. All are found by material name (`water`, `flame`, `coal`), so new models pick them up without changes. Sheet `assets/sheets/city_effects.jpg`. Only seen as still frames here; the sea ripple shows a repeating pattern and the fountain water looks grainy at dusk.
-- **Life, batches 1 and 2 (`review/life.js`, wired in `review/city.js`):** 44 citizens walk a route graph through the gate, main street, bridge, agora and sacred way, stopping at stalls, the fountain, the library and the temple (`?people=N` changes the count); 6 more walk the quay. Three building sites loop on their own clocks: the council hall and two villas rise behind scaffolding (a clipping plane, per the "stages in code" decision), a hoist lifts blocks, builders hammer, dust puffs, a Bolts progress label follows each site, and on completion a lightning bolt strikes and nearby citizens cheer. A flock of 16 birds circles. A frame-rate counter sits top right. Sun shadows are drawn once; people use blob shadows. Sheet `assets/sheets/city_life.jpg`. Verified in stills only: motion, timing and frame rate are unchecked. It is a timed demo, not driven by real Bolts.
-- **Life, batch 3 (`review/ambient.js`):** cloth (banners, flags, awnings) ripples in a vertex shader, 45 trees sway, smoke rises from 8 chimneys (bakery, forge, kiln, cottages, bathhouse), the plaza fountain sprays, the trireme rides at anchor, a small sailing boat crosses the bay, and the sky drifts. Sheet `assets/sheets/city_ambient.jpg`. Stills now show the scene 8 seconds in. Cloth movement is kept small because the gold bolts on banners do not move with the cloth and would sink into it. Verified in stills and for errors only.
-- **Life, batch 5:** the city page now cycles from day to dusk and back by default (40 s day, 16 s change, 30 s dusk): sun colour, height and strength, sky (two photo domes cross-fading), fog, grass and water colour, exposure, and the lamps and fires coming up as it darkens. `?light=day` or `dusk` holds one. A camera tour (default when no view is chosen) glides between wide, plaza, civic, street, temple, harbour and river, turning slowly at each; grabbing the view or the Tour button stops it. Stills checked for day and dusk; the transition itself, the tour and the frame rate have not been seen in motion. Sun shadows are redrawn about eight times per transition, which may hitch.
-- Plan agreed with the owner: deliver liveliness in batches and validate each on the hosted preview. Remaining: batch 4 animals (birds done; four-legged animals need generation, not yet approved), (batch 5, day cycle and camera tour, is done).
-- Quality check: every model was rendered beside a citizen and the villa, and the city scene was checked from six views. Fixed along the way: stretched stone on round towers, egg-shaped brazier flames on the temple.
-- Remaining flaws seen: gymnasium roof has small notches at the corners; the amphitheatre's stage building hides the stage from the front; pergola vines are sparse; river bank stones are thin on the near side; water is flat blue until the game adds movement; dusk lamps are not yet lit by the models themselves.
-- Known flaws: the café's back wall is broken (visible from behind); boundary stones read a little like logs; some louvre slats catch the sun as white lines.
+| File | What it does |
+| --- | --- |
+| `city.js` | Layout of the city, lighting and colour grade, sky, camera views, controls panel, time of day, water, fire and lamp effects |
+| `life.js` | Citizens walking a route graph, building sites rising with Bolts labels, lightning on completion, birds |
+| `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
+| `city.html` | Page, loading bar, collapsible controls |
+| `street.js`, `main.js` | The six-plot street test and the single-model review scene (older, still on the pale lighting) |
 
-**Hosted preview (Vercel)**
-- Project `zeus-world-preview` (team Bala), linked to this repo with root `zeus-world/assets`, build `npm run build`, output `dist`. Live at https://zeus-world-preview-bala-0416.vercel.app/city.html (also `street.html`, and `index.html?m=models/<file>.glb` for single models). The link is public. Pushes to the linked repo redeploy.
+Page options: `?view=wide|plaza|street|temple|harbour|river|homes|civic|top`, `?light=cycle|day|dusk` (cycle is the default), `?people=N` (default 44), `?tour=0`, `?spin=0`, `?grade=soft` (the old pale look), `?shot` (one still frame, used by `shot.mjs`).
+
+Everything that moves registers a function in the `tickers` list in `city.js`. Effects find their targets by material name (`water`, `flame`, `coal`, `cloth_*`), so new models pick them up without code changes.
+
+**All motion is a timed demo.** Bolts counts, viewer names and build progress are made up. Nothing is connected to TikTok or a simulation.
+
+## Hosted preview
+
+- Vercel project `zeus-world-preview`, team "Bala" (`team_sbCFPbyQjCI8e29mwR2c9t3U`), project id `prj_CxFJGUOEOvvLAiTCftIXpYpWqOds`.
+- Linked to this repository, root `zeus-world/assets`, framework Vite, build `npm run build`, output `dist`.
+- **It does not redeploy on push to this branch.** The project's production branch is another one, so each update was deployed by hand through the Vercel tools: `create_deployment` with `gitSource` (github, org `bala1237`, repo `zeus-scripts`, ref this branch, the commit sha) and `target: production`.
+- The link is public and serves every model file. Protect it or take it down before sharing more widely.
+
+## Verified, and not
+
+- **Verified:** every model rendered beside a citizen and the villa; the city from several fixed views in day and dusk as still frames; the controls panel by driving it in a browser; no page or shader errors.
+- **Not verified:** anything in motion. The build machine has no graphics card, so a still takes about four minutes and motion cannot be watched. Walking, the build loop, cloth, smoke, the day-to-dusk change, the camera tour and the frame rate have only been seen by the owner, on the live preview.
+- The owner has confirmed: the page loads, the city "looks awesome", auto-rotation and controls work. They reported flicker on the tower tops (fix shipped, not yet confirmed gone).
+
+## Waiting on the owner
+
+The plan agreed on 22 Nov was to deliver liveliness in batches and have the owner check each on the preview, rather than one fix at a time. Batches 1, 2, 3 and 5 are delivered. No feedback has come back yet on any of them. The checklists sent were:
+
+1. **People.** Natural walking, no sliding or walking through stalls, lamps or buildings; correct height over the bridge; is 44 the right number.
+2. **Construction.** Does the council hall rise convincingly; do the Bolts labels stay on their buildings; is the lightning and flash too strong.
+3. **Ambient.** Is the cloth ripple visible enough; tree sway; smoke amount; does the fountain spray read as water; the sailing boat.
+4. **Day cycle and tour.** Is the change smooth; any stutter (shadows are redrawn about eight times per change); cycle length; tour pace and stops; does any stop start inside a building.
+5. **Frame rate** on a computer and a phone, day and dusk (counter is top right).
+
+## Next
+
+1. **Collect the owner's feedback** on batches 1, 2, 3 and 5 and fix it in one pass.
+2. **Batch 4, animals.** Birds are in. Cats, dogs, a donkey with a cart and goats need generating and rigging: roughly $1 to $2 each on fal, or free if Mesh2Motion works for four-legged rigs (not yet evaluated). The owner has not approved the spend.
+3. **Performance.** Unmeasured. The city is about 80 MB and 110 models; 50 animated citizens are about a million triangles. Likely work: far-view models, loading distant buildings last, fewer real lights, a quality setting. Needed before OBS or phone use.
+4. **Finish the look.** Marble reads slightly cool under the sky light; grass is strong, especially at dusk; apply the stream grade to `street.js` and `main.js`; the dusk fountain water still shows a faint speckle.
+5. **Known model flaws.** Gymnasium roof has notches at the corners; the amphitheatre's stage building hides the stage from the front; pergola vines are sparse; river bank stones are thin on one side; gate posts in the garden set are fine but the boundary stones read a little like logs; one villa in the north-east row of the city scene was dropped because it sat on the wall.
+6. **Construction loop.** A finished building vanishes and restarts abruptly; walls are cut off flat so the hollow inside shows; only the temple has real stage models; builders "hammer" with the clap animation.
+7. **Cloth.** Banner ripple is kept small because the gold bolts are separate meshes and sink into moving cloth. A proper flag wave needs the bolt made part of the cloth in `blender/parts.py` (`banner`).
+8. **Wire the catalogue into the product.** The phone plot builder (`style-test/`) still uses the old generated villa parts stretched to fit; the new parts are at real size with fixed origins (see socket table in the asset bible). Then drive the city from real Bolts and viewers.
+9. **Still to make.** Corinthian porch, arched windows, rooftop statue and chimney extras, apartment block tier 4, more tree species (laurel, pomegranate, fig, plane, almond), vines, more citizens and outfits, statues, Zeya and Zeus figures. Trees and characters need generation or another route; the rest can be scripted.
+10. **Housekeeping.** Merge this branch; decide whether `assets/models/` (83 MB in git) should move to file storage; licence check on the fal generators before anything ships.
 
 ## Decisions taken
 
@@ -74,33 +87,38 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 | --- | --- |
 | Plot size | 16 × 12 m on a 2 m grid |
 | Interiors | Exteriors only for now |
-| Concept images | Nano Banana 2.1 (`google/nano-banana-2.1`) on fal, 1:1, 2K, template prompt |
-| Hard-edged and modular items | Built free by Blender script (`assets/blender/`), not generated |
-| Image to 3D | Trellis 2 (`fal-ai/trellis-2`, resolution 1536, texture 2048, decimation 120000) is the default; Hunyuan 3D 3.1 Pro is the fallback |
-| Tried and rejected | Higgsfield 3D Jutsu (poor result on the cottage) |
-| Characters | Meshy rigging via fal (`fal-ai/meshy/rigging/multi-animation`) |
-| Construction stages | Made in code (rise from the ground behind a scaffolding kit), not separate models |
-| Citizen's tree | 4 growth-stage models; the drooping "resting" pose is done in code |
-| Roads, paths, plaza tiles, boundary stones | Drawn in code, not generated |
-| Review flow | Concepts in batches of about 10 on one sheet; the owner approves before any 3D spend |
+| Cost | Keep spend low. Hard-edged and modular items are scripted in Blender for free; paid generation only for organic pieces (plants, citizens, statues, landmarks) |
+| Quality bar | "Visual excellence is non-negotiable" (owner) |
+| Engine | Three.js in the browser. Unreal was considered and rejected: it does not run in a phone browser |
+| Asset packs | Not buying any. Style clash with the "not low-poly, not photoreal" rule, and licences often forbid shipping files to browsers. Used only as inspiration (painted temples, walls, market stalls) |
+| Free sources | Poly Haven for skies and textures (CC0). Its models only selectively (single rocks, the bust) |
+| Budgets | Props up to 30k triangles and 1.3 MB, plants up to 60k and 2.8 MB, with the original 5k and 10k as goals. Scripted models meet the goals; generated ones do not |
+| Concept images | Nano Banana 2.1 on fal, 1:1, 2K, template prompt; owner approves a sheet before any 3D spend |
+| Image to 3D | Trellis 2 on fal (resolution 1536, texture 2048, decimation 120000). Measured at $0.35 a model. Tripo P2 gave a cleaner result at $1.10; not adopted |
+| Characters | Meshy rigging through fal. Mesh2Motion (free, browser) suggested by the owner, not evaluated |
+| Construction stages | Done in code (a rising cut-off behind scaffolding), not separate models. The temple also has four real stage models |
+| Citizen's tree | An oak, four growth-stage models; the leaning "resting" pose is to be done in code |
+| Stream look | Deeper sky and grass, harder sun, less fill, saturation and contrast boost, because the first look was too pale for OBS |
+| Working method | Deliver in batches with a checklist; the owner validates on the hosted preview |
 
 ## Environment notes
 
-- fal is connected through the fal MCP tools (account "Bala murugan").
-- An ElevenLabs key is saved on the Default cloud environment (header `xi-api-key`; the proxy injects it).
-- A Meshy key is also saved there, but direct calls to api.meshy.ai were blocked by the session permission check. Use Meshy through fal, or ask the owner before retrying.
-- No Blender installed; the clean-up is done in Node with gltf-transform.
-- Software rendering only: review stills take seconds, full teaser renders about 1.5 hours.
+- **Blender** is not preinstalled. Set up once per session: `python3 -m venv bl && bl/bin/pip install bpy pillow` (Blender 5.3 as a Python module), then `PY=bl/bin/python ./build.sh [model name]` from `assets/`. A full rebuild takes about 15 minutes.
+- **Node:** `npm install` in `assets/`, then `npm run review` (port 4180). Stills: `node shot.mjs renders/x.png "props&m=models/x.glb&view=3q"`; for the city, `PAGE=city.html node shot.mjs renders/x.png "view=plaza&light=dusk"`. `qc.sh` renders several models side by side.
+- **Rendering here is software only.** A city still takes about four minutes and can exceed a ten-minute command limit if two are chained; run one per command. A page error makes the render hang until timeout, so check `shot.mjs` output for "page error".
+- **fal** is connected through the fal tools (account "Bala murugan"). The tools cannot report charges or the balance; the owner reads them off the fal dashboard. Balance was $96.48 after about $9 of use this round.
+- **Vercel** is connected through the Vercel tools.
+- **Poly Haven:** `python3 blender/fetch_textures.py <asset>` downloads a texture set; the API is `api.polyhaven.com`.
+- An ElevenLabs key and a Meshy key are saved on the cloud environment. Direct calls to api.meshy.ai were blocked by a permission check earlier; use Meshy through fal or ask the owner.
 
-## Next
+## Open questions
 
-1. **Owner review** of `assets/sheets/city.jpg`, `street_milestone.jpg` and `temple_of_zeus.jpg`.
-2. **Phone performance test** of a district, and far-view versions of the heaviest models.
-3. **Wire the scripted villa parts and new homes into the builder** (`style-test/`).
-4. **Build stages** for the other civic buildings (only the temple has them), and the stadium rising in code.
-5. **Tune the effects in motion** (sea ripple pattern, fountain water at dusk), and move them into the game renderer.
-6. **Still needing generation or another route:** more trees (laurel, pomegranate, fig, plane, almond), rocks, vines, more citizens and outfits, statues, Zeya and Zeus figures. Look at Mesh2Motion for free rigging.
+- A cost ceiling per batch on fal.
+- Licence terms of each fal generator for commercial on-stream use.
+- What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
+- That the "First 100 become Founders" promise is honoured at launch.
+- Whether every citizen gets the same plot size.
 
-Open: a cost ceiling per batch on fal, licence check for commercial on-stream use of each generator, what the four teaser mysteries become, and that the "First 100 become Founders" promise is honoured at launch.
+## Sheets worth opening first
 
-Watch on Trellis output: wall-crack patches (fine for tier 1, not for higher tiers) and greyish shutters instead of the palette azure.
+`assets/sheets/city.jpg` (the whole city), `city_life.jpg`, `city_ambient.jpg`, `city_effects.jpg`, `street_milestone.jpg`, `temple_of_zeus.jpg`, `polyhaven_trial.jpg`, `city_grade_before_after.jpg`.
