@@ -24,6 +24,9 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - `assets/review/` + `assets/shot.mjs`: review scene that renders an item beside the reference villa and a citizen on the 2 m grid, day or dusk.
 - First catalogue item done: **starter cottage** (`home_cottage_t1`). Concept A, built with Trellis 2 and Hunyuan 3D 3.1 Pro; the owner chose **Trellis 2**.
 
+**Batch 1 concepts (22 Nov, awaiting the owner's approval)**
+- 17 concept images for the P1 small items in `assets/concepts/batch1/`, one sheet at `assets/concepts/batch1_sheet.jpg`, prompts in `assets/PROMPTS.md`. No 3D generated yet. The citizen's tree is drawn as an oak.
+
 ## Decisions taken
 
 | Topic | Decision |
