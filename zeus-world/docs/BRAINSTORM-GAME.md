@@ -1,6 +1,6 @@
 # Brainstorm: make the city feel like a game
 
-Backlog: ZW-017. Started 22 Nov 2026. This is a list of ideas to choose from, not a plan. Nothing here is decided or built.
+Backlog: ZW-017. Started 22 Nov 2026. This is a list of ideas to choose from, not a plan. Nothing here is decided or built. The phased plan that grew out of it is `ROADMAP.md`.
 
 ## The brief, in the owner's words
 

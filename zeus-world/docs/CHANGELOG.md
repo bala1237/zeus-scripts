@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 22 Nov 2026
 
+- **The bigger plan written.** `ROADMAP.md` sets out the game in six phases, from the owner's direction: a palace with queens (ZW-020), a living day for long streams (ZW-021), walking through the battle MVP's property (ZW-022), and building it like an actual game in phases (ZW-023). Nothing built.
 - **Cinematic camera for the battle (ZW-019).** The owner approved the siege and asked for a closer, film-like camera. Nine kinds of shot now cut between the clash, the ranks, the catapults, the wall and the gate, following the fighting line. Soldiers gained legs and helmets for the closer views.
 - **Siege at the south gate (ZW-018, first version).** During a battle two armies face each other outside the wall and the line between them moves with the score, with arrows, catapults, a rival camp and a strength bar. Runs on a made-up score from the Battle button or `?battle`. `assets/review/battle.js`.
 - **Game direction logged and brainstormed.** ZW-015 (losing a battle damages a building, the community repairs it), ZW-016 (winning triggers a surprise celebration) and ZW-017 (make the city feel like a game: levels that unlock things, a world to explore). Ideas written up in `BRAINSTORM-GAME.md`. Nothing built.

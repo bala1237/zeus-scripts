@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-020.**
+- **Next number: ZW-024.**
 
 ## Open
 
@@ -34,6 +34,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-017 | Brainstorm | Make the city feel like a game | High (proposed) | Brainstorm written; waiting for the owner's choices | 22 Nov 2026, owner |
 | ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium | First version accepted by the owner; real battle events still to connect | 22 Nov 2026, owner |
 | ZW-019 | Enhancement | Cinematic camera during the battle: closer, moving between points of interest | High | Fix shipped | 22 Nov 2026, owner |
+| ZW-020 | Enhancement | A palace, with queens living in it | Medium (proposed) | Open, not started. Roadmap phase 2 | 22 Nov 2026, owner |
+| ZW-021 | Enhancement | A living day: people working, markets, celebrations, dancing, enough for long streams | High (proposed) | Open, not started. Roadmap phase 1 | 22 Nov 2026, owner |
+| ZW-022 | Enhancement | Walk through the battle MVP's property, in and out, to showcase it | Medium (proposed) | Open, not started. Roadmap phase 3 | 22 Nov 2026, owner |
+| ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
 
 ## Closed
 
@@ -198,3 +202,36 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - Touching the view hands the camera back to the viewer. `?cine=0` turns it off.
 - **Checked:** a still of every shot, and a whole battle stepped through to confirm the sequence. The cuts and camera moves have not been seen in motion.
 - **Waiting on the owner:** does it feel cinematic; is any shot too close, too far or too long; are the cuts too frequent; any shot to add or drop.
+
+### ZW-020: A palace, with queens living in it
+
+- **Reported:** 22 Nov 2026, by the owner: "we need a palace and have the queens in there. I will get to choose who they are. For now we can have random."
+- **Plan:** `ROADMAP.md`, phase 2. A scripted palace with a courtyard, a balcony and a throne hall; crowned queens who appear on the balcony, walk the gardens and take part in events; guards and a herald.
+- **First version can be free:** the palace built by Blender script, the queens as the existing woman citizen with a crown and a royal colour, names picked at random.
+- **To settle:** how many queens; what makes someone a queen; what they get and do; where the palace stands; how the owner chooses them (a director's console does not exist yet).
+- Not started.
+
+### ZW-021: A living day
+
+- **Reported:** 22 Nov 2026, by the owner: "since it's going to be during my stream which runs for long hours, we need to ensure we have a lot more things people can explore and we showcase. People working, markets, community celebrations, dancing and so on."
+- **Plan:** `ROADMAP.md`, phase 1. People at work at the forge, bakery, pottery, quay and building sites; market day; a ring dance, a procession to the temple, a play in the amphitheatre, athletes at the gymnasium, a wedding, a feast; a programme of events through the stream announced a little ahead; the battle's film-style camera generalised to showcase each event.
+- **Cost:** movements made in code where possible, as the standing pose was. Paid animations only if those are not good enough, and only with the owner's approval.
+- Related: ZW-014 (the standing pose), ZW-019 (the cinematic camera), ZW-003 (animals).
+- Not started.
+
+### ZW-022: Walk through the battle MVP's property
+
+- **Reported:** 22 Nov 2026, by the owner: "after battle, I should be able to walk through the property of the MVP, in and out, and showcase what they have built for themselves."
+- **Plan:** `ROADMAP.md`, phase 3. First a showcase walk outside: through the garden gate, round the garden, up to the porch, with the owner's name on screen. Then inside.
+- **Two things to settle first:**
+  - **Interiors.** The standing decision is exteriors only (`DECISIONS.md`). "In and out" reverses it, and interiors need rooms, furniture and a way for people to arrange them.
+  - **Naming the MVP.** The constitution forbids any ranking by spend on stream. An MVP is the top supporter of a battle. It is the owner's rule to change; the options are in `ROADMAP.md`, "Things to settle".
+- **Depends on:** real homes built by real people (ZW-009), real battles (ZW-018), and a way for the owner to steer the walk.
+- Not started.
+
+### ZW-023: The bigger plan
+
+- **Reported:** 22 Nov 2026, by the owner: "I need help with ideas and expanding on it to build like an actual game. We don't have to do everything now, but have the bigger plan and build in phases and improvise."
+- **Written:** `ROADMAP.md`. Three loops (the moment, the stream, the city), six phases each ending in something to show on stream, the foundations they lean on, a suggested order, and six things to settle.
+- Continues ZW-017, whose ideas are in `BRAINSTORM-GAME.md`.
+- **Next step:** the owner picks the order and answers the questions. Each phase is then broken into backlog entries as it starts.
