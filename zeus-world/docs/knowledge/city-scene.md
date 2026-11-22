@@ -10,6 +10,8 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `city.js` | Renderer, lighting and colour grade, skies, camera views and tour, model loading, the layout of the city, water, fire and lamp effects, time of day |
 | `life.js` | Citizens walking a route graph, building sites rising with Bolts labels, lightning on completion, birds |
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
+| `names.js` | Name plates over the homes |
+| `poses.html`, `poses.js` | Frame sheet of a character's animation, for checking motion without watching it (see `characters.md`). Not part of the hosted build |
 | `street.js`, `main.js` | The six-plot street test and the single-model review scene. Older; still on the pale lighting (ZW-005) |
 | `public/` | Served as-is: `sky/`, plus two links: `models` to `assets/models/` and `ref` to `style-test/public/models/` (the older reference villa and citizen) |
 
@@ -23,6 +25,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `tour` | `0` turns the camera tour off | on, unless a view is chosen |
 | `spin` | `0` turns the slow rotation off | on |
 | `grade` | `soft` gives the old pale look | stream grade |
+| `names` | `0` hides the name plates over the homes | shown |
 | `shot` | present: render one still frame, 8 seconds in, no animation loop | absent |
 | `label` | text for the top-left label | view and light |
 
@@ -59,7 +62,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 - Three graphs: the town (gate, main street, shops, plaza, stalls, sacred way, library, council hall site), the quay, and one small graph per building site for its builders.
 - Each walker keeps to a lane offset from the line, so two-way traffic passes.
 - `height(x, z)` gives the ground height; the town graph uses it to climb the bridge.
-- Three citizen models, each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`.
+- Three citizen models, each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`. The models and their rigs are described in `characters.md`.
 - `cheerNear()` makes everyone within a radius turn and cheer.
 
 ## Construction (`life.js`)
@@ -68,6 +71,15 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 - A label above shows the name, a Bolts bar and the count. All made up, on a timer.
 - On completion: lightning strike, flash, gold puffs, nearby citizens cheer. After a rest the loop restarts (abruptly; ZW-007).
 - Three sites: the council hall and two villas in the north-east row, each on its own clock.
+
+## Name plates (`names.js`)
+
+- `names.add(building, name)` puts a plate just above the highest point of a building: cream with a gold rim and bolt, the handle in dark blue, drawn on a canvas.
+- A plate is a sprite in the scene, so nearer buildings hide it, unlike the Bolts labels, which are page elements drawn over everything.
+- Each frame a plate is resized so it is 0.85 m tall when the camera is close and never less than 20 pixels tall on screen, up to 3.6 m. That keeps names readable from the wide view. Plates of neighbouring homes can touch at the widest views.
+- It is unlit, so it is dimmed by 30% at dusk to sit with the scene.
+- The list of homes and names is in `city.js` (search for `createNames`). The names are made up. The two villas being built are left out; their Bolts label names the owner.
+- Trap: a building inside a group that has not been drawn yet does not know its position. `add()` updates the world matrices first; without that every plate lands at the centre of the city.
 
 ## Ambient (`ambient.js`)
 

@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-012.**
+- **Next number: ZW-015.**
 
 ## Open
 
@@ -26,6 +26,9 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-009 | Enhancement | Wire the catalogue into the product | Medium | Open | 22 Nov 2026 |
 | ZW-010 | Enhancement | Models still to make | Low | Open | 22 Nov 2026 |
 | ZW-011 | Enhancement | Housekeeping: model storage, licence check, protect the preview | Low | Open | 22 Nov 2026 |
+| ZW-012 | Bug | The women walk in a weird way | High | Fix shipped | 22 Nov 2026, owner |
+| ZW-013 | Enhancement | Houses should show a name, visible from above | Medium | Fix shipped | 22 Nov 2026, owner |
+| ZW-014 | Bug | The "idle" animation is a wide stride that turns round, not a standing pose | Low (proposed) | Open | 22 Nov 2026, found while fixing ZW-012 |
 
 ## Closed
 
@@ -109,3 +112,27 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - Decide whether `assets/models/` (about 85 MB in git) should move to file storage.
 - Licence check on the fal generators before anything ships.
 - The preview link is public and serves every model file. Protect it or take it down before sharing more widely.
+
+### ZW-012: The women walk in a weird way
+
+- **Reported:** 22 Nov 2026, by the owner, after watching the preview: "the women are walking in a weird way. we need to fix it."
+- **Cause:** the woman citizen came from the generator's automatic rig with her whole upper body and head bound to her left forearm bone. Standing still this is invisible; as soon as she moved, her body folded forward and twisted round with the swing of that arm, and her skirt tore between her feet. The skeleton and the animations were correct; the man uses the same ones and walks normally.
+- **Fix shipped 22 Nov 2026:** her binding was rebuilt from her shape with a new tool, `assets/reskin.mjs`. Torso on the hips, head on the head bone, arms and bare legs on their own bones, the skirt hanging from the hips and following the stride. No regeneration, no cost. Detail in `knowledge/characters.md`.
+- **Checked:** frame sheets of her walk, idle, cheer and clap, from the side and the front, and a still of the street. Motion itself cannot be watched on the build machine.
+- **Waiting on the owner:** watch her on the preview. Known compromises: in a long stride her feet show a little ahead of or behind the hem, with nothing drawn of the leg above the ankle.
+
+### ZW-013: Houses should show a name
+
+- **Reported:** 22 Nov 2026, by the owner: "the houses should have name in it. maybe on the roof so its visible?"
+- **Shipped 22 Nov 2026:** a name plate stands just above the roof of each home: cream with a gold rim and a gold bolt, the owner's handle in dark blue. It always faces the camera and never gets smaller on screen than a readable size, so names can be read from the wide view. `assets/review/names.js`; detail in `knowledge/city-scene.md`.
+- **Which homes:** the five finished villas, the four cottages and the grand villa. The two villas being built already show their owner on the Bolts label. Apartment blocks have no plate (many residents).
+- **The names are made up** for the demo.
+- **Design choice to confirm:** a plate standing above the roof was chosen over lettering painted on the roof itself, because painted lettering can only be read from one side and is squashed at a low angle. `?names=0` hides the plates.
+- **Waiting on the owner:** size, style, and whether apartment blocks, shops and public buildings should carry names too.
+
+### ZW-014: The "idle" animation is not a standing pose
+
+- **Found:** 22 Nov 2026, in the frame sheets made for ZW-012. Not reported by the owner.
+- The clip named `Idle`, which citizens play when they stop at a stall or a shop, has the character in a wide stride, turning the upper body round. It is the same for all three citizens, so it comes from the generator's animation set.
+- Options: pick a calmer clip if the rigging service offers one (may cost), or hold a still frame of the walk's passing pose and add a slow breathing sway in code (free).
+- Related, lower priority: the man's and the elder's bindings are coarse (the man's torso is rigid on his hips; the elder's cloak follows his arms). They look acceptable. `reskin.mjs` could be tried on the man; the elder has a different skeleton.

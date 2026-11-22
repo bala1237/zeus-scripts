@@ -15,4 +15,6 @@ n landmark_trireme         trireme   0,0,24   0 80000 2048 0.01
 n landmark_vault           vault     0,10,0   0 80000 2048 0.01
 # Rigged citizens: the last value corrects the height, measured as window.sizes in the review scene (see README).
 n char_citizen_woman       citizen_f     0,1.75,0 0 20000 1024 0.01 0.011908
+# The generator bound her upper body and head to her left forearm; this rebuilds the binding from her shape (see docs/knowledge/characters.md).
+node reskin.mjs models/char_citizen_woman.glb
 n char_citizen_elder       citizen_elder 0,1.75,0 0 20000 1024 0.01 0.011644
