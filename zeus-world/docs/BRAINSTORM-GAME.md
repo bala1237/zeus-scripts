@@ -55,7 +55,7 @@ One shared level for the whole city, raised by the community together. Each leve
 11. **Zeus acts.** The streamer is Zeus. From the director console he can send a storm, a blessing, a golden hour, a challenge. Unpredictable, and it makes him part of the game.
 12. **Votes.** The community chooses the next district, the next build, the name of a street. The constitution already allows for civic votes.
 13. **Battles.** Losing damages a building and opens a repair (ZW-015). Winning triggers a surprise celebration (ZW-016). A winning streak makes the celebrations rarer and bigger.
-14. **A rival city.** Later: the opponent's city is visible across the water, and battles are between the two.
+14. **A rival city, and a battle you can watch.** During a TikTok battle the fight is shown live, driven by the score: a siege at the gate, a sea battle in the harbour, or Zeus against the rival's god (ZW-018). Later the opponent's city is visible across the water.
 
 ## Ideas for each person, inside the shared game
 
