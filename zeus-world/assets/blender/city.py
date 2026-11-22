@@ -225,20 +225,20 @@ def city_wall():
         if abs(abs(v.co.x) - 4.0) < 0.08: v.co.x = 4.0 if v.co.x > 0 else -4.0
     zw.box('course', (8.0, 1.72, 0.22), (0, 0, 0.4), mat('stone_dark'), uv=3.4)
     zw.box('walk', (8.0, 2.0, 0.2), (0, 0, 5.1), mat('step'), uv=1.0)
-    merlons(8.0, 5.2, (0, -0.8)); zw.box('parapet', (8.0, 0.4, 0.45), (0, -0.8, 5.42), mat('stone'), uv=3.4)
+    merlons(8.0, 5.2, (0, -0.8)); zw.box('parapet', (8.0, 0.36, 0.5), (0, -0.8, 5.4), mat('stone'), uv=3.4)
 
 
 def wall_tower():
     """Round wall tower, 9 m, with battlements, a door and a flag."""
     zw.lathe('tower', [(2.9, 0), (2.75, 0.5), (2.6, 7.4), (2.95, 7.9), (2.95, 8.2), (0, 8.2)], mat('stone'), segs=18, uv=3.4)
-    zw.lathe('course', [(2.98, 7.9), (2.98, 8.2)], mat('step'), segs=18)
+    zw.lathe('course', [(2.98, 7.9), (2.98, 8.17)], mat('step'), segs=18)
     for i in range(9):
         a = i * 2 * PI / 9
-        at(lambda: zw.box('merlon', (0.85, 0.4, 0.7), (0, -2.72, 8.55), mat('stone'), bevel=0.03, segs=1, uv=3.4), rz=a)
+        at(lambda: zw.box('merlon', (0.85, 0.4, 0.78), (0, -2.72, 8.51), mat('stone'), bevel=0.03, segs=1, uv=3.4), rz=a)
     at(lambda: door(Face(0, 0, 5.3, 5.3, 'F'), 0, 0, 1.1, 2.2, 'wood_dark', trim='step', double=False), rz=PI)
     for z, a in ((3.4, 0.0), (5.6, 0.5), (4.4, -0.6)):
         at(lambda: zw.box('slit', (0.24, 0.12, 0.9), (0, -2.66, z), mat('dark')), rz=a)
-    zw.rod('pole', (0, 0, 8.2), (0, 0, 11.4), 0.06, mat('wood_dark'), segs=6)
+    zw.rod('pole', (0, 0, 8.1), (0, 0, 11.4), 0.06, mat('wood_dark'), segs=6)
     zw.prism('flag', [(0, 11.3), (1.5, 11.0), (0, 10.5)], 0.03, mat('cloth_red'), axis='Y', centre=(0.06, 0, 0))
     zw.bolt('bolt', 0.4, (0, 0, 11.75), mat('gold'), depth=0.04)
 
@@ -247,7 +247,7 @@ def wall_gate():
     """Gate in the city wall: an 8 m run with a round arch, timber doors standing open, banners."""
     arch_wall('gate', 8.0, 6.4, 1.8, [(0, 1.7, 2.6)], 'stone', uv=3.4)
     zw.box('course', (8.0, 1.9, 0.22), (0, 0, 5.0), mat('step'), uv=1.0)
-    merlons(8.0, 6.4, (0, -0.7)); zw.box('walk', (8.0, 2.1, 0.16), (0, 0, 6.32), mat('step'))
+    merlons(8.0, 6.4, (0, -0.7)); zw.box('walk', (8.0, 2.1, 0.16), (0, 0, 6.3), mat('step'))
     for i in range(11):
         a = PI * i / 10
         zw.box('voussoir', (0.36, 1.9, 0.42), (0, 0, 0), mat('marble'), bevel=0.03, segs=1).data.transform(Matrix.Translation((1.92 * math.cos(a), 0, 2.6 + 1.92 * math.sin(a))) @ Matrix.Rotation(-(a - PI / 2), 4, 'Y'))

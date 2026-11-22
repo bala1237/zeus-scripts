@@ -299,7 +299,8 @@ def merlons(length, z, c=(0, 0), axis='X', m='stone', w=0.7, h=0.6, t=0.4, gap=0
     n = max(1, int((length + gap) / (w + gap)))
     for i in range(n):
         u = (i - (n - 1) / 2) * (w + gap)
-        zw.box('merlon', (w, t, h) if axis == 'X' else (t, w, h), (c[0] + u, c[1], z + h / 2) if axis == 'X' else (c[0], c[1] + u, z + h / 2), mat(m), bevel=0.03, segs=1, uv=2.6)
+        # sunk a little into the wall top: faces lying exactly on each other flicker in the game
+        zw.box('merlon', (w, t, h + 0.06) if axis == 'X' else (t, w, h + 0.06), (c[0] + u, c[1], z + h / 2 - 0.03) if axis == 'X' else (c[0], c[1] + u, z + h / 2 - 0.03), mat(m), bevel=0.03, segs=1, uv=2.6)
 
 
 def shrub(x, y, z, r=0.3, m='leaf', seed=0, n=5):
