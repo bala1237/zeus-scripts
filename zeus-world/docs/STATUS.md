@@ -44,11 +44,12 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 **Free Blender route (owner's decision, 22 Nov: "visual excellence is non-negotiable")**
 - Hard-edged and modular items are now built by script in `assets/blender/` (Blender 5.3 as a Python module), at no cost. `zw.py` holds the helpers; `villa_walls.py`, `bench.py` and `kit.py` build the models; `build.sh` builds everything into `assets/models/`. Textures are CC0 Poly Haven scans in `blender/textures/`, graded to the palette; soft contact shadows are baked into vertex colours.
-- Built this way: villa walls in stone, ochre and gold-trim marble (panelled double doors, louvred shutters, cornice with dentils, corner stones, wall lantern; 28.5k triangles each, 0.8 to 1.5 MB, tested under the existing roofs and behind the porches), marble bench, bronze lantern post, amphorae cluster, garden wall and gate (same height now, so they join), street lamp, name plaque, road, plaza and mosaic tiles, boundary stones, scaffolding bay, crane, stone blocks, timber stack, crates. All within the original budgets except the bench at 6.3k triangles (goal 5k).
+- Built this way: villa walls in stone, ochre and gold-trim marble (panelled double doors, louvred shutters, cornice with dentils, corner stones, wall lantern; 28.5k triangles each, 0.8 to 1.5 MB, tested under the existing roofs and behind the porches), terracotta and azure roofs (17k triangles), Doric and Ionic porches (11k and 14k), marble bench, bronze lantern post, amphorae cluster, garden wall and gate (same height now, so they join), street lamp, name plaque, road, plaza and mosaic tiles, boundary stones, scaffolding bay, crane, stone blocks, timber stack, crates. All within the original budgets except the bench at 6.3k triangles (goal 5k).
 - The scripted bench, lantern, amphorae, garden wall and gate replaced the Trellis versions in the catalogue; the Trellis files are kept beside them as `*.trellis.glb`.
 - **Milestone reached: the street test.** `assets/review/street.html` lays out six 16 x 12 m plots on a cobbled road from catalogue models only; sheet `assets/sheets/street_milestone.jpg` (views: wide, street, ochre, gold, site, villas; day and dusk).
-- Still generated, not scripted: roofs, porches, trees, bushes, flowers, pots, cypress, café, citizens. They sit well beside the scripted pieces in the street test.
-- Known flaws: the café's back wall is broken (visible from behind); the Trellis roofs have a chipped tile and white gaps; boundary stones read a little like logs; some louvre slats catch the sun as white lines.
+- The villa is now fully scripted: a complete house (walls, roof, porch) is about 57k to 60k triangles and 1.7 to 2.4 MB. The street test uses the scripted roofs and porches; the older Trellis roof and porch parts in `style-test/` are no longer needed for new work.
+- Still generated, not scripted: trees, bushes, flowers, pots, cypress, café, cottage, citizens. They sit well beside the scripted pieces in the street test.
+- Known flaws: the café's back wall is broken (visible from behind); boundary stones read a little like logs; some louvre slats catch the sun as white lines.
 
 ## Decisions taken
 
@@ -77,7 +78,7 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 ## Next
 
 1. **Owner review** of `assets/sheets/street_milestone.jpg` and the three wall styles.
-2. **Scripted roofs and porches** (terracotta and azure roofs, Doric and Ionic porches), so the whole villa is free, within budget and free of the Trellis roof flaws.
+2. **Wire the scripted villa parts into the builder** (`style-test/`): three more wall styles, new roofs and porches, at their real sizes rather than stretched.
 3. **Tier 2 cottage, apartment block, shops** by script, reusing the wall, door and window parts.
 4. **Stadium rising in code** behind the scaffolding kit.
 5. **Far-view LODs** for the generated plants and trees (the scripted models are already light).

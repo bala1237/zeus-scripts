@@ -27,3 +27,7 @@ run decor_lantern_t1_bronze   kit.py lantern_post 6000  512
 run decor_amphorae_t1_cluster kit.py amphorae     7000  512
 run decor_garden-wall_t1_plaster kit.py garden_wall 5000 512
 run decor_garden-gate_t1_azure   kit.py garden_gate 9000 512
+run home_villa-roof_t1_terracotta villa_roof.py  terracotta 30000 512
+run home_villa-roof_t3_azure      villa_roof.py  azure      30000 512
+run home_villa-porch_t2_doric     villa_porch.py doric      20000 512
+run home_villa-porch_t3_ionic     villa_porch.py ionic      20000 512

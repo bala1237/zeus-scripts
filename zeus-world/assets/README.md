@@ -22,7 +22,7 @@ Setup: `npm install`.
 `blender/` builds models by script, with no generation cost.
 
 - `zw.py`: shared helpers. Palette, textures (numpy-made marble and meander, and `tex_photo()` which grades CC0 Poly Haven scans towards the palette), boxes, prisms, cylinders, lathed shapes, rods, beams, rings, boolean cuts, the gold bolt, hand-made wobble, baked contact shadows, glTF export.
-- `villa_walls.py <stone|ochre|goldmarble>`: the villa wall body for the walls socket.
+- `villa_walls.py <stone|ochre|goldmarble>`, `villa_roof.py <terracotta|azure>`, `villa_porch.py <doric|ionic>`: the three villa parts, each built to its socket.
 - `bench.py`, `kit.py <item>`: bench; street, construction and garden pieces.
 - `fetch_textures.py`: downloads Poly Haven texture sets into `blender/textures/` (see the README there).
 - `build.sh [model name]`: builds everything, or one model, into `models/`.

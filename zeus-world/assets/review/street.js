@@ -54,8 +54,8 @@ async function fit(url, w, h, d, parent, y = 0, z = 0) {
 async function villa(parent, walls, roof, porch) {
   const W = 6.4, D = 4.4, H = 3.0; const g = new THREE.Group(); parent.add(g);
   if (walls.startsWith('ref:')) await fit(R(walls.slice(4)), W, H, D, g); else await put(M(walls), 0, 0, 0, 1, g);
-  if (roof) await fit(R(roof), W + 0.9, 2.3, D + 1.1, g, H - 0.12);
-  if (porch) await fit(R(porch), W + 0.2, H + 0.1, 1.9, g, 0, D / 2 + 0.85);
+  if (roof) await put(M(`home_villa-roof_${roof}`), 0, 0, 0, 1, g, H);          // scripted parts are already at real size
+  if (porch) await put(M(`home_villa-porch_${porch}`), 0, D / 2, 0, 1, g);
   return g;
 }
 async function citizen(url, x, z, ry, clip = 'Idle', t = 0.4, parent = scene) {
@@ -73,12 +73,12 @@ function lampLight(x, y, z) { if (!L.lamp) return; const p = new THREE.PointLigh
 const PW = 16, PD = 12, ROAD = 4, N = 3, X0 = -PW * N / 2;
 for (let i = 0; i < PW * N / 2 + 4; i++) for (let j = 0; j < ROAD / 2; j++) await put(M('infra_tile_t1_road'), X0 - 3 + i * 2, -ROAD / 2 + 1 + j * 2);
 const PLOTS = [
-  { walls: 'home_villa-walls_t1_stone', roof: 'roof_terracotta', porch: 'porch_doric', tree: 3 },
-  { walls: 'home_villa-walls_t2_ochre', roof: 'roof_terracotta', porch: null, tree: 4 },
-  { walls: 'home_villa-walls_t3_goldmarble', roof: 'roof_azure', porch: 'porch_ionic', tree: 2 },
+  { walls: 'home_villa-walls_t1_stone', roof: 't1_terracotta', porch: 't2_doric', tree: 3 },
+  { walls: 'home_villa-walls_t2_ochre', roof: 't1_terracotta', porch: null, tree: 4 },
+  { walls: 'home_villa-walls_t3_goldmarble', roof: 't3_azure', porch: 't3_ionic', tree: 2 },
   { walls: 'home_villa-walls_t3_goldmarble', roof: null, porch: null, site: true, tree: 1 },
-  { walls: 'ref:body_plaster', roof: 'roof_azure', porch: 'porch_doric', tree: 3 },
-  { walls: 'home_villa-walls_t2_ochre', roof: 'roof_terracotta', porch: 'porch_doric', tree: 2, cafe: true },
+  { walls: 'ref:body_plaster', roof: 't3_azure', porch: 't2_doric', tree: 3 },
+  { walls: 'home_villa-walls_t2_ochre', roof: 't1_terracotta', porch: 't2_doric', tree: 2, cafe: true },
 ];
 for (let k = 0; k < 6; k++) {
   const p = PLOTS[k], side = k < 3 ? -1 : 1, col = k % 3;

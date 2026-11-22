@@ -76,8 +76,8 @@ Homes are built from parts that snap into fixed sockets, so every new part multi
 | Socket | Fits | Box (W × H × D) |
 | --- | --- | --- |
 | Walls (body) | All wall styles | 6.4 × 3.0 × 4.4 m |
-| Roof | All roof styles | Sits on the wall top, overhang included |
-| Porch | All porches | Front face, 6.4 m wide |
+| Roof | All roof styles | Sits on the wall top (origin at 3.0 m), 7.3 x 5.5 m with overhang |
+| Porch | All porches | Front face: origin at the wall front, 6.6 m wide, 1.9 m deep, 3.1 m high |
 | Door | All doors | Front centre of the body |
 | Upper storey (planned) | Second-floor bodies | Same as walls, stacked |
 | Rooftop (planned) | Terrace, statue, garden | Flat roof variants only |
@@ -151,9 +151,9 @@ Priority: **P1** = needed for the first playable version (one district, one plot
 | --- | --- | --- | --- |
 | Villa walls | Plaster, Marble | Done | P1 |
 | Villa walls | Stone, Painted (ochre), Gold-trim marble | Done (scripted; doors and shutters built in) | P1 |
-| Villa roof | Terracotta, Azure | Done | P1 |
+| Villa roof | Terracotta, Azure | Done (scripted versions replace the generated ones) | P1 |
 | Villa roof | Slate grey, Gold tile, Roof garden (flat) | To build | P2 |
-| Villa porch | Doric, Ionic | Done | P1 |
+| Villa porch | Doric, Ionic | Done (scripted versions replace the generated ones) | P1 |
 | Villa porch | Corinthian, Pergola with vines | To build | P2 |
 | Villa door | Panelled double door, built into each scripted wall body (azure or olive) | Done | P1 |
 | Villa door | Wood, Bronze, Gold | To build | P2 |

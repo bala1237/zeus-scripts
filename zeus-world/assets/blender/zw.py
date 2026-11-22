@@ -293,11 +293,12 @@ def beam(name, p0, p1, w, h, mat, bevel=0.0, uv=1.0):
     return o
 
 
-def lathe(name, profile, mat, centre=(0, 0, 0), segs=16, uv=1.0, tilt=None):
+def lathe(name, profile, mat, centre=(0, 0, 0), segs=16, uv=1.0, tilt=None, flutes=0, flute_depth=0.07):
     """Spin a (radius, height) profile about the vertical axis: pots, amphorae, column drums, finials."""
     bm = bmesh.new(); rings = []
     for r, z in profile:
-        rings.append([bm.verts.new((r * math.cos(2 * math.pi * i / segs), r * math.sin(2 * math.pi * i / segs), z)) for i in range(segs)])
+        fl = (lambda i: 1 - flute_depth * (0.5 - 0.5 * math.cos(2 * math.pi * flutes * i / segs))) if flutes else (lambda i: 1)
+        rings.append([bm.verts.new((r * fl(i) * math.cos(2 * math.pi * i / segs), r * fl(i) * math.sin(2 * math.pi * i / segs), z)) for i in range(segs)])
     for a, b in zip(rings, rings[1:]):
         for i in range(segs):
             bm.faces.new([a[i], a[(i + 1) % segs], b[(i + 1) % segs], b[i]])
@@ -353,12 +354,13 @@ def wobble(o, amp=0.008, scale=1.6, seed=0):
     return o
 
 
-def bake_shading(samples=40, dist=0.75, floor=0.38):
-    """Soft contact shadows baked into vertex colours (under cornices, around frames, where things meet the
+def bake_shading(samples=40, dist=0.75, floor=0.38, keep=()):
+    """keep: names of long parts to leave unsplit. Soft contact shadows baked into vertex colours (under cornices, around frames, where things meet the
     ground). The game multiplies them into the material, so the model has depth even in flat light."""
     from mathutils.bvhtree import BVHTree
     objs = [o for o in bpy.context.scene.objects if o.type == 'MESH']
     for o in objs:   # long parts need a few extra points, or a shadow at one end smears along the whole length
+        if o.name.split('.')[0] in keep: continue      # parts that are evenly shaded along their length stay as they are
         if max(((o.data.vertices[e.vertices[0]].co - o.data.vertices[e.vertices[1]].co).length for e in o.data.edges), default=0) > 1.2:
             refine(o, 0.8)
     verts, polys, n0 = [], [], 0
