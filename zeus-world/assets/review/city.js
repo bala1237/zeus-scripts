@@ -189,11 +189,20 @@ for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], pe
   const N = 256, data = new Uint8Array(N * N * 4), W = [[1, 2, 0.5], [3, -1, 0.3], [-2, 5, 0.18], [6, 3, 0.1], [-5, -7, 0.07]];
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let dx = 0, dy = 0; for (const [a, b, k] of W) { const c = Math.cos((a * x + b * y) / N * 2 * PI + a) * k; dx += a * c; dy += b * c; }
     const i = (y * N + x) * 4, l = Math.hypot(dx * 0.35, dy * 0.35, 1); data[i] = 128 + 127 * dx * 0.35 / l; data[i + 1] = 128 + 127 * dy * 0.35 / l; data[i + 2] = 255 / l; data[i + 3] = 255; }
-  const ripple = (rep) => { const t = new THREE.DataTexture(data, N, N); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.needsUpdate = true; return t; };
+  const ripple = (rep) => { const t = new THREE.DataTexture(data, N, N); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep);
+    // smooth sampling with mipmaps: the default for raw textures is blocky, which made the water grainy
+    t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.needsUpdate = true; return t; };
   const waterCol = light === 'day' ? 0x2a86b4 : 0x3d6590;
-  const water = (rep, speed) => { const m = new THREE.MeshStandardMaterial({ name: 'water', color: waterCol, roughness: 0.07, metalness: 0.35, normalMap: ripple(rep), normalScale: new THREE.Vector2(0.3, 0.3), envMapIntensity: 1.2 });
-    tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); m.normalScale.setScalar(0.28 + 0.07 * Math.sin(t * 0.9)); }); return m; };
-  const pondWater = water(0.5, 0.035), seaWater = water(110, 0.02);
+  const water = (rep, speed, rough, ns) => { const m = new THREE.MeshStandardMaterial({ name: 'water', color: waterCol, roughness: rough, metalness: 0.35, normalMap: ripple(rep), normalScale: new THREE.Vector2(ns, ns), envMapIntensity: 1.2 });
+    // three layers of the same ripples at unrelated sizes, turned and drifting different ways, so no repeat shows
+    const u = { uA: { value: new THREE.Vector2() }, uB: { value: new THREE.Vector2() } };
+    m.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
+      sh.fragmentShader = 'uniform vec2 uA; uniform vec2 uB;\n' + sh.fragmentShader.replace('texture2D( normalMap, vNormalMapUv )',
+        '( texture2D( normalMap, vNormalMapUv ) * 0.4 + texture2D( normalMap, mat2( 0.8, -0.6, 0.6, 0.8 ) * vNormalMapUv * 0.37 + uA ) * 0.35 + texture2D( normalMap, mat2( -0.28, 0.96, -0.96, -0.28 ) * vNormalMapUv * 0.113 + uB ) * 0.25 )'); };
+    tickers.push((t) => { m.normalMap.offset.set(t * speed, t * speed * 0.6); u.uA.value.set(-t * speed * 0.7, t * speed * 0.45); u.uB.value.set(t * speed * 0.3, -t * speed * 0.5); m.normalScale.setScalar(ns * (1 + 0.2 * Math.sin(t * 0.9))); });
+    return m; };
+  // small pools are calmer and less mirror-like: sharp ripples there catch every lamp and turn to sparkle
+  const pondWater = water(0.22, 0.02, 0.3, 0.16), seaWater = water(90, 0.02, 0.08, 0.5);
   // soft round glow for fires and lamps
   const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
   gr.addColorStop(0, 'rgba(255,214,150,1)'); gr.addColorStop(0.25, 'rgba(255,160,70,0.55)'); gr.addColorStop(1, 'rgba(255,120,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
