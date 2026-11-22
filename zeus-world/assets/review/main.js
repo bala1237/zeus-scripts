@@ -4,6 +4,9 @@
 //
 // ?m=models/<file>.glb  the item under review (several: comma separated, laid out left to right)
 // ?view=3q|front|back|side|top   ?light=day|dusk   ?label=text
+// ?m=asm:models/walls.glb  shows a wall body (already at real size) assembled with a roof and porch;
+//   &roof=ref/roof_terracotta.glb &porch=ref/porch_doric.glb pick the parts (porch=none for no porch), and a part
+//   under models/ is used at its own size while the reference parts are stretched to the sockets
 // ?props  close-up for small items: tight spacing, no home-slot outlines, camera framed on the items and the citizen
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -47,16 +50,15 @@ const load = async (url) => { const g = await loader.loadAsync(url); g.scene.tra
 const boxOf = (o) => new THREE.Box3().setFromObject(o);
 
 // reference villa (plaster + terracotta + doric), assembled the way the builder does it
-async function villa() {
+async function villa(wallsUrl, roofUrl = './ref/roof_terracotta.glb', porchUrl = './ref/porch_doric.glb') {
   const g = new THREE.Group();
   const fitBox = (o, w, h, d) => { const hold = new THREE.Group(); hold.add(o); let b = boxOf(o), s = b.getSize(new THREE.Vector3());
     if (s.z > s.x) { o.rotation.y = Math.PI / 2; b = boxOf(o); s = b.getSize(new THREE.Vector3()); }
     const c = b.getCenter(new THREE.Vector3()); o.position.set(-c.x, -b.min.y, -c.z); hold.scale.set(w / s.x, h / s.y, d / s.z); return hold; };
-  const [w, r, p] = await Promise.all(['body_plaster', 'roof_terracotta', 'porch_doric'].map((n) => load(`./ref/${n}.glb`)));
-  const W = 6.4, D = 4.4, H = 3.0;
-  const wall = fitBox(w, W, H, D); g.add(wall);
-  const roof = fitBox(r, W + 0.9, 2.3, D + 1.1); roof.position.y = H - 0.12; g.add(roof);
-  const porch = fitBox(p, W + 0.2, H + 0.1, 1.9); porch.position.z = D / 2 + 0.85; g.add(porch);
+  const W = 6.4, D = 4.4, H = 3.0, own = (u) => u.includes('models/');
+  const w = await load(wallsUrl || './ref/body_plaster.glb'); g.add(wallsUrl ? w : fitBox(w, W, H, D));
+  if (roofUrl !== 'none') { const r = await load(roofUrl); const roof = own(roofUrl) ? r : fitBox(r, W + 0.9, 2.3, D + 1.1); roof.position.y = own(roofUrl) ? H : H - 0.12; g.add(roof); }
+  if (porchUrl !== 'none') { const p = await load(porchUrl); const porch = own(porchUrl) ? p : fitBox(p, W + 0.2, H + 0.1, 1.9); porch.position.z = own(porchUrl) ? D / 2 : D / 2 + 0.85; g.add(porch); }
   return g;
 }
 // footprint outline of the 6.4 x 4.4 m home slot
@@ -68,7 +70,7 @@ function slot(x) {
 const ref = await villa(); ref.position.x = -8; scene.add(ref); slot(-8);
 const props = q.has('props'), gap = props ? 0.6 : 3;
 const xs = []; let x = 0, top = 1.75; window.sizes = {}; // rendered size of each item, for checks from scripts
-for (const url of items) { const o = await load(url); const b = boxOf(o); window.sizes[url] = b.getSize(new THREE.Vector3()).toArray(); x += -b.min.x; o.position.x = x; scene.add(o); if (!props) slot(x); xs.push(x); x += b.max.x + gap; top = Math.max(top, b.max.y); }
+for (const url of items) { const o = url.startsWith('asm:') ? await villa('./' + url.slice(4), q.get('roof') ? (q.get('roof') === 'none' ? 'none' : './' + q.get('roof')) : undefined, q.get('porch') ? (q.get('porch') === 'none' ? 'none' : './' + q.get('porch')) : undefined) : await load(url); const b = boxOf(o); window.sizes[url] = b.getSize(new THREE.Vector3()).toArray(); x += -b.min.x; o.position.x = x; scene.add(o); if (!props) slot(x); xs.push(x); x += b.max.x + gap; top = Math.max(top, b.max.y); }
 const cit = await load('./ref/citizen.glb'); { const b = boxOf(cit); const s = 1.75 / (b.max.y - b.min.y); cit.scale.setScalar(s); cit.position.set(props ? -1.2 : (xs[0] ?? 0) + 2.2, -b.min.y * s, props ? 0 : 3.4); scene.add(cit); }
 
 const minX = props ? -1.8 : -11.6, maxX = x - gap, cx = (minX + maxX) / 2, span = Math.max(maxX - minX, props ? top * 1.6 : 0);
