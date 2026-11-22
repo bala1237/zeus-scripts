@@ -1,0 +1,19 @@
+{
+  "name": "zeus-world-assets",
+  "private": true,
+  "type": "module",
+  "description": "Asset pipeline: normalise and compress generated models, and the review scene.",
+  "scripts": {
+    "review": "vite review --port 4180",
+    "build": "vite build review"
+  },
+  "dependencies": { "three": "^0.187.0" },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.1.0",
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "meshoptimizer": "^0.22.0",
+    "vite": "^6.0.0"
+  }
+}

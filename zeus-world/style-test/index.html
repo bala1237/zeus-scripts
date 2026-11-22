@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Zeus World Plot</title>
+<meta name="claude:viewport-fit-sides" content="cover" />
+<style>
+  :root { --gold: #f3c35b; --ink: #1d1a2e; --glass: rgba(20, 18, 38, .62); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #e9c9a3; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-user-select: none; user-select: none; }
+  canvas { display: block; touch-action: none; }
+  .hud { position: fixed; left: 0; right: 0; pointer-events: none; display: flex; justify-content: space-between; align-items: center; padding-block: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+  .top { top: 0; padding-top: max(14px, env(safe-area-inset-top)); }
+  .pill { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: var(--glass); color: #fff; border: 1.5px solid rgba(243, 195, 91, .7); border-radius: 999px; padding: 6px 16px 6px 6px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #f7d789, #c98a2a); display: grid; place-items: center; font-weight: 800; color: var(--ink); }
+  .name { font-weight: 700; font-size: 15px; line-height: 1.1; }
+  .sub { font-size: 12px; opacity: .8; }
+  .bolts { padding: 8px 16px 8px 12px; font-weight: 800; font-size: 16px; }
+  .bolts svg { width: 16px; height: 24px; }
+  .bottom { bottom: 0; padding-bottom: max(18px, env(safe-area-inset-bottom)); justify-content: center; gap: 10px; flex-wrap: wrap; }
+  button { pointer-events: auto; font: 700 15px system-ui, -apple-system, 'Segoe UI', sans-serif; color: #fff; background: var(--glass); border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px; padding: 12px 18px; min-height: 46px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 6px 20px rgba(0,0,0,.25); cursor: pointer; }
+  button.primary { background: linear-gradient(180deg, #f7d789, #d99a32); color: var(--ink); border-color: #fff3c9; }
+  button:active { transform: scale(.97); }
+  button:focus-visible { outline: 3px solid #fff3c9; outline-offset: 2px; }
+  .top2 { top: calc(max(14px, env(safe-area-inset-top)) + 58px); justify-content: flex-end; gap: 8px; }
+  .top2 button { padding: 8px 14px; min-height: 38px; font-size: 13px; }
+  #build { position: fixed; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; padding-bottom: max(14px, env(safe-area-inset-bottom)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: linear-gradient(180deg, rgba(20,18,38,0), rgba(20,18,38,.55) 30%, rgba(20,18,38,.72)); }
+  .slot { display: flex; align-items: center; gap: 8px; max-width: 560px; width: 100%; margin: 0 auto; }
+  .slot-name { width: 52px; flex: none; color: #fff; font: 700 12px system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+  .chip { flex: 1; min-width: 0; min-height: 50px; padding: 6px 8px; border-radius: 14px; font-size: 14px; line-height: 1.15; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .chip small { font-size: 11px; font-weight: 600; color: var(--gold); margin-top: 2px; }
+  .chip[aria-pressed="true"] { background: linear-gradient(180deg, #f7d789, #d99a32); color: var(--ink); border-color: #fff3c9; }
+  .chip[aria-pressed="true"] small { color: #5a3b06; }
+  .chip:disabled { opacity: .4; }
+  #plaque { position: fixed; left: 0; top: 0; pointer-events: none; transform: translate(-50%, -100%); background: var(--glass); color: #fff; border: 1.5px solid var(--gold); border-radius: 12px; padding: 7px 14px; font-weight: 700; font-size: 14px; white-space: nowrap; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); text-align: center; }
+  #plaque small { display: block; font-weight: 600; font-size: 11px; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; }
+  #loading { position: fixed; inset: 0; display: grid; place-items: center; background: linear-gradient(180deg, #f6dfc0, #e2b98d); color: var(--ink); font: 700 18px system-ui, sans-serif; transition: opacity .6s; z-index: 5; }
+  #loading .bar { width: 220px; height: 6px; border-radius: 3px; background: rgba(0,0,0,.12); margin-top: 14px; overflow: hidden; }
+  #loading .bar i { display: block; height: 100%; width: 0; background: #c98a2a; transition: width .2s; }
+  #toast { position: fixed; left: 50%; top: 18%; transform: translateX(-50%); background: var(--glass); color: #fff; border: 1.5px solid var(--gold); border-radius: 14px; padding: 12px 20px; font-weight: 800; font-size: 17px; opacity: 0; transition: opacity .4s; pointer-events: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+</style>
+</head>
+<body>
+<div id="loading"><div>Raising your plot…<div class="bar"><i id="bar"></i></div></div></div>
+<div class="hud top">
+  <div class="pill"><div class="avatar">L</div><div><div class="name">Luna</div><div class="sub">Citizen · Builder</div></div></div>
+  <div class="pill bolts"><svg viewBox="-50 -105 100 210"><polygon fill="#f3c35b" points="15,-100 -45,10 -5,10 -20,100 45,-20 5,-20 35,-100"/></svg><span id="bolts">1,240</span></div>
+</div>
+<div id="plaque"><small id="tier"></small>Luna's Villa</div>
+<div id="toast"></div>
+<div class="hud top2"><button id="light">Golden hour</button><button id="spin">Pause spin</button></div>
+<div id="build" aria-label="Build your villa"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

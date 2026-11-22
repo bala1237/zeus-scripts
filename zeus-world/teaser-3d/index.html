@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus World Teaser</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: #000; }
+  #stage canvas { position: absolute; inset: 0; display: block; }
+  #flash, #dim { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  #flash { background: #eaf0ff; }
+  #dim { background: radial-gradient(ellipse at 50% 45%, rgba(8,10,28,.72), rgba(4,5,16,.94)); }
+  #scrim { position: absolute; left: 0; top: 0; width: 100%; height: 820px; pointer-events: none; background: linear-gradient(180deg, rgba(4,7,20,.5), rgba(4,7,20,.24) 55%, rgba(4,7,20,0)); }
+  .cap { position: absolute; left: 50px; width: 980px; text-align: center; font-family: 'Cinzel', serif; font-weight: 900; color: #fff; text-transform: uppercase; display: none; transform-origin: 50% 0; }
+  .cap .row { line-height: 1.14; letter-spacing: .05em; filter: drop-shadow(0 5px 16px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(0,0,0,.95)); }
+  .cap .word { display: inline-block; white-space: nowrap; }
+  .cap .ch { display: inline-block; opacity: 0; }
+  .cap .ch.gold { background: linear-gradient(100deg, #ffcf66 0%, #ffb02e 36%, #fffbe6 50%, #ffb02e 64%, #ffcf66 100%); background-size: 260% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .cap .rule { height: 4px; width: 0; margin: 24px auto 0; background: linear-gradient(90deg, rgba(255,214,118,0), #ffd676, rgba(255,214,118,0)); }
+  .tag { position: absolute; left: 0; top: 0; padding: 12px 28px 12px 20px; border-radius: 44px; background: linear-gradient(180deg, rgba(22,26,52,.86), rgba(10,12,30,.9)); border: 2px solid #ffd676; color: #fff; font: 700 38px/1 system-ui, -apple-system, 'Segoe UI', sans-serif; white-space: nowrap; opacity: 0; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 26px rgba(0,0,0,.5), 0 0 22px rgba(255,200,90,.35); }
+  .tag svg { width: 24px; height: 38px; }
+  .tag::after { content: ''; position: absolute; left: 50%; bottom: -16px; width: 2px; height: 16px; background: #ffd676; }
+  #comments { position: absolute; left: 50px; top: 0; width: 720px; height: 1920px; pointer-events: none; }
+  .cmt { position: absolute; left: 0; display: flex; align-items: center; gap: 18px; padding: 16px 30px 16px 16px; border-radius: 48px; background: rgba(20, 16, 30, .62); color: #fff; font: 600 36px/1.2 system-ui, -apple-system, 'Segoe UI', sans-serif; opacity: 0; white-space: nowrap; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+  .cmt .av { width: 62px; height: 62px; border-radius: 50%; flex: none; display: grid; place-items: center; font: 800 30px system-ui, sans-serif; color: #fff; border: 3px solid #fff; }
+  .cmt b { display: block; font-size: 28px; opacity: .8; font-weight: 700; }
+  #phone { position: absolute; left: 160px; top: 1040px; width: 760px; padding: 34px 38px 40px; border-radius: 56px; background: linear-gradient(180deg, rgba(26,22,44,.92), rgba(14,12,26,.95)); border: 3px solid rgba(255, 214, 118, .7); box-shadow: 0 30px 80px rgba(0,0,0,.55); opacity: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: #fff; }
+  #phone .ph-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
+  #phone .ph-name { font: 800 38px system-ui, sans-serif; }
+  #phone .ph-name small { display: block; font-size: 24px; font-weight: 600; opacity: .7; }
+  #phone .ph-bolts { display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 40px; background: rgba(255,255,255,.1); border: 2px solid #ffd676; font: 800 36px system-ui, sans-serif; }
+  #phone .ph-row { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+  #phone .ph-row span { width: 110px; font: 800 22px system-ui, sans-serif; letter-spacing: .1em; opacity: .75; }
+  #phone .chip { flex: 1; text-align: center; padding: 18px 8px; border-radius: 24px; background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.25); font: 700 30px system-ui, sans-serif; position: relative; }
+  #phone .chip small { display: block; font-size: 22px; color: #ffd676; margin-top: 4px; }
+  #phone .chip.on { background: linear-gradient(180deg, #f7d789, #d99a32); color: #1d1a2e; border-color: #fff3c9; }
+  #phone .chip.on small { color: #5a3b06; }
+  #tap { position: absolute; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 6px solid rgba(255,255,255,.9); opacity: 0; pointer-events: none; }
+  #featured { position: absolute; left: 0; width: 1080px; top: 520px; text-align: center; opacity: 0; }
+  #featured .live { display: inline-flex; align-items: center; gap: 14px; padding: 14px 34px; border-radius: 16px; background: #ff2d55; color: #fff; font: 900 44px system-ui, sans-serif; letter-spacing: .06em; box-shadow: 0 10px 40px rgba(255,45,85,.5); }
+  #featured .live i { width: 22px; height: 22px; border-radius: 50%; background: #fff; display: inline-block; }
+  #featured .who { margin-top: 18px; font: 800 52px 'Cinzel', serif; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,.8); }
+  #tease { position: absolute; left: 0; width: 1080px; top: 1180px; text-align: center; font: 900 220px 'Cinzel', serif; color: #ffd676; opacity: 0; text-shadow: 0 0 60px rgba(255,190,70,.8), 0 8px 30px rgba(0,0,0,.8); }
+  #tease small { display: block; font: 700 40px 'Cinzel', serif; letter-spacing: .4em; color: #fff; margin-top: -20px; }
+  #cta { position: absolute; left: 80px; width: 920px; top: 1235px; text-align: center; opacity: 0; font: 800 46px system-ui, -apple-system, 'Segoe UI', sans-serif; color: #fff; line-height: 1.3; text-shadow: 0 4px 20px rgba(0,0,0,.8); }
+  #cta b { color: #ffd676; }
+  #title { position: absolute; left: 0; width: 1080px; top: 520px; text-align: center; opacity: 0; font-family: 'Cinzel', serif; }
+  #title .bolt { width: 150px; height: 230px; filter: drop-shadow(0 0 40px rgba(255,200,80,.85)); }
+  #title h1 { margin: 10px 0 0; font-weight: 900; font-size: 196px; line-height: .98; letter-spacing: .05em; background: linear-gradient(180deg, #fff6d6 0%, #ffd676 45%, #e09a2b 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 6px 30px rgba(0,0,0,.7)); }
+  #tagline { position: absolute; left: 0; width: 1080px; top: 1140px; text-align: center; font: 700 52px 'Cinzel', serif; color: #fff; letter-spacing: .05em; opacity: 0; text-shadow: 0 4px 20px rgba(0,0,0,.8); }
+  #soon { position: absolute; left: 0; width: 1080px; top: 1400px; text-align: center; font: 700 36px 'Cinzel', serif; color: #ffd676; letter-spacing: .42em; padding-left: .42em; box-sizing: border-box; opacity: 0; }
+  #hud { position: fixed; right: 10px; bottom: 10px; color: #9aa; font: 12px system-ui; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scrim"></div>
+  <div id="tags"></div>
+  <div id="comments"></div>
+  <div id="phone">
+    <div class="ph-top"><div class="ph-name">Luna<small>Citizen · Builder</small></div><div class="ph-bolts">⚡ <span id="ph-bolts">1,240</span></div></div>
+    <div class="ph-row"><span>WALLS</span><div class="chip" id="c-w0">Plaster<small>300 ⚡</small></div><div class="chip" id="c-w1">Marble<small>800 ⚡</small></div></div>
+    <div class="ph-row"><span>ROOF</span><div class="chip" id="c-r0">Terracotta<small>200 ⚡</small></div><div class="chip" id="c-r1">Azure<small>600 ⚡</small></div></div>
+    <div class="ph-row"><span>PORCH</span><div class="chip" id="c-p0">Doric<small>250 ⚡</small></div><div class="chip" id="c-p1">Ionic<small>700 ⚡</small></div></div>
+  </div>
+  <div id="tap"></div>
+  <div id="featured"><div class="live"><i></i>FEATURED ON ZEUS LIVE</div><div class="who">Luna's Villa</div></div>
+  <div id="tease">?<small>COMING SOON</small></div>
+  <div id="caps"></div>
+  <div id="dim"></div>
+  <div id="title">
+    <svg class="bolt" viewBox="-60 -110 120 220"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset=".5" stop-color="#ffd676"/><stop offset="1" stop-color="#e09a2b"/></linearGradient></defs><polygon fill="url(#bg)" points="15,-100 -45,10 -5,10 -20,100 45,-20 5,-20 35,-100"/></svg>
+    <h1>ZEUS<br/>WORLD</h1>
+  </div>
+  <div id="tagline">Everyone has a place.</div>
+  <div id="cta">Comment your name to <b>claim your plot</b><br/>First 100 become <b>Founders</b></div>
+  <div id="soon">OPENING SOON</div>
+  <div id="flash"></div>
+</div>
+<div id="hud"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
