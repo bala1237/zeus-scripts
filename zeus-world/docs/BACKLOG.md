@@ -18,7 +18,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-001 | Bug | Chrome uses a lot of memory when the city runs | High | Fix shipped | 22 Nov 2026, owner |
 | ZW-002 | Bug | Flicker on the tower tops | Medium | Fix shipped | 22 Nov 2026, owner |
 | ZW-003 | Enhancement | Animals: cats, dogs, donkey with cart, goats | Medium | Blocked on spend approval | 22 Nov 2026 |
-| ZW-004 | Enhancement | Performance: frame rate, download size, a quality setting | High (proposed) | Open | 22 Nov 2026 |
+| ZW-004 | Enhancement | Performance: frame rate, download size, a quality setting | High | First batch shipped; more to do | 22 Nov 2026 |
 | ZW-005 | Enhancement | Finish the look: marble, grass, old scenes, fountain speckle | Medium | Open | 22 Nov 2026 |
 | ZW-006 | Bug | Known model flaws | Low | Open | 22 Nov 2026 |
 | ZW-007 | Enhancement | Construction loop looks abrupt and hollow | Medium | Open | 22 Nov 2026 |
@@ -64,10 +64,16 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-004: Performance
 
-- **Measured 22 Nov 2026:** every frame draws 5.0 million triangles in 2,320 draw calls, from 2,196 separate meshes. Redrawing the shadows costs about 1,800 more draw calls. The download is 57 MB of models plus 3 MB of sky. Frame rate itself cannot be measured on the build machine.
-- Likely work, in `knowledge/performance.md`, "What is left": drawing repeated models in one go, not animating or drawing citizens who are off screen, far-view models, a quality setting, loading distant buildings last.
-- Needed before the scene is used in OBS or on a phone.
-- Memory was handled under ZW-001.
+- **Measured 22 Nov 2026:** every frame drew 5.0 million triangles in 2,330 draw calls. The citizens were 1.8 million of those (the man alone 1.0 million), trees and bushes 1.5 million, and most draw calls were copies of the same tiles, walls and quay pieces.
+- **First batch shipped 22 Nov 2026** (the owner asked for this item to go ahead):
+  - Repeated pieces are drawn in one go. Picture unchanged.
+  - Citizens outside the view are not posed or drawn.
+  - The man is now 20,000 triangles instead of 59,000.
+  - Distant citizens and plants use lighter far-view models.
+  - Result: wide view 2,330 to 1,154 draw calls and 5.0 to 2.2 million triangles; plaza 2.8 to 1.9 million; street 3.2 to 2.3 million.
+- **Checked:** stills before and after, far models beside full ones, by day and dusk. Frame rate cannot be measured on the build machine.
+- **Waiting on the owner:** the frame rate on the preview (counter top right) on a computer and a phone, and whether any tree or citizen visibly changes as the camera moves towards or away from it.
+- **Still to do** (detail in `knowledge/performance.md`, "What is left"): a quality setting for phones; far-view versions of the largest buildings; lighter scaffolding; merging one-off building parts; loading the centre first. Download size is unchanged at about 58 MB.
 
 ### ZW-005: Finish the look
 

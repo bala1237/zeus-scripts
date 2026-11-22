@@ -12,6 +12,7 @@ Run from `zeus-world/assets/`. Background and past figures in `zeus-world/docs/k
 3. Make the change.
 4. Measure again into `renders/measure-after.json`, and render the same stills.
 5. **Compare the stills pixel by pixel.** Two renders of unchanged code differ in under about 100 pixels; thousands means the picture changed. A change meant to save memory must not change the picture unless the owner agreed to it.
+   For the frame cost of one camera view: `node measure.mjs renders/m.json 0.2 1280 720 "view=plaza"`. The output lists the heaviest models in the scene by triangles and by number of meshes; start with those.
 6. **Read the result:**
    - "calculated graphics memory" and the counts are exact.
    - Process memory is from software rendering: use it to compare before and after, not as what the owner will see.

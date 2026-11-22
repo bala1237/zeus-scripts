@@ -78,11 +78,23 @@ async function get(url) {
   return cache[url];
 }
 const M = (n) => `./models/${n}.glb`, R = (n) => `./ref/${n}.glb`;
+// Far-view versions (made by lod.mjs): a fraction of the triangles, shown instead of the full model beyond a distance. ?far=0 turns them off.
+const F = (n) => `./models/far/${n}.glb`, FAR_PLANTS = ['nature_cypress_t1', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4'], FAR_PEOPLE = ['char_citizen_man', 'char_citizen_woman', 'char_citizen_elder'];
+const farOn = q.get('far') !== '0', PLANT_FAR = Number(q.get('plantfar') || 70), PEOPLE_FAR = Number(q.get('peoplefar') || 45), swaps = [];
+// a far model has a colour on each vertex in place of a texture, so it wears a copy of the near material with the texture maps taken off.
+// Clustering turns some faces inside out, so both sides are drawn. Without its roughness map a material would read as solid metal and render dark, so that is reset.
+const farMats = new Map(), farMaterial = (m) => { if (!farMats.has(m)) { const c = m.clone(); if (c.metalnessMap) { c.metalness = 0; c.roughness = 0.9; } c.map = c.normalMap = c.roughnessMap = c.metalnessMap = c.aoMap = null; c.vertexColors = true; c.side = THREE.DoubleSide; farMats.set(m, c); } return farMats.get(m); };
+async function addFar(o, name) { const f = await get(F(name)), mats = {}, near = []; o.traverse((m) => { if (m.isMesh) { near.push(m); mats[m.material.name] = m.material; } });
+  const far = f.scene.clone(true); far.traverse((m) => { if (m.isMesh) m.material = farMaterial(mats[m.material.name] || near[0].material); });
+  far.visible = false; o.add(far); o.userData.dynamic = true; swaps.push({ o, near, far, isFar: false, at: null }); }
+tickers.push(() => { for (const s of swaps) { s.at ||= s.o.getWorldPosition(new THREE.Vector3()); const d = camera.position.distanceTo(s.at), isFar = s.isFar ? d > PLANT_FAR * 0.93 : d > PLANT_FAR * 1.07;   // a margin either side so it does not flip back and forth at the boundary
+  if (isFar !== s.isFar) { s.isFar = isFar; s.far.visible = isFar; for (const m of s.near) m.visible = !isFar; } } });
 // place a copy: position, yaw, optional uniform scale
 const sway = [];
 async function put(url, x, z, ry = 0, s = 1, parent = scene, y = 0) {
   const g = await get(url); const o = g.scene.clone(true);
-  o.position.set(x, y, z); o.rotation.y = ry; o.scale.setScalar(s); parent.add(o); if (/nature_(citizen-tree|cypress)/.test(url)) sway.push(o); return o;
+  o.position.set(x, y, z); o.rotation.y = ry; o.scale.setScalar(s); parent.add(o); const far = farOn && FAR_PLANTS.find((n) => url === M(n)); if (far) await addFar(o, far);
+  if (/nature_(citizen-tree|cypress)/.test(url)) { sway.push(o); o.userData.dynamic = true; } if (/landmark_trireme/.test(url)) o.userData.dynamic = true; return o;   // dynamic: it moves, so it is left out of the instancing below
 }
 // reference parts are stretched to their sockets, as the builder does
 async function fit(url, w, h, d, parent, y = 0, z = 0) {
@@ -139,12 +151,13 @@ const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', or
   for (const b of document.querySelectorAll('[data-p]')) hold(b, () => { const [x, z] = b.dataset.p.split(',').map(Number); const f = controls.target.clone().sub(camera.position); f.y = 0; const dist = camera.position.distanceTo(controls.target); f.normalize();
     const r = new THREE.Vector3(-f.z, 0, f.x), m = r.multiplyScalar(x).add(f.multiplyScalar(z)).multiplyScalar(dist * 0.012); camera.position.add(m); controls.target.add(m); }); }
 // download every model at once, with a progress bar, then let the city appear as it is placed
-const PRE = ['biz_bakery_t1', 'biz_cafe_t1', 'biz_flower-shop_t1', 'biz_forge_t1', 'biz_olive-press_t1', 'biz_pottery_t1', 'biz_scroll-shop_t1', 'biz_stall_t1_cloth', 'biz_stall_t1_fish', 'biz_stall_t1_fruit', 'biz_stall_t1_pottery', 'build_crane_t1', 'build_crates_t1', 'build_timber-stack_t1', 'char_citizen_elder', 'char_citizen_woman', 'civic_amphitheatre', 'civic_aqueduct', 'civic_bathhouse', 'civic_council-hall', 'civic_fountain-plaza', 'civic_gymnasium', 'civic_library', 'civic_lighthouse', 'civic_stoa', 'civic_temple-zeus_stage4', 'civic_tholos', 'decor_altar', 'decor_banner_t1_azure', 'decor_banner_t1_red', 'decor_barrels_t1', 'decor_bench_t1_marble', 'decor_brazier_t1', 'decor_bust_t1_marble', 'decor_cart_t1', 'decor_dining-set_t1', 'decor_garden-bed_t1', 'decor_garden-gate_t1_azure', 'decor_garden-wall_t1_plaster', 'decor_lantern_t1_bronze', 'decor_obelisk', 'decor_pergola_t1', 'decor_planter_t1', 'decor_shrine', 'decor_statue-plinth_t1', 'decor_sundial', 'decor_victory-column', 'home_cottage_t1', 'home_cottage_t2', 'home_grand-villa_t4', 'home_insula_t1', 'home_insula_t2', 'home_insula_t3', 'home_villa-porch_t2_doric', 'home_villa-porch_t3_ionic', 'home_villa-roof_t1_terracotta', 'home_villa-roof_t2_slate', 'home_villa-roof_t3_azure', 'home_villa-roof_t3_garden', 'home_villa-roof_t4_gold', 'home_villa-upper_t2_plaster', 'home_villa-upper_t3_marble', 'home_villa-walls_t1_stone', 'home_villa-walls_t2_ochre', 'home_villa-walls_t3_goldmarble', 'infra_bridge', 'infra_city-wall', 'infra_signpost', 'infra_street-lamp_t1', 'infra_tile_t1_plaza', 'infra_tile_t1_road', 'infra_wall-gate', 'infra_wall-tower', 'landmark_trireme', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage1', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4', 'nature_cypress_t1', 'nature_rock_t1_boulder', 'nature_rock_t1_coast', 'nature_rock_t1_small', 'water_pier', 'water_pond', 'water_quay', 'water_reflecting-pool', 'water_river-straight', 'water_stepping-stones', 'water_well'];
+const PRE = ['biz_bakery_t1', 'biz_cafe_t1', 'biz_flower-shop_t1', 'biz_forge_t1', 'biz_olive-press_t1', 'biz_pottery_t1', 'biz_scroll-shop_t1', 'biz_stall_t1_cloth', 'biz_stall_t1_fish', 'biz_stall_t1_fruit', 'biz_stall_t1_pottery', 'build_crane_t1', 'build_crates_t1', 'build_timber-stack_t1', 'char_citizen_elder', 'char_citizen_man', 'char_citizen_woman', 'civic_amphitheatre', 'civic_aqueduct', 'civic_bathhouse', 'civic_council-hall', 'civic_fountain-plaza', 'civic_gymnasium', 'civic_library', 'civic_lighthouse', 'civic_stoa', 'civic_temple-zeus_stage4', 'civic_tholos', 'decor_altar', 'decor_banner_t1_azure', 'decor_banner_t1_red', 'decor_barrels_t1', 'decor_bench_t1_marble', 'decor_brazier_t1', 'decor_bust_t1_marble', 'decor_cart_t1', 'decor_dining-set_t1', 'decor_garden-bed_t1', 'decor_garden-gate_t1_azure', 'decor_garden-wall_t1_plaster', 'decor_lantern_t1_bronze', 'decor_obelisk', 'decor_pergola_t1', 'decor_planter_t1', 'decor_shrine', 'decor_statue-plinth_t1', 'decor_sundial', 'decor_victory-column', 'home_cottage_t1', 'home_cottage_t2', 'home_grand-villa_t4', 'home_insula_t1', 'home_insula_t2', 'home_insula_t3', 'home_villa-porch_t2_doric', 'home_villa-porch_t3_ionic', 'home_villa-roof_t1_terracotta', 'home_villa-roof_t2_slate', 'home_villa-roof_t3_azure', 'home_villa-roof_t3_garden', 'home_villa-roof_t4_gold', 'home_villa-upper_t2_plaster', 'home_villa-upper_t3_marble', 'home_villa-walls_t1_stone', 'home_villa-walls_t2_ochre', 'home_villa-walls_t3_goldmarble', 'infra_bridge', 'infra_city-wall', 'infra_signpost', 'infra_street-lamp_t1', 'infra_tile_t1_plaza', 'infra_tile_t1_road', 'infra_wall-gate', 'infra_wall-tower', 'landmark_trireme', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage1', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4', 'nature_cypress_t1', 'nature_rock_t1_boulder', 'nature_rock_t1_coast', 'nature_rock_t1_small', 'water_pier', 'water_pond', 'water_quay', 'water_reflecting-pool', 'water_river-straight', 'water_stepping-stones', 'water_well'];
 const bar = document.getElementById('load'); let done = 0;
-const tick = () => { done++; if (bar) bar.firstElementChild.style.width = `${Math.round(100 * done / (PRE.length + 3))}%`; };
+const FARS = farOn ? [...FAR_PLANTS, ...FAR_PEOPLE] : [];
+const tick = () => { done++; if (bar) bar.firstElementChild.style.width = `${Math.round(100 * done / (PRE.length + FARS.length))}%`; };
 const clock = new THREE.Clock();
 if (!q.has('shot')) renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); for (const f of tickers) f(t); controls.update(); renderer.render(scene, camera); });
-await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...['citizen'].map((n) => get(R(n)).then(tick))]);
+await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...FARS.map((n) => get(F(n)).then(tick))]);
 if (bar) bar.remove();
 const PI = Math.PI, placed = {}, P = async (n, x, z, ry = 0, s = 1) => { const o = await put(M(n), x, z, ry, s); (placed[n] ||= []).push(o); return o; };
 const rnd = (() => { let a = 7; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
@@ -216,9 +229,9 @@ for (const [x, z, r, sc] of [[-34, 18.5, 0.5, 0.8], [-26.5, 13, 2.2, 0.6], [-20,
 for (const [x, z, r] of [[-33, 36.8, 0], [18, 33.2, 3], [40, 36.6, 1], [-12, 33.3, 2]]) await P('nature_rock_t1_small', x, z, r);
 for (const [x, z, r] of [[78, 52, 0], [80, -42, 2], [76, 58, 4]]) await P('nature_rock_t1_coast', x, z, r, 1.3);
 await put(M('decor_bust_t1_marble'), -22, -12, 0, 1.1, scene, 1.38);
-const C = [M('char_citizen_woman'), M('char_citizen_elder'), R('citizen')];
+const C = [M('char_citizen_woman'), M('char_citizen_elder'), M('char_citizen_man')];   // the man is the catalogue copy at 20,000 triangles; the style test's original is 59,000
 // ---------- life: walking citizens, buildings rising as Bolts come in, birds
-const life = createLife({ scene, camera, renderer, get, tickers });
+const life = createLife({ scene, camera, renderer, get, tickers, farMaterial, farUrl: (url) => { const n = farOn && FAR_PEOPLE.find((x) => url === M(x)); return n ? F(n) : null; }, farAt: PEOPLE_FAR });
 const N = Math.max(0, Math.min(120, Number(q.get('people') ?? 44)));
 const stop = (face, act = ['Idle'], t = [4, 10], p = 0.75) => ({ stop: t, face, act, p });
 const bridgeY = (x, z) => { const d = Math.abs(z - 35); if (Math.abs(x) > 2.2 || d > 8.4) return 0.07; return d < 4 ? 2.56 : d < 6.4 ? 2.56 - (d - 4) / 2.4 * 1.2 : 1.36 - (d - 6.4) / 2 * 1.29; };
@@ -257,7 +270,21 @@ if (q.get('names') !== '0') { const names = createNames({ scene, camera, rendere
     [placed['home_grand-villa_t4'][0], '@queen_calli'], ...placed.home_cottage_t1.map((o, i) => [o, ['@sam_w', '@ivy.rose'][i]]), ...placed.home_cottage_t2.map((o, i) => [o, ['@dario', '@little_owl'][i]])];
   for (const [o, name] of owned) names.add(o.userData.parts || o, name); }
 if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
-  let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.count()} citizens`; n = 0; t0 = now; } }); }
+  let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.shown()} of ${life.count()} citizens in view · ${renderer.info.render.calls} draws`; n = 0; t0 = now; } }); }
+
+// ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
+// separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
+// Left alone: anything that moves or changes (marked dynamic), buildings under construction, people, and the materials the effects below
+// handle one mesh at a time (fire, cloth).
+{ scene.updateMatrixWorld(true); const sets = new Map();
+  scene.traverse((o) => { if (!o.isMesh || o.isSkinnedMesh || o.isInstancedMesh || o.userData.site || Array.isArray(o.material) || /^(flame|coal|cloth_)/.test(o.material.name || '')) return;
+    for (let p = o; p; p = p.parent) if (p.userData.dynamic) return;
+    const k = `${o.geometry.uuid}|${o.material.uuid}|${o.castShadow}|${o.receiveShadow}`; if (!sets.has(k)) sets.set(k, []); sets.get(k).push(o); });
+  let before = 0, after = 0;
+  for (const list of sets.values()) { before += list.length; if (list.length < 2) { after++; continue; } after++;
+    const m = new THREE.InstancedMesh(list[0].geometry, list[0].material, list.length); m.castShadow = list[0].castShadow; m.receiveShadow = list[0].receiveShadow; m.name = list[0].name;
+    list.forEach((o, i) => { m.setMatrixAt(i, o.matrixWorld); o.removeFromParent(); }); m.instanceMatrix.needsUpdate = true; m.computeBoundingSphere(); m.computeBoundingBox(); scene.add(m); }
+  window.__instanced = { before, after }; }
 
 // ---------- ambient motion: cloth, trees, smoke, fountain spray, boats, drifting clouds
 window.__ambient = createAmbient({ scene, tickers, placed, sway });

@@ -14,6 +14,7 @@ Run from `zeus-world/assets/`. Background in `zeus-world/docs/knowledge/models.m
 5. **Build:** `PY=bl/bin/python ./build.sh <model name>`. With no name it rebuilds everything, about 15 minutes.
 6. **Check:** render it beside the villa and a citizen (`render-still` skill) and look at the image. Check against the acceptance checklist in the asset bible, section 1.9.
 7. **Use it in the city:** add the name to `PRE` in `review/city.js` and place it with `P()`. A chimney needs a line in `CHIMNEYS` in `review/ambient.js`.
-8. **Update the documents:** the catalogue line in the asset bible, the changelog, and the backlog entry if there is one.
+8. **Far-view version:** if the model is one of those listed in `far.sh` (citizens, trees, bushes), run `./far.sh` so its far-view version matches.
+9. **Update the documents:** the catalogue line in the asset bible, the changelog, and the backlog entry if there is one.
 
 Generated models (fal) cost money. Ask the owner before generating anything.

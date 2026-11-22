@@ -27,6 +27,8 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `spin` | `0` turns the slow rotation off | on |
 | `grade` | `soft` gives the old pale look | stream grade |
 | `names` | `0` hides the name plates over the homes | shown |
+| `far` | `0` turns the far-view models off | on |
+| `peoplefar`, `plantfar` | distance in metres beyond which citizens and plants switch to their far-view model | 45, 70 |
 | `shot` | present: render one still frame, 8 seconds in, no animation loop | absent |
 | `label` | text for the top-left label | view and light |
 
@@ -37,6 +39,8 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 **Loading.** Every model in the `PRE` list is downloaded before anything is placed, behind the loading bar. `get(url)` caches each file; `put()` and `P()` place a copy (a full clone of the model's objects, sharing geometry and materials). `P()` also records the copy in `placed[name]`, which the ambient effects use to find chimneys, fountains and ships.
 
 **Shared textures.** Model files each carry their own copies of the common textures. `shareTextures()` in `get()` keeps one copy of each distinct image, matched by the image's bytes (see `performance.md`). Anything that loads models another way would bring the duplicates back.
+
+**Instancing and far-view models.** After the city is placed, copies that share a shape and a material are turned into instanced meshes, and distant citizens and plants are swapped for lighter models. Both are described in `performance.md`. The rule to remember when adding things: anything that moves, or is shown and hidden, must set `userData.dynamic = true` before the instancing block runs.
 
 **Layout.** The city is laid out by hand in `city.js`, section by section: agora, sacred way, main street, river, civic buildings, homes, wall, harbour, greenery. Coordinates are metres; the plaza centre is the origin; north is negative z; the sea is to the east (positive x). The wall runs from x −56 to 56 and z −68 to 60.
 
@@ -63,8 +67,10 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 - Three graphs: the town (gate, main street, shops, plaza, stalls, sacred way, library, council hall site), the quay, and one small graph per building site for its builders.
 - Each walker keeps to a lane offset from the line, so two-way traffic passes.
 - `height(x, z)` gives the ground height; the town graph uses it to climb the bridge.
-- Three citizen models, each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`. `Idle` is the standing pose from `stand.js`, not the clip supplied with the model. The models and their rigs are described in `characters.md`.
+- Three citizen models (`char_citizen_woman`, `char_citizen_elder`, `char_citizen_man`), each tinted one of eight colours. Animations by name: `Walk`, `Idle`, `Clap`, `Cheer`. `Idle` is the standing pose from `stand.js`, not the clip supplied with the model. The models and their rigs are described in `characters.md`.
 - `cheerNear()` makes everyone within a radius turn and cheer.
+
+- Citizens outside the camera's view are not posed or drawn, and beyond 45 m a lighter body on the same skeleton is shown. The counter top right shows frames a second, how many citizens are in view, and the draw calls of the last frame.
 
 ## Construction (`life.js`)
 

@@ -11,6 +11,7 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
+| Frame rate | ZW-004 | First batch shipped 22 Nov: draw calls and triangles roughly halved. Waiting for the owner's frame rate on the preview before deciding the next batch |
 | The women walk in a weird way | ZW-012 | Fix shipped 22 Nov. Waiting for the owner to watch her on the preview |
 | Idle animation is a turning stride | ZW-014 | Fix shipped 22 Nov: a standing pose made in code. Waiting for the owner to watch it |
 | Houses should show a name | ZW-013 | Shipped 22 Nov as plates above the roofs. Waiting for the owner's view on size, style and which buildings |
@@ -20,7 +21,7 @@ Last updated: 22 Nov 2026.
 
 The owner sets the order. This is the current proposal; the numbers point to `BACKLOG.md`.
 
-1. **ZW-004, frame rate.** Measured at 5.0 million triangles and 2,320 draw calls a frame. Start with drawing repeated models in one go and skipping citizens who are off screen. Further memory cuts under ZW-001 if the owner's figures are still too high.
+1. **ZW-004, frame rate, second batch**, if the owner's frame rate is still too low: a quality setting for phones, far-view versions of the largest buildings, lighter scaffolding.
 2. **Owner feedback on batches 1, 2, 3 and 5** (see "Waiting on the owner"), fixed in one pass.
 3. **ZW-005, finish the look.**
 4. **ZW-007, construction loop**, and **ZW-008, cloth.**
@@ -38,13 +39,14 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
    - **Day cycle and tour.** Is the change smooth; any stutter; cycle length; tour pace and stops; does any stop start inside a building.
    - **Frame rate** on a computer and a phone, day and dusk (counter is top right).
 2. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
-3. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
-4. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
-5. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
-6. **ZW-002.** Is the flicker on the tower tops gone.
-7. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
-8. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
-9. The open questions in `DECISIONS.md`.
+3. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
+4. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
+5. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
+6. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
+7. **ZW-002.** Is the flicker on the tower tops gone.
+8. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
+9. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
+10. The open questions in `DECISIONS.md`.
 
 ## What exists
 
