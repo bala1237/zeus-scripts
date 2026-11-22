@@ -37,7 +37,7 @@ Scripted models are built at real size, facing the front, so the normaliser only
 
 `review/city.html` is the whole scripted city (`PAGE=city.html node shot.mjs renders/x.png "view=wide"`; about 3 minutes a still). `qc.sh` renders any set of models side by side for checking.
 
-`review/life.js` (citizens, building sites, birds) and `review/ambient.js` (cloth, trees, smoke, spray, boats) add the motion; `review/city.js` holds layout, lighting, time of day and effects. Page options are listed in `docs/STATUS.md`. `npm run build` makes the hosted version in `dist/`.
+`review/life.js` (citizens, building sites, birds) and `review/ambient.js` (cloth, trees, smoke, spray, boats) add the motion; `review/city.js` holds layout, lighting, time of day and effects. Page options and how the scene works are in `docs/knowledge/city-scene.md`. `npm run build` makes the hosted version in `dist/`.
 
 ## Street test
 
