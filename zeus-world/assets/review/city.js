@@ -18,10 +18,16 @@ document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.5, 900);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.03).texture;
-const L = {
+// ?grade=soft is the old pale look; the default is graded for streaming (deeper sky and grass, harder sun, less fill)
+const SOFT = q.get('grade') === 'soft';
+const L = (SOFT ? {
   day: { sky: 0xbfd9ee, ground: 0x86a85f, sun: 0xfff1dc, sunI: 2.9, sunPos: [-60, 90, 70], hemi: 0.75, env: 0.5, exp: 1.0, lamp: 0 },
   dusk: { sky: 0xe9a878, ground: 0x6f8c52, sun: 0xff9a55, sunI: 1.9, sunPos: [-100, 30, 50], hemi: 0.4, env: 0.3, exp: 1.0, lamp: 1 },
-}[light];
+} : {
+  day: { sky: 0x5aa6e0, ground: 0x6a9446, sun: 0xffe9c4, sunI: 3.6, sunPos: [-70, 80, 60], hemi: 0.38, env: 0.3, exp: 0.86, lamp: 0 },
+  dusk: { sky: 0xe07a4a, ground: 0x4f7a38, sun: 0xff8a45, sunI: 2.6, sunPos: [-100, 26, 50], hemi: 0.22, env: 0.2, exp: 0.92, lamp: 1 },
+})[light];
+if (!SOFT) renderer.domElement.style.filter = 'saturate(1.18) contrast(1.1)';
 scene.background = new THREE.Color(L.sky); scene.fog = new THREE.Fog(L.sky, 160, 520);
 scene.environmentIntensity = L.env; renderer.toneMappingExposure = L.exp;
 scene.add(new THREE.HemisphereLight(0xffffff, 0x7a6a48, L.hemi));
