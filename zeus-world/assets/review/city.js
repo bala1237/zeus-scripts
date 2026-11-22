@@ -8,6 +8,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createLife } from './life.js';
 import { createAmbient } from './ambient.js';
+import { createNames } from './names.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -187,7 +188,7 @@ async function home(x, z, ry, walls, roof, porch, upper) {
 }
 const V = [['t1_stone', 't1_terracotta', 't2_doric', null], ['t2_ochre', 't1_terracotta', null, 't2_plaster'], ['t3_goldmarble', 't3_azure', 't3_ionic', null], ['t2_ochre', 't2_slate', 't2_doric', null],
   ['t3_goldmarble', 't4_gold', 't3_ionic', 't3_marble'], ['t1_stone', 't3_garden', null, null], ['t1_stone', 't2_slate', null, 't2_plaster'], ['t2_ochre', 't3_azure', 't3_ionic', null]];
-for (let i = 0; i < 4; i++) await home([-46, -32, 22, 46][i], 47, PI, ...V[i]);
+const south = []; for (let i = 0; i < 4; i++) south.push(await home([-46, -32, 22, 46][i], 47, PI, ...V[i]));
 const row = []; for (let i = 0; i < 3; i++) row.push(await home(18 + i * 13, -56, 0, ...V[4 + i]));
 await P('home_grand-villa_t4', -22, 22, PI / 2); await P('home_cottage_t1', 36, 40, PI); await P('home_cottage_t2', 46, 40, PI); await P('home_cottage_t2', 44, 24, -PI / 2); await P('home_cottage_t1', 44, 14, -PI / 2);
 // ---------- city wall, towers and gate
@@ -250,6 +251,11 @@ for (const [i, hx] of [[0, 18], [2, 44]]) { const [who, goal] = owners[i / 2], t
     scaffolds: bays([...side(hx - 4.5, -57.1, 2, tall > 6 ? 2 : 1, PI / 2), ...side(hx + 4.5, -57.1, 2, tall > 6 ? 2 : 1, -PI / 2)]), hoist: [hx + 5.4, -52.2, PI],
     workers: { count: 2, height: () => 0, nodes: { st: [hx + 6.5, -50.5, stop(0, ['Idle'], [2, 5])], a: [hx + 1.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)], b: [hx - 2.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)] }, edges: [['st', 'a'], ['a', 'b']] }, builderUrls: C });
   await P('build_stone-blocks_t1', hx + 7.2, -49.4, 1.2, 0.8); }
+// ---------- name plates over the homes (made-up handles for the demo). The two villas being built show their owner on the Bolts label instead.
+if (q.get('names') !== '0') { const names = createNames({ scene, camera, renderer, tickers, dn });
+  const owned = [[south[0], '@theo_builds'], [south[1], '@lina.sky'], [south[2], '@olive_and_oak'], [south[3], '@marcus77'], [row[1], '@penny_d'],
+    [placed['home_grand-villa_t4'][0], '@queen_calli'], ...placed.home_cottage_t1.map((o, i) => [o, ['@sam_w', '@ivy.rose'][i]]), ...placed.home_cottage_t2.map((o, i) => [o, ['@dario', '@little_owl'][i]])];
+  for (const [o, name] of owned) names.add(o.userData.parts || o, name); }
 if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
   let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.count()} citizens`; n = 0; t0 = now; } }); }
 
