@@ -4,7 +4,8 @@
   "type": "module",
   "description": "Asset pipeline: normalise and compress generated models, and the review scene.",
   "scripts": {
-    "review": "vite review --port 4180"
+    "review": "vite review --port 4180",
+    "build": "vite build review"
   },
   "dependencies": { "three": "^0.187.0" },
   "devDependencies": {

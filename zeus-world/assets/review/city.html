@@ -11,6 +11,13 @@
 </head>
 <body>
 <div id="label"></div>
+<div id="nav" style="position:fixed;left:16px;bottom:14px;display:flex;flex-wrap:wrap;gap:6px;font:600 13px system-ui"></div>
+<script>
+  // quick links between views; drag to orbit, scroll to zoom
+  const q = new URLSearchParams(location.search), nav = document.getElementById('nav');
+  const link = (t, k, v) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; a.style.cssText = 'background:rgba(255,255,255,.8);color:#1d1a2e;padding:6px 10px;border-radius:8px;text-decoration:none'; nav.append(a); };
+  if (!q.has('shot')) { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'top']) link(v, 'view', v); link('day', 'light', 'day'); link('dusk', 'light', 'dusk'); }
+</script>
 <script type="module" src="./city.js"></script>
 </body>
 </html>
