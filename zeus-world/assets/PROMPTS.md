@@ -10,9 +10,9 @@ Materials: cream plaster, terracotta tile, painted wood, rough stone, polished g
 
 Concept A chosen (wide front, stone base). 3D: Trellis 2 chosen over Hunyuan 3D 3.1 Pro (both kept in models/ for reference). Normalised with `--fit 6.8,0,4.8 --yaw 0 --tris 30000 --tex 1024`.
 
-## Batch 1: P1 small items (22 Nov 2026, awaiting approval)
+## Batch 1: P1 small items (22 Nov 2026, concepts approved by the owner)
 
-Concepts in `concepts/batch1/`, sheet in `concepts/batch1_sheet.jpg`. Nano Banana 2.1, 1:1, 2K, buildings/props/nature template. The wall, gate and hedge also carry the modular clause ("a single module only, straight and symmetric, flat clean ends where it joins other parts"). The citizen's tree is an oak (Zeus's sacred tree); every stage shares the ring of pale stones and the deep red ribbon so the four read as one tree.
+Concepts in `concepts/batch1/`, sheet in `sheets/batch1_concepts.jpg`. Nano Banana 2.1, 1:1, 2K, buildings/props/nature template. The wall, gate and hedge also carry the modular clause ("a single module only, straight and symmetric, flat clean ends where it joins other parts"). The citizen's tree is an oak (Zeus's sacred tree); every stage shares the ring of pale stones and the deep red ribbon so the four read as one tree.
 
 | Name | Item | Materials |
 | --- | --- | --- |
@@ -33,3 +33,5 @@ Concepts in `concepts/batch1/`, sheet in `concepts/batch1_sheet.jpg`. Nano Banan
 | `nature_citizen-tree_stage2` | a young oak tree, the sacred tree of Zeus, about two and a half metres tall, a slim straight trunk with a few short branches and a small rounded crown of large lobed oak leaves in chunky clumps, a deep red ribbon tied around the trunk, planted in a round bed of dark earth edged by a ring of rough pale stones | olive green leaves, brown bark, rough stone, dark earth, deep red cloth |
 | `nature_citizen-tree_stage3` | a mature oak tree, the sacred tree of Zeus, about five metres tall, a thick sturdy trunk with textured bark dividing into strong spreading branches, a broad full rounded crown of large lobed oak leaves in chunky clumps, a few acorns, a deep red ribbon tied around the trunk, planted in a round bed of dark earth edged by a ring of rough pale stones | olive green leaves, brown bark, rough stone, dark earth, deep red cloth |
 | `nature_citizen-tree_stage4` | a grand ancient oak tree, the sacred tree of Zeus, about eight metres tall, a massive gnarled trunk with deep textured bark and thick roots gripping the earth, mighty spreading branches, a huge wide majestic crown of large lobed oak leaves in chunky clumps with a scattering of gilded golden leaves and golden acorns glinting among the green, a deep red ribbon tied around the trunk carrying a small gold lightning-bolt charm, planted in a round bed of dark earth edged by a ring of rough pale stones | olive green leaves, brown bark, polished gold, rough stone, dark earth, deep red cloth |
+
+3D: all 17 built with Trellis 2 (resolution 1536, texture 2048, decimation 120000). The young tree (stage 2) and the gate were regenerated once with seed 7: the first tree came out sparse and dark, the first gate lost its gold bolts. Sizes, budgets and error limits are in `batch1.sh`; review sheet in `sheets/batch1_review.jpg`. Every model is over the bible's triangle and file-size budget (see `docs/STATUS.md`).

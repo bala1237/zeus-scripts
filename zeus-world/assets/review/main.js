@@ -4,6 +4,7 @@
 //
 // ?m=models/<file>.glb  the item under review (several: comma separated, laid out left to right)
 // ?view=3q|front|back|side|top   ?light=day|dusk   ?label=text
+// ?props  close-up for small items: tight spacing, no home-slot outlines, camera framed on the items and the citizen
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -65,12 +66,13 @@ function slot(x) {
 }
 
 const ref = await villa(); ref.position.x = -8; scene.add(ref); slot(-8);
-const xs = []; let x = 0;
-for (const url of items) { const o = await load(url); const b = boxOf(o); x += -b.min.x; o.position.x = x; scene.add(o); slot(x); xs.push(x); x += b.max.x + 3; }
-const cit = await load('./ref/citizen.glb'); { const b = boxOf(cit); const s = 1.75 / (b.max.y - b.min.y); cit.scale.setScalar(s); cit.position.set((xs[0] ?? 0) + 2.2, -b.min.y * s, 3.4); scene.add(cit); }
+const props = q.has('props'), gap = props ? 0.6 : 3;
+const xs = []; let x = 0, top = 1.75;
+for (const url of items) { const o = await load(url); const b = boxOf(o); x += -b.min.x; o.position.x = x; scene.add(o); if (!props) slot(x); xs.push(x); x += b.max.x + gap; top = Math.max(top, b.max.y); }
+const cit = await load('./ref/citizen.glb'); { const b = boxOf(cit); const s = 1.75 / (b.max.y - b.min.y); cit.scale.setScalar(s); cit.position.set(props ? -1.2 : (xs[0] ?? 0) + 2.2, -b.min.y * s, props ? 0 : 3.4); scene.add(cit); }
 
-const minX = -11.6, maxX = x - 3, cx = (minX + maxX) / 2, span = maxX - minX;
-const target = new THREE.Vector3(cx, 1.4, 0);
+const minX = props ? -1.8 : -11.6, maxX = x - gap, cx = (minX + maxX) / 2, span = Math.max(maxX - minX, props ? top * 1.6 : 0);
+const target = new THREE.Vector3(cx, props ? top * 0.45 : 1.4, 0);
 const cams = { '3q': [cx + span * 0.5, span * 0.5, span * 0.95], front: [cx, 2.2, span * 1.15], back: [cx, 2.2, -span * 1.15], side: [cx + span, 2.5, 0.01], top: [cx, span * 1.25, 0.01] };
 camera.position.set(...cams[view]); camera.lookAt(target);
 const controls = new OrbitControls(camera, renderer.domElement); controls.target.copy(target); controls.update();

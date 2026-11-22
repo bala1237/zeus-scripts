@@ -1,6 +1,6 @@
 # Zeus World: where we stand
 
-Handoff for a new session, 22 Nov 2026. Branch `claude/dazzling-mendel-y9qquo` of `bala1237/zeus-scripts`, folder `zeus-world/`.
+Handoff for a new session, 22 Nov 2026. Latest work is on branch `claude/eager-faraday-svkb22` (continues `claude/dazzling-mendel-y9qquo`) of `bala1237/zeus-scripts`, folder `zeus-world/`.
 
 Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially the 15 Nov addendum), `docs/ASSET-BIBLE.md` (3D style rules and catalogue), `assets/README.md` (pipeline).
 
@@ -24,8 +24,12 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 - `assets/review/` + `assets/shot.mjs`: review scene that renders an item beside the reference villa and a citizen on the 2 m grid, day or dusk.
 - First catalogue item done: **starter cottage** (`home_cottage_t1`). Concept A, built with Trellis 2 and Hunyuan 3D 3.1 Pro; the owner chose **Trellis 2**.
 
-**Batch 1 concepts (22 Nov, awaiting the owner's approval)**
-- 17 concept images for the P1 small items in `assets/concepts/batch1/`, one sheet at `assets/concepts/batch1_sheet.jpg`, prompts in `assets/PROMPTS.md`. No 3D generated yet. The citizen's tree is drawn as an oak.
+**Batch 1: P1 small items (22 Nov)**
+- 17 models built from owner-approved concepts with Trellis 2: myrtle bush, oleander bush, box hedge segment, wildflowers, grass tuft, marble bench, bronze lantern, three pots, amphorae cluster, garden wall segment, garden gate, and the citizen's tree (an oak) at 4 stages. Concepts in `assets/concepts/batch1/`, models in `assets/models/`, sheets in `assets/sheets/`, settings in `assets/batch1.sh`.
+- All face +Z, sit at the origin and are scaled to real size (tree stages 0.9, 2.5, 5 and 7 m). Checked in day and dusk.
+- **Not yet accepted: every model is over budget.** Props are 11k to 31k triangles and 0.5 to 1.3 MB (budget 5k, 300 KB); plants and trees are 14k to 61k triangles and 0.5 to 2.7 MB (budget 10k, 600 KB). Trellis cuts the texture into many small pieces and simplification cannot cross their edges; pushing harder strips the leaves (the hedge fell apart at 11k). Options: raise the budgets and rely on far-view LODs, regenerate at a lower Trellis `decimation_target`, or rebuild foliage as flat leaf cards. Owner to decide.
+- Other open points: the gate posts are 1.1 m against the wall's 0.9 m, the bench marble lost most of its veining, the grand tree's gold leaves read pale yellow, the lantern has no light source yet (add in code).
+- `normalize.mjs` gained `--maxerr` and repeated simplification passes; the review scene gained `?props`.
 
 ## Decisions taken
 
@@ -52,7 +56,7 @@ Read in this order: this file, `docs/CONSTITUTION.md` (product rules, especially
 
 ## Next
 
-1. **Batch 1, P1 small items (about 10):** bushes, flowers and grass tufts, marble bench, bronze lantern on a post, potted plants, amphorae cluster, low garden wall and gate, the citizen's tree at 4 growth stages. Generate concepts with the template prompt, show one sheet, get approval, then Trellis 2, `normalize.mjs`, and a review sheet.
+1. **Close batch 1:** get the owner's decision on the budget problem above, apply it, then mark the items Done in the asset bible.
 2. **Clean up the 12 teaser models** (gate, door, stadium, Founders wall, café building, cypress, two citizens, colossus, sky island, trireme, vault): run them through `normalize.mjs` and the checklist. Code only, no generation cost.
 3. **Homes:** three new villa wall styles (stone, ochre, gold-trim marble), then tier 2 of the cottage (the "repaired" version: same footprint, no cracks, azure shutters).
 4. **Construction kit:** scaffolding, crane, stone blocks; then the stadium rising in code.
