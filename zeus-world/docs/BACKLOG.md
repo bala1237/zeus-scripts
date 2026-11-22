@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-019.**
+- **Next number: ZW-020.**
 
 ## Open
 
@@ -32,7 +32,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-015 | Enhancement | Losing a TikTok battle damages the city | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
 | ZW-016 | Enhancement | Winning a battle triggers a surprise celebration | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
 | ZW-017 | Brainstorm | Make the city feel like a game | High (proposed) | Brainstorm written; waiting for the owner's choices | 22 Nov 2026, owner |
-| ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium | First version shipped (siege at the gate, demo score) | 22 Nov 2026, owner |
+| ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium | First version accepted by the owner; real battle events still to connect | 22 Nov 2026, owner |
+| ZW-019 | Enhancement | Cinematic camera during the battle: closer, moving between points of interest | High | Fix shipped | 22 Nov 2026, owner |
 
 ## Closed
 
@@ -183,6 +184,17 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **It runs on a made-up score.** The Battle button in the controls starts one; `?battle` loops them. Real battle events are not connected (ZW-009), and whether the capture path provides both scores and the time left is still unconfirmed.
 - **Built free**, entirely in code. The soldiers are simple stylised figures that read at the battle camera's distance, not close-up characters.
 - **Checked:** stills at three scores, by day and dusk, and a whole demo battle stepped through without errors. Not seen in motion.
-- **Waiting on the owner:** does it feel like a battle; is the line's movement readable; pace and length; the look of the soldiers, tents and catapults; the wording on the bar.
+- **Owner's verdict, 22 Nov 2026:** "yes the battle was good and loved it." Pace and length are good for now. The look is good. The wording on the bar is right. The one request, a closer and more cinematic camera, is ZW-019.
+- **For the real wiring (owner, 22 Nov 2026):** a real TikTok battle runs for five minutes, and the action should be dictated by the score. Not to be worried about for now.
 - **Possible next steps:** proper marching and fighting soldiers (costs money); scripted models for tents and catapults; sound; damage after a loss (ZW-015) and the surprise celebration after a win (ZW-016), which hook into the battle's result; the other settings discussed (sea battle, duel in the stadium, Zeus against the rival's god).
 - **Constitution:** no permanent loss for either side; strength shown, never coins or gift values; taking part must count for everyone.
+
+### ZW-019: Cinematic camera during the battle
+
+- **Reported:** 22 Nov 2026, by the owner, after watching the siege: "need little more zoom and focus like a cinematic view camera focusing on different so it feels real and close."
+- **Meaning:** during a battle the camera should come in close and move between points of interest (the clash, the ranks, the catapults, the wall), like a film, instead of holding one wide view.
+- **Shipped 22 Nov 2026:** five seconds into a battle a film-style camera takes over. Nine kinds of shot, each held six to eight seconds with a slow move, then a cut: down the corridor between the two lines, across the clash from the flank, over our ranks, from behind the rival towards the city, past a catapult, down from the wall, high over the field, the gate under pressure, and the rival's retreat. The shots follow the fighting line as it moves, and favour the gate when we are losing and their camp when we are winning. Detail in `knowledge/battle.md`.
+- The soldiers gained legs, helmets and smaller crests so they hold up closer in.
+- Touching the view hands the camera back to the viewer. `?cine=0` turns it off.
+- **Checked:** a still of every shot, and a whole battle stepped through to confirm the sequence. The cuts and camera moves have not been seen in motion.
+- **Waiting on the owner:** does it feel cinematic; is any shot too close, too far or too long; are the cuts too frequent; any shot to add or drop.

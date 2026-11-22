@@ -275,12 +275,12 @@ if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssTe
 
 // ---------- the siege at the south gate (ZW-018). Until real battle events are connected the score is made up:
 // ?battle runs a demo battle on a loop, the Battle button starts one, and ?battle=0.3 with ?shot poses a still at that share of the score.
-const battle = createBattle({ scene, camera, tickers, gateZ: Z1, wallTop: new THREE.Box3().setFromObject((await get(M('infra_city-wall'))).scene).max.y, towers: [[-28, Z1], [28, Z1]],
+const battle = createBattle({ scene, camera, controls, tickers, gateZ: Z1, wallTop: new THREE.Box3().setFromObject((await get(M('infra_city-wall'))).scene).max.y, towers: [[-28, Z1], [28, Z1]],
   onResult: (result) => { if (result !== 'win') return; life.cheerNear(0, 44, 46, 9); for (const [i, x] of [-14, 9, -2].entries()) setTimeout(() => life.strike(x, 0, Z1 + 52 + i * 4), 900 + i * 1100); } });
 { const fly = { on: false, t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], to: null, back: null }, ease = (k) => k * k * (3 - 2 * k);
   const go = (to) => { fly.on = true; fly.t0 = null; fly.from[0].copy(camera.position); fly.from[1].copy(controls.target); fly.to = to; };
   tickers.push((t) => { if (!fly.on) return; if (fly.t0 === null) fly.t0 = t; const k = ease(Math.min(1, (t - fly.t0) / 4)); camera.position.lerpVectors(fly.from[0], new THREE.Vector3(...fly.to[0]), k); controls.target.lerpVectors(fly.from[1], new THREE.Vector3(...fly.to[1]), k); if (k >= 1) fly.on = false; });
-  renderer.domElement.addEventListener('pointerdown', () => { fly.on = false; });
+  renderer.domElement.addEventListener('pointerdown', () => { fly.on = false; battle.filming(false); });   // grabbing the view hands the camera back to the viewer
   // a made-up score that swings both ways; `wins` decides which side it ends on
   let demo = null; const wave = (u, wins) => 0.5 + 0.3 * Math.sin(u * 5.2 + 0.6) * (1 - u * 0.5) + 0.12 * Math.sin(u * 17) + (wins ? 0.26 : -0.26) * u * u;
   const begin = (wins) => { if (battle.state.on) return; demo = { wins, seconds: 75 }; fly.back = { tour: tour.on, spin: controls.autoRotate, cam: [camera.position.toArray(), controls.target.toArray()] }; tour.on = false; controls.autoRotate = false;
@@ -289,9 +289,10 @@ const battle = createBattle({ scene, camera, tickers, gateZ: Z1, wallTop: new TH
   tickers.push((t) => { const s = battle.state;
     if (!s.on && demo && fly.back) { tour.on = fly.back.tour; controls.autoRotate = fly.back.spin; if (!tour.on) go(fly.back.cam); fly.back = null; demo = null; next = q.has('battle') ? t + 30 : Infinity; }
     if (!s.on && t > next) { begin(wins); wins = !wins; }
-    if (s.on && s.phase === 'fight' && demo) battle.setShare(wave(1 - s.left / demo.seconds, demo.wins)); });
+    if (s.on && s.phase === 'fight' && demo) battle.setShare(wave(1 - s.left / demo.seconds, demo.wins));
+    if (s.on && demo && !demo.filmed && s.t > 5 && !fly.on && q.get('cine') !== '0') { demo.filmed = true; battle.filming(true); } });   // once the armies are marching out, the cinematic camera takes over
   document.getElementById('battle')?.addEventListener('click', () => { begin(wins); wins = !wins; });
-  if (q.has('shot') && q.has('battle')) battle.pose(Number(q.get('battle')) || 0.5); }
+  if (q.has('shot') && q.has('battle')) { battle.pose(Number(q.get('battle')) || 0.5, 8, q.get('cine')); controls.update(); } }
 
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.

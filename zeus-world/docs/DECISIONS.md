@@ -24,6 +24,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Documentation (22 Nov 2026) | The repository is the project's memory: `CLAUDE.md` as the entry point, plan, backlog, knowledge files, changelog, and skills for repeatable procedures. Documents are updated in the same commit as the change |
 | Backlog (22 Nov 2026) | Kept as a file (`BACKLOG.md`), not GitHub Issues |
 | Branches (22 Nov 2026) | Work is merged into the default branch at the end of each session, by pull request |
+| Battles (22 Nov 2026) | The siege at the south gate is the accepted way to show a battle. A real TikTok battle runs five minutes, and the score dictates the action. Wiring to real events comes later |
 
 ## Open questions
 
