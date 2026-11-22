@@ -239,8 +239,125 @@ def bolt(name, height, centre, mat, depth=0.02):
     return prism(name, pts, depth, mat, axis='Y', centre=centre)
 
 
+def cylinder(name, r1, r2, depth, centre, mat, axis='Z', segs=16, uv=1.0, bevel=0.0):
+    """Cylinder or cone frustum along an axis (r1 at the low end, r2 at the high end)."""
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, segments=segs, radius1=r1, radius2=r2, depth=depth)
+    if bevel > 0:
+        caps = [e for e in bm.edges if abs(e.verts[0].co.z - e.verts[1].co.z) < 1e-6]
+        bmesh.ops.bevel(bm, geom=caps, offset=bevel, segments=2, affect='EDGES', profile=0.5)
+    rot = {'Z': Matrix.Identity(4), 'X': Matrix.Rotation(math.pi / 2, 4, 'Y'), 'Y': Matrix.Rotation(-math.pi / 2, 4, 'X')}[axis]
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(centre) @ rot, verts=bm.verts[:])
+    o = obj_from_bm(name, bm, mat, 50); box_uv(o, uv)
+    return o
+
+
+def torus(name, R, r, centre, mat, axis='Y', seg=16, tube=8):
+    """Ring (door knocker, wreath) whose hole faces along `axis`."""
+    bm = bmesh.new(); rows = []
+    for i in range(seg):
+        a = 2 * math.pi * i / seg; row = []
+        for j in range(tube):
+            b = 2 * math.pi * j / tube
+            row.append(bm.verts.new(((R + r * math.cos(b)) * math.cos(a), (R + r * math.cos(b)) * math.sin(a), r * math.sin(b))))
+        rows.append(row)
+    for i in range(seg):
+        for j in range(tube):
+            bm.faces.new([rows[i][j], rows[(i + 1) % seg][j], rows[(i + 1) % seg][(j + 1) % tube], rows[i][(j + 1) % tube]])
+    rot = {'Z': Matrix.Identity(4), 'Y': Matrix.Rotation(math.pi / 2, 4, 'X'), 'X': Matrix.Rotation(math.pi / 2, 4, 'Y')}[axis]
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(centre) @ rot, verts=bm.verts[:])
+    o = obj_from_bm(name, bm, mat, 80); box_uv(o, 1.0)
+    return o
+
+
+def refine(o, max_len=0.35):
+    """Split long edges so there are enough points for baked shading and for hand-made wobble."""
+    bm = bmesh.new(); bm.from_mesh(o.data)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:])
+    for _ in range(8):
+        long = [e for e in bm.edges if e.calc_length() > max_len]
+        if not long: break
+        bmesh.ops.subdivide_edges(bm, edges=long, cuts=1)
+        bmesh.ops.triangulate(bm, faces=bm.faces[:])
+    bm.to_mesh(o.data); bm.free()
+    return o
+
+
+def wobble(o, amp=0.008, scale=1.6, seed=0):
+    """Push every point a few millimetres with smooth noise: the hand-made, slightly uneven look."""
+    from mathutils import noise as mn
+    off = Vector((seed * 13.1, seed * 7.7, seed * 3.3))
+    for v in o.data.vertices:
+        v.co += Vector(mn.noise_vector(v.co * scale + off)) * amp
+    return o
+
+
+def bake_shading(samples=40, dist=0.75, floor=0.38):
+    """Soft contact shadows baked into vertex colours (under cornices, around frames, where things meet the
+    ground). The game multiplies them into the material, so the model has depth even in flat light."""
+    from mathutils.bvhtree import BVHTree
+    objs = [o for o in bpy.context.scene.objects if o.type == 'MESH']
+    for o in objs:   # long parts need a few extra points, or a shadow at one end smears along the whole length
+        if max(((o.data.vertices[e.vertices[0]].co - o.data.vertices[e.vertices[1]].co).length for e in o.data.edges), default=0) > 1.2:
+            refine(o, 0.8)
+    verts, polys, n0 = [], [], 0
+    for o in objs:
+        verts += [v.co.copy() for v in o.data.vertices]
+        polys += [[n0 + i for i in p.vertices] for p in o.data.polygons]; n0 += len(o.data.vertices)
+    bvh = BVHTree.FromPolygons(verts, polys)
+    rng = np.random.default_rng(4); d = rng.normal(size=(samples * 2, 3)); d /= np.linalg.norm(d, axis=1, keepdims=True)
+    dirs = [Vector(v) for v in d]
+    for o in objs:
+        me = o.data
+        col = me.color_attributes.new('Color', 'BYTE_COLOR', 'CORNER'); cache = {}
+        for p in me.polygons:
+            n = p.normal
+            for li in p.loop_indices:
+                vi = me.loops[li].vertex_index; key = (vi, round(n.x, 1), round(n.y, 1), round(n.z, 1))
+                if key not in cache:
+                    o0 = me.vertices[vi].co + n * 0.02; occ = tot = 0.0
+                    for r in dirs:
+                        c = r.dot(n)
+                        if c <= 0.05: continue
+                        tot += c
+                        if r.z < 0 and o0.z + r.z * dist < 0:        # the ground
+                            occ += c * 0.7 * (1 - (o0.z / -r.z) / dist); continue
+                        hit = bvh.ray_cast(o0, r, dist)
+                        if hit[0] is not None: occ += c * (1 - hit[3] / dist) ** 0.7
+                    cache[key] = 1 - occ / tot if tot else 1
+                a = floor + (1 - floor) * cache[key]
+                col.data[li].color = (a, a, a, 1)
+        me.color_attributes.active_color = col
+
+
+def apply_transforms():
+    """Bake object rotations and positions into the mesh points, so later steps can work in world space."""
+    for o in bpy.context.scene.objects:
+        if o.type == 'MESH' and o.matrix_basis != Matrix.Identity(4):
+            o.data.transform(o.matrix_basis); o.matrix_basis = Matrix.Identity(4)
+
+
+def merge_by_material():
+    """One mesh per material: far fewer draw calls in the game and a much smaller file."""
+    groups = {}
+    for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
+        groups.setdefault(o.data.materials[0] if o.data.materials else None, []).append(o)
+    for mat, objs in groups.items():
+        bm = bmesh.new()
+        for o in objs: bm.from_mesh(o.data)
+        me = bpy.data.meshes.new(mat.name if mat else 'mesh'); bm.to_mesh(me); bm.free()
+        for p in me.polygons: p.use_smooth = True
+        me.set_sharp_from_angle(angle=math.radians(40))
+        if mat: me.materials.append(mat)
+        for o in objs: bpy.data.objects.remove(o, do_unlink=True)
+        bpy.context.scene.collection.objects.link(bpy.data.objects.new(me.name, me))
+
+
 def export(path):
+    apply_transforms(); merge_by_material()
     tris = sum(len(p.vertices) - 2 for o in bpy.context.scene.objects if o.type == 'MESH' for p in o.data.polygons)
     bpy.ops.export_scene.gltf(filepath=path, export_format='GLB', export_apply=True, export_yup=True,
-                              export_image_format='WEBP', export_image_quality=85)
+                              export_image_format='WEBP', export_image_quality=85,
+                              export_vertex_color='ACTIVE', export_all_vertex_colors=False,
+                              export_active_vertex_color_when_no_material=True)
     print(f'{path}: {tris} triangles')
