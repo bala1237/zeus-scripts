@@ -6,13 +6,15 @@ The citizens: where they come from, how their rigs work, and how to check and re
 
 | Model | File | Skeleton | State |
 | --- | --- | --- | --- |
-| Man | `style-test/public/models/citizen.glb` (served as `ref/citizen.glb`) | 22 bones | Works. Coarse binding: torso rigid on the hips, head on the head bone |
+| Man | `assets/models/char_citizen_man.glb`, normalised to 20,000 triangles from `style-test/public/models/citizen.glb` (59,000) on 22 Nov 2026 | 22 bones | Works. Coarse binding: torso rigid on the hips, head on the head bone |
 | Woman | `assets/models/char_citizen_woman.glb` | 22 bones, same as the man | Binding rebuilt 22 Nov 2026 (ZW-012) |
 | Elder | `assets/models/char_citizen_elder.glb` | 24 bones, different order | Works. Cloak follows the arms |
 
 All three were generated, then rigged and animated by Meshy through fal. Each carries four clips with the same names and lengths: `Walk` (1.07 s), `Idle` (4.03 s), `Cheer` (9.03 s), `Clap` (13.70 s). The supplied `Idle` clip is a wide stride that turns round, not a standing pose, so the city replaces it with one made in code (see "Standing still").
 
 In the city each citizen is a copy of one of these, tinted one of eight colours and scaled to between 1.66 and 1.82 m (`review/life.js`, `spawn`).
+
+Each citizen also has a far-view body of about 3,900 triangles in `models/far/`, shown beyond 45 m. It is bound to the same skeleton by bone name, using the far file's own bind data, because the two files are quantised differently (`review/life.js`, `spawn`).
 
 ## Things to know about these rigs
 
@@ -79,4 +81,4 @@ Tune it with the options of `standClip`: `seconds`, `steps`, `arm`.
 1. Concept image and generation as in `models.md`; rigging through Meshy on fal. Ask the owner before spending.
 2. Normalise with `--rescale` (assets README).
 3. Make frame sheets of every clip before accepting it. If the binding is wrong and the skeleton is the 22-bone one, run `reskin.mjs`.
-4. Add it to the list `C` in `review/city.js`.
+4. Add it to the list `C` in `review/city.js`, and to `far.sh` and `FAR_PEOPLE` in `city.js` for a far-view body.

@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { standClip } from './stand.js';
 
-export function createLife({ scene, camera, renderer, get, tickers }) {
+export function createLife({ scene, camera, renderer, get, tickers, farUrl = () => null, farAt = 45, farMaterial = (m) => m }) {
   const rnd = (() => { let a = 99; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
   const pick = (l) => l[Math.floor(rnd() * l.length)];
   const soft = (inner, outer) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -24,9 +24,15 @@ export function createLife({ scene, camera, renderer, get, tickers }) {
     const w = new THREE.Group(); w.add(hold);   // a soft blob stands in for the shadow: real shadows are drawn once, for the buildings
     const blob = new THREE.Mesh(blobGeo, new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false })); blob.position.y = 0.03; w.add(blob);
     scene.add(w);
+    // a far-view body on the same skeleton: a fifth of the triangles, swapped in when the citizen is small on screen
+    const swap = { hi: [], lo: null, far: false }, fu = farUrl(url); o.traverse((m) => { if (m.isSkinnedMesh) swap.hi.push(m); });
+    if (fu && swap.hi.length === 1) { const fg = await get(fu), hi = swap.hi[0]; let src = null; fg.scene.traverse((m) => { if (m.isSkinnedMesh) src ||= m; });
+      const bones = src ? src.skeleton.bones.map((b) => hi.skeleton.getBoneByName(b.name)) : [];
+      if (src && bones.every(Boolean)) { const lo = new THREE.SkinnedMesh(src.geometry, farMaterial(hi.material)); lo.position.copy(src.position); lo.quaternion.copy(src.quaternion); lo.scale.copy(src.scale); lo.frustumCulled = false; lo.castShadow = false; lo.visible = false;
+        hi.parent.add(lo); lo.bind(new THREE.Skeleton(bones, src.skeleton.boneInverses), src.bindMatrix); swap.lo = lo; } }
     const mixer = new THREE.AnimationMixer(o), acts = {}; for (const c of g.animations) acts[c.name] = mixer.clipAction(c);
     acts.Idle = mixer.clipAction(standClip(g.scene));   // the supplied Idle is a turning stride; standing still uses the pose made in stand.js
-    const me = { w, mixer, acts, cur: null, yaw: 0,
+    const me = { w, mixer, acts, swap, cur: null, yaw: 0,
       play(name, scale = 1) { const a = acts[name] || acts.Idle; if (!a) return; a.timeScale = scale; if (this.cur === a) return; if (this.cur) this.cur.fadeOut(0.3); a.reset().fadeIn(0.3).play(); this.cur = a; } };
     mixer.setTime(rnd() * 3);
     return me;
@@ -46,7 +52,7 @@ export function createLife({ scene, camera, renderer, get, tickers }) {
   function point(me) { const a = me.graph.nodes[me.from], b = me.graph.nodes[me.to]; let dx = b[0] - a[0], dz = b[1] - a[1]; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l;
     return [a[0] + (b[0] - a[0]) * me.k - dz * me.lane, a[1] + (b[1] - a[1]) * me.k + dx * me.lane, dx, dz, l]; }
   function step(me, dt) {
-    me.mixer.update(dt);
+    if (me.w.visible) me.mixer.update(dt);   // no point posing a skeleton nobody can see; the walk itself carries on below
     if (me.cheer > 0) { me.cheer -= dt; if (me.cheer <= 0) me.play(me.pause > 0 ? 'Idle' : 'Walk', me.speed / 1.25); else return; }
     if (me.pause > 0) { me.pause -= dt; if (me.pause <= 0) me.play('Walk', me.speed / 1.25); else { turn(me, me.face, dt); return; } }
     let [x, z, dx, dz, l] = point(me); me.k += me.speed * dt / l;
@@ -76,7 +82,7 @@ export function createLife({ scene, camera, renderer, get, tickers }) {
   async function construct({ name, by, goal, objects, at: [x, z], size: [w, d], height, scaffolds = [], hoist, buildSecs = 70, restSecs = 26, start = 0, workers, builderUrls }) {
     const plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
     for (const o of objects) o.traverse((m) => { if (!m.isMesh) return; m.userData.site = true; m.castShadow = false; m.material = m.material.clone(); m.material.clippingPlanes = [plane]; m.material.side = THREE.DoubleSide; });
-    const sg = await get(scaffolds.url), scaf = scaffolds.list.map(([sx, sz, ry, sy]) => { const o = sg.scene.clone(true); o.position.set(sx, sy, sz); o.rotation.y = ry; o.traverse((m) => { if (m.isMesh) m.castShadow = false; }); scene.add(o); return o; });
+    const sg = await get(scaffolds.url), scaf = scaffolds.list.map(([sx, sz, ry, sy]) => { const o = sg.scene.clone(true); o.position.set(sx, sy, sz); o.rotation.y = ry; o.userData.dynamic = true; o.traverse((m) => { if (m.isMesh) m.castShadow = false; }); scene.add(o); return o; });   // shown and hidden as the building rises, so it must stay a separate object
     // a timber hoist lifts marble blocks to the top of the wall
     let block, rope; if (hoist) { const [hx, hz, ry] = hoist, H = height + 2.2, wood = new THREE.MeshStandardMaterial({ color: 0x7a5a3a, roughness: 0.9 }), g = new THREE.Group(); g.position.set(hx, 0, hz); g.rotation.y = ry; scene.add(g);
       const add = (sx, sy, sz, px, py, pz, rz = 0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), wood); m.position.set(px, py, pz); m.rotation.z = rz; g.add(m); };
@@ -113,14 +119,17 @@ export function createLife({ scene, camera, renderer, get, tickers }) {
     for (let i = 0; i < 16; i++) { const g = new THREE.Group(), l = new THREE.Mesh(wing, mat), r = new THREE.Mesh(wing, mat); r.scale.x = -1; g.add(l, r); scene.add(g);
       birds.push({ g, l, r, cx: (rnd() - 0.5) * 50, cz: (rnd() - 0.5) * 60 - 6, rad: 14 + rnd() * 26, y: 16 + rnd() * 16, sp: (0.12 + rnd() * 0.1) * (rnd() < 0.5 ? 1 : -1), ph: rnd() * 6.28, flap: 7 + rnd() * 4 }); } }
 
-  let last = null;
+  let last = null; const frustum = new THREE.Frustum(), view = new THREE.Matrix4(), inv = new THREE.Matrix4(), ball = new THREE.Sphere(new THREE.Vector3(), 1.7);
   tickers.push((t) => { const dt = last === null ? 0.016 : Math.min(0.1, t - last); last = t;
-    for (const me of walkers) step(me, dt);
+    // citizens outside the camera's view are neither posed nor drawn
+    camera.updateMatrixWorld(); frustum.setFromProjectionMatrix(view.multiplyMatrices(camera.projectionMatrix, inv.copy(camera.matrixWorld).invert()));
+    for (const me of walkers) { ball.center.copy(me.w.position); ball.center.y += 0.9; me.w.visible = frustum.intersectsSphere(ball); step(me, dt);
+      const sw = me.swap; if (sw.lo && me.w.visible) { const d = camera.position.distanceTo(me.w.position), far = sw.far ? d > farAt * 0.93 : d > farAt * 1.07; if (far !== sw.far) { sw.far = far; sw.lo.visible = far; sw.hi[0].visible = !far; } } }
     for (const s of sites) siteStep(s, t, dt);
     for (const p of puffs) { if (p.age >= p.life) { p.s.visible = false; continue; } p.age += dt; const k = p.age / p.life; p.s.position.set(p.x, p.y + p.rise * k, p.z); p.s.scale.setScalar(p.size * (0.5 + k)); p.s.material.opacity = 0.7 * (1 - k); }
     boltAge += dt; bolt.visible = boltAge < 0.5 && Math.sin(boltAge * 60) > -0.4; boltLight.intensity = boltAge < 0.6 ? 900 * (1 - boltAge / 0.6) : 0; flash.style.opacity = boltAge < 0.5 ? 0.55 * (1 - boltAge / 0.5) : 0;
     for (const b of birds) { const a = b.ph + t * b.sp; b.g.position.set(b.cx + Math.cos(a) * b.rad, b.y + Math.sin(t * 0.4 + b.ph) * 1.5, b.cz + Math.sin(a) * b.rad); b.g.rotation.y = -a + (b.sp > 0 ? Math.PI : 0);
       const f = Math.sin(t * b.flap + b.ph) * 0.7; b.l.rotation.z = f; b.r.rotation.z = -f; } });
 
-  return { addWalkers, construct, cheerNear, count: () => walkers.length };
+  return { addWalkers, construct, cheerNear, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
 }

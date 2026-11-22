@@ -17,4 +17,7 @@ n landmark_vault           vault     0,10,0   0 80000 2048 0.01
 n char_citizen_woman       citizen_f     0,1.75,0 0 20000 1024 0.01 0.011908
 # The generator bound her upper body and head to her left forearm; this rebuilds the binding from her shape (see docs/knowledge/characters.md).
 node reskin.mjs models/char_citizen_woman.glb
+# The man comes from the style test's copy (59,000 triangles); this is the catalogue copy at 20,000, as used in the city.
+node normalize.mjs ../style-test/public/models/citizen.glb models/char_citizen_man.glb --fit 0,1.75,0 --yaw 0 --tris 20000 --tex 1024 --maxerr 0.01 --rescale 0.0119
+# After any change to the citizens or plants, rebuild their far-view versions: ./far.sh
 n char_citizen_elder       citizen_elder 0,1.75,0 0 20000 1024 0.01 0.011644

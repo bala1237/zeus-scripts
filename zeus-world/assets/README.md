@@ -43,6 +43,8 @@ Scripted models are built at real size, facing the front, so the normaliser only
 
 `review/poses.html` is a frame sheet of a character's animation (`PAGE=poses.html node shot.mjs renders/x.png "m=models/char_citizen_woman.glb&clip=Walk" 1600 760`), and `reskin.mjs` rebuilds a rigged character's bone binding from its shape. Both are explained in `docs/knowledge/characters.md`.
 
+`lod.mjs` makes a far-view version of a model (`models/far/`), and `far.sh` rebuilds all of them; the city swaps them in at a distance. See `docs/knowledge/performance.md`.
+
 ## Street test
 
 `review/street.html` is the look test: six plots on a road, from catalogue models only. `PAGE=street.html node shot.mjs renders/x.png "view=wide&light=day"` (views: wide, street, villas, ochre, gold, site, garden). `review/main.js` also takes `m=asm:models/<walls>.glb` to show a wall body with a roof and porch.

@@ -35,9 +35,14 @@ const inventory = await p.evaluate(async () => {
   const tex = new Map(), geo = new Map(); let meshes = 0, skinned = 0, sceneTris = 0, materials = new Set();
   scene.traverse((o) => { if (o.isSprite) { if (o.material.map) tex.set(o.material.map.source.uuid, o.material.map); return; } if (!o.isMesh) return; meshes++; if (o.isSkinnedMesh) skinned++; geo.set(o.geometry.uuid, o.geometry); sceneTris += tris(o.geometry);
     for (const m of [].concat(o.material)) { materials.add(m); for (const s of SLOTS) if (m[s]) tex.set(m[s].source.uuid, m[s]); } });
+  // what each model costs in the scene as placed: how many meshes (draw calls) and triangles all its copies add up to
+  const owner = new Map(); for (const [url, pr] of Object.entries(cache)) { const g = await pr; g.scene.traverse((o) => { if (o.isMesh) owner.set(o.geometry.uuid, url.replace(/^.*\/(models|ref)\//, '').replace('.glb', '')); }); }
+  const use = {}; const shown = (o) => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+  scene.traverse((o) => { if (!o.isMesh || !shown(o)) return; const k = owner.get(o.geometry.uuid) || '(made in code)', u = use[k] ||= { model: k, meshes: 0, triangles: 0 }, n = o.isInstancedMesh ? o.count : 1; u.meshes++; u.triangles += Math.round(tris(o.geometry) * n); });
+  const placedCost = Object.values(use);
   const sm = sun.shadow.mapSize, cv = renderer.domElement, gl = renderer.getContext(), samples = gl.getParameter(gl.SAMPLES) || 1;
   const envs = [scene.environment].filter(Boolean);
-  return { models, scene: { meshes, skinned, materials: materials.size, triangles: Math.round(sceneTris), uniqueGeometries: geo.size, uniqueTextures: tex.size,
+  return { models, placedCost, scene: { meshes, skinned, materials: materials.size, triangles: Math.round(sceneTris), uniqueGeometries: geo.size, uniqueTextures: tex.size,
       textureBytes: [...tex.values()].reduce((a, t) => a + texBytes(t), 0), geometryBytes: [...geo.values()].reduce((a, x) => a + geoBytes(x), 0) },
     shadow: (() => { const m = sun.shadow.map, c = m?.texture.format === 1028 ? 1 : 4, d = m?.depthTexture?.type === 1012 ? 2 : 4; return { size: [sm.x, sm.y], bytes: sm.x * sm.y * (c + d), note: `colour layer ${c} byte(s) a pixel, depth ${d}` }; })(),
     canvas: { size: [cv.width, cv.height], samples, bytes: cv.width * cv.height * 4 * (samples + 2) + cv.width * cv.height * 4 * samples, note: 'multisampled colour and depth, resolved copy, and the kept copy (preserveDrawingBuffer)' },
@@ -61,6 +66,8 @@ calculated graphics memory: textures ${MB(S.textureBytes)} MB, geometry ${MB(S.g
 model textures if nothing were shared: ${MB(inventory.models.reduce((a, m) => a + m.textureBytes, 0))} MB
 largest by texture memory:\n${top('textureBytes')}
 largest by geometry memory:\n${top('geometryBytes')}
+heaviest in the scene by triangles (all copies):\n${[...inventory.placedCost].sort((a, z) => z.triangles - a.triangles).slice(0, 14).map((m) => `  ${m.model.padEnd(34)} ${m.triangles.toLocaleString().padStart(10)} triangles in ${m.meshes} meshes`).join('\n')}
+most meshes in the scene (each is a draw call):\n${[...inventory.placedCost].sort((a, z) => z.meshes - a.meshes).slice(0, 14).map((m) => `  ${m.model.padEnd(34)} ${String(m.meshes).padStart(5)} meshes`).join('\n')}
 first frame: ${series[0].drawCalls} draw calls, ${series[0].trianglesDrawn.toLocaleString()} triangles drawn
 process memory (software rendering): empty page tab ${empty.tabMB} / gpu ${empty.gpuMB} MB; city at start tab ${series[0].tabMB} / gpu ${series[0].gpuMB} MB; after ${mins} simulated minutes tab ${series.at(-1).tabMB} / gpu ${series.at(-1).gpuMB} MB
 over time: geometries ${series[0].geometries} -> ${series.at(-1).geometries}, textures ${series[0].textures} -> ${series.at(-1).textures}, script memory ${series[0].heapMB} -> ${series.at(-1).heapMB} MB`);

@@ -4,7 +4,9 @@ Backlog: ZW-001 (Chrome memory), ZW-004 (frame rate, download size, quality sett
 
 ## Where it stands (22 Nov 2026)
 
-Memory was measured, the two largest causes were fixed, and it was measured again. Memory use roughly halved or better, with no change to the picture. Frame rate has not been worked on yet; the figures below show why it will need to be.
+Two rounds of work, both the same day. Memory was measured and roughly halved (ZW-001). Then the cost of drawing a frame was cut by about half (ZW-004, first batch). Frame rate itself cannot be measured on the build machine; draw calls and triangles are the stand-in, and the owner's frame counter on the preview is the real test.
+
+Memory (ZW-001):
 
 | | Before | After |
 | --- | --- | --- |
@@ -14,12 +16,18 @@ Memory was measured, the two largest causes were fixed, and it was measured agai
 | Tab process, measured here | 1,438 MB | 708 MB |
 | Graphics process, measured here | 2,121 MB | 828 MB |
 | Growth over ten simulated minutes | none in the tab; about 100 MB in the graphics process, all in the first two minutes | the same |
-| Draw calls a frame | 2,320 | 2,320 |
-| Triangles drawn a frame | 5.0 million | 5.0 million |
+
+Cost of a frame (ZW-004):
+
+| View | Draw calls before | after | Triangles before | after |
+| --- | --- | --- | --- | --- |
+| Wide (the whole city) | 2,330 | 1,154 | 5.0 million | 2.2 million |
+| Plaza | 667 | 431 | 2.8 million | 1.9 million |
+| Street | 908 | 591 | 3.2 million | 2.3 million |
 
 The process figures come from software rendering on a 1280 × 720 page, where graphics memory is ordinary memory. On the owner's machine the split between the tab and the "GPU Process" will differ, and a larger or high-density window adds to the canvas figure. The counts and the calculated sizes are exact.
 
-**Waiting on the owner:** the real figures from Chrome's task manager (Shift+Esc) on the preview, after one minute and after ten.
+**Waiting on the owner:** memory figures from Chrome's task manager (Shift+Esc), and the frame rate shown top right on the preview, on a computer and a phone.
 
 ## What was found
 
@@ -39,14 +47,43 @@ Both in `assets/review/city.js`.
 
 **How it was checked.** Stills of four views (wide day, plaza dusk, street day, temple dusk) before and after, compared pixel by pixel. Between 5 and 183 pixels out of 921,600 differ by more than 8 levels, which is the same as two renders of unchanged code (82 pixels). With 32-bit depth the stills are identical, so texture sharing changes nothing; the handful of differing pixels are shadow edges from the 16-bit depth, and are not visible at four times zoom.
 
+## Frame cost: what was found and changed (ZW-004)
+
+**Found.** `measure.mjs` now lists what each model costs in the scene as placed. Before the work:
+
+- The 58 citizens were 1.8 of the 5.0 million triangles. The man alone was 1.0 million: he was the style test's copy at 59,000 triangles, three times the other two.
+- Trees and bushes were another 1.5 million. A single bush is 50,000 to 60,000 triangles.
+- Most of the 2,330 draw calls were copies of the same pieces: 194 road-tile meshes, 171 wall meshes, 168 quay meshes, 144 plaza tiles.
+
+**Changed.** All in `assets/review/`, with tools in `assets/`.
+
+1. **Repeated pieces are drawn in one go** (`city.js`, the instancing block after the city is placed). Every set of meshes sharing a shape and a material becomes one instanced mesh. Meshes went from 2,196 to about 1,000. Left out: anything marked `userData.dynamic` (it moves, or is shown and hidden), buildings under construction, people, and fire and cloth materials, which the effects handle one mesh at a time. The picture is unchanged.
+   - Anything added to the scene that moves or toggles must set `userData.dynamic = true` on itself or a parent before that block runs, or it will be frozen into an instance.
+   - An instanced set is culled as a whole, so pieces spread over the city (tiles, walls) are always drawn. Their triangle counts are small.
+2. **Citizens outside the camera's view are neither posed nor drawn** (`life.js`). Their walk carries on; only the skeleton work and the drawing stop. A citizen coming back into view picks up its step where it left off, so two stills can differ at the frame edge.
+3. **The man is now a catalogue model** at 20,000 triangles (`models/char_citizen_man.glb`), like the other two. A frame sheet beside the original shows no difference.
+4. **Far-view models** for the citizens, the trees and the bushes (`models/far/`, made by `lod.mjs`, listed in `far.sh`): about a fifth of the triangles. A citizen switches beyond 45 m, a plant beyond 70 m, with a 7% margin either side so nothing flickers at the boundary. `?far=0` turns them off; `?peoplefar=` and `?plantfar=` set the distances.
+   - A far citizen is a second body on the same skeleton, so its movement is identical.
+   - Far models carry a colour on each vertex and no texture, so they add no texture memory and only 1.1 MB of download.
+
+**How the far models are made, and what did not work** (`lod.mjs`):
+
+- The usual simplifier (meshopt, through gltf-transform) stops far short of the target on generated models: 20,000 triangles came down only to 12,000 to 18,000. These meshes are thousands of loose islands that it will not join. Ignoring texture seams and allowing it to prune loose pieces did not help.
+- Vertex clustering is used instead: vertices are snapped to a grid, each cell keeps one, and collapsed faces are dropped. The grid is searched for the finest one that meets the budget. Coarse close up, but it always reaches the budget and keeps the outline.
+- **Colour.** A clustered vertex with its old texture position shows whatever texel it sat on, and on generated models vertices sit on texture seams, which are darker than the surface. So colour is sampled inside each face, weighted by the face's size, averaged per cell and stored on the vertices.
+- **Trap: metallic.** A material whose roughness map is removed falls back to its factors, which on these models are fully metallic, and renders dark. The far material resets metalness to 0 and roughness to 0.9.
+- **Facing.** Clustering turns some faces inside out, so far materials are drawn double-sided. Foliage (`round`) gets facing that mixes outward-from-the-middle with straight up, so it lights evenly from any side, as the many leaf tops of the full model do. Plain outward facing went dark on the side away from the sun and under tall trees.
+
+**How it was checked.** Stills of four views before and after instancing: only citizens at the frame edge differed. Far models: rendered beside the full models, and the wide view by day and dusk with `far=0` and without, compared side by side and by mean colour (within one level of 255). Frame sheets of the lighter man.
+
 ## How to measure
 
 From `zeus-world/assets/`, with the review server running (`npm run review`):
 
-- `node measure.mjs [out.json] [simulated minutes] [width height] [extra query]`, for example `node measure.mjs renders/measure.json 10`. About four minutes for ten simulated minutes.
+- `node measure.mjs [out.json] [simulated minutes] [width height] [extra query]`, for example `node measure.mjs renders/measure.json 10`. About four minutes for ten simulated minutes. For one view's frame cost: `node measure.mjs renders/m.json 0.2 1280 720 "view=plaza"`.
 - It loads the city in still mode with the day cycle on, then steps the scene forward in simulated time and draws a frame every 30 simulated seconds. It reports:
   - what the scene holds, calculated from the objects: textures, geometry, shadow map and canvas in megabytes, and the heaviest models;
-  - draw calls and triangles for a frame;
+  - draw calls and triangles for a frame, and what each model costs in the scene as placed;
   - counts of live geometries and textures over time, and script memory (a rise means a leak);
   - resident memory of the browser's tab and graphics processes.
 - The page exposes `window.__zw` (`renderer`, `scene`, `camera`, `tickers`, `sun`, `cache`) for this script.
@@ -67,12 +104,12 @@ Memory, in order of size:
 
 Download: the model files still each carry their own copies of the shared textures (57 MB preloaded). Storing shared textures once, outside the model files, would cut the download as well. Related: ZW-011.
 
-Frame rate (ZW-004), not started:
+Frame rate (ZW-004), still to do, in rough order of value:
 
-- Draw repeated models in one go (instancing): about 340 tiles, 60 wall pieces, 27 river pieces, lamps, trees.
-- Skip animation and drawing for citizens outside the view. The 58 citizens are skinned and never culled.
-- Lighter far-view versions of the citizens and the heaviest models.
-- A quality setting (`?q=low|medium|high`, chosen automatically on phones): shadow map size, pixel ratio, number of citizens, number of real lights.
+- **A quality setting** (`?q=low|medium|high`, chosen automatically on phones): shadow map size, pixel ratio, number of citizens, number of real lights, shorter far distances. Needs a phone to check.
+- **Buildings.** They are now most of what is left: about 1.7 million triangles in the wide view. Far-view versions of the largest (grand villa, temple, gymnasium, amphitheatre, apartment blocks) would cut that, but hard-edged architecture shows simplification far more than foliage does.
+- **Scaffolding** is 245,000 triangles in 90 meshes. A lighter scaffold model, or instancing it per level.
+- **Merge the single meshes.** About 800 meshes are one-off building parts, around 20 per building, one per material. Merging them by material would cut draw calls again, at the cost of memory and of culling.
 - Load the centre first and distant buildings afterwards.
 - The lightning bolt builds new geometry on each strike without freeing the old. It does not show as growth in the measurements, but it should reuse one.
 
@@ -84,3 +121,4 @@ Software rendering, 1280 × 720, `light=cycle`, 44 people. Process memory is at 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 22 Nov 2026 | Baseline | 2,320 | 5.0 M | 1,065 | 1,305 MB | 512 MB | 1,438 MB | 2,121 MB |
 | 22 Nov 2026 | Shared textures, leaner shadow map | 2,320 | 5.0 M | 144 | 340 MB | 192 MB | 708 MB | 828 MB |
+| 22 Nov 2026 | Instancing, culling of citizens, lighter man, far-view models | 1,154 | 2.2 M | 154 | about 345 MB | 192 MB | about 710 MB | about 830 MB |

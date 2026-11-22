@@ -4,6 +4,8 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 22 Nov 2026
 
+- **Each frame now costs about half as much to draw (ZW-004, first batch).** Repeated pieces (tiles, walls, river and quay sections) are drawn in one go; citizens outside the view are skipped; the man model was three times heavier than the others and is now the same; distant citizens, trees and bushes use lighter far-view models. Wide view: 2,330 to 1,154 draw calls, 5.0 to 2.2 million triangles. Frame rate itself is for the owner to read on the preview.
+- **Tools added:** `assets/lod.mjs` and `far.sh` make the far-view models; `measure.mjs` now lists what each model costs in the scene.
 - **Citizens stand still properly (ZW-014).** The supplied idle animation was a wide, turning stride. A standing pose made in code replaces it for all three citizens: feet together, arms hanging, breathing, a slow look from side to side. `assets/review/stand.js`.
 - **The woman citizen walks properly (ZW-012).** Her rig from the generator had her upper body and head bound to her left forearm, so she folded and twisted as she walked. Her binding was rebuilt from her shape with a new tool, `assets/reskin.mjs`, at no cost. Checked with frame sheets of all four of her animations.
 - **Homes show their owner's name (ZW-013).** A plate above each finished home's roof, readable from the wide view. `assets/review/names.js`. Names are made up for the demo.

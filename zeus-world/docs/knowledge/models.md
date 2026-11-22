@@ -35,6 +35,14 @@ Things learned:
 - Every model so far needed `--yaw 0`.
 - Tripo P2 gave a cleaner result at $1.10 a model; not adopted on cost.
 
+## Far-view models
+
+`models/far/` holds lighter versions of the models that appear many times and are heavy: the three citizens, the cypress, the two bushes and three stages of the citizen's tree. The city shows them beyond a distance (see `performance.md`).
+
+- `./far.sh` rebuilds all of them; `node lod.mjs models/<name>.glb <triangles> [round]` builds one. `round` is for foliage.
+- They are made from the catalogue model, so rebuild them whenever that model changes.
+- They have no textures and are not for close viewing. They are not catalogue models and are not counted in the catalogue.
+
 ## Checking a model
 
 - `npm run review` (port 4180), then `node shot.mjs renders/x.png "m=models/x.glb&view=3q"` renders it beside the reference villa and a citizen. Add `props&` for small items.
