@@ -84,6 +84,19 @@ async function citizen(url, x, z, ry, clip = 'Idle', t = 0.4, parent = scene) {
 function lampLight(x, y, z) { if (!L.lamp) return; const p = new THREE.PointLight(0xffb45a, 14, 12, 1.8); p.position.set(x, y, z); scene.add(p); }
 
 
+const cams = {
+  wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.8, 3.2, 28.5], [-0.5, 3.0, 6]], temple: [[10, 5, -14], [-2, 6, -44]],
+  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-39, 5, 41.5], [-31, 0.3, 35]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
+};
+camera.position.set(...cams[view][0]); camera.lookAt(...cams[view][1]);
+const controls = new OrbitControls(camera, renderer.domElement); controls.target.set(...cams[view][1]); controls.update();
+// download every model at once, with a progress bar, then let the city appear as it is placed
+const PRE = ['biz_bakery_t1', 'biz_cafe_t1', 'biz_flower-shop_t1', 'biz_forge_t1', 'biz_olive-press_t1', 'biz_pottery_t1', 'biz_scroll-shop_t1', 'biz_stall_t1_cloth', 'biz_stall_t1_fish', 'biz_stall_t1_fruit', 'biz_stall_t1_pottery', 'build_crane_t1', 'build_crates_t1', 'build_timber-stack_t1', 'char_citizen_elder', 'char_citizen_woman', 'civic_amphitheatre', 'civic_aqueduct', 'civic_bathhouse', 'civic_council-hall', 'civic_fountain-plaza', 'civic_gymnasium', 'civic_library', 'civic_lighthouse', 'civic_stoa', 'civic_temple-zeus_stage4', 'civic_tholos', 'decor_altar', 'decor_banner_t1_azure', 'decor_banner_t1_red', 'decor_barrels_t1', 'decor_bench_t1_marble', 'decor_brazier_t1', 'decor_bust_t1_marble', 'decor_cart_t1', 'decor_dining-set_t1', 'decor_garden-bed_t1', 'decor_garden-gate_t1_azure', 'decor_garden-wall_t1_plaster', 'decor_lantern_t1_bronze', 'decor_obelisk', 'decor_pergola_t1', 'decor_planter_t1', 'decor_shrine', 'decor_statue-plinth_t1', 'decor_sundial', 'decor_victory-column', 'home_cottage_t1', 'home_cottage_t2', 'home_grand-villa_t4', 'home_insula_t1', 'home_insula_t2', 'home_insula_t3', 'home_villa-porch_t2_doric', 'home_villa-porch_t3_ionic', 'home_villa-roof_t1_terracotta', 'home_villa-roof_t2_slate', 'home_villa-roof_t3_azure', 'home_villa-roof_t3_garden', 'home_villa-roof_t4_gold', 'home_villa-upper_t2_plaster', 'home_villa-upper_t3_marble', 'home_villa-walls_t1_stone', 'home_villa-walls_t2_ochre', 'home_villa-walls_t3_goldmarble', 'infra_bridge', 'infra_city-wall', 'infra_signpost', 'infra_street-lamp_t1', 'infra_tile_t1_plaza', 'infra_tile_t1_road', 'infra_wall-gate', 'infra_wall-tower', 'landmark_trireme', 'nature_bush_t1_myrtle', 'nature_bush_t1_oleander', 'nature_citizen-tree_stage1', 'nature_citizen-tree_stage2', 'nature_citizen-tree_stage3', 'nature_citizen-tree_stage4', 'nature_cypress_t1', 'nature_rock_t1_boulder', 'nature_rock_t1_coast', 'nature_rock_t1_small', 'water_pier', 'water_pond', 'water_quay', 'water_reflecting-pool', 'water_river-straight', 'water_stepping-stones', 'water_well'];
+const bar = document.getElementById('load'); let done = 0;
+const tick = () => { done++; if (bar) bar.firstElementChild.style.width = `${Math.round(100 * done / (PRE.length + 3))}%`; };
+if (!q.has('shot')) renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+await Promise.all([...PRE.map((n) => get(M(n)).then(tick)), ...['citizen'].map((n) => get(R(n)).then(tick))]);
+if (bar) bar.remove();
 const PI = Math.PI, P = (n, x, z, ry = 0, s = 1) => put(M(n), x, z, ry, s);
 const rnd = (() => { let a = 7; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
 // ---------- agora: paved square, fountain, stoas, market
@@ -158,11 +171,5 @@ const people = [[2, 4, 1, 'Idle'], [-3, -4, 2.5, 'Idle'], [-6, -5.6, 0, 'Idle'],
 for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], people[i][1], people[i][2], people[i][3], 0.13 * i);
 if (L.lamp) for (const [x, y, z] of [[0, 3, 0], [0, 5, -31], [0, 3, 20], [0, 3, 34], [-22, 4, -18], [22, 4, -18], [66, 13, 40], [0, 4, 58]]) { const p = new THREE.PointLight(0xffb45a, 220, 40, 1.8); p.position.set(x, y, z); scene.add(p); }
 
-const cams = {
-  wide: [[95, 95, 150], [4, 0, -4]], plaza: [[13, 9, 22], [-2, 2, -6]], street: [[0.8, 3.2, 28.5], [-0.5, 3.0, 6]], temple: [[10, 5, -14], [-2, 6, -44]],
-  harbour: [[98, 16, 46], [66, 3, 4]], river: [[-39, 5, 41.5], [-31, 0.3, 35]], homes: [[-52, 14, 70], [-32, 2, 44]], civic: [[-6, 26, 20], [20, 2, -22]], top: [[0, 260, 1], [0, 0, 0]],
-};
-camera.position.set(...cams[view][0]); camera.lookAt(...cams[view][1]);
-const controls = new OrbitControls(camera, renderer.domElement); controls.target.set(...cams[view][1]); controls.update();
-if (q.has('shot')) renderer.render(scene, camera); else renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+if (q.has('shot')) renderer.render(scene, camera);
 window.ready = true;
