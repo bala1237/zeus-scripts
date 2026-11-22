@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { createLife } from './life.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -124,7 +125,7 @@ await P('decor_victory-column', 0, -10.5); await P('decor_cart_t1', 6, 3.5, 0.6)
 // ---------- sacred way north to the temple, library and council hall either side
 for (let j = 0; j < 9; j++) for (const i of [-1, 1]) await P('infra_tile_t1_road', i, -13 - j * 2);
 await P('civic_temple-zeus_stage4', 0, -47); await P('decor_altar', 0, -29.5); await P('decor_obelisk', -5, -28); await P('decor_obelisk', 5, -28);
-await P('civic_library', -22, -26); await P('civic_council-hall', 22, -26);
+await P('civic_library', -22, -26); const hall = await P('civic_council-hall', 22, -26);
 await P('civic_tholos', -36, -12); await P('water_reflecting-pool', 0, -22.5, PI / 2, 0.6);
 // ---------- main street south to the gate, shops and apartment blocks along it
 for (let j = 0; j < 22; j++) for (const i of [-1, 1]) await P('infra_tile_t1_road', i, 13 + j * 2);
@@ -145,14 +146,16 @@ async function home(x, z, ry, walls, roof, porch, upper) {
   await put(M(`home_villa-walls_${walls}`), 0, 0, 0, 1, g);
   let h = 3; if (upper) { await put(M(`home_villa-upper_${upper}`), 0, 0, 0, 1, g, 3); h = 6; }
   await put(M(`home_villa-roof_${roof}`), 0, 0, 0, 1, g, h); if (porch) await put(M(`home_villa-porch_${porch}`), 0, 2.2, 0, 1, g);
+  g.userData.parts = g.children.slice();   // the building itself, without its garden
   await put(M('decor_garden-gate_t1_azure'), 0, 6.5, 0, 1, g); for (const u of [-3, -5, 3, 5]) await put(M('decor_garden-wall_t1_plaster'), u, 6.5, 0, 1, g);
   await put(M(`nature_citizen-tree_stage${2 + Math.floor(rnd() * 3)}`), 5.5, 3.5, rnd() * 6, 1, g); await put(M('decor_bench_t1_marble'), -4.6, 3.6, 0.4, 1, g);
   await put(M('decor_lantern_t1_bronze'), -1.7, 5.4, 0, 1, g); await put(M(rnd() > 0.5 ? 'decor_planter_t1' : 'decor_garden-bed_t1'), -4.5, 0.5, PI / 2, 1, g);
+  return g;
 }
 const V = [['t1_stone', 't1_terracotta', 't2_doric', null], ['t2_ochre', 't1_terracotta', null, 't2_plaster'], ['t3_goldmarble', 't3_azure', 't3_ionic', null], ['t2_ochre', 't2_slate', 't2_doric', null],
   ['t3_goldmarble', 't4_gold', 't3_ionic', 't3_marble'], ['t1_stone', 't3_garden', null, null], ['t1_stone', 't2_slate', null, 't2_plaster'], ['t2_ochre', 't3_azure', 't3_ionic', null]];
 for (let i = 0; i < 4; i++) await home([-46, -32, 22, 46][i], 47, PI, ...V[i]);
-for (let i = 0; i < 4; i++) await home(18 + i * 13, -56, 0, ...V[4 + i]);
+const row = []; for (let i = 0; i < 3; i++) row.push(await home(18 + i * 13, -56, 0, ...V[4 + i]));
 await P('home_grand-villa_t4', -22, 22, PI / 2); await P('home_cottage_t1', 36, 40, PI); await P('home_cottage_t2', 46, 40, PI); await P('home_cottage_t2', 44, 24, -PI / 2); await P('home_cottage_t1', 44, 14, -PI / 2);
 // ---------- city wall, towers and gate
 const X0 = -56, X1 = 56, Z0 = -68, Z1 = 60;
@@ -180,9 +183,42 @@ for (const [x, z, r] of [[-33, 36.8, 0], [18, 33.2, 3], [40, 36.6, 1], [-12, 33.
 for (const [x, z, r] of [[78, 52, 0], [80, -42, 2], [76, 58, 4]]) await P('nature_rock_t1_coast', x, z, r, 1.3);
 await put(M('decor_bust_t1_marble'), -22, -12, 0, 1.1, scene, 1.38);
 const C = [M('char_citizen_woman'), M('char_citizen_elder'), R('citizen')];
-const people = [[2, 4, 1, 'Idle'], [-3, -4, 2.5, 'Idle'], [-6, -5.6, 0, 'Idle'], [4.5, -5.8, 0.4, 'Cheer'], [0.6, 18, 3.1, 'Walk'], [-0.7, 26, 0, 'Walk'], [0.5, -20, 0, 'Walk'], [-1, -30.8, 0, 'Cheer'], [-12, 1, 1.6, 'Idle'], [12, -2, -1.6, 'Idle'],
-  [-4.6, 17, 1.6, 'Idle'], [4.4, 23, -1.6, 'Idle'], [0.4, 35, 3.1, 'Walk'], [64, 6, 1.6, 'Idle'], [-28, 11, 0, 'Idle'], [30, -6, 1.6, 'Clap'], [0.8, 48, 3.1, 'Walk'], [-1.2, 6.5, 0.3, 'Clap']];
-for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], people[i][1], people[i][2], people[i][3], 0.13 * i);
+// ---------- life: walking citizens, buildings rising as Bolts come in, birds
+const life = createLife({ scene, camera, renderer, get, tickers });
+const N = Math.max(0, Math.min(120, Number(q.get('people') ?? 44)));
+const stop = (face, act = ['Idle'], t = [4, 10], p = 0.75) => ({ stop: t, face, act, p });
+const bridgeY = (x, z) => { const d = Math.abs(z - 35); if (Math.abs(x) > 2.2 || d > 8.4) return 0.07; return d < 4 ? 2.56 : d < 6.4 ? 2.56 - (d - 4) / 2.4 * 1.2 : 1.36 - (d - 6.4) / 2 * 1.29; };
+const town = { height: bridgeY, nodes: {
+  gate: [0, 57], s3: [0, 48], s2: [0, 43.6], m3: [0, 29.7], m2: [0, 23.1], m1: [0, 16.5], pS: [0, 11],
+  w1: [-3.7, 16.5, stop(-PI / 2, ['Idle', 'Clap'])], w2: [-3.7, 23.1, stop(-PI / 2)], w3: [-3.7, 29.7, stop(-PI / 2)],
+  e1: [3.7, 16.5, stop(PI / 2)], e2: [3.7, 23.1, stop(PI / 2, ['Idle', 'Clap'])], e3: [3.7, 29.7, stop(PI / 2)],
+  fS: [0, 4.6, stop(PI, ['Idle'], [3, 7], 0.3)], fE: [4.6, 0], fN: [0, -4.6], fW: [-4.6, 0, stop(PI / 2, ['Idle'], [3, 8], 0.3)],
+  sA: [-7.5, 5.9, stop(0)], sB: [-2.5, 5.9, stop(0, ['Idle', 'Clap'])], sC: [2.5, 5.9, stop(0)], sD: [7.5, 5.9, stop(0)],
+  nA: [-7.5, -5.3, stop(PI)], nB: [-2.5, -5.3, stop(PI)], nC: [2.5, -5.3, stop(PI, ['Idle', 'Clap'])], nD: [7.5, -5.3, stop(PI)],
+  gap: [0, -7.6], pN: [2.4, -9.4], cN: [2.4, -12.4], xr: [0, -13.2],
+  sac2: [2.6, -19], sac3: [2.6, -25.4], pray: [1.0, -26.6, stop(PI, ['Cheer', 'Clap', 'Idle'], [5, 11], 1)],
+  lib1: [-9, -13.2], lib: [-22, -15.9, stop(PI, ['Idle'], [5, 12], 1)],
+  co1: [9, -13.2], watch: [18.5, -15.2, stop(2.6, ['Idle', 'Clap'], [6, 14], 1)] },
+  edges: [['gate', 's3'], ['s3', 's2'], ['s2', 'm3'], ['m3', 'm2'], ['m2', 'm1'], ['m1', 'pS'], ['m1', 'w1'], ['m2', 'w2'], ['m3', 'w3'], ['m1', 'e1'], ['m2', 'e2'], ['m3', 'e3'],
+    ['pS', 'fS'], ['fS', 'fE'], ['fE', 'fN'], ['fN', 'fW'], ['fW', 'fS'], ['fS', 'sB'], ['fS', 'sC'], ['sA', 'sB'], ['sB', 'sC'], ['sC', 'sD'], ['fN', 'nB'], ['fN', 'nC'], ['nA', 'nB'], ['nB', 'nC'], ['nC', 'nD'],
+    ['fN', 'gap'], ['gap', 'pN'], ['pN', 'cN'], ['cN', 'xr'], ['xr', 'sac2'], ['sac2', 'sac3'], ['sac3', 'pray'], ['xr', 'lib1'], ['lib1', 'lib'], ['cN', 'co1'], ['co1', 'watch']] };
+const quay = { height: () => 0.07, nodes: { a: [60, -27], b: [60, -12, stop(PI / 2, ['Idle'], [5, 12])], c: [60, 4, stop(PI / 2)], d: [60, 13.5, stop(PI / 2, ['Idle', 'Clap'])], g: [57.6, 8] }, edges: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['c', 'g']] };
+await life.addWalkers(town, C, N); await life.addWalkers(quay, C, Math.round(N / 7));
+// three sites: the council hall and two villas, each on its own clock so something is always going up
+const SC = M('build_scaffolding_t1'), bays = (list) => ({ url: SC, list });
+const side = (x, z0, n, levels, ry) => { const l = []; for (let k = 0; k < levels; k++) for (let i = 0; i < n; i++) l.push([x, z0 + i * 2.2, ry, k * 3.3]); return l; };
+await life.construct({ name: 'Council Hall', by: '214 citizens', goal: 20000, objects: [hall], at: [22, -26], size: [12.4, 14], height: 9.3, start: 0.35, buildSecs: 80,
+  scaffolds: bays([...side(29.0, -30.4, 3, 3, -PI / 2), ...side(15.0, -30.4, 3, 3, PI / 2)]), hoist: [29.6, -17.4, PI],
+  workers: { count: 4, height: () => 0, nodes: { st: [31.5, -14.5, stop(0, ['Idle'], [2, 5])], a: [27, -16.4, stop(PI, ['Clap'], [5, 10], 1)], b: [18, -16.6, stop(PI, ['Clap'], [5, 10], 1)], c: [31.2, -24, stop(-PI / 2, ['Clap'], [5, 10], 1)] }, edges: [['st', 'a'], ['a', 'b'], ['st', 'c']] }, builderUrls: C });
+await P('build_stone-blocks_t1', 32.5, -13.2, 0.4); await P('build_timber-stack_t1', 33.5, -20, PI / 2); await P('build_crates_t1', 14.5, -17, 0.3);
+const owners = [['@maya_k', 1500], ['@nikos_22', 2400]];
+for (const [i, hx] of [[0, 18], [2, 44]]) { const [who, goal] = owners[i / 2], tall = row[i].userData.parts.length > 3 || i === 0 ? 8.4 : 5.4;
+  await life.construct({ name: `${who}'s villa`, by: who, goal, objects: row[i].userData.parts, at: [hx, -56], size: [7.3, 5.5], height: tall, start: i ? 0.8 : 0.05, buildSecs: 55, restSecs: 30,
+    scaffolds: bays([...side(hx - 4.5, -57.1, 2, tall > 6 ? 2 : 1, PI / 2), ...side(hx + 4.5, -57.1, 2, tall > 6 ? 2 : 1, -PI / 2)]), hoist: [hx + 5.4, -52.2, PI],
+    workers: { count: 2, height: () => 0, nodes: { st: [hx + 6.5, -50.5, stop(0, ['Idle'], [2, 5])], a: [hx + 1.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)], b: [hx - 2.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)] }, edges: [['st', 'a'], ['a', 'b']] }, builderUrls: C });
+  await P('build_stone-blocks_t1', hx + 7.2, -49.4, 1.2, 0.8); }
+if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
+  let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.count()} citizens`; n = 0; t0 = now; } }); }
 
 // ---------- effects: moving water, glowing fire, lit lamps (found by material name, so new models get them for free)
 { // ripple normal map, tileable, made from a few crossing waves
@@ -215,7 +251,7 @@ for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], pe
     o.castShadow = false;
     if (!seen.has(o.material)) { seen.add(o.material); const m = o.material; m.emissive = new THREE.Color(n === 'flame' ? 0xffa040 : 0xff4a10); m.emissiveIntensity = n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night; m.toneMapped = false;
       tickers.push((t) => { m.emissiveIntensity = (n === 'flame' ? 2.2 + 2.5 * night : 1.6 + 1.5 * night) * (0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 7.3)); }); }
-    if (n !== 'flame') return;
+    if (n !== 'flame' || o.userData.site) return;   // no halo on a building that is still going up
     // one glow per separate flame: a street lamp's two lanterns share a mesh, so group its points by position
     if (!clusters.has(o.geometry)) { const pos = o.geometry.attributes.position, cells = new Map(), v = new THREE.Vector3();
       for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i); const k = `${Math.round(v.x / 0.9)},${Math.round(v.y / 0.9)},${Math.round(v.z / 0.9)}`; const c = cells.get(k) || { sum: new THREE.Vector3(), n: 0, min: v.clone(), max: v.clone() }; c.sum.add(v); c.n++; c.min.min(v); c.max.max(v); cells.set(k, c); }
@@ -229,5 +265,7 @@ for (let i = 0; i < people.length; i++) await citizen(C[i % 3], people[i][0], pe
   window.__fx = { glows: glows.length, tickers: tickers.length };
   if (q.has('shot')) for (const f of tickers) f(1.3);
 }
+// the sun's shadows are drawn once: only people and effects move, and they don't cast any
+if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
 if (q.has('shot')) renderer.render(scene, camera);
 window.ready = true;
