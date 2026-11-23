@@ -16,6 +16,7 @@ Run from `zeus-world/assets/`. Details in `zeus-world/docs/knowledge/environment
    - Several models side by side: `./qc.sh <name> <props|wide> <label> <model> <model> ...`.
    - A character's animation as a frame sheet: `PAGE=poses.html node shot.mjs renders/<name>.png "m=models/<character>.glb&clip=Walk&n=8" 1600 760` (clips: `Walk`, `Idle`, `Cheer`, `Clap`, `Stand`, `none`). Use it for anything about how a citizen moves; see `zeus-world/docs/knowledge/characters.md`.
    - One shot of the cinematic tour: `PAGE=city.html node shot.mjs renders/<name>.png "light=day&film=agora,1,0.5" 800 450` (place, shot number from 0, progress through the shot). Always look at the picture: trees and walls end up in front of the lens.
+   - A moment of the after-battle sequence: `PAGE=city.html node shot.mjs renders/<name>.png "light=day&after=triumph,16" 800 450` (`storm`, `triumph` or `home`, then seconds in). The whole scene is run forward that far, so later moments take longer to render.
 4. Read the output for "page error" or "console error". An error makes the render hang until timeout; a syntax error hangs it silently, so run `node --check review/<file>.js` after editing a script and wrap renders in `timeout 200`.
 5. Open the image and look at it before reporting anything about it.
 

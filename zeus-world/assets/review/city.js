@@ -11,6 +11,7 @@ import { createAmbient } from './ambient.js';
 import { createNames } from './names.js';
 import { createBattle } from './battle.js';
 import { createTour } from './tour.js';
+import { createAftermath } from './aftermath.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -269,12 +270,20 @@ for (const [i, hx] of [[0, 18], [2, 44]]) { const [who, goal] = owners[i / 2], t
     workers: { count: 2, height: () => 0, nodes: { st: [hx + 6.5, -50.5, stop(0, ['Idle'], [2, 5])], a: [hx + 1.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)], b: [hx - 2.5, -52.4, stop(PI, ['Clap'], [5, 10], 1)] }, edges: [['st', 'a'], ['a', 'b']] }, builderUrls: C });
   await P('build_stone-blocks_t1', hx + 7.2, -49.4, 1.2, 0.8); }
 // ---------- name plates over the homes (made-up handles for the demo). The two villas being built show their owner on the Bolts label instead.
-if (q.get('names') !== '0') { const names = createNames({ scene, camera, renderer, tickers, dn });
-  const owned = [[south[0], '@theo_builds'], [south[1], '@lina.sky'], [south[2], '@olive_and_oak'], [south[3], '@marcus77'], [row[1], '@penny_d'],
+const names = createNames({ scene, camera, renderer, tickers, dn });
+// each home with its owner and the way its door faces, for the name plates and for the house tour after a battle
+const owned = []; { const list = [[south[0], '@theo_builds'], [south[1], '@lina.sky'], [south[2], '@olive_and_oak'], [south[3], '@marcus77'], [row[1], '@penny_d'],
     [placed['home_grand-villa_t4'][0], '@queen_calli'], ...placed.home_cottage_t1.map((o, i) => [o, ['@sam_w', '@ivy.rose'][i]]), ...placed.home_cottage_t2.map((o, i) => [o, ['@dario', '@little_owl'][i]])];
-  for (const [o, name] of owned) names.add(o.userData.parts || o, name); }
+  for (const [o, name] of list) { const ry = o.rotation.y; const parts = [].concat(o.userData.parts || o), box = new THREE.Box3(); for (const x of parts) { x.updateWorldMatrix(true, true); box.expandByObject(x); }
+    owned.push({ name, home: { box, front: [Math.sin(ry), Math.cos(ry)] } }); if (q.get('names') !== '0') names.add(o.userData.parts || o, name); } }
 if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
   let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.shown()} of ${life.count()} citizens in view · ${renderer.info.render.calls} draws`; n = 0; t0 = now; } }); }
+
+// ---------- after a battle is won (ZW-025): the storm of gold, the triumph of the top three, a tour of the first one's home.
+// The top three are made up for now: the owners of three of the homes. ?after=0 skips it; ?shot&after=storm|triumph|home poses a still, and after=home,16 one at 16 seconds in (the whole scene is run forward that far, so people are where they would be).
+const shotEnd = Number((q.get('after') || '').split(',')[1] || 8);
+const after = createAftermath({ scene, camera, controls, renderer, tickers, life, names, heroModels: C, height: bridgeY, instant: q.has('shot') });
+const topThree = ['@queen_calli', '@theo_builds', '@lina.sky'].map((n) => owned.find((o) => o.name === n)).filter(Boolean);
 
 // ---------- the siege at the south gate (ZW-018). Until real battle events are connected the score is made up:
 // ?battle runs a demo battle on a loop, the Battle button starts one, and ?battle=0.3 with ?shot poses a still at that share of the score.
@@ -283,13 +292,15 @@ const battle = createBattle({ scene, camera, controls, tickers, gateZ: Z1, wallT
 { const fly = { on: false, t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], to: null, back: null }, ease = (k) => k * k * (3 - 2 * k);
   const go = (to) => { fly.on = true; fly.t0 = null; fly.from[0].copy(camera.position); fly.from[1].copy(controls.target); fly.to = to; };
   tickers.push((t) => { if (!fly.on) return; if (fly.t0 === null) fly.t0 = t; const k = ease(Math.min(1, (t - fly.t0) / 4)); camera.position.lerpVectors(fly.from[0], new THREE.Vector3(...fly.to[0]), k); controls.target.lerpVectors(fly.from[1], new THREE.Vector3(...fly.to[1]), k); if (k >= 1) fly.on = false; });
-  renderer.domElement.addEventListener('pointerdown', () => { fly.on = false; battle.filming(false); });   // grabbing the view hands the camera back to the viewer
+  renderer.domElement.addEventListener('pointerdown', () => { fly.on = false; battle.filming(false); if (after.state.on) after.stop(); });   // grabbing the view hands the camera back to the viewer
   // a made-up score that swings both ways; `wins` decides which side it ends on
   let demo = null; const wave = (u, wins) => 0.5 + 0.3 * Math.sin(u * 5.2 + 0.6) * (1 - u * 0.5) + 0.12 * Math.sin(u * 17) + (wins ? 0.26 : -0.26) * u * u;
   const begin = (wins) => { if (battle.state.on) return; demo = { wins, seconds: 75 }; fly.back = { tour: tour.on, spin: controls.autoRotate, cam: [camera.position.toArray(), controls.target.toArray()] }; tour.on = false; controls.autoRotate = false;
     battle.start({ rival: '@rival_city', seconds: demo.seconds, share: 0.5 }); go(cams.battle); };
   let next = q.has('battle') && !q.has('shot') ? 10 : Infinity, wins = true;
   tickers.push((t) => { const s = battle.state;
+    if (!s.on && demo && fly.back && demo.wins && !demo.celebrated && q.get('after') !== '0' && topThree.length) { demo.celebrated = true; demo.wait = true; after.play({ heroes: topThree, onDone: () => { if (demo) demo.wait = false; } }); return; }
+    if (demo?.wait) return;
     if (!s.on && demo && fly.back) { tour.on = fly.back.tour; controls.autoRotate = fly.back.spin; if (!tour.on) go(fly.back.cam); fly.back = null; demo = null; next = q.has('battle') ? t + 30 : Infinity; }
     if (!s.on && t > next) { begin(wins); wins = !wins; }
     if (s.on && s.phase === 'fight' && demo) battle.setShare(wave(1 - s.left / demo.seconds, demo.wins));
@@ -299,8 +310,10 @@ const battle = createBattle({ scene, camera, controls, tickers, gateZ: Z1, wallT
 
 // ---------- the cinematic tour (ZW-024): runs whenever the tour is on and no battle is being fought. ?pace=lively shortens every shot.
 const film = createTour({ camera, controls, tickers, walkers: life.walkers, pace: q.get('pace') === 'lively' ? 0.6 : 1, setLabel: (n) => { document.getElementById('label').textContent = n; } });
-if (!CLASSIC) tickers.push((t) => { if (tour.on && !battle.state.on) film.update(t); else film.stop(); });
+if (!CLASSIC) tickers.push((t) => { if (tour.on && !battle.state.on && !after.state.on) film.update(t); else film.stop(); });
 if (q.has('shot') && q.get('film')) { const [n, i, u] = q.get('film').split(','); film.pose(n, Number(i || 0), Number(u ?? 0.5)); controls.update(); }
+
+if (q.has('shot') && q.get('after')) await after.play({ heroes: topThree, startAt: q.get('after').split(',')[0] });
 
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
@@ -379,10 +392,12 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
     tickers.push((t) => { const u = t % T, d = u < DAY ? 0 : u < DAY + RAMP ? (u - DAY) / RAMP : u < DAY + RAMP + DUSK ? 1 : 1 - (u - DAY - RAMP - DUSK) / RAMP; if (d !== dn.d) setTime(d * d * (3 - 2 * d)); }); }
   tickers.push(() => { for (const m of domes) { m.position.copy(camera.position); m.rotation.y += 0.00004; } });
   window.__fx = { glows: glows.length, tickers: tickers.length };
-  if (q.has('shot')) for (let t = 0; t <= 8; t += 0.05) for (const f of tickers) f(t);   // a still shows the scene 8 seconds in
+  if (q.has('shot')) for (let t = 0; t <= shotEnd; t += 0.05) for (const f of tickers) f(t);   // a still shows the scene 8 seconds in, or further with ?after=triumph,20
 }
 // the sun's shadows are drawn once: only people and effects move, and they don't cast any
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
-if (q.has('shot')) renderer.render(scene, camera);
-window.__zw = { renderer, scene, camera, tickers, sun, cache, battle, film };   // for measure.mjs
+// a still is drawn once, with no animation loop to keep the camera pointed at its target, so point it here, then run the
+// tickers once more so that who is in view (citizens outside it are hidden) is worked out from where the camera now looks
+if (q.has('shot')) { if (q.get('after')) { controls.update(); for (const f of tickers) f(shotEnd); controls.update(); } renderer.render(scene, camera); }
+window.__zw = { renderer, scene, camera, tickers, sun, cache, battle, film, after };   // for measure.mjs
 window.ready = true;
