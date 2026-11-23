@@ -10,6 +10,7 @@ import { createLife } from './life.js';
 import { createAmbient } from './ambient.js';
 import { createNames } from './names.js';
 import { createBattle } from './battle.js';
+import { createTour } from './tour.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -133,7 +134,9 @@ const controls = new OrbitControls(camera, renderer.domElement); controls.target
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.49; controls.minDistance = 4; controls.maxDistance = 420;
 controls.autoRotate = !q.has('shot') && q.get('spin') !== '0'; controls.autoRotateSpeed = 0.7;
 window.__cam = () => camera.position.toArray();
-// camera tour: glide between the lively spots, turning slowly at each; grabbing the view or picking one stops it
+// camera tour. The default is the cinematic tour in tour.js (set up further down, once the citizens exist); ?tour=classic is the older one here:
+// glide between the lively spots, turning slowly at each. Grabbing the view or picking one stops either.
+const CLASSIC = q.get('tour') === 'classic';
 const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', order: ['wide', 'plaza', 'civic', 'street', 'temple', 'harbour', 'river'], i: 0, phase: 'dwell', t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], spin: true };
 { const $ = (id) => document.getElementById(id), home = [camera.position.clone(), controls.target.clone()];
   const spin = $('spin'), label = () => { if (spin) spin.textContent = `⟳ Rotate: ${controls.autoRotate ? 'on' : 'off'}`; }; label();
@@ -142,7 +145,7 @@ const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', or
   tb?.addEventListener('click', () => { tour.on = !tour.on; tour.t0 = null; tour.phase = 'dwell'; controls.autoRotate = tour.spin; tl(); });
   renderer.domElement.addEventListener('pointerdown', () => { if (tour.on) { tour.on = false; controls.autoRotate = tour.spin; tl(); } });
   const name = $('label'), smooth = (k) => k * k * (3 - 2 * k);
-  tickers.push((t) => { if (!tour.on) return; if (tour.t0 === null) tour.t0 = t; const e = t - tour.t0;
+  tickers.push((t) => { if (!tour.on || !CLASSIC) return; if (tour.t0 === null) tour.t0 = t; const e = t - tour.t0;
     if (tour.phase === 'dwell' && e > 13) { tour.i = (tour.i + 1) % tour.order.length; tour.from[0].copy(camera.position); tour.from[1].copy(controls.target); tour.phase = 'move'; tour.t0 = t; controls.autoRotate = false; if (name) name.textContent = `City · ${tour.order[tour.i]}`; }
     else if (tour.phase === 'move') { const k = smooth(Math.min(1, e / 5)), c = cams[tour.order[tour.i]]; camera.position.lerpVectors(tour.from[0], new THREE.Vector3(...c[0]), k); controls.target.lerpVectors(tour.from[1], new THREE.Vector3(...c[1]), k);
       if (e >= 5) { tour.phase = 'dwell'; tour.t0 = t; controls.autoRotate = tour.spin; } } });
@@ -294,6 +297,11 @@ const battle = createBattle({ scene, camera, controls, tickers, gateZ: Z1, wallT
   document.getElementById('battle')?.addEventListener('click', () => { begin(wins); wins = !wins; });
   if (q.has('shot') && q.has('battle')) { battle.pose(Number(q.get('battle')) || 0.5, 8, q.get('cine')); controls.update(); } }
 
+// ---------- the cinematic tour (ZW-024): runs whenever the tour is on and no battle is being fought. ?pace=lively shortens every shot.
+const film = createTour({ camera, controls, tickers, walkers: life.walkers, pace: q.get('pace') === 'lively' ? 0.6 : 1, setLabel: (n) => { document.getElementById('label').textContent = n; } });
+if (!CLASSIC) tickers.push((t) => { if (tour.on && !battle.state.on) film.update(t); else film.stop(); });
+if (q.has('shot') && q.get('film')) { const [n, i, u] = q.get('film').split(','); film.pose(n, Number(i || 0), Number(u ?? 0.5)); controls.update(); }
+
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
 // Left alone: anything that moves or changes (marked dynamic), buildings under construction, people, and the materials the effects below
@@ -376,5 +384,5 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
 // the sun's shadows are drawn once: only people and effects move, and they don't cast any
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
 if (q.has('shot')) renderer.render(scene, camera);
-window.__zw = { renderer, scene, camera, tickers, sun, cache, battle };   // for measure.mjs
+window.__zw = { renderer, scene, camera, tickers, sun, cache, battle, film };   // for measure.mjs
 window.ready = true;
