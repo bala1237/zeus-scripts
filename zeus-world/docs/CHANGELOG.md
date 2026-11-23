@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 23 Nov 2026
+
+- **Game direction discussed.** The owner set four directions after the research (slow growth from Bolts with games that pay Bolts, the MVP showcase, a structure of levels, elevated moments tied to momentum). Proposals in reply recorded in `BRAINSTORM-GAME.md`. Nothing built.
+
 ## 22 Nov 2026
 
 - **Research for the game direction (ZW-023).** Five strands: what makes open worlds hold people, earlier audience-driven games, retention and its pitfalls, AI-driven living worlds, TikTok LIVE's mechanics and rules. Report in `reports/` at the repository root; notes in `research_notes/`. Nothing built.

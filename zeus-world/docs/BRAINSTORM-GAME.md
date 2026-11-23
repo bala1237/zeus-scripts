@@ -97,3 +97,76 @@ If the direction is right, the smallest version that would already change how th
 - A level-up moment: lightning, a camera move, the gate opening.
 
 Everything else can be added one idea at a time.
+
+## Discussion, 23 Nov 2026: the owner's direction after the research, and proposals in reply
+
+After reading the research the owner set four directions. The proposals under each are ideas offered in reply; none is decided.
+
+### 1. Bolts and slow growth
+
+Owner: "People will have the ability to build based on the Bolts they own and grow slowly. Comments, taps count as well. We will be playing games and whoever wins gets Bolts as well."
+
+Proposals:
+
+- **A home that grows in stages**: tent, hut, cottage, villa, grand villa. Each costs several times the last, so a regular moves up over weeks, not one stream.
+- **Games on stream that pay Bolts**, all won by taking part or by skill, never by chance or by paying to enter (TikTok's rules reportedly prohibit games of chance on LIVE):
+  - Riddle of the Sphinx: first correct answers in chat.
+  - Myth trivia, in rounds.
+  - Spot it: something hidden in the city; first to name where.
+  - The Games: a foot race or chariot race in the stadium where each citizen's runner is driven by that viewer's own taps.
+  - Best garden of the week: the community votes; the winner's street gets a prize.
+  - Tug of war between two halves of chat.
+- **Caps per stream** on Bolts from taps and watching, as the constitution already says, so growth stays slow and tapping cannot be farmed.
+
+### 2. Showcasing the battle's MVP
+
+Owner: "For MVP showcase, we need to discuss and need your help with some engaging ideas."
+
+Proposals:
+
+- **The triumph.** After a win the hero's citizen rides a chariot through the south gate and up the main street to the plaza, with citizens lining the way and cheering. A queen crowns them with laurel on the palace steps. The camera then follows them home.
+- **The house tour.** The camera walks their property with Zeya as guide: how long they have been a citizen, what they built first, the rarest thing they own. Neighbours come out to greet them.
+- **The feast.** Their garden hosts the victory party for the rest of the stream: tables, dancing, lanterns.
+- **What stays.** A laurel wreath over their door until the next battle, and their name carved on the victory column for good.
+- **A postcard.** A still of the hero at their home, framed, that they can share.
+- **Three heroes, not one.** To keep faith with the rule against ranking by spend while still honouring the battle's top supporter: the Champion (the battle's MVP, named without amounts), the Voice (who rallied the chat most), and the Herald (who brought the most people in). All three ride in the triumph; one home is toured each time, in turn. The owner decides.
+
+### 3. A structure that builds over time and opens levels
+
+Owner: "Structuring the game so everything builds over time and scales and opens levels."
+
+Proposals:
+
+- **Four ladders, one inside the next.**
+
+  | Ladder | Who climbs it | Example steps |
+  | --- | --- | --- |
+  | Home | One person | Tent, hut, cottage, villa, grand villa; garden, furniture, a pet |
+  | Street | A dozen neighbours | Dirt lane, paved, lamps, a fountain, a named street with its own banner |
+  | City | Everyone | Camp, village, town, city, polis, capital; each opens buildings, events and places |
+  | World | Everyone, over months | The land beyond the walls: harbour routes, islands, the four mysteries |
+
+- **Streets** are worth having because research on shared projects found smaller groups more active per person than large ones.
+- **Ages.** The whole city changes look as it rises: an age of wood, of stone, of marble, of gold. The catalogue already has stone, ochre and gold-marble walls and four roof grades, so this fits what exists.
+- **Targets that scale with the audience**, and bars that never start at zero, both supported by the research.
+- **Every level-up is an event**: announced ahead, counted down, with something visibly opening.
+
+### 4. Elevated moments worth waiting for
+
+Owner: "Elevated moments and getting into ranking or winning big showcase something very interesting which people want to see again but have to wait till the momentum happens again."
+
+Proposals:
+
+- **Zeus's favour.** A meter that fills from the whole community's energy: a big battle win, a winning streak, the stream entering a ranking, a record crowd, a level-up. When it fills, a spectacle plays. It cannot be bought directly and it cannot be forced; it needs the moment.
+- **Three grades of spectacle**, rarer as they get grander:
+
+  | Grade | Roughly how often | Examples |
+  | --- | --- | --- |
+  | Bright | Most streams | Fireworks over the harbour, a rain of gold, doves released from the temple, every lamp lit at once |
+  | Rare | A few times a month | Zeus's face in the storm clouds hurling lightning, the fleet sailing in under torchlight, an eagle carrying a wreath to the hero, the colossus turning its head |
+  | Legendary | A handful of times ever | The colossus stepping off its plinth and walking the harbour, the sky temple descending through the clouds, the vault opening, the mountain splitting to free a titan |
+
+- **Never the same twice in a row**, drawn from a pool, with some held back unseen so there is always one nobody has witnessed.
+- **A hall of moments.** Each spectacle is recorded with its date and the names of everyone present. "I was there" is the reward; it costs nothing and cannot be bought later.
+- **Replayed, not lost.** The research on one-time events found that people who missed them resented it. So each is shown again in the next stream's recap and leaves a lasting mark in the city; only being *in* the record requires being there.
+- **A care from the research:** the trigger should be the community's momentum from all kinds of taking part. A spectacle that plays when gifts reach a number would read as soliciting gifts, which TikTok's rules reportedly penalise.
