@@ -39,7 +39,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-023, the bigger plan.** Read `ROADMAP.md`; choose which phase comes first and answer its six questions (the queens, naming the MVP, interiors, paid animations, sound, the order).
+1. **ZW-023, the bigger plan.** Go-ahead for the recommended next build: the after-battle sequence (storm of gold, triumph of the top three, house tour). See the top of `ROADMAP.md`.
 2. **ZW-017, the game brainstorm.** Read `BRAINSTORM-GAME.md`, answer its seven questions and pick the ideas to pursue. ZW-015 (battle damage) and ZW-016 (victory celebration) are logged and wait on the same conversation.
 3. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:
    - **People.** Natural walking, no sliding or walking through stalls, lamps or buildings; correct height over the bridge; is 44 the right number.

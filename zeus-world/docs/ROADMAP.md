@@ -2,6 +2,17 @@
 
 How the city grows from a showpiece into a game people stay for, built in phases. Written 22 Nov 2026 from the owner's direction. It is a plan to improvise on, not a contract: phases can be reordered, split or dropped. The ideas behind it are in `BRAINSTORM-GAME.md`; the numbered work is in `BACKLOG.md`. Research done after this was written (`reports/Zeus World game design research.md` at the repository root) has not yet been folded in; it is waiting for discussion with the owner.
 
+## Revised 23 Nov 2026, after the research and discussion
+
+The phases below still stand. What changed:
+
+- **Research** (`reports/Zeus World game design research.md` at the repository root) found that worlds like this last when they are a hosted show: the city supplies events, the owner as host gives them meaning, and people stay for characters and a stake of their own. It supports the living day, city levels, rare spectacles and recaps, and warns against selling influence and against anything that reads as soliciting gifts.
+- **Decided by the owner:** people build from the Bolts they own and grow slowly; comments, taps and winning games on stream all earn Bolts; the games are the owner's own (Family Feud, Bible quiz, number guessing); a battle's MVPs are its top three, who are honoured and showcased.
+- **Recommended, to be confirmed by the owner on seeing it:** four ladders (home, street, city, world) with the city passing through ages; the first spectacle is "Zeus's storm of gold".
+- **Recommended next build:** the after-battle sequence. The rival driven off, the storm of gold when earned, a triumph for the top three, a tour of the first one's home, and lasting marks. Detail in `BRAINSTORM-GAME.md`, "The owner's answers, 23 Nov 2026".
+- **New pieces the phases now include:** stages for the owner's games in the city (amphitheatre, library, shrine) with Bolts for winners; a recap at the start of each stream; a pacing director so long streams have peaks and quiet stretches.
+- **To settle before real TikTok events are connected:** read TikTok's current LIVE and monetisation rules on its own pages; measure the delay between a viewer's tap and what they see; decide whether to rest on an unofficial data feed.
+
 ## What the owner asked for
 
 - "We need a palace and have the queens in there. I will get to choose who they are. For now we can have random."

@@ -170,3 +170,45 @@ Proposals:
 - **A hall of moments.** Each spectacle is recorded with its date and the names of everyone present. "I was there" is the reward; it costs nothing and cannot be bought later.
 - **Replayed, not lost.** The research on one-time events found that people who missed them resented it. So each is shown again in the next stream's recap and leaves a lasting mark in the city; only being *in* the record requires being there.
 - **A care from the research:** the trigger should be the community's momentum from all kinds of taking part. A spectacle that plays when gifts reach a number would read as soliciting gifts, which TikTok's rules reportedly penalise.
+
+### The owner's answers, 23 Nov 2026, and what follows from them
+
+1. **Games:** "Family Feud, Bible quiz, number guessing and so on. Anyone can participate."
+2. **MVPs:** "MVPs are top 3 in any battle." So the triumph and the house tour honour the battle's top three, not the three roles proposed above. Recorded as an addendum to the constitution.
+3. **The backbone** (four ladders and the ages): the owner is not familiar with how games structure this and leaves it to recommendation.
+4. **First spectacle:** "you suggest."
+
+**Giving each game a place in the city.** The games stay exactly as the owner plays them; the city gives them a stage and a result people can see.
+
+| Game | Where it happens | What the city shows |
+| --- | --- | --- |
+| Family Feud | The amphitheatre | Two families of citizens on stage, the answers revealed one by one on a great board, the crowd reacting; the winning family's street hangs a banner |
+| Bible quiz | The library steps | Scholars gathered, a scroll unrolled for each question, the winner handed a laurel |
+| Number guessing | The round shrine, as "the oracle's number" | Guesses rise as lanterns; the closest lights up |
+| Any game | The plaza | The winner's citizen walks up to receive their Bolts; a small trophy appears at their home |
+
+- A board of games champions in the stadium counts wins at games. It is not a ranking by spend, so it sits comfortably with the constitution.
+- Everyone who takes part earns a little; winners earn more. Entry is always free.
+- Number guessing is partly luck. With free entry and a prize that exists only in the city it is unlikely to be what TikTok means by games of chance, but the rule should be read on TikTok's own page before relying on that.
+- It needs a way for the owner to say who won: a button on a console to begin with, reading answers from chat later.
+
+**The recommended backbone**, in plain terms:
+
+- **Your home grows** as you earn Bolts: tent, hut, cottage, villa, grand villa.
+- **Your street grows** when the dozen neighbours on it grow together: paved, lit, a fountain, a name.
+- **The city grows** when everyone does: camp, village, town, city, polis, capital. Each step opens new buildings, events and places.
+- **The world opens** over months: beyond the walls, the islands, the four mysteries.
+- **The city's look changes with its age**: wood, then stone, then marble, then gold. Anyone glancing at the stream can tell how far the community has come.
+
+**The recommended first spectacle: Zeus's storm of gold.** The sky darkens in seconds. Thunder rolls. Zeus's eyes open in the clouds above the temple. Lightning strikes the temple roof again and again until it blazes gold, and a rain of gold falls over the whole city while every citizen stops and cheers and every lamp flares. Then the clouds part to a clear sky. It suits the name, it uses the lightning already built, and it needs no new models. The one to save as the first legendary: the colossus stepping off its plinth.
+
+**The recommended next build: what happens after a battle is won.**
+
+1. The rival is driven off (built).
+2. If the moment has earned it, the storm of gold.
+3. The triumph: the top three ride through the south gate and up the main street to the plaza, citizens lining the way.
+4. The house tour: the camera follows the first of them home and walks the property with their name on screen.
+5. A wreath over their door, their names on the victory column.
+
+All on made-up names for now, as the battle is. It turns the battle into a full story with an ending people want to be in.
+
