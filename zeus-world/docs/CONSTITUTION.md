@@ -370,3 +370,14 @@ This addendum amends the constitution. Where it differs from the text above, the
 - [ ] Earning rates per action, the per-stream caps, and catalogue prices
 - [ ] How a community build is proposed: by Zeus, by civic vote, or by any citizen
 - [ ] Whether Bolts spent on a removed plot item are refunded
+
+## Addendum, 23 Nov 2026: battle MVPs
+
+This addendum amends the constitution. Where it differs from the text above, the addendum wins. Decided by the owner on 23 Nov 2026.
+
+- **The MVPs of a battle are its top three.** After a battle they may be named on stream, honoured in the city and have their homes showcased.
+- **This is the one exception to "no ranking by spend".** Principle 5 and the Bolts addendum say rankings by spend never appear on stream. A battle's top three is such a ranking, and TikTok shows it itself. The exception covers the top three of a battle and nothing else.
+- **Still never shown:** coin or gift values, diamond counts, amounts of any kind, and any ranking by spend outside a battle's top three.
+- **Still true:** belonging is free, nobody needs to gift to be a citizen or to build, and everything else on stream (games, levels, titles, spectacles) can be earned by taking part.
+- **Outcome that must never occur, amended:** "a ranking by spend appears on stream" now reads "a ranking by spend appears on stream, other than the names of a battle's top three, shown without amounts".
+

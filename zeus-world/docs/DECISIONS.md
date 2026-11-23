@@ -26,6 +26,10 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Branches (22 Nov 2026) | Work is merged into the default branch at the end of each session, by pull request |
 | Battles (22 Nov 2026) | The siege at the south gate is the accepted way to show a battle. A real TikTok battle runs five minutes, and the score dictates the action. Wiring to real events comes later |
 | Bolts (23 Nov 2026) | People build from the Bolts they own and grow slowly. Comments and taps earn Bolts, and so does winning the games played on stream |
+| Games on stream (23 Nov 2026) | The owner plays Family Feud, Bible quiz, number guessing and similar games on stream. Anyone can take part, and winners earn Bolts |
+| Battle MVPs (23 Nov 2026) | The MVPs of a battle are its top three. They are the ones honoured and showcased afterwards. Amounts are never shown. This amends the constitution's rule on ranking by spend; see its addendum of 23 Nov 2026 |
+| Backbone of the game (23 Nov 2026) | Left to Claude's recommendation by the owner: four ladders (home, street, city, world) and the city passing through ages (wood, stone, marble, gold). To be confirmed when the owner sees it working |
+| First spectacle (23 Nov 2026) | Left to Claude's recommendation by the owner: "Zeus's storm of gold" |
 
 ## Open questions
 

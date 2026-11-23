@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 23 Nov 2026
 
+- **Decisions on the game direction.** The owner's games (Family Feud, Bible quiz, number guessing) pay Bolts and anyone can join; a battle's MVPs are its top three, recorded as a constitution addendum; the backbone and first spectacle are left to recommendation. `ROADMAP.md` updated with what changed and a recommended next build.
 - **Game direction discussed.** The owner set four directions after the research (slow growth from Bolts with games that pay Bolts, the MVP showcase, a structure of levels, elevated moments tied to momentum). Proposals in reply recorded in `BRAINSTORM-GAME.md`. Nothing built.
 
 ## 22 Nov 2026
