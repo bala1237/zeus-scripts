@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-024.**
+- **Next number: ZW-025.**
 
 ## Open
 
@@ -38,6 +38,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-021 | Enhancement | A living day: people working, markets, celebrations, dancing, enough for long streams | High (proposed) | Open, not started. Roadmap phase 1 | 22 Nov 2026, owner |
 | ZW-022 | Enhancement | Walk through the battle MVP's property, in and out, to showcase it | Medium (proposed) | Open, not started. Roadmap phase 3 | 22 Nov 2026, owner |
 | ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
+| ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High (proposed) | Open, options under discussion | 23 Nov 2026, owner |
 
 ## Closed
 
@@ -240,3 +241,19 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Discussion, 23 Nov 2026:** the owner set four directions: build from Bolts and grow slowly, with comments and taps counting and Bolts won in games played on stream; engaging ideas wanted for showcasing the battle's MVP; a structure that builds over time and opens levels; elevated moments tied to momentum (a ranking, a big win) that people must wait to see again. Proposals in reply are recorded in `BRAINSTORM-GAME.md`, "Discussion, 23 Nov 2026".
 - **The owner's answers, 23 Nov 2026:** the games are Family Feud, Bible quiz, number guessing and the like, open to anyone; a battle's MVPs are its top three; the backbone and the first spectacle are left to recommendation. Recorded in `DECISIONS.md`, a constitution addendum, and `BRAINSTORM-GAME.md`. `ROADMAP.md` now opens with what changed.
 - **Recommended next build, waiting for the owner's go-ahead:** the after-battle sequence (storm of gold, triumph of the top three, house tour, lasting marks), on made-up names.
+
+### ZW-024: Cinematic city tour in place of the 360 rotation
+
+- **Reported:** 23 Nov 2026, by the owner: "For now we are doing a 360 rotation. But I want it like a cinematic shot. Can we discuss the options on it so people get an immersive feeling like a movie and the tour is more realistic."
+- **Today:** the tour glides between seven fixed viewpoints and turns slowly round each one.
+- **Options put to the owner:**
+  1. A film crew's shot list for each place: push in, rise and reveal, track along a street, a low hero angle. This is what the battle camera does.
+  2. Follow a citizen: the camera walks behind or beside one person through the streets.
+  3. A visitor's walk at eye level: in through the gate, up the main street, through the market, to the temple, glancing at things on the way.
+  4. Flights: sweeping from district to district, over roofs, through the gate, along the river, round the lighthouse.
+  5. A director that goes where something is happening and builds each visit as wide, then medium, then close.
+  6. A film look: lens changes, slight hand-held sway, soft-focus backgrounds, place names on screen, music.
+- **Recommended:** a director that treats each place as a three-shot visit (a flight in, a move through at street level, a close detail), follows a citizen between places, and breaks off for events. Lens changes, gentle sway and place titles first; soft-focus backgrounds later, since they cost frame rate. The 360 turn stays as a manual option.
+- **To settle:** whether the stream is upright (portrait) or wide, since shots must be composed for it; pace; whether place names appear on screen.
+- Builds on ZW-019 (the battle's cinematic camera). Related: ZW-021 (a living day), ZW-022 (the house tour).
+
