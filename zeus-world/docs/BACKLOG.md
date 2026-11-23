@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-025.**
+- **Next number: ZW-026.**
 
 ## Open
 
@@ -39,6 +39,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-022 | Enhancement | Walk through the battle MVP's property, in and out, to showcase it | Medium (proposed) | Open, not started. Roadmap phase 3 | 22 Nov 2026, owner |
 | ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
 | ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High | Fix shipped | 23 Nov 2026, owner |
+| ZW-025 | Enhancement | After a battle is won: the storm of gold, a triumph for the top three, a tour of the first one's home | High | Fix shipped | 23 Nov 2026, owner |
 
 ## Closed
 
@@ -167,6 +168,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-016: Winning a battle triggers a surprise celebration
 
+- **First version, 23 Nov 2026:** the storm of gold, built as part of ZW-025. It plays after every won battle in the demo. Still open: a pool of different celebrations, rarity, and tying it to momentum.
+
 - **Reported:** 22 Nov 2026, by the owner. Logged only; not to be built yet.
 - **Idea:** a premium, awesome animation that nobody is expecting, so the community wants to take part and see it again.
 - **Open points from the owner:** what the celebration is; whether it changes each time so it stays a surprise; how rare it is.
@@ -222,6 +225,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 ### ZW-022: Walk through the battle MVP's property
 
+- **First version, 23 Nov 2026:** a tour of the first MVP's home from outside, built as part of ZW-025. Still open: going inside, touring all three, and steering the tour by hand.
+
 - **Reported:** 22 Nov 2026, by the owner: "after battle, I should be able to walk through the property of the MVP, in and out, and showcase what they have built for themselves."
 - **Plan:** `ROADMAP.md`, phase 3. First a showcase walk outside: through the garden gate, round the garden, up to the porch, with the owner's name on screen. Then inside.
 - **Settled 23 Nov 2026:** the MVPs are the battle's top three, and the owner has amended the constitution to allow naming them (addendum of 23 Nov 2026). Ideas for the showcase (a triumph, a house tour, a feast, a wreath, a postcard) are in `BRAINSTORM-GAME.md`.
@@ -261,4 +266,14 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Checked:** every shot rendered at its midpoint and looked at (eight of nineteen were reframed), and the whole loop stepped through to confirm the sequence. The moves, cuts and following shots have not been seen in motion.
 - **Waiting on the owner:** does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the look of the titles; whether following a citizen works.
 - Builds on ZW-019 (the battle's cinematic camera). Related: ZW-021 (a living day), ZW-022 (the house tour).
+
+### ZW-025: After a battle is won
+
+- **Agreed:** 23 Nov 2026. Proposed as the next build after the owner's decisions on the game direction; the owner said "Ok" twice, the second time after it was named as next in line.
+- **What it is:** the story after a win. The rival is driven off (built in ZW-018); then the storm of gold, the first spectacle (first version of ZW-016); then the triumph, the battle's top three entering through the south gate and walking up the main street while citizens cheer; then a tour of the first one's home (first version of ZW-022); and a wreath left over their door.
+- **On made-up names**, as the battle is. Real names need real battle events (ZW-009).
+- **Shipped 23 Nov 2026**, about a minute after each won battle: the storm of gold (14.5 s), the triumph (27 s), the house tour (18.5 s), then the city tour resumes. Detail in `knowledge/battle.md`, "After a win".
+- **Different from what was proposed:** the top three walk; there is no chariot, because the catalogue has no horses. The tour stays outside the home. The storm plays after every win; making it rare and earned is not built. Names on the victory column are not built.
+- **Checked:** stills at ten moments across the three parts, and the whole flow (battle, storm, triumph, tour, return) stepped through without errors. Not seen in motion.
+- **Waiting on the owner:** does the storm feel like a big moment; is the darkening too much or too little; the triumph's pace and shots; the house tour; the wreath; the titles.
 

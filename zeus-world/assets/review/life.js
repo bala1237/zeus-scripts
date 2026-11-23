@@ -39,12 +39,13 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
   }
 
   // graph: { nodes: { name: [x, z, { stop: [min, max] seconds, face: yaw, act: ['Idle', ...], p: chance of stopping }] }, edges: [[a, b], ...], height: (x, z) => y }
-  async function addWalkers(graph, urls, count) {
+  // opts: start (the node everyone sets out from, in place of a random spot), speed, lane (sideways offset from the line)
+  async function addWalkers(graph, urls, count, opts = {}) {
     const nb = {}; for (const [a, b] of graph.edges) { (nb[a] ||= []).push(b); (nb[b] ||= []).push(a); }
     const names = Object.keys(graph.nodes).filter((n) => nb[n]);
     const made = await Promise.all(Array.from({ length: count }, (_, i) => spawn(urls[i % urls.length])));
     for (const me of made) {
-      me.graph = graph; me.nb = nb; me.from = pick(names); me.to = pick(nb[me.from]); me.k = rnd(); me.speed = 0.95 + rnd() * 0.5; me.lane = (0.3 + rnd() * 0.45) * (rnd() < 0.85 ? 1 : -1); me.pause = 0; me.cheer = 0;
+      me.graph = graph; me.nb = nb; me.from = opts.start ?? pick(names); me.to = pick(nb[me.from]); me.k = opts.start ? 0 : rnd(); me.speed = opts.speed ?? 0.95 + rnd() * 0.5; me.lane = opts.lane ?? (0.3 + rnd() * 0.45) * (rnd() < 0.85 ? 1 : -1); me.pause = 0; me.cheer = 0;
       const [x, z] = point(me); me.w.position.set(x, graph.height?.(x, z) ?? 0, z); me.play('Walk', me.speed / 1.25); walkers.push(me);
     }
     return made;
@@ -131,5 +132,7 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
     for (const b of birds) { const a = b.ph + t * b.sp; b.g.position.set(b.cx + Math.cos(a) * b.rad, b.y + Math.sin(t * 0.4 + b.ph) * 1.5, b.cz + Math.sin(a) * b.rad); b.g.rotation.y = -a + (b.sp > 0 ? Math.PI : 0);
       const f = Math.sin(t * b.flap + b.ph) * 0.7; b.l.rotation.z = f; b.r.rotation.z = -f; } });
 
-  return { addWalkers, construct, cheerNear, strike, walkers: () => walkers, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
+  // take people out of the city again (a procession that has arrived, for instance)
+  function remove(list) { for (const me of list) { const i = walkers.indexOf(me); if (i >= 0) walkers.splice(i, 1); me.mixer.stopAllAction(); scene.remove(me.w); } }
+  return { addWalkers, remove, construct, cheerNear, strike, walkers: () => walkers, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
 }

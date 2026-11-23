@@ -22,5 +22,7 @@ export function createNames({ scene, camera, renderer, tickers, dn }) {
   }
   function size(s) { const perPx = 2 * camera.position.distanceTo(s.position) * Math.tan(camera.fov * Math.PI / 360) / renderer.domElement.clientHeight, h = Math.min(MAX, Math.max(BASE, MIN_PX * perPx)); s.scale.set(h * s.userData.aspect, h, 1); }
   tickers.push(() => { const k = 1 - 0.3 * dn.d; for (const s of plates) { size(s); s.material.color.setScalar(k); } });   // a little dimmer at dusk, since the plate is not lit by the scene
-  return { add, count: () => plates.length };
+  // a small plate to carry above someone who moves: a fixed size in metres, attached by the caller
+  function tag(name, h = 0.42) { const { t, aspect } = texture(name), s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, toneMapped: false })); s.center.set(0.5, 0); s.scale.set(h * aspect, h, 1); return s; }
+  return { add, tag, count: () => plates.length };
 }
