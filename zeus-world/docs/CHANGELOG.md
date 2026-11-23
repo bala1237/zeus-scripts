@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 23 Nov 2026
 
+- **Cinematic city tour (ZW-024).** The tour no longer turns round each viewpoint. It films seven places in three shots each (a flight in, a move at street level, a close detail) with a title, and follows a citizen between them. The stream is wide and place names are shown, as the owner decided. `assets/review/tour.js`.
 - **Decisions on the game direction.** The owner's games (Family Feud, Bible quiz, number guessing) pay Bolts and anyone can join; a battle's MVPs are its top three, recorded as a constitution addendum; the backbone and first spectacle are left to recommendation. `ROADMAP.md` updated with what changed and a recommended next build.
 - **Game direction discussed.** The owner set four directions after the research (slow growth from Bolts with games that pay Bolts, the MVP showcase, a structure of levels, elevated moments tied to momentum). Proposals in reply recorded in `BRAINSTORM-GAME.md`. Nothing built.
 

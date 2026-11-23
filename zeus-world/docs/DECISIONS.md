@@ -30,6 +30,8 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Battle MVPs (23 Nov 2026) | The MVPs of a battle are its top three. They are the ones honoured and showcased afterwards. Amounts are never shown. This amends the constitution's rule on ranking by spend; see its addendum of 23 Nov 2026 |
 | Backbone of the game (23 Nov 2026) | Left to Claude's recommendation by the owner: four ladders (home, street, city, world) and the city passing through ages (wood, stone, marble, gold). To be confirmed when the owner sees it working |
 | First spectacle (23 Nov 2026) | Left to Claude's recommendation by the owner: "Zeus's storm of gold" |
+| Stream format (23 Nov 2026) | The stream is wide (landscape). Camera shots are composed for that |
+| City tour (23 Nov 2026) | A cinematic tour replaces the 360 rotation; place names appear on screen; calm pace by default |
 
 ## Open questions
 

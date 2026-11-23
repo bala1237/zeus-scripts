@@ -11,6 +11,7 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
+| Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
 | Live battle against the rival | ZW-018 | Approved by the owner 22 Nov. Real TikTok battle events (five minutes, score-driven) still to connect |
 | Cinematic battle camera | ZW-019 | Shipped 22 Nov. Waiting for the owner to watch it |
 | Make the city feel like a game | ZW-017 | Brainstorm written 22 Nov (`BRAINSTORM-GAME.md`). Waiting for the owner's choices. Nothing to be built yet |
@@ -39,7 +40,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-024, the cinematic city tour.** Choose among the options in its backlog entry; say whether the stream is upright or wide, the pace wanted, and whether place names should appear.
+1. **ZW-024, the cinematic city tour.** Shipped 23 Nov. Watch a full loop on the preview (about three and a half minutes): does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the titles; the shots that follow a citizen.
 2. **ZW-023, the bigger plan.** Go-ahead for the recommended next build: the after-battle sequence (storm of gold, triumph of the top three, house tour). See the top of `ROADMAP.md`.
 3. **ZW-017, the game brainstorm.** Read `BRAINSTORM-GAME.md`, answer its seven questions and pick the ideas to pursue. ZW-015 (battle damage) and ZW-016 (victory celebration) are logged and wait on the same conversation.
 4. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:

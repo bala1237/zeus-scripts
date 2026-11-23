@@ -38,7 +38,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-021 | Enhancement | A living day: people working, markets, celebrations, dancing, enough for long streams | High (proposed) | Open, not started. Roadmap phase 1 | 22 Nov 2026, owner |
 | ZW-022 | Enhancement | Walk through the battle MVP's property, in and out, to showcase it | Medium (proposed) | Open, not started. Roadmap phase 3 | 22 Nov 2026, owner |
 | ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
-| ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High (proposed) | Open, options under discussion | 23 Nov 2026, owner |
+| ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High | Fix shipped | 23 Nov 2026, owner |
 
 ## Closed
 
@@ -254,6 +254,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
   5. A director that goes where something is happening and builds each visit as wide, then medium, then close.
   6. A film look: lens changes, slight hand-held sway, soft-focus backgrounds, place names on screen, music.
 - **Recommended:** a director that treats each place as a three-shot visit (a flight in, a move through at street level, a close detail), follows a citizen between places, and breaks off for events. Lens changes, gentle sway and place titles first; soft-focus backgrounds later, since they cost frame rate. The 360 turn stays as a manual option.
-- **To settle:** whether the stream is upright (portrait) or wide, since shots must be composed for it; pace; whether place names appear on screen.
+- **Settled by the owner, 23 Nov 2026:** the stream is wide; place names appear on screen. Pace: the owner asked what "livelier" meant; calm (shots of eight to ten seconds) is the default for the everyday tour, with quicker cutting kept for battles and big moments, and a setting to switch.
+- **Shipped 23 Nov 2026:** the tour is now a film of the city. Seven places, each a visit of three shots (a flight in, a move through at street level, a close detail) under a title; between places the camera follows a citizen through the streets. One loop takes about three and a half minutes. Lens changes and a slight hand-held sway at street level. Detail in `knowledge/city-scene.md`, "The cinematic tour".
+- **Not included yet:** soft-focus backgrounds (they cost frame rate), music, and a director that breaks off for events other than battles.
+- **The old tour** is still available as `?tour=classic`, and the Rotate button still turns the view by hand when the tour is off.
+- **Checked:** every shot rendered at its midpoint and looked at (eight of nineteen were reframed), and the whole loop stepped through to confirm the sequence. The moves, cuts and following shots have not been seen in motion.
+- **Waiting on the owner:** does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the look of the titles; whether following a citizen works.
 - Builds on ZW-019 (the battle's cinematic camera). Related: ZW-021 (a living day), ZW-022 (the house tour).
 

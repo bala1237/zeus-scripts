@@ -11,6 +11,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `life.js` | Citizens walking a route graph, building sites rising with Bolts labels, lightning on completion, birds |
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
 | `stand.js` | The standing pose citizens use when they stop, made in code (see `characters.md`) |
+| `tour.js` | The cinematic city tour: places, shots, titles, following a citizen |
 | `battle.js` | The siege at the south gate during a battle (see `battle.md`) |
 | `names.js` | Name plates over the homes |
 | `poses.html`, `poses.js` | Frame sheet of a character's animation, for checking motion without watching it (see `characters.md`). Not part of the hosted build |
@@ -24,7 +25,9 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `view` | `wide`, `plaza`, `street`, `temple`, `harbour`, `river`, `homes`, `civic`, `battle`, `top` | `wide` |
 | `light` | `cycle`, `day`, `dusk` | `cycle` |
 | `people` | 0 to 120 | 44 (plus one seventh as many on the quay, plus builders) |
-| `tour` | `0` turns the camera tour off | on, unless a view is chosen |
+| `tour` | `0` turns the camera tour off; `classic` uses the older tour that turns round each viewpoint | on, unless a view is chosen |
+| `pace` | `lively` shortens every tour shot to six tenths of its length | calm |
+| `film` | With `shot`: one tour shot to pose, as place, shot number, progress, for example `film=agora,1,0.5` | absent |
 | `spin` | `0` turns the slow rotation off | on |
 | `grade` | `soft` gives the old pale look | stream grade |
 | `names` | `0` hides the name plates over the homes | shown |
@@ -62,7 +65,28 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 
 **Shadows.** The scene creates the sun's shadow map itself, in a compact form (see `performance.md` for why, and for the trap with the shadow camera). It is drawn once, because only people and effects move and they cast none. It is redrawn about eight times during a change of light. Citizens get a soft blob under them instead of a real shadow.
 
-**Camera tour.** Glides between seven views, 13 s at each and 5 s moving. Touching the view or choosing one stops it.
+**Camera tour.** The default is the cinematic tour described below. The older one (`?tour=classic`) glides between seven views, 13 s at each and 5 s moving, turning round each. Touching the view or choosing one stops either.
+
+## The cinematic tour (`tour.js`, ZW-024)
+
+The city filmed like a documentary. It runs whenever the tour is on and no battle is being fought.
+
+- **Seven places** in `PLACES`: the city from above, the agora, the Temple of Zeus, the main street, the harbour, the river, the civic quarter. One loop takes about three and a half minutes.
+- **Each place is a visit of three shots**: a flight in, a move through at street level, and a close detail. Shots cut directly within a place; between places the picture dips to black for under half a second.
+- **A title** for each place appears lower left for about five seconds, and the label top left shows the place.
+- **Between places the camera follows a citizen** for nine seconds, a few metres behind and above the shoulder: the one nearest the next place who is walking and is not a builder.
+- **A shot** is `{ a: [position, target], b: [position, target], s: seconds, fov, hand }`. The camera eases from `a` to `b`. `fov` is the lens: about 44 is wide, 34 normal, 22 to 26 long. `hand` adds a slight hand-held sway, used at street level.
+- **Pace.** Shots last seven to eleven seconds. `?pace=lively` multiplies every length by 0.6. Calm is the default because the tour is a backdrop to the owner talking; quicker cutting is kept for the battle.
+- **The stream is wide**, so shots are composed for a landscape frame.
+
+Things learned:
+
+- **The viewer's controls fight a film camera.** They stop the camera going below what it looks at, and from coming closer than 4 m. A low shot looking up at the temple was silently lifted to roof height. The tour lifts both limits while it runs and restores them when it stops.
+- **Set-up order matters.** The tour's ticker mentions the battle, and tickers start running while the city is still loading, so the tour must be created after the battle or the page fails with an error about using something before it is defined.
+- **Shots cannot be judged from coordinates.** Trees, awnings and walls end up in front of the lens. Every shot was rendered at its midpoint and looked at (`?shot&film=agora,1,0.5`), and eight of nineteen were reframed.
+- **Close shots show what the wide view hides**: flat grass, plain ground at street level, and few things happening. The living day (ZW-021) is what will give these shots something to look at.
+
+To add or change a shot, edit `PLACES`, render it with `film=`, and look at the picture. To add a place, add an entry with a name, a subtitle and its shots.
 
 ## Citizens (`life.js`)
 
