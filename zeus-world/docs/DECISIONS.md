@@ -25,6 +25,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Backlog (22 Nov 2026) | Kept as a file (`BACKLOG.md`), not GitHub Issues |
 | Branches (22 Nov 2026) | Work is merged into the default branch at the end of each session, by pull request |
 | Battles (22 Nov 2026) | The siege at the south gate is the accepted way to show a battle. A real TikTok battle runs five minutes, and the score dictates the action. Wiring to real events comes later |
+| Bolts (23 Nov 2026) | People build from the Bolts they own and grow slowly. Comments and taps earn Bolts, and so does winning the games played on stream |
 
 ## Open questions
 
