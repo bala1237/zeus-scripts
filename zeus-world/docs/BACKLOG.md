@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-033.**
+- **Next number: ZW-034.**
 
 ## Open
 
@@ -44,6 +44,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-030 | Brainstorm | The stream as a journey: enter by the grand gate and reveal the kingdom piece by piece as people take part | High (proposed) | Ideas written; waiting for the owner's choices | 24 Nov 2026, owner |
 | ZW-031 | Enhancement | Personalisation for MVPs: choose colours, and request items that are built and available the next day | Medium (proposed) | Open, idea under discussion | 24 Nov 2026, owner |
 | ZW-032 | Brainstorm | Music and games on stream: lighting that follows the beat, citizens dancing to the music, a stage for the games | Medium (proposed) | Ideas written; waiting for the owner's answers | 24 Nov 2026, owner |
+| ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Fix shipped | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -339,3 +340,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Short answer:** all three are possible and can be built free in a first version. The open technical point is how the city page hears the music, which depends on how the owner plays it; three routes are described.
 - Not started.
 
+### ZW-033: Concert mode
+
+- **Asked:** 24 Nov 2026. After the discussion under ZW-032 the owner chose "concert first", and answered: the music plays on the same computer that streams; he goes live with OBS or TikTok LIVE Studio; his games run in a browser.
+- **Shipped 24 Nov 2026:** the Concert button. Evening falls; lamps pulse on the beat; beams sweep from the towers; lantern strings chase over the plaza; coloured light on the plaza and temple; fireworks every eight beats; 44 citizens dance round the fountain; the camera cuts on the beat. The beat is set by tapping a button in time, or by letting the city listen to the music. Detail in `knowledge/concert.md`.
+- **Built free.** Dances are made in code and are simple.
+- **Checked:** stills of the shots; start, end and return to the tour without errors; tap tempo and the beat detector with exact made-up timings. **Not checked:** anything in motion, and listening to real music, which this machine cannot do.
+- **Waiting on the owner:** try it with real music. Does tapping work; does Listen follow the song; are the lights too much or too little; do the dances look right; is the cutting right.

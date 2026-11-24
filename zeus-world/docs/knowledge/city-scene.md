@@ -12,6 +12,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
 | `stand.js` | The standing pose citizens use when they stop, made in code (see `characters.md`) |
 | `tour.js` | The cinematic city tour: places, shots, titles, following a citizen |
+| `concert.js` | Concert mode: lights, fireworks, dancers and camera on the beat (see `concert.md`) |
 | `soldier.js` | The battle's soldiers: figure, gear, guard and thrust |
 | `aftermath.js` | After a battle is won: the storm of gold, the triumph, the house tour (see `battle.md`) |
 | `battle.js` | The siege at the south gate during a battle (see `battle.md`) |
@@ -34,6 +35,8 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `grade` | `soft` gives the old pale look | stream grade |
 | `names` | `0` hides the name plates over the homes | shown |
 | `battle` | present: demo battles at the south gate on a loop. With `shot`, a number sets our share of the score for a still | absent |
+| `concert` | present: start in concert mode. With `shot`, the number of the camera shot to pose | absent |
+| `bpm` | the concert's tempo in beats a minute | 120 |
 | `after` | `0` skips what follows a won battle. With `shot`: `storm`, `triumph` or `home` poses a still, and `triumph,16` one at 16 seconds in | on |
 | `cine` | `0` turns the battle's cinematic camera off. With `shot` and `battle`, the name of one shot to pose | on |
 | `far` | `0` turns the far-view models off | on |

@@ -12,6 +12,15 @@
 <body>
 <div id="label"></div>
 <div id="load" style="position:fixed;left:50%;top:50%;width:min(60vw,420px);height:10px;margin:-5px 0 0 calc(min(60vw,420px) / -2);background:rgba(255,255,255,.6);border-radius:6px;overflow:visible"><div style="border-radius:6px;height:100%;width:2%;background:#2f6fb0;transition:width .2s"></div><div style="position:absolute;top:18px;left:0;right:0;text-align:center;font:600 14px system-ui;color:#1d1a2e">Building the city…</div></div>
+<div id="stage" style="position:fixed;right:16px;bottom:14px;display:none;font:600 13px system-ui;color:#1d1a2e;background:rgba(255,255,255,.9);padding:9px 11px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.25)">
+  <div style="margin-bottom:6px">♪ Concert · <span id="bpm">120</span> beats a minute<span id="hearing"></span></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <button id="tap" title="Tap in time with the music, three times or more">Tap the beat</button>
+    <button id="slower" title="Slower">−</button><button id="faster" title="Faster">＋</button>
+    <button id="listen" title="Let the city hear the music: share the tab or screen that is playing it, with audio">Listen</button>
+    <button id="endconcert">End</button>
+  </div>
+</div>
 <div id="panel" style="position:fixed;left:16px;bottom:14px;font:600 13px system-ui;color:#1d1a2e;max-width:calc(100vw - 32px)">
   <button id="fold" title="Hide or show controls">☰ Controls</button>
   <div id="body">
@@ -19,6 +28,7 @@
     <div class="row">
       <button id="tour">🎥 Tour: on</button>
       <button id="battle" title="Start a demo battle at the south gate">⚔ Battle</button>
+      <button id="concert" title="Concert mode: lights and dancing to the music">♪ Concert</button>
       <button id="spin">⟳ Rotate: on</button>
       <button data-z="-1" title="Zoom in">＋</button><button data-z="1" title="Zoom out">－</button>
       <button data-p="-1,0" title="Pan left">←</button><button data-p="0,1" title="Pan forward">↑</button><button data-p="0,-1" title="Pan back">↓</button><button data-p="1,0" title="Pan right">→</button>
@@ -28,6 +38,7 @@
 </div>
 <style>
   #panel .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  #stage button { background: #2f6fb0; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; min-width: 34px; }
   #panel button, #panel a { background: rgba(255,255,255,.85); color: #1d1a2e; padding: 7px 11px; border-radius: 8px; text-decoration: none; border: 0; font: inherit; cursor: pointer; min-width: 34px; }
   #panel a.on { background: #2f6fb0; color: #fff; }
   #panel.shut #body { display: none; }
@@ -36,7 +47,7 @@
   // view links; the rest of the panel is wired up in city.js
   const q = new URLSearchParams(location.search), nav = document.getElementById('nav'), panel = document.getElementById('panel');
   const link = (t, k, v, d) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; if ((q.get(k) || d) === v) a.className = 'on'; nav.append(a); };
-  if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'battle', 'top']) link(v, 'view', v, q.has('view') ? 'wide' : ''); link('☀ ↔ 🌙 cycle', 'light', 'cycle', 'cycle'); link('day', 'light', 'day', 'cycle'); link('dusk', 'light', 'dusk', 'cycle'); }
+  if (q.has('shot')) { panel.remove(); document.getElementById('stage').remove(); } else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'battle', 'top']) link(v, 'view', v, q.has('view') ? 'wide' : ''); link('☀ ↔ 🌙 cycle', 'light', 'cycle', 'cycle'); link('day', 'light', 'day', 'cycle'); link('dusk', 'light', 'dusk', 'cycle'); }
   document.getElementById('fold')?.addEventListener('click', () => { panel.classList.toggle('shut'); try { localStorage.setItem('zw-panel', panel.classList.contains('shut') ? '1' : ''); } catch {} });
   try { if (localStorage.getItem('zw-panel')) panel.classList.add('shut'); } catch {}
 </script>

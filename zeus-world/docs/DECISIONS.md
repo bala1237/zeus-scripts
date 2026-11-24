@@ -32,6 +32,8 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | First spectacle (23 Nov 2026) | Left to Claude's recommendation by the owner: "Zeus's storm of gold" |
 | Stream format (23 Nov 2026) | The stream is wide (landscape). Camera shots are composed for that |
 | City tour (23 Nov 2026) | A cinematic tour replaces the 360 rotation; place names appear on screen; calm pace by default |
+| The owner's setup (24 Nov 2026) | Music is played on the same computer that streams. He goes live with OBS or TikTok LIVE Studio. His games run in a browser |
+| Order of the stream features (24 Nov 2026) | Concert mode first, then the game stage |
 
 ## Open questions
 
