@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-032.**
+- **Next number: ZW-033.**
 
 ## Open
 
@@ -43,6 +43,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-029 | Bug | Building labels show during the battle camera | High | Fix shipped | 24 Nov 2026, owner |
 | ZW-030 | Brainstorm | The stream as a journey: enter by the grand gate and reveal the kingdom piece by piece as people take part | High (proposed) | Ideas written; waiting for the owner's choices | 24 Nov 2026, owner |
 | ZW-031 | Enhancement | Personalisation for MVPs: choose colours, and request items that are built and available the next day | Medium (proposed) | Open, idea under discussion | 24 Nov 2026, owner |
+| ZW-032 | Brainstorm | Music and games on stream: lighting that follows the beat, citizens dancing to the music, a stage for the games | Medium (proposed) | Ideas written; waiting for the owner's answers | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -329,5 +330,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **What is feasible:** colours are cheap and instant (recolouring walls, roofs, shutters, doors, awnings, banners from a set palette). Requested items that are hard-edged (furniture, a fountain, a sign, a gate, a small shrine) can be scripted overnight for free. Organic ones (a statue of a person, an animal, an unusual tree) need paid generation, roughly $0.35 to $2 each, and the owner's approval each time.
 - **Constitution:** "catalogue items only; no uploads" still holds, because a request becomes a catalogue item made by us to the style rules; any name or text on it passes moderation.
 - **To settle:** who qualifies (first place or all top three); how many requests per win; whether a requested item stays theirs alone or joins the catalogue later; the budget for paid items; who builds it overnight (a session has to be started for it).
+- Not started.
+
+### ZW-032: Music and games on stream
+
+- **Reported:** 24 Nov 2026, by the owner, for discussion: "I do play music and games in my live. What's the possibility of setting up virtual lighting which adjusts to the beat, characters dancing based on the music, and for games some interesting idea for setting the stage."
+- **Ideas and feasibility in reply:** `BRAINSTORM-GAME.md`, "Music and games on stream, 24 Nov 2026".
+- **Short answer:** all three are possible and can be built free in a first version. The open technical point is how the city page hears the music, which depends on how the owner plays it; three routes are described.
 - Not started.
 

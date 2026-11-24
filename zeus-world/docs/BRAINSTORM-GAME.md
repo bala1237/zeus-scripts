@@ -320,3 +320,65 @@ Proposals in reply. None decided.
 3. Should a commissioned item join the catalogue for everyone after a time?
 4. Is there a budget for generated items, or scripted only for now?
 
+## Music and games on stream, 24 Nov 2026 (ZW-032)
+
+The owner plays music and games in his live and asked about lighting that follows the beat, citizens dancing to the music, and a stage for the games.
+
+Proposals and feasibility in reply. None decided.
+
+### How the city can hear the music
+
+The city is a web page, and a web page can listen to sound and measure its loudness and bass many times a second. Three routes, simplest first:
+
+| Route | How | Strength | Weakness |
+| --- | --- | --- | --- |
+| Tap the tempo | The owner taps a button in time for a few beats, or types the tempo | Always works, exact, nothing to set up | Does not follow a change of song by itself |
+| Listen | The page listens to the computer's sound (through a microphone input or a loop-back of what is playing) and follows the energy and bass | Follows any song automatically | Needs a one-time sound setup on the streaming computer; picks up the owner's voice if it shares the input |
+| Play it through the page | The music is played by the city page itself | Perfect sync and full detail | Changes how the owner plays music |
+
+- Following the *energy* of music (lights swelling with loudness and bass) is reliable. Finding every exact *beat* automatically is less so on songs without a strong drum; tap tempo covers those. A mix of the two is the likely answer.
+- Viewers see picture and sound together, because both go out in the same stream.
+
+### Concert mode: what the city does
+
+- **Lighting.** Every lamp and brazier pulses on the beat. The temple's columns are lit from below in colours that change with the song. Beams sweep from the wall towers. Strings of festival lanterns over the plaza. The fountain's jets jump with the bass. Fireworks on the big moments. It looks best at dusk, so concert mode brings the evening on.
+- **Dancing.** Citizens gather in the plaza. Movement made in code and timed to the tempo, as the standing pose and the soldiers' thrust were: a sway, a step from side to side, arms up, claps on the beat, and a ring dance round the fountain. The clap and cheer they already have can be timed to the music too.
+- **Camera.** Cuts on the beat between the dancers, the lights and the wide city, using the film camera that exists.
+- **Limit.** Dances made in code are simple. Proper dance animations from the rigging service would look better and cost money; that can wait until the simple version shows whether the idea works.
+
+### A stage for the games
+
+The amphitheatre becomes the game-show stage.
+
+| Game | The stage |
+| --- | --- |
+| Family Feud | Two families of citizens at stone podiums. A great board of stone tablets that turn over to reveal each answer. A wrong answer brings a thunderclap and a cracked "X". Each side's score is a column that rises |
+| Bible quiz | The library steps: a scroll unrolls with each question, a brazier burns down as the timer |
+| Number guessing | The oracle at the round shrine: guesses rise as lanterns and the closest one flares |
+| Any game | The crowd in the seats reacts: leaning in, groaning, leaping up. The winner is crowned with laurel and walks out to cheers |
+
+- The owner keeps running the game as he does now. The city needs to be told what happened: reveal answer three, a strike, a point to a side, a winner. That means buttons on the director's console.
+- The simplest first step needs no buttons at all: a "game mode" that takes the camera to the amphitheatre with the crowd in place, and a "winner" button that crowns and celebrates.
+
+### The city in modes
+
+This and the earlier ideas point the same way: the city has modes the owner switches between.
+
+| Mode | What it shows |
+| --- | --- |
+| Tour | The cinematic tour (built) |
+| Journey | Waking the city district by district (ZW-030) |
+| Battle | The siege and what follows (built) |
+| Concert | Lights and dancing to the music |
+| Game show | The amphitheatre stage |
+| Guild | Choosing what to build (ZW-030, ZW-031) |
+
+All of them wait on the same thing: a console for the owner.
+
+### Questions for the owner
+
+1. How is the music played: from the same computer that streams, and through which programme?
+2. What is used to go live: OBS, TikTok LIVE Studio, or something else?
+3. How are the games run today: by voice, on paper, or with an on-screen tool?
+4. Which first: concert mode, or the game stage?
+
