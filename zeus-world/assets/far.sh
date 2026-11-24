@@ -5,6 +5,7 @@ f() { node lod.mjs "models/$1.glb" "$2" "$3"; }
 f char_citizen_man           4000 plain
 f char_citizen_woman         4000 plain
 f char_citizen_elder         4000 plain
+f char_soldier               4000 plain
 f nature_cypress_t1          2500 round
 f nature_bush_t1_myrtle      5000 round
 f nature_bush_t1_oleander    5000 round

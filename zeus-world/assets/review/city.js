@@ -12,6 +12,7 @@ import { createNames } from './names.js';
 import { createBattle } from './battle.js';
 import { createTour } from './tour.js';
 import { createAftermath } from './aftermath.js';
+import { soldierKit } from './soldier.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -287,7 +288,8 @@ const topThree = ['@queen_calli', '@theo_builds', '@lina.sky'].map((n) => owned.
 
 // ---------- the siege at the south gate (ZW-018). Until real battle events are connected the score is made up:
 // ?battle runs a demo battle on a loop, the Battle button starts one, and ?battle=0.3 with ?shot poses a still at that share of the score.
-const battle = createBattle({ scene, camera, controls, tickers, gateZ: Z1, wallTop: new THREE.Box3().setFromObject((await get(M('infra_city-wall'))).scene).max.y, towers: [[-28, Z1], [28, Z1]],
+const kit = await soldierKit({ get, url: M('char_soldier'), farUrl: farOn ? F('char_soldier') : null, farMaterial });
+const battle = createBattle({ scene, camera, controls, tickers, kit, gateZ: Z1, wallTop: new THREE.Box3().setFromObject((await get(M('infra_city-wall'))).scene).max.y, towers: [[-28, Z1], [28, Z1]],
   onResult: (result) => { if (result !== 'win') return; life.cheerNear(0, 44, 46, 9); for (const [i, x] of [-14, 9, -2].entries()) setTimeout(() => life.strike(x, 0, Z1 + 52 + i * 4), 900 + i * 1100); } });
 { const fly = { on: false, t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], to: null, back: null }, ease = (k) => k * k * (3 - 2 * k);
   const go = (to) => { fly.on = true; fly.t0 = null; fly.from[0].copy(camera.position); fly.from[1].copy(controls.target); fly.to = to; };

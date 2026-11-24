@@ -11,6 +11,7 @@ Last updated: 22 Nov 2026.
 | Item | Backlog | State |
 | --- | --- | --- |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
+| Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Shipped 24 Nov. Waiting for the owner to watch it |
 | After a battle is won | ZW-025 | Shipped 23 Nov: storm of gold, triumph, house tour. Waiting for the owner to watch it |
 | Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
 | Live battle against the rival | ZW-018 | Approved by the owner 22 Nov. Real TikTok battle events (five minutes, score-driven) still to connect |
@@ -41,25 +42,26 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-024, the cinematic city tour.** Shipped 23 Nov. Watch a full loop on the preview (about three and a half minutes): does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the titles; the shots that follow a citizen.
-2. **ZW-025, after a battle is won.** Press the Battle button; the first battle is a win. After the rival is driven off: does the storm of gold feel like a big moment; is the darkening right; the triumph's pace and shots; the house tour; the wreath; the titles.
-3. **ZW-017, the game brainstorm.** Read `BRAINSTORM-GAME.md`, answer its seven questions and pick the ideas to pursue. ZW-015 (battle damage) and ZW-016 (victory celebration) are logged and wait on the same conversation.
-4. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:
+1. **ZW-026, ZW-027, ZW-028, the battle rebuilt.** Press the Battle button. Do the soldiers look right close up and far away; are the arrows and lightning good enough; is the camera fast and exciting enough, with too much shake or too little.
+2. **ZW-024, the cinematic city tour.** Shipped 23 Nov. Watch a full loop on the preview (about three and a half minutes): does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the titles; the shots that follow a citizen.
+3. **ZW-025, after a battle is won.** Press the Battle button; the first battle is a win. After the rival is driven off: does the storm of gold feel like a big moment; is the darkening right; the triumph's pace and shots; the house tour; the wreath; the titles.
+4. **ZW-017, the game brainstorm.** Read `BRAINSTORM-GAME.md`, answer its seven questions and pick the ideas to pursue. ZW-015 (battle damage) and ZW-016 (victory celebration) are logged and wait on the same conversation.
+5. **Feedback on the liveliness batches.** Batches 1, 2, 3 and 5 are on the preview. No feedback yet. The checklists:
    - **People.** Natural walking, no sliding or walking through stalls, lamps or buildings; correct height over the bridge; is 44 the right number.
    - **Construction.** Does the council hall rise convincingly; do the Bolts labels stay on their buildings; is the lightning and flash too strong.
    - **Ambient.** Is the cloth ripple visible enough; tree sway; smoke amount; does the fountain spray read as water; the sailing boat.
    - **Day cycle and tour.** Is the change smooth; any stutter; cycle length; tour pace and stops; does any stop start inside a building.
    - **Frame rate** on a computer and a phone, day and dusk (counter is top right).
-5. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
-6. **ZW-019.** Press the Battle button and watch the new camera. Does it feel cinematic; is any shot too close, too far or too long; are the cuts too frequent.
-7. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
-8. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
-9. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
-10. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
-11. **ZW-002.** Is the flicker on the tower tops gone.
-12. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
-13. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
-14. The open questions in `DECISIONS.md`.
+6. **ZW-001.** Memory figures from Chrome's task manager (Shift+Esc) with the preview open: the tab and "GPU Process", after one minute and after ten. And confirm the city looks the same as before.
+7. **ZW-019.** Press the Battle button and watch the new camera. Does it feel cinematic; is any shot too close, too far or too long; are the cuts too frequent.
+8. **ZW-004.** Frame rate on the preview (counter top right), on a computer and a phone, in the wide view and in the street view. Does any tree or citizen visibly change as the camera moves towards or away from it.
+9. **ZW-012.** Do the women walk naturally now, including when they stop, cheer and clap.
+10. **ZW-013.** Name plates: size and style, and should apartment blocks, shops and public buildings carry names too.
+11. **ZW-014.** Do citizens look natural when they stand at the stalls and shops; is the movement too little or too much.
+12. **ZW-002.** Is the flicker on the tower tops gone.
+13. **ZW-003.** Approval to spend roughly $1 to $2 per animal on fal.
+14. **Rename the default branch to `main`** in the GitHub settings (see `knowledge/hosting.md`, "Branches").
+15. The open questions in `DECISIONS.md`.
 
 ## What exists
 
