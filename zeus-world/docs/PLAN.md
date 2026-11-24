@@ -13,7 +13,7 @@ Last updated: 22 Nov 2026.
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
 | Building labels showing during the battle | ZW-029 | Fix shipped 24 Nov. Waiting for the owner to confirm |
-| Concert mode | ZW-033 | Shipped 24 Nov. Waiting for the owner to try it with real music |
+| The Zeus Stage for music | ZW-034 | Shipped 24 Nov, replacing concert mode in the city, which the owner rejected. Waiting for the owner to try it |
 | After a battle is won | ZW-025 | Shipped 23 Nov: storm of gold, triumph, house tour. Waiting for the owner to watch it |
 | Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
 | Live battle against the rival | ZW-018 | Approved by the owner 22 Nov. Real TikTok battle events (five minutes, score-driven) still to connect |
@@ -44,7 +44,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-033, concert mode.** Press Concert with music playing. Tap the beat, then try Listen (share the tab or screen playing the music, with audio). Are the lights too much or too little; do the dances look right; is the cutting right.
+1. **ZW-034, the Zeus Stage.** Open ♪ Stage from the city's controls with music playing. Does it look good; which backgrounds to keep or add; lasers too many or too few; is Backdrop only useful behind your camera; what should stand on the stage.
 2. **ZW-030, the stream as a journey.** Answer the five questions at the end of that section in `BRAINSTORM-GAME.md`.
 3. **ZW-029.** Confirm the building labels and name plates no longer show during a battle.
 4. **ZW-024, the cinematic city tour.** Shipped 23 Nov. Watch a full loop on the preview (about three and a half minutes): does it feel like a film; any shot that is dull, too close, blocked or too long; the pace; the titles; the shots that follow a citizen.

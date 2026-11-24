@@ -339,6 +339,8 @@ The city is a web page, and a web page can listen to sound and measure its loudn
 - Following the *energy* of music (lights swelling with loudness and bass) is reliable. Finding every exact *beat* automatically is less so on songs without a strong drum; tap tempo covers those. A mix of the two is the likely answer.
 - Viewers see picture and sound together, because both go out in the same stream.
 
+**Update, 24 Nov 2026:** concert mode in the city was built and the owner rejected it. Music now has its own stage, separate from the city (ZW-034, `knowledge/stage.md`). The section below is kept as a record.
+
 ### Concert mode: what the city does
 
 - **Lighting.** Every lamp and brazier pulses on the beat. The temple's columns are lit from below in colours that change with the song. Beams sweep from the wall towers. Strings of festival lanterns over the plaza. The fountain's jets jump with the bass. Fireworks on the big moments. It looks best at dusk, so concert mode brings the evening on.

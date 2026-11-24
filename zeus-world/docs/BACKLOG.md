@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-034.**
+- **Next number: ZW-035.**
 
 ## Open
 
@@ -44,7 +44,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-030 | Brainstorm | The stream as a journey: enter by the grand gate and reveal the kingdom piece by piece as people take part | High (proposed) | Ideas written; waiting for the owner's choices | 24 Nov 2026, owner |
 | ZW-031 | Enhancement | Personalisation for MVPs: choose colours, and request items that are built and available the next day | Medium (proposed) | Open, idea under discussion | 24 Nov 2026, owner |
 | ZW-032 | Brainstorm | Music and games on stream: lighting that follows the beat, citizens dancing to the music, a stage for the games | Medium (proposed) | Ideas written; waiting for the owner's answers | 24 Nov 2026, owner |
-| ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Rejected by the owner; replaced by ZW-034 | 24 Nov 2026, owner |
+| ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Fix shipped | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -347,3 +348,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Built free.** Dances are made in code and are simple.
 - **Checked:** stills of the shots; start, end and return to the tour without errors; tap tempo and the beat detector with exact made-up timings. **Not checked:** anything in motion, and listening to real music, which this machine cannot do.
 - **Waiting on the owner:** try it with real music. Does tapping work; does Listen follow the song; are the lights too much or too little; do the dances look right; is the cutting right.
+- **Rejected 24 Nov 2026.** The owner tried it: "no, it's not looking good." Concert mode inside the city is removed. Replaced by ZW-034.
+
+### ZW-034: A separate stage module for music
+
+- **Reported:** 24 Nov 2026, by the owner, after rejecting concert mode in the city: "instead of the game itself, can we set up a separate module and staging with laser light and something interesting background transitioning."
+- **Meaning:** music gets its own show, apart from the city: a stage with lasers and backgrounds that change, following the beat.
+- **Shipped 24 Nov 2026:** the Zeus Stage, its own page (`/stage.html`, linked from the city's controls). A dark arena with a great screen of six moving backgrounds that change every 32 beats with a wipe; fans of lasers whose pattern changes every eight beats; wide beams, haze, a reflecting floor, a crowd in silhouette; a camera that cuts between six angles. "Backdrop only" shows just the moving background to put behind a camera. The beat is tapped in or heard from the music. Detail in `knowledge/stage.md`.
+- **Checked:** stills of every background, a transition and the backdrop; the controls, with no errors. **Not checked:** motion, and listening to real music.
+- **Waiting on the owner:** does it look good now; which backgrounds to keep, drop or add; lasers too many or too few; is backdrop-only useful behind his camera; what should stand on the stage.
