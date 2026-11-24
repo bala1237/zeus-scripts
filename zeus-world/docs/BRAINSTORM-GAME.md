@@ -274,3 +274,49 @@ Proposals in reply. None decided.
 4. May an MVP's Bolts be shown on stream during the guild walk?
 5. Build the opening-night slice first, or the Builders' Guild first?
 
+## Personalisation for MVPs, 24 Nov 2026 (ZW-031)
+
+The owner's idea: MVPs can customise, choosing colours or requesting items that are built and made available the next day.
+
+Proposals in reply. None decided.
+
+### Colours: instant, on stream
+
+- At the Builders' Guild the MVP chooses from a palette that fits the city's look (the asset bible's colours, so nothing clashes): walls, roof tiles, shutters and doors, awnings, the banner.
+- They type the choice in chat and their home changes colour live, with the camera on it.
+- A crest: a symbol and two colours on a banner by their door. Chosen from a set, not drawn, so it is always safe to show.
+
+### A commission: requested today, standing tomorrow
+
+- The MVP asks for one thing for their plot. The owner accepts it on stream, and Zeya announces a commission to the Builders' Guild.
+- Overnight it is built. Next stream opens with the unveiling: a cloth pulled off, the camera on it, their name on a plaque: "Commissioned by ...".
+- This gives people a reason to come back the next day, which is the hardest thing to earn.
+
+### What can be made overnight
+
+| Kind | Examples | Cost |
+| --- | --- | --- |
+| Scripted | A fountain, a pergola, a sign over the door, a garden gate, a small shrine, a mosaic floor, a sundial, a bench with their name, a tower room | Free |
+| Generated | A statue of a figure, a pet, an unusual tree | Roughly $0.35 to $2 each; the owner approves each one |
+| Not possible | Anything modern, anything copyrighted, anything with a real person's likeness, anything outside the style rules | Declined kindly, with an alternative offered |
+
+### Keeping it fair and manageable
+
+- **One commission per win**, so the workload stays small and the honour stays rare.
+- **Theirs first, everyone's later.** The item is theirs alone for a month, then joins the catalogue for all with "designed by ..." on it. The MVP gets lasting credit, and the catalogue grows from the community's own ideas.
+- **A second way in.** Games champions (Family Feud, the quiz) could also earn a commission now and then, so it is not only for those who support in battles. TikTok's rules reportedly look hard at goods given in exchange for gifts, and a route that is open to taking part helps there too.
+- Requests pass the same moderation as names.
+
+### What it needs
+
+- Recolouring built into the home parts (the catalogue's materials are already named, so this is modest work).
+- A list of commissions in the repository, so whichever session runs that night knows what to build, for whom, and where it goes.
+- Someone to start that night's session: the builds do not happen by themselves.
+
+### Questions for the owner
+
+1. First place only, or all of the top three?
+2. One commission per win?
+3. Should a commissioned item join the catalogue for everyone after a time?
+4. Is there a budget for generated items, or scripted only for now?
+
