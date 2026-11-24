@@ -141,5 +141,7 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
 
   // take people out of the city again (a procession that has arrived, for instance)
   function remove(list) { for (const me of list) { const i = walkers.indexOf(me); if (i >= 0) walkers.splice(i, 1); me.mixer.stopAllAction(); scene.remove(me.w); } }
-  return { addWalkers, remove, construct, cheerNear, strike, walkers: () => walkers, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
+  // the Bolts labels over the building sites, hidden while something else is being filmed
+  const showLabels = (on) => { labels.style.visibility = on ? '' : 'hidden'; };
+  return { addWalkers, remove, construct, cheerNear, strike, showLabels, walkers: () => walkers, count: () => walkers.length, shown: () => walkers.filter((m) => m.w.visible).length };
 }

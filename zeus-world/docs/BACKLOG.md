@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-029.**
+- **Next number: ZW-030.**
 
 ## Open
 
@@ -40,15 +40,15 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
 | ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High | Fix shipped | 23 Nov 2026, owner |
 | ZW-025 | Enhancement | After a battle is won: the storm of gold, a triumph for the top three, a tour of the first one's home | High | Fix shipped | 23 Nov 2026, owner |
-| ZW-026 | Bug | Battle soldiers look like shapes: no hands, odd | High | Fix shipped | 24 Nov 2026, owner |
-| ZW-027 | Bug | Battle arrows and lightning look basic: arrows are lines | High | Fix shipped | 24 Nov 2026, owner |
-| ZW-028 | Enhancement | Battle camera as a cinematic action sequence with fast cuts | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-029 | Bug | Building labels show during the battle camera | High | Fix shipped | 24 Nov 2026, owner |
 
 ## Closed
 
 | No. | Type | Title | Closed | Commit |
 | --- | --- | --- | --- | --- |
-| | | Nothing closed yet | | |
+| ZW-026 | Bug | Battle soldiers look like shapes: no hands, odd | 24 Nov 2026, owner: "looks good" | 5a515b3 |
+| ZW-027 | Bug | Battle arrows and lightning look basic: arrows are lines | 24 Nov 2026, owner: "looks good" | 5a515b3 |
+| ZW-028 | Enhancement | Battle camera as a cinematic action sequence with fast cuts | 24 Nov 2026, owner: "looks good" | 5a515b3 |
 
 ## Details
 
@@ -287,6 +287,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Fix shipped 24 Nov 2026:** the soldiers are now real human figures with a bronze or iron helmet, a round shield and a spear, standing in a braced guard and thrusting in the front rank. Built free from the man citizen. Detail in `knowledge/battle.md`, "Rebuilt 24 Nov 2026".
 - **Limits:** they are all the same man; they do not fall or react to hits; the rival's tunics could only be made somewhat darker.
 - **Waiting on the owner:** do they look right now, close up and from a distance.
+- **Closed 24 Nov 2026:** the owner watched the rebuilt battle and said "looks good".
 
 ### ZW-027: Battle arrows and lightning look basic
 
@@ -294,6 +295,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Cause:** an arrow is a thin dark box; the lightning is a chain of plain cylinders with a white flash.
 - **Fix shipped 24 Nov 2026:** arrows have a shaft, a bronze head and feathers, and stay standing where they land. Catapult stones burn, trail fire and smoke, and land with a burst and a jolt. Lightning has a glowing core, forks, a burst and sparks where it strikes, everywhere it is used.
 - **Waiting on the owner:** are the arrows and the lightning good enough now.
+- **Closed 24 Nov 2026:** the owner watched the rebuilt battle and said "looks good".
 
 ### ZW-028: Battle camera as an action sequence
 
@@ -302,3 +304,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Fix shipped 24 Nov 2026:** the battle is cut every 1.5 to 3 seconds between twelve kinds of shot: low between the lines at a thrusting soldier, a fast run along the shields, a long lens down the helmets, over a shoulder, riding behind an arrow, riding a catapult stone to its landing, past a catapult, down from the wall, and a short wide view to keep bearings. Hand-held throughout, with a jolt on every impact. Replaces the slower camera of ZW-019.
 - **Checked:** a still of each shot and a full battle stepped through. The cutting and the camera shake have not been seen in motion.
 - **Waiting on the owner:** is it fast and exciting enough; too much shake or too little; any shot that does not work.
+- **Closed 24 Nov 2026:** the owner watched the rebuilt battle and said "looks good".
+
+### ZW-029: Building labels show during the battle camera
+
+- **Reported:** 24 Nov 2026, by the owner, after approving the rebuilt battle: "the building labels show up in battle camera movement."
+- **Cause:** the Bolts labels over the building sites are page elements drawn on top of the picture wherever their building falls on screen, and the name plates over the homes grow to stay readable from far away. Neither knew a battle was being filmed, so they floated across the close battle shots.
+- **Fix shipped 24 Nov 2026:** the Bolts labels and the name plates are hidden for the whole of a battle and what follows it (the storm of gold, the triumph, the house tour), and come back when the city tour resumes. The names carried above the three heroes in the triumph are separate and still show.
+- **Checked:** stills of a close battle shot, the wide battle view and the storm show no labels; the normal city view still shows them.
+- **Waiting on the owner:** confirm they are gone during the battle.
