@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 24 Nov 2026
 
+- **Concert mode (ZW-033).** A Concert button turns the city into the show for the owner's music: evening, lamps pulsing on the beat, sweeping beams, lantern strings, coloured light, fireworks, 44 citizens dancing round the fountain, and a camera that cuts on the beat. The beat is tapped in or heard from the music. `assets/review/concert.js`.
 - **Brainstorm logged (ZW-032):** music and games on stream. Lighting that follows the beat, citizens dancing, the amphitheatre as a game-show stage, and the city in modes. Ideas in `BRAINSTORM-GAME.md`. Nothing built.
 - **Idea logged (ZW-031):** personalisation for MVPs. Colours chosen live, and a commissioned item built overnight and unveiled the next stream. Ideas in `BRAINSTORM-GAME.md`. Nothing built.
 - **Brainstorm logged (ZW-030):** the stream as a journey. Enter by the gate and wake the city district by district as people take part; battles inside it; a Builders' Guild where MVPs choose what to build. Ideas in `BRAINSTORM-GAME.md`. Nothing built.
