@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-030.**
+- **Next number: ZW-031.**
 
 ## Open
 
@@ -41,6 +41,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High | Fix shipped | 23 Nov 2026, owner |
 | ZW-025 | Enhancement | After a battle is won: the storm of gold, a triumph for the top three, a tour of the first one's home | High | Fix shipped | 23 Nov 2026, owner |
 | ZW-029 | Bug | Building labels show during the battle camera | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-030 | Brainstorm | The stream as a journey: enter by the grand gate and reveal the kingdom piece by piece as people take part | High (proposed) | Ideas written; waiting for the owner's choices | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -313,3 +314,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Fix shipped 24 Nov 2026:** the Bolts labels and the name plates are hidden for the whole of a battle and what follows it (the storm of gold, the triumph, the house tour), and come back when the city tour resumes. The names carried above the three heroes in the triumph are separate and still show.
 - **Checked:** stills of a close battle shot, the wide battle view and the storm show no labels; the normal city view still shows them.
 - **Waiting on the owner:** confirm they are gone during the battle.
+
+### ZW-030: The stream as a journey
+
+- **Reported:** 24 Nov 2026, by the owner, as a brainstorm: "It should be more like a game rather than showcasing everything at once. Like moving through the grand kingdom entry, reveal one by one and cinematic camera movement. The more the viewers' participation, it reveals more. More the support, it reveals more. Battle scenes when battle starts and based on win or loss. MVP tours and helping MVPs choose what they want to build, and I will be running through what we have, and things are opened or locked based on how many Bolts they have and so on."
+- **Ideas in reply:** `BRAINSTORM-GAME.md`, "The stream as a journey, 24 Nov 2026".
+- **Not a build task yet.** A first slice is proposed there.
+

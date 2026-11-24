@@ -212,3 +212,65 @@ Proposals:
 
 All on made-up names for now, as the battle is. It turns the battle into a full story with an ending people want to be in.
 
+## The stream as a journey, 24 Nov 2026 (ZW-030)
+
+The owner's idea: stop showing everything at once. Enter through the grand gate, reveal the kingdom one piece at a time with cinematic camera moves, more revealed the more people take part and support. Battle scenes when a battle starts. Tours for MVPs, and the owner walking them through what can be built, with things open or locked by the Bolts they have.
+
+Proposals in reply. None decided.
+
+### Two kinds of progress
+
+- **What the city has** is permanent. Buildings and levels earned are never lost (constitution).
+- **What is awake tonight** starts again each stream. The stream opens outside the gate with the city asleep under mist, and the community wakes it district by district. That gives every stream a beginning, a build-up and a finale, and it is what makes people wait for the momentum again.
+
+### The journey of one stream
+
+| Chapter | What opens it | What is seen |
+| --- | --- | --- |
+| At the gate | The stream starts | Outside the south gate at dawn, walls and towers above the mist, a counter of who has arrived |
+| The gate opens | The first wave of people and taps | The doors swing, the camera goes through, the main street lamps light one by one |
+| The Agora | The meter fills | Mist lifts, stalls open, citizens come out, the fountain starts |
+| The Harbour, the River, the Civic Quarter | Each fills in turn | A flight in, a walk through, a close detail: the three-shot visits the tour already has |
+| The Temple | A high bar | The sacred way lights torch by torch up to the temple |
+| The Palace | The finale, not reached every stream | The queens appear on the balcony; the night's biggest moment |
+
+- **The meter** is the community's energy: people present, comments, taps, shares, games won, and support. Support counts for more, but the meter can be filled without it, and its targets scale with how many are watching.
+- It should read as the city waking, not as a request. TikTok's rules reportedly penalise repeated prompts for gifts, so the bar is named for the city ("The Agora wakes"), never for gifts.
+- Each reveal reuses camera work that exists: the tour's shots become the reveals.
+
+### Battles inside the journey
+
+- A battle interrupts whatever chapter is running and takes the camera to the south gate.
+- A win: the storm of gold, the triumph, and the next district opens at once as the prize.
+- A loss: one awake district goes dark and has to be relit by the community (temporary, in keeping with the constitution), and damage is left to repair (ZW-015).
+
+### The MVP tour and choosing what to build
+
+- **The Builders' Guild.** The catalogue becomes a place in the city: a yard where every home part, garden piece and decoration stands as a model on a plinth. What a person can afford glows; what they cannot is behind a rope with its price in Bolts on a tablet; what the city's level has not opened yet is under a cloth.
+- **The walk.** The owner takes an MVP's citizen through the yard on stream. The camera follows them from plinth to plinth; their Bolts show in a corner (the constitution allows a balance to be seen by its owner and the director; showing it on stream would be a choice for the owner to make).
+- **The choice.** They pick in chat. The piece is carried to their plot and rises there, live, with their name on it.
+- **Then the tour** of their home as it now stands.
+- Everyone watching sees what they could have, which is the point.
+
+### What it needs
+
+- **A director's console for the owner**: next chapter, open the guild for a named person, start and stop a battle, choose the queens. This is the piece everything above waits on.
+- The palace (ZW-020) for the finale, and the guild yard, both scriptable for free.
+- Mist and darkness that can cover and uncover a district.
+- Real events for the meter (ZW-009); a demo meter until then.
+
+### A possible first slice: opening night
+
+- The stream starts outside the gate with the city under mist.
+- A meter, driven by a button for now, as the battle was.
+- Three chapters: the gate opens, the Agora wakes, the Harbour wakes, each with a reveal and a title.
+- Then the normal tour of whatever is awake.
+
+### Questions for the owner
+
+1. Should the city go back to sleep at the start of every stream, with only buildings and levels kept?
+2. Should the meter be fillable by taking part alone, with support counting extra?
+3. Is the order gate, Agora, harbour, river, civic quarter, temple, palace right?
+4. May an MVP's Bolts be shown on stream during the guild walk?
+5. Build the opening-night slice first, or the Builders' Guild first?
+
