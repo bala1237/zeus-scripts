@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-031.**
+- **Next number: ZW-032.**
 
 ## Open
 
@@ -42,6 +42,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-025 | Enhancement | After a battle is won: the storm of gold, a triumph for the top three, a tour of the first one's home | High | Fix shipped | 23 Nov 2026, owner |
 | ZW-029 | Bug | Building labels show during the battle camera | High | Fix shipped | 24 Nov 2026, owner |
 | ZW-030 | Brainstorm | The stream as a journey: enter by the grand gate and reveal the kingdom piece by piece as people take part | High (proposed) | Ideas written; waiting for the owner's choices | 24 Nov 2026, owner |
+| ZW-031 | Enhancement | Personalisation for MVPs: choose colours, and request items that are built and available the next day | Medium (proposed) | Open, idea under discussion | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -320,4 +321,13 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Reported:** 24 Nov 2026, by the owner, as a brainstorm: "It should be more like a game rather than showcasing everything at once. Like moving through the grand kingdom entry, reveal one by one and cinematic camera movement. The more the viewers' participation, it reveals more. More the support, it reveals more. Battle scenes when battle starts and based on win or loss. MVP tours and helping MVPs choose what they want to build, and I will be running through what we have, and things are opened or locked based on how many Bolts they have and so on."
 - **Ideas in reply:** `BRAINSTORM-GAME.md`, "The stream as a journey, 24 Nov 2026".
 - **Not a build task yet.** A first slice is proposed there.
+
+### ZW-031: Personalisation for MVPs
+
+- **Reported:** 24 Nov 2026, by the owner: "We should bring in the personalisation for the MVP and they can customise, colours or request items that we will build and make it available next day."
+- **Ideas in reply:** `BRAINSTORM-GAME.md`, "Personalisation for MVPs, 24 Nov 2026".
+- **What is feasible:** colours are cheap and instant (recolouring walls, roofs, shutters, doors, awnings, banners from a set palette). Requested items that are hard-edged (furniture, a fountain, a sign, a gate, a small shrine) can be scripted overnight for free. Organic ones (a statue of a person, an animal, an unusual tree) need paid generation, roughly $0.35 to $2 each, and the owner's approval each time.
+- **Constitution:** "catalogue items only; no uploads" still holds, because a request becomes a catalogue item made by us to the style rules; any name or text on it passes moderation.
+- **To settle:** who qualifies (first place or all top three); how many requests per win; whether a requested item stays theirs alone or joins the catalogue later; the budget for paid items; who builds it overnight (a session has to be started for it).
+- Not started.
 
