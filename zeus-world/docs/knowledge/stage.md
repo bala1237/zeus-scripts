@@ -30,6 +30,34 @@ Lesson: a sunlit miniature city is the wrong canvas for a light show. Lasers and
 - **A crowd in silhouette** that bounces on the beat, some with hands in the air.
 - **The camera** cuts between six angles every sixteen beats.
 
+## Still without music, visibly on the beat, and a neon glow (ZW-035, 24 Nov 2026)
+
+The owner approved the look, then reported three things: he could not tell whether it followed the beat, it moved when no music was playing, and the lights lacked a neon glow.
+
+**Still without music.**
+
+- The stage starts still and dark: the screen dimmed to a fifth and frozen, lasers off, crowd standing.
+- It moves only while it is listening and hears music, or after the beat has been tapped in. **Stop** makes it still again.
+- When listening, a second or so of silence freezes it, and it wakes when the music returns. Time itself stops for the backgrounds, the lasers and the camera; they resume where they left off.
+- `beat.js` holds this in `state.act`, which eases from 0 (still) to 1 (playing). Everything in `stage.js` is multiplied by it.
+
+**Visibly on the beat.**
+
+- The panel has a **lamp** that flashes on every beat the stage acts on, and a **Hearing** bar that shows the loudness it is receiving. If the bar does not move, the stage is not hearing the music.
+- A line of status says which state it is in: still; running on the tapped beat; listening with no music; listening and on the beat; listening and finding the beat.
+- On each beat the lasers flare from 30% to full, the screen brightens, the glowing edges and the bolt flash, the crowd jumps and the camera kicks. Before, these followed a smooth wave and the beat was hard to pick out.
+- When listening, each flash comes from the beat as heard in the music, not from a clock, so it stays with the song.
+- The listener now judges loudness against the loudest the song has been in the last few seconds, so a quiet stream is followed as well as a loud one, and it reacts faster (less smoothing of the sound).
+
+**Neon glow.**
+
+- A glow pass (bloom) makes everything bright bleed light into what is around it: lasers get a halo, the screen and its edges glow.
+- Trap: with the glow pass, light is added up the way real light adds, which made every faint see-through layer (haze, wide beams, the lasers' own soft sleeve) several times brighter and turned the black arena into coloured fog. They were cut to about a tenth, and a last step pulls the darkest tones back down to black. Neon only reads as neon beside black.
+- Settings that worked after four tries: strength 0.55, radius 0.14, threshold 0.7. `?glow=0.8` tries another strength.
+- The screen's picture has to be handed to the glow pass in linear light (`pow(colour, 2.2)`), or it comes out washed.
+
+Tested with exact made-up input: at rest nothing advances; a tapped beat runs; Stop freezes it; a loud made-up song at 124 beats a minute was found as 124 with 21 beats heard in ten seconds; a song a fifth as loud at 100 was found as 100; four seconds of silence were judged silent after the first 1.2.
+
 ## Backdrop only
 
 A button (or `?mode=backdrop`) shows just the moving background, filling the window, with no stage. This is for putting behind the owner's own camera in OBS or LIVE Studio: capture this window as a layer and place the camera over it, with a green screen or background removal if he uses one.
@@ -37,7 +65,7 @@ A button (or `?mode=backdrop`) shows just the moving background, filling the win
 ## How the owner uses it
 
 1. Open it from the **♪ Stage** link in the city's controls, or directly at `/stage.html`.
-2. Set the beat: **Tap the beat** three or more times in time with the music (or press the space bar), or **Listen** and share the tab or screen playing the music with its audio ticked.
+2. Start it: **Listen to the music** and share the tab or screen playing the music with its audio ticked, which is the way to have it follow the song by itself; or **Tap the beat** three or more times in time (or press the space bar). **Stop** makes it still.
 3. **Next background** (or N) changes it at once. **Auto** turns the change every 32 beats on and off. **Camera cuts** turns the angle changes on and off.
 4. The panel hides when the mouse is still, so it does not appear on stream. **H** keeps it hidden.
 

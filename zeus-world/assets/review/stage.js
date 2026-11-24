@@ -4,6 +4,11 @@
 //   ?bpm=128  ?scene=0..5  ?mode=backdrop  ?auto=0  ?cuts=0  ?shot (one still; with ?beats=N how far in, ?cam=N which angle)
 // The beat comes from beat.js: tapped in, or heard from the music.
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeat } from './beat.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot');
@@ -18,7 +23,7 @@ const NAMES = ['Aurora', 'Tunnel', 'Sunset drive', 'Kaleidoscope', 'Warp', 'Skyl
 // ---------- the screen: six moving pictures drawn by the graphics card, with a wipe between them
 const frag = /* glsl */`
   precision highp float;
-  varying vec2 vUv; uniform float uTime, uBeat, uEnergy, uMix, uAspect, uFlash; uniform int uA, uB; uniform vec3 a1, a2, a3, b1, b2, b3;
+  varying vec2 vUv; uniform float uTime, uBeat, uEnergy, uMix, uAspect, uFlash, uAct; uniform int uA, uB; uniform vec3 a1, a2, a3, b1, b2, b3;
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   float noise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y); }
   float fbm(vec2 p) { float v = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { v += a * noise(p); p = p * 2.03 + 7.1; a *= 0.5; } return v; }
@@ -51,9 +56,9 @@ const frag = /* glsl */`
     if (id == 3) return kalei(uv, t, c1, c2, c3); if (id == 4) return warp(uv, t, c1, c2, c3); return skyline(uv, t, c1, c2, c3); }
   void main() { vec2 uv = (vUv * 2.0 - 1.0) * vec2(uAspect, 1.0); vec3 A = pic(uA, uv, uTime, a1, a2, a3);
     if (uMix > 0.001) { vec3 B = pic(uB, uv, uTime, b1, b2, b3); float edge = uMix * 1.5 - 0.25 + (fbm(uv * 2.5 + 3.0) - 0.5) * 0.5 - length(uv) * 0.12, k = smoothstep(0.42, 0.58, edge); A = mix(A, B, k) + (b1 + a2) * 0.9 * smoothstep(0.1, 0.0, abs(edge - 0.5)) * step(0.01, uMix) * step(uMix, 0.99); }
-    A += uFlash * 0.25; float led = 0.86 + 0.14 * step(0.18, fract(vUv.x * 240.0)) * step(0.18, fract(vUv.y * 105.0)); gl_FragColor = vec4(A * led, 1.0); }`;
+    A = A * (0.22 + 0.78 * uAct) * (0.8 + 0.3 * uBeat) + uFlash * 0.15; float led = 0.86 + 0.14 * step(0.18, fract(vUv.x * 240.0)) * step(0.18, fract(vUv.y * 105.0)); gl_FragColor = vec4(pow(max(A * led, 0.0), vec3(2.2)), 1.0); }`;   // the glow pass works in linear light and converts at the end, so the picture is handed over in linear light
 const vert = 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
-const col3 = (h) => new THREE.Color(h), U = { uTime: { value: 0 }, uBeat: { value: 0 }, uEnergy: { value: 0.8 }, uMix: { value: 0 }, uAspect: { value: 34 / 15 }, uFlash: { value: 0 }, uA: { value: 0 }, uB: { value: 1 },
+const col3 = (h) => new THREE.Color(h), U = { uTime: { value: 0 }, uBeat: { value: 0 }, uEnergy: { value: 0.8 }, uMix: { value: 0 }, uAspect: { value: 34 / 15 }, uFlash: { value: 0 }, uAct: { value: 0 }, uA: { value: 0 }, uB: { value: 1 },
   a1: { value: col3(0) }, a2: { value: col3(0) }, a3: { value: col3(0) }, b1: { value: col3(0) }, b2: { value: col3(0) }, b3: { value: col3(0) } };
 const screenMat = new THREE.ShaderMaterial({ uniforms: U, vertexShader: vert, fragmentShader: frag });
 const W = 34, H = 15, FLOOR = 1.0, wall = new THREE.Mesh(new THREE.PlaneGeometry(W, H), screenMat); wall.position.set(0, FLOOR + H / 2 + 0.6, -8);
@@ -72,7 +77,7 @@ const boltMat = new THREE.MeshBasicMaterial({ color: 0xffd45a, side: THREE.Doubl
 // ---------- lasers: thin bright cores inside a soft glow, in fans from the rig above and the floor behind
 const EMIT = [[-13, 17.8, -2, 0], [-6.5, 17.8, -2, 0], [0, 17.8, -2, 0], [6.5, 17.8, -2, 0], [13, 17.8, -2, 0], [-15, FLOOR + 0.3, -6, 1], [-5, FLOOR + 0.3, -6, 1], [5, FLOOR + 0.3, -6, 1], [15, FLOOR + 0.3, -6, 1]], PER = 7, NB = EMIT.length * PER;
 const beamGeo = new THREE.CylinderGeometry(1, 1, 1, 6, 1, true).translate(0, 0.5, 0), add = (opacity) => new THREE.MeshBasicMaterial({ transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
-const cores = new THREE.InstancedMesh(beamGeo, add(0.9), NB), glows = new THREE.InstancedMesh(beamGeo, add(0.13), NB); for (const m of [cores, glows]) { m.frustumCulled = false; stage.add(m); for (let i = 0; i < NB; i++) m.setColorAt(i, new THREE.Color(1, 1, 1)); }
+const cores = new THREE.InstancedMesh(beamGeo, add(0.85), NB), glows = new THREE.InstancedMesh(beamGeo, add(0.022), NB); for (const m of [cores, glows]) { m.frustumCulled = false; stage.add(m); for (let i = 0; i < NB; i++) m.setColorAt(i, new THREE.Color(1, 1, 1)); }
 // ---------- wide beams from moving heads on the rig, and haze for everything to shine through
 const headGeo = new THREE.CylinderGeometry(0.2, 2.6, 34, 16, 1, true).translate(0, -17, 0), heads = [-15.5, -9, -3, 3, 9, 15.5].map((x, i) => { const m = new THREE.Mesh(headGeo, add(0.07)); m.position.set(x, 18, 3.6); m.userData = { ph: i * 1.1 }; stage.add(m); return m; });
 const soft = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,0.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
@@ -87,19 +92,19 @@ const flat = new THREE.Scene(), flatCam = new THREE.OrthographicCamera(-1, 1, 1,
 
 // ---------- the show
 const st = { scene: Number(q.get('scene') || 0) % 6, next: 1, mixAt: null, auto: q.get('auto') !== '0', backdrop: q.get('mode') === 'backdrop', cuts: q.get('cuts') !== '0', cam: Number(q.get('cam') || 0), camAt: 0, flash: 0, t: 0 };
-const $ = (id) => document.getElementById(id), beat = createBeat({ bpm: Number(q.get('bpm') || 120), onChange: (s) => { $('bpm').textContent = s.bpm; $('hearing').textContent = s.listening ? ' · listening' : ''; $('listen').textContent = s.listening ? 'Stop listening' : 'Listen'; $('listen').classList.toggle('on', s.listening); } });
+const $ = (id) => document.getElementById(id), beat = createBeat({ bpm: Number(q.get('bpm') || 120), onChange: (s) => { $('bpm').textContent = s.bpm; $('listen').textContent = s.mode === 'listen' ? 'Stop listening' : 'Listen to the music'; $('listen').classList.toggle('on', s.mode === 'listen'); } });
 const pal = (i) => PALETTES[i % PALETTES.length], setPal = () => { const a = pal(st.scene), b = pal(st.next); U.a1.value.set(a[0]); U.a2.value.set(a[1]); U.a3.value.set(a[2]); U.b1.value.set(b[0]); U.b2.value.set(b[1]); U.b3.value.set(b[2]); U.uA.value = st.scene; U.uB.value = st.next; $('scene').textContent = NAMES[st.scene]; };
 function change(to = (st.scene + 1) % 6) { if (st.mixAt !== null) return; st.next = to; st.mixAt = beat.state.beats; setPal(); }
 const CAMS = [(u) => [[0, 5.6, 27 - 2 * u], [0, 8.6, -8]], (u) => [[-21 + 3 * u, 3.2, 23], [2, 8.5, -8]], (u) => [[0, 15 - 3 * u, 27], [0, 7, -8]], (u) => [[21 - 3 * u, 3.2, 23], [-2, 8.5, -8]], (u) => [[-7 + 14 * u, 4.2, 20], [0, 9.5, -8]], (u) => [[0, 2.4, 25], [0, 10.5 + 1.5 * u, -8]]];
 const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0), D = new THREE.Vector3(), S = new THREE.Vector3(), P = new THREE.Vector3(), C = new THREE.Color(), c1 = new THREE.Color(), c2 = new THREE.Color(), c3 = new THREE.Color(), E0 = new THREE.Euler();
-function update(dt) { const b = beat.state, isBeat = beat.update(dt); st.t += dt; const beats = b.beats, whole = Math.floor(beats), e = 0.45 + 0.55 * b.energy;
+function update(dt) { const b = beat.state, isBeat = beat.update(dt); st.t += dt * b.act; const beats = b.beats, whole = Math.floor(beats), e = (0.45 + 0.55 * b.energy) * b.act;   // b.act is 0 with no music: time stops and the lights go out
   if (isBeat && st.auto && whole > 0 && whole % 32 === 0) change();
   if (st.mixAt !== null) { const k = (beats - st.mixAt) / 4; U.uMix.value = Math.min(1, k); if (k >= 1) { st.scene = st.next; st.next = (st.scene + 1) % 6; st.mixAt = null; U.uMix.value = 0; st.flash = 1; setPal(); } }
-  st.flash *= Math.exp(-dt * 4); U.uTime.value = st.t; U.uBeat.value = b.pulse; U.uEnergy.value = b.energy; U.uFlash.value = st.flash;
+  st.flash *= Math.exp(-dt * 4); U.uAct.value = b.act; U.uTime.value = st.t; U.uBeat.value = b.pulse * b.act; U.uEnergy.value = b.energy; U.uFlash.value = st.flash;
   const k = U.uMix.value, pa = pal(st.scene), pb = pal(st.next); c1.set(pa[0]).lerp(C.set(pb[0]), k); c2.set(pa[1]).lerp(C.set(pb[1]), k); c3.set(pa[2]).lerp(C.set(pb[2]), k);
-  edgeMat.color.copy(c1).multiplyScalar(0.5 + 0.5 * b.pulse); boltMat.color.set(0xffd45a).multiplyScalar(0.55 + 0.45 * b.pulse);
+  edgeMat.color.copy(c1).multiplyScalar((0.25 + 0.95 * b.pulse) * (0.3 + 0.7 * b.act)); boltMat.color.set(0xffd45a).multiplyScalar(0.3 + 0.9 * b.pulse * b.act);
   // lasers: the pattern changes every eight beats
-  const pat = Math.floor(beats / 8) % 5, sw = Math.sin(beats * Math.PI / 4), sw2 = Math.sin(beats * Math.PI / 8), bright = (0.5 + 0.5 * b.pulse) * e;
+  const pat = Math.floor(beats / 8) % 5, sw = Math.sin(beats * Math.PI / 4), sw2 = Math.sin(beats * Math.PI / 8), bright = (0.3 + 0.9 * b.pulse) * e;   // lasers flare on every beat
   for (let n = 0; n < EMIT.length; n++) { const [ex, ey, ez, low] = EMIT[n], side = n % 2 ? 1 : -1;
     for (let i = 0; i < PER; i++) { const f = i / (PER - 1) - 0.5, id = n * PER + i; let yaw = 0, pitch = low ? 0.95 : -0.5, on = 1;
       if (pat === 0) { yaw = f * (0.5 + 0.9 * (0.5 + 0.5 * sw)); pitch += 0.28 * sw2; }                                     // a fan that opens and closes
@@ -111,21 +116,32 @@ function update(dt) { const b = beat.state, isBeat = beat.update(dt); st.t += dt
       cores.setMatrixAt(id, M.compose(P, Q, S.set(0.022, 70, 0.022))); glows.setMatrixAt(id, M.compose(P, Q, S.set(0.085, 70, 0.085)));
       C.copy((i + n) % 3 === 0 ? c2 : low ? c3 : c1).multiplyScalar(bright * on); cores.setColorAt(id, C); glows.setColorAt(id, C); } }
   for (const m of [cores, glows]) { m.instanceMatrix.needsUpdate = true; m.instanceColor.needsUpdate = true; }
-  for (const [i, m] of heads.entries()) { const u = m.userData; m.rotation.copy(E0.set(0.5 + 0.35 * Math.sin(beats * Math.PI / 8 + u.ph), 0, 0.5 * Math.sin(beats * Math.PI / 4 + u.ph * 1.7))); m.material.color.copy(i % 2 ? c2 : c3); m.material.opacity = (0.012 + 0.022 * b.pulse) * e; }
-  for (const s of haze) { const u = s.userData; s.position.set(u.x + Math.sin(st.t * 0.12 * u.k + u.y) * 5, u.y + Math.sin(st.t * 0.2 * u.k) * 1.2, u.z); s.material.color.copy(c1).lerp(c2, 0.5 + 0.5 * Math.sin(st.t * 0.3 + u.x)); s.material.opacity = (0.03 + 0.035 * b.pulse) * e; }
-  crowd.forEach((p, i) => { const hop = Math.abs(Math.sin((beats + p.ph * 0.25) * Math.PI)) * 0.22 * e, y = p.tall + hop; headsI.setMatrixAt(i, M.makeTranslation(p.x, y, p.z)); bodies.setMatrixAt(i, M.makeTranslation(p.x, y - 1.05, p.z));
+  for (const [i, m] of heads.entries()) { const u = m.userData; m.rotation.copy(E0.set(0.5 + 0.35 * Math.sin(beats * Math.PI / 8 + u.ph), 0, 0.5 * Math.sin(beats * Math.PI / 4 + u.ph * 1.7))); m.material.color.copy(i % 2 ? c2 : c3); m.material.opacity = (0.0015 + 0.004 * b.pulse) * e; }
+  for (const s of haze) { const u = s.userData; s.position.set(u.x + Math.sin(st.t * 0.12 * u.k + u.y) * 5, u.y + Math.sin(st.t * 0.2 * u.k) * 1.2, u.z); s.material.color.copy(c1).lerp(c2, 0.5 + 0.5 * Math.sin(st.t * 0.3 + u.x)); s.material.opacity = (0.002 + 0.003 * b.pulse) * e; }
+  crowd.forEach((p, i) => { const hop = b.pulse * (0.16 + 0.12 * p.ph) * e, y = p.tall + hop;   // the crowd jumps on the beat itself headsI.setMatrixAt(i, M.makeTranslation(p.x, y, p.z)); bodies.setMatrixAt(i, M.makeTranslation(p.x, y - 1.05, p.z));
     for (const s of [-1, 1]) { const a = p.up ? s * 0.25 + 0.3 * Math.sin(beats * Math.PI / 2 + p.ph * 6) : s * 2.7; Q.setFromEuler(E0.set(0, 0, a)); arms.setMatrixAt(i * 2 + (s > 0 ? 1 : 0), M.compose(P.set(p.x + s * 0.36, y - 0.45, p.z), Q, S.set(1, 1, 1))); } });
   for (const m of [headsI, bodies, arms]) m.instanceMatrix.needsUpdate = true;
   // the camera: a slow move within each angle, and a cut every sixteen beats
   if (st.cuts && beats - st.camAt >= 16) { st.cam = (st.cam + 1) % CAMS.length; st.camAt = Math.floor(beats / 16) * 16; }
-  const [cp, ct] = CAMS[st.cam](Math.min(1, (beats - st.camAt) / 16)); camera.position.set(cp[0] + Math.sin(st.t * 0.5) * 0.15, cp[1] + Math.sin(st.t * 0.7) * 0.08 + 0.06 * b.pulse, cp[2]); camera.lookAt(ct[0], ct[1], ct[2]); }
-function draw() { if (st.backdrop) { U.uAspect.value = innerWidth / innerHeight; renderer.render(flat, flatCam); } else { U.uAspect.value = W / H; renderer.render(scene, camera); } }
+  const [cp, ct] = CAMS[st.cam](Math.min(1, (beats - st.camAt) / 16)); camera.position.set(cp[0] + Math.sin(st.t * 0.5) * 0.15, cp[1] + Math.sin(st.t * 0.7) * 0.08 + 0.1 * b.pulse * b.act, cp[2]); camera.lookAt(ct[0], ct[1], ct[2]); }
+// the neon glow: everything bright bleeds light into what is around it. The glow pass blends light the way real light adds up, which makes
+// faint see-through layers (haze, wide beams) far brighter than they were, so those are kept very faint to leave the arena black.
+const composer = new EffectComposer(renderer), pass = new RenderPass(scene, camera), bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), Number(q.get('glow') ?? 0.55), 0.14, 0.7); composer.addPass(pass); composer.addPass(bloom);
+// neon needs black beside it: the glow lifts the whole picture a little, so the darkest part is pulled back down to black
+composer.addPass(new ShaderPass({ uniforms: { tDiffuse: { value: null } }, vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: 'uniform sampler2D tDiffuse; varying vec2 vUv; void main() { vec4 c = texture2D(tDiffuse, vUv); gl_FragColor = vec4(max(c.rgb - 0.03, 0.0) * 1.06, 1.0); }' }));
+composer.addPass(new OutputPass());
+function draw() { if (st.backdrop) { U.uAspect.value = innerWidth / innerHeight; pass.scene = flat; pass.camera = flatCam; } else { U.uAspect.value = W / H; pass.scene = scene; pass.camera = camera; } composer.render();
+  // the panel shows what the stage is hearing and acting on
+  const b = beat.state, lamp = $('lamp'); lamp.style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; lamp.style.boxShadow = b.pulse > 0.5 && b.act > 0.2 ? '0 0 12px #ffd23f' : 'none'; $('meter').style.width = `${Math.round((b.mode === 'listen' ? b.level : b.mode === 'tap' ? b.pulse : 0) * 100)}%`;
+  $('status').textContent = failed || (b.mode === 'off' ? 'still. Press Listen to the music, or tap the beat' : b.mode === 'tap' ? 'running on the tapped beat' : b.act < 0.3 ? 'listening: no music, so standing still' : b.heard < 2.5 ? 'listening: on the beat' : 'listening: music heard, finding the beat'); }
 setPal();
 
 // ---------- controls
 const mark = (id, on, text) => { $(id).classList.toggle('on', on); $(id).textContent = text; };
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('slower').addEventListener('click', () => beat.nudge(-1)); $('faster').addEventListener('click', () => beat.nudge(1));
-$('listen').addEventListener('click', () => { if (beat.state.listening) beat.unlisten(); else beat.listen().catch((e) => { $('hearing').textContent = ' · could not listen: ' + e.message; }); });
+$('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); });
+$('stop').addEventListener('click', () => beat.stop()); let failed = '';
 $('next').addEventListener('click', () => change()); $('auto').addEventListener('click', () => { st.auto = !st.auto; mark('auto', st.auto, `Auto: ${st.auto ? 'on' : 'off'}`); });
 $('mode').addEventListener('click', () => { st.backdrop = !st.backdrop; mark('mode', st.backdrop, st.backdrop ? 'Show the stage' : 'Backdrop only'); });
 $('cam').addEventListener('click', () => { st.cuts = !st.cuts; mark('cam', st.cuts, `Camera cuts: ${st.cuts ? 'on' : 'off'}`); });
@@ -133,7 +149,7 @@ mark('auto', st.auto, `Auto: ${st.auto ? 'on' : 'off'}`); mark('mode', st.backdr
 let idle = null, hidden = false; const wake = () => { $('ui').classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { $('ui').classList.add('idle'); document.body.classList.add('idle'); }, 3500); };
 addEventListener('pointermove', () => { if (!hidden) wake(); }); wake();
 addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (e.key === 'n' || e.key === 'N') change(); else if (e.key === 'h' || e.key === 'H') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
-addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
 window.__stage = { st, beat, change, update, draw };
-if (SHOT) { $('ui').style.display = 'none'; st.cuts = false; const n = Number(q.get('beats') || 6) * 60 / beat.state.bpm; if (q.has('mix')) { change(); } for (let t = 0; t < n; t += 1 / 60) update(1 / 60); if (q.has('mix')) { st.mixAt = beat.state.beats - 4 * Number(q.get('mix')); update(0.001); } draw(); window.ready = true; }
+if (SHOT) { $('ui').style.display = 'none'; st.cuts = false; if (!q.has('still')) beat.tap(); const n = Number(q.get('beats') || 6) * 60 / beat.state.bpm; if (q.has('mix')) { change(); } for (let t = 0; t < n; t += 1 / 60) update(1 / 60); if (q.has('mix')) { st.mixAt = beat.state.beats - 4 * Number(q.get('mix')); update(0.001); } draw(); window.ready = true; }
 else { const clock = new THREE.Clock(); renderer.setAnimationLoop(() => { update(Math.min(0.1, clock.getDelta())); draw(); }); window.ready = true; }

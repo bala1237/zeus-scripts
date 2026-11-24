@@ -16,11 +16,19 @@
 </head>
 <body>
 <div id="ui">
-  <div>♪ Zeus Stage · <span id="bpm">120</span> beats a minute<span id="hearing"></span> · <span id="scene"></span></div>
+  <div style="display:flex;align-items:center;gap:9px">
+    <span id="lamp" title="Flashes on every beat the stage acts on" style="width:16px;height:16px;border-radius:50%;background:#2a3040;flex:none"></span>
+    <span>♪ Zeus Stage · <span id="status">waiting for music</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:7px;font-weight:500;font-size:12px">
+    <span style="opacity:.75">Hearing</span><span style="flex:1;height:7px;border-radius:4px;background:#2a3040;overflow:hidden;min-width:120px"><span id="meter" style="display:block;height:100%;width:0;background:linear-gradient(90deg,#18ff9a,#ffd23f)"></span></span>
+    <span><span id="bpm">120</span> beats a minute · <span id="scene"></span></span><span id="hearing" style="display:none"></span>
+  </div>
   <div class="row">
     <button id="tap" title="Tap in time with the music, three times or more (or press the space bar)">Tap the beat</button>
     <button id="slower" title="Slower">−</button><button id="faster" title="Faster">＋</button>
-    <button id="listen" title="Let the stage hear the music: share the tab or screen that is playing it, with audio">Listen</button>
+    <button id="listen" title="Let the stage hear the music: share the tab or screen that is playing it, with audio">Listen to the music</button>
+    <button id="stop" title="Stop the stage moving">Stop</button>
   </div>
   <div class="row">
     <button id="next" title="Change the background now (or press N)">Next background</button>

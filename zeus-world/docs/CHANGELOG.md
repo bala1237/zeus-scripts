@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 24 Nov 2026
 
+- **Stage: still without music, visibly on the beat, neon glow (ZW-035).** The stage now stands still and dark until it hears music or the beat is tapped; a lamp and a bar in the panel show the beat and what it hears; the lights hit on the beat itself; a glow pass gives the lasers and screen a neon halo against black.
 - **The Zeus Stage (ZW-034); concert mode in the city removed (ZW-033).** The owner rejected the concert in the city and asked for a separate stage. It is its own page: a dark arena, a great screen with six moving backgrounds that change on the beat, lasers, beams, haze, a crowd in silhouette, and a backdrop-only view for behind a camera. `assets/review/stage.js`, `beat.js`.
 - **Concert mode (ZW-033).** A Concert button turns the city into the show for the owner's music: evening, lamps pulsing on the beat, sweeping beams, lantern strings, coloured light, fireworks, 44 citizens dancing round the fountain, and a camera that cuts on the beat. The beat is tapped in or heard from the music. `assets/review/concert.js`.
 - **Brainstorm logged (ZW-032):** music and games on stream. Lighting that follows the beat, citizens dancing, the amphitheatre as a game-show stage, and the city in modes. Ideas in `BRAINSTORM-GAME.md`. Nothing built.
