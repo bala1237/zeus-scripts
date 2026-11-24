@@ -46,6 +46,8 @@ The first version drew soldiers as simple shapes, arrows as thin boxes, and film
 
 **Cost.** In the wide battle view about 1,400 draw calls and 2.0 million triangles a frame; in a close shot about 190 draw calls and 0.9 million triangles.
 
+**Labels are put away during a battle (ZW-029).** The Bolts labels over the building sites are page elements drawn over the picture, and the name plates grow to stay readable from afar, so both floated across the close shots. `city.js` hides them (`life.showLabels`, `names.show`) for as long as a battle or its aftermath is running. Anything new that draws labels over the city should be added to that one place.
+
 ## What is on screen
 
 - **Two armies** in front of the south gate, 72 hoplites each in three ranks. Ours carry blue shields and cream tunics; the rival's carry crimson shields and dark tunics. Each has four standards.

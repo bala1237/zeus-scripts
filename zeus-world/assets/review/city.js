@@ -317,6 +317,10 @@ if (q.has('shot') && q.get('film')) { const [n, i, u] = q.get('film').split(',')
 
 if (q.has('shot') && q.get('after')) await after.play({ heroes: topThree, startAt: q.get('after').split(',')[0] });
 
+// ---------- during a battle and what follows it, the Bolts labels and the name plates are put away: they belong to the city tour,
+// and floated across the close shots of the fight (ZW-029)
+{ let busy = null; tickers.push(() => { const now = battle.state.on || after.state.on; if (now !== busy) { busy = now; life.showLabels(!now); names.show(!now); } }); }
+
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
 // Left alone: anything that moves or changes (marked dynamic), buildings under construction, people, and the materials the effects below

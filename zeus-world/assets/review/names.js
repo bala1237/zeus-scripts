@@ -24,5 +24,7 @@ export function createNames({ scene, camera, renderer, tickers, dn }) {
   tickers.push(() => { const k = 1 - 0.3 * dn.d; for (const s of plates) { size(s); s.material.color.setScalar(k); } });   // a little dimmer at dusk, since the plate is not lit by the scene
   // a small plate to carry above someone who moves: a fixed size in metres, attached by the caller
   function tag(name, h = 0.42) { const { t, aspect } = texture(name), s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, toneMapped: false })); s.center.set(0.5, 0); s.scale.set(h * aspect, h, 1); return s; }
-  return { add, tag, count: () => plates.length };
+  // the plates over the homes, hidden while something else is being filmed
+  const show = (on) => { for (const s of plates) s.visible = on; };
+  return { add, tag, show, count: () => plates.length };
 }
