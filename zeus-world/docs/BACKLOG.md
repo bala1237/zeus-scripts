@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-035.**
+- **Next number: ZW-036.**
 
 ## Open
 
@@ -45,7 +45,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-031 | Enhancement | Personalisation for MVPs: choose colours, and request items that are built and available the next day | Medium (proposed) | Open, idea under discussion | 24 Nov 2026, owner |
 | ZW-032 | Brainstorm | Music and games on stream: lighting that follows the beat, citizens dancing to the music, a stage for the games | Medium (proposed) | Ideas written; waiting for the owner's answers | 24 Nov 2026, owner |
 | ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Rejected by the owner; replaced by ZW-034 | 24 Nov 2026, owner |
-| ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
+| ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -357,3 +358,15 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Shipped 24 Nov 2026:** the Zeus Stage, its own page (`/stage.html`, linked from the city's controls). A dark arena with a great screen of six moving backgrounds that change every 32 beats with a wipe; fans of lasers whose pattern changes every eight beats; wide beams, haze, a reflecting floor, a crowd in silhouette; a camera that cuts between six angles. "Backdrop only" shows just the moving background to put behind a camera. The beat is tapped in or heard from the music. Detail in `knowledge/stage.md`.
 - **Checked:** stills of every background, a transition and the backdrop; the controls, with no errors. **Not checked:** motion, and listening to real music.
 - **Waiting on the owner:** does it look good now; which backgrounds to keep, drop or add; lasers too many or too few; is backdrop-only useful behind his camera; what should stand on the stage.
+
+### ZW-035: Stage: beat, stillness and glow
+
+- **Reported:** 24 Nov 2026, by the owner, after trying the stage: "looks good", but "I'm not able to tell if this is aligning to the beat. If there is no music, there should[n't] be any movement. Also the lights are good, [but] it's not giving the neon glow light effect."
+- **Three parts:** make it visible that the stage follows the beat; nothing should move when no music is playing; the lights need a neon glow.
+- **Fix shipped 24 Nov 2026:**
+  - **No music, no movement.** The stage starts still and dark. It moves only while it hears music or after the beat is tapped; a second of silence freezes it; Stop freezes it.
+  - **Visibly on the beat.** A lamp in the panel flashes on each beat, a bar shows what the stage is hearing, and a status line says what it is doing. Lasers, screen, edges, crowd and camera now hit on the beat itself.
+  - **Neon glow.** A glow pass gives the lasers and the screen a halo against a black arena.
+  - Detail in `knowledge/stage.md`.
+- **Checked:** stills of the glow; the stillness and the beat with exact made-up input. **Not checked:** motion, and listening to real music.
+- **Waiting on the owner:** with music playing and Listen on, does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the glow right.
