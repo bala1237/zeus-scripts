@@ -4,6 +4,48 @@ Backlog: ZW-018. A TikTok battle shown as a fight outside the city wall, driven 
 
 Source: `assets/review/battle.js`, wired up in `assets/review/city.js` (search for `createBattle`).
 
+## Rebuilt 24 Nov 2026 (ZW-026, ZW-027, ZW-028)
+
+The first version drew soldiers as simple shapes, arrows as thin boxes, and filmed it at a documentary pace. The owner's verdict after seeing it closer: the soldiers were "just like a shape and no hands", the arrows "like lines", the lightning "very basic", and the camera needed to be "a cinematic action sequence with fast cuts". All four were rebuilt. Where the sections below describe the first version, this section is the current state.
+
+**Soldiers (`soldier.js`).**
+
+- A soldier is now a real human figure: the man citizen with his arms properly bound (`models/char_soldier.glb`, made by `reskin.mjs`; the original has its upper arms bound to the hips, which tears when an arm is raised). 48 a side in three ranks of 16, plus 10 guards on the wall.
+- Gear: a helmet with a brow band and a crest, a round shield with a rim and a boss on the left forearm, a spear through the right hand. Ours have bronze helmets and blue shields rimmed in gold; theirs have iron helmets, crimson shields rimmed in black and darker tunics.
+- Movement: `March` is the model's own walk. `Guard` (a braced stance, shield forward, spear levelled) and `Thrust` (the spear driven forward and back every 1.7 seconds) are made in code, the same way as the standing pose. The front rank thrusts, the ranks behind hold guard.
+- **How the gear is fitted.** The figure is put into the guard stance first; each piece is placed where it should be in the world; then it is handed to the bone that carries it, by working out its position relative to that bone. Fitting in the rest pose, with the arms held out, put every piece in the wrong place once the arm moved.
+- Each piece of gear is one mesh coloured per vertex, so a soldier costs five draw calls (body, three pieces, shadow) and not ten.
+- Like citizens, a soldier is only posed when the camera can see him, and beyond 24 m he swaps to a light body of 3,800 triangles.
+- The team tint multiplies the whole body, skin included, and the scene is brightly lit, so the rival's tunics can only be made somewhat darker. Shield and helmet colour are what tell the sides apart.
+- Frame sheet of a soldier: `PAGE=poses.html node shot.mjs renders/x.png "m=models/char_soldier.glb&kit=us&clip=Thrust&n=6" 1200 760` (`kit=us` or `them`; clips `March`, `Guard`, `Thrust`).
+
+**Arrows.** Each has a wooden shaft, a bronze head and feathers, flies on an arc pointing along its path, and stays standing where it lands for four to eight seconds, so the field fills with spent arrows. Volleys are 14 arrows.
+
+**Catapult stones** tumble, burn, leave a trail of fire and smoke, and land with a burst, dust and a jolt of the camera that is stronger the closer it is.
+
+**Lightning (`life.js`, `strike`)** has a white-hot core inside a wider blue-white glow, four forks on the way down, a burst of light and sparks where it lands, and a softer, bluer flash across the screen. It also frees its old shapes on each strike, which the first version did not.
+
+**The action camera.** Cuts every 1.5 to 3 seconds:
+
+| Shot | What it shows |
+| --- | --- |
+| `duel`, `enemy` | From knee height between the lines, up at one soldier of ours or theirs as he thrusts |
+| `shields` | A fast run along the gap between the two front ranks |
+| `faces` | A long lens down our line of helmets |
+| `shoulder`, `theirs` | Over one soldier's shoulder at the enemy facing him |
+| `arrow` | Riding behind an arrow in flight |
+| `stone` | Riding behind a catapult stone until it lands |
+| `engine` | Past a catapult's frame at the battle and the wall |
+| `wall` | Down from the wall |
+| `wide` | A three-second high view, so the viewer keeps their bearings |
+| `gate`, `rout` | The closing shot of a loss or a win |
+
+- The camera is hand-held throughout and jolts when a stone lands.
+- A ride needs something in the air; if there is nothing, another shot is used.
+- For a still of one shot: `?shot&view=battle&battle=0.5&cine=duel`.
+
+**Cost.** In the wide battle view about 1,400 draw calls and 2.0 million triangles a frame; in a close shot about 190 draw calls and 0.9 million triangles.
+
 ## What is on screen
 
 - **Two armies** in front of the south gate, 72 hoplites each in three ranks. Ours carry blue shields and cream tunics; the rival's carry crimson shields and dark tunics. Each has four standards.
@@ -102,7 +144,7 @@ The demo in `city.js` is a few lines that call `setShare` from a wave that swing
 ## Known limits and next steps
 
 - **Seen in motion only by the owner**, who approved the battle on 22 Nov 2026. On the build machine it is checked as stills (three scores, each camera shot) and by stepping a whole demo battle through in a headless browser, which confirms the phases, the timing and the sequence of shots.
-- The soldiers are stylised pegs. Marching, fighting figures need models and animations from the rigging service, which costs money.
+- The soldiers are real figures as of 24 Nov 2026, but all one man, and they do not fall, clash or react to being hit. More bodies and real fighting animations need the rigging service, which costs money.
 - The tents and catapults are plain. Scripted Blender models would match the rest of the city better.
 - No sound.
 - The rival is a name and a colour. A rival city across the water is a later idea in `../BRAINSTORM-GAME.md`.

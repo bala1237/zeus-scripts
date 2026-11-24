@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 24 Nov 2026
+
+- **The battle rebuilt after the owner's review (ZW-026, ZW-027, ZW-028).** Soldiers are real human figures with helmets, shields and spears, standing guard and thrusting, in place of simple shapes. Arrows have heads and feathers and stay where they land; catapult stones burn and jolt the camera; lightning has a glowing core and forks. The camera cuts every 1.5 to 3 seconds between twelve close shots, hand-held. `assets/review/soldier.js`, `battle.js`, `life.js`.
+
 ## 23 Nov 2026
 
 - **After a battle is won (ZW-025).** The storm of gold, the first spectacle: the sky darkens, Zeus's eyes open over the temple, lightning strikes it until it blazes gold, and gold rains on the city. Then the triumph: the battle's top three walk in through the south gate, crowned, to cheering. Then a tour of the first one's home, with a wreath left over the door. On made-up names. `assets/review/aftermath.js`.

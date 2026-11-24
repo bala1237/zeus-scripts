@@ -19,5 +19,7 @@ n char_citizen_woman       citizen_f     0,1.75,0 0 20000 1024 0.01 0.011908
 node reskin.mjs models/char_citizen_woman.glb
 # The man comes from the style test's copy (59,000 triangles); this is the catalogue copy at 20,000, as used in the city.
 node normalize.mjs ../style-test/public/models/citizen.glb models/char_citizen_man.glb --fit 0,1.75,0 --yaw 0 --tris 20000 --tex 1024 --maxerr 0.01 --rescale 0.0119
+# The battle's soldier is the man with his arms bound to their own bones, so he can raise a shield and thrust a spear (see docs/knowledge/battle.md).
+node reskin.mjs models/char_citizen_man.glb models/char_soldier.glb
 # After any change to the citizens or plants, rebuild their far-view versions: ./far.sh
 n char_citizen_elder       citizen_elder 0,1.75,0 0 20000 1024 0.01 0.011644

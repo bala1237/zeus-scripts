@@ -9,6 +9,7 @@ The citizens: where they come from, how their rigs work, and how to check and re
 | Man | `assets/models/char_citizen_man.glb`, normalised to 20,000 triangles from `style-test/public/models/citizen.glb` (59,000) on 22 Nov 2026 | 22 bones | Works. Coarse binding: torso rigid on the hips, head on the head bone |
 | Woman | `assets/models/char_citizen_woman.glb` | 22 bones, same as the man | Binding rebuilt 22 Nov 2026 (ZW-012) |
 | Elder | `assets/models/char_citizen_elder.glb` | 24 bones, different order | Works. Cloak follows the arms |
+| Soldier | `assets/models/char_soldier.glb`: the man with his binding rebuilt by `reskin.mjs`, so his arms move on their own bones | 22 bones | Used only in the battle, with gear and stances from `review/soldier.js` (see `battle.md`). His tunic hem is ragged where hidden faces were removed |
 
 All three were generated, then rigged and animated by Meshy through fal. Each carries four clips with the same names and lengths: `Walk` (1.07 s), `Idle` (4.03 s), `Cheer` (9.03 s), `Clap` (13.70 s). The supplied `Idle` clip is a wide stride that turns round, not a standing pose, so the city replaces it with one made in code (see "Standing still").
 

@@ -12,6 +12,7 @@ The whole scripted city in one browser page: agora, temple, civic buildings, sho
 | `ambient.js` | Rippling cloth, swaying trees, chimney smoke, fountain spray, boats |
 | `stand.js` | The standing pose citizens use when they stop, made in code (see `characters.md`) |
 | `tour.js` | The cinematic city tour: places, shots, titles, following a citizen |
+| `soldier.js` | The battle's soldiers: figure, gear, guard and thrust |
 | `aftermath.js` | After a battle is won: the storm of gold, the triumph, the house tour (see `battle.md`) |
 | `battle.js` | The siege at the south gate during a battle (see `battle.md`) |
 | `names.js` | Name plates over the homes |

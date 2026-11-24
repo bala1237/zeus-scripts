@@ -69,16 +69,22 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
 
   // ---------- construction: a building rises behind scaffolding while its Bolts bar fills, then Zeus strikes and the crowd cheers
   const sites = [], labels = document.createElement('div'); labels.style.cssText = 'position:fixed;inset:0;pointer-events:none;overflow:hidden'; document.body.append(labels);
-  const flash = document.createElement('div'); flash.style.cssText = 'position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none'; document.body.append(flash);
+  const flash = document.createElement('div'); flash.style.cssText = 'position:fixed;inset:0;background:#e6f0ff;opacity:0;pointer-events:none'; document.body.append(flash);
   renderer.localClippingEnabled = true;
   const puffs = Array.from({ length: 36 }, () => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffTex, transparent: true, depthWrite: false, opacity: 0 })); s.visible = false; scene.add(s); return { s, age: 9, life: 1 }; });
   function puff(x, y, z, color, size, life, rise) { const p = puffs.find((q) => q.age >= q.life); if (!p) return; Object.assign(p, { age: 0, life, size, rise, x, y, z }); p.s.material.color.set(color); p.s.visible = true; }
-  const boltMat = new THREE.MeshBasicMaterial({ color: 0xfff3b0, toneMapped: false, fog: false }), boltLight = new THREE.PointLight(0xfff0c0, 0, 120, 1.2); scene.add(boltLight);
+  // lightning: a white-hot core inside a wider blue-white glow, forking on the way down, with a burst of light and sparks where it lands
+  const boltCore = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false, fog: false }), boltGlow = new THREE.MeshBasicMaterial({ color: 0x9cc8ff, toneMapped: false, fog: false, transparent: true, opacity: 0.38, blending: THREE.AdditiveBlending, depthWrite: false });
+  const boltLight = new THREE.PointLight(0xdfeaff, 0, 140, 1.2); scene.add(boltLight);
+  const burst = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffTex, color: 0xeaf3ff, transparent: true, depthWrite: false, opacity: 0, blending: THREE.AdditiveBlending, fog: false, toneMapped: false })); burst.visible = false; scene.add(burst);
   const bolt = new THREE.Group(); bolt.visible = false; scene.add(bolt); let boltAge = 9;
-  function strike(x, y, z) { bolt.clear(); let p = new THREE.Vector3(x, y, z);
-    while (p.y < 130) { const n = new THREE.Vector3(p.x + (rnd() - 0.5) * 9, p.y + 9 + rnd() * 7, p.z + (rnd() - 0.5) * 9), d = n.clone().sub(p);
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, d.length(), 5), boltMat); m.position.copy(p).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); bolt.add(m); p = n; }
-    boltLight.position.set(x, y + 6, z); boltAge = 0; }
+  const yAxis = new THREE.Vector3(0, 1, 0);
+  function limb(a, b, r) { const d = b.clone().sub(a), len = d.length(); for (const [mat, k] of [[boltCore, 1], [boltGlow, 4.2]]) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r * k, r * k, len, 6), mat); m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(yAxis, d.clone().normalize()); bolt.add(m); } }
+  function fork(from, dir, r, steps) { let p = from.clone(); for (let i = 0; i < steps; i++) { const n = p.clone().add(new THREE.Vector3(dir.x * (2.5 + rnd() * 3) + (rnd() - 0.5) * 3, -(2 + rnd() * 3.5), dir.z * (2.5 + rnd() * 3) + (rnd() - 0.5) * 3)); limb(p, n, r * (1 - i / (steps + 1))); p = n; } }
+  function strike(x, y, z) { for (const m of bolt.children) m.geometry.dispose(); bolt.clear(); let p = new THREE.Vector3(x, y, z); const nodes = [p];
+    while (p.y < 130) { const n = new THREE.Vector3(p.x + (rnd() - 0.5) * 7, p.y + 5 + rnd() * 6, p.z + (rnd() - 0.5) * 7); limb(p, n, 0.11 + 0.1 * Math.min(1, p.y / 60)); p = n; nodes.push(p); }
+    for (let i = 0; i < 4; i++) { const from = nodes[2 + Math.floor(rnd() * Math.min(9, nodes.length - 3))], a = rnd() * 6.28; fork(from, new THREE.Vector3(Math.cos(a), 0, Math.sin(a)), 0.07, 2 + Math.floor(rnd() * 3)); }
+    boltLight.position.set(x, y + 6, z); burst.position.set(x, y + 0.6, z); for (let i = 0; i < 10; i++) puff(x + (rnd() - 0.5) * 3, y + rnd() * 1.5, z + (rnd() - 0.5) * 3, i % 2 ? 0xfff0b0 : 0xbfdcff, 1.2, 0.7 + rnd() * 0.5, 2.5 + rnd() * 2); boltAge = 0; }
 
   async function construct({ name, by, goal, objects, at: [x, z], size: [w, d], height, scaffolds = [], hoist, buildSecs = 70, restSecs = 26, start = 0, workers, builderUrls }) {
     const plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
@@ -128,7 +134,8 @@ export function createLife({ scene, camera, renderer, get, tickers, farUrl = () 
       const sw = me.swap; if (sw.lo && me.w.visible) { const d = camera.position.distanceTo(me.w.position), far = sw.far ? d > farAt * 0.93 : d > farAt * 1.07; if (far !== sw.far) { sw.far = far; sw.lo.visible = far; sw.hi[0].visible = !far; } } }
     for (const s of sites) siteStep(s, t, dt);
     for (const p of puffs) { if (p.age >= p.life) { p.s.visible = false; continue; } p.age += dt; const k = p.age / p.life; p.s.position.set(p.x, p.y + p.rise * k, p.z); p.s.scale.setScalar(p.size * (0.5 + k)); p.s.material.opacity = 0.7 * (1 - k); }
-    boltAge += dt; bolt.visible = boltAge < 0.5 && Math.sin(boltAge * 60) > -0.4; boltLight.intensity = boltAge < 0.6 ? 900 * (1 - boltAge / 0.6) : 0; flash.style.opacity = boltAge < 0.5 ? 0.55 * (1 - boltAge / 0.5) : 0;
+    boltAge += dt; bolt.visible = boltAge < 0.55 && (boltAge < 0.12 || Math.sin(boltAge * 70) > -0.2); boltLight.intensity = boltAge < 0.7 ? 1100 * (1 - boltAge / 0.7) : 0; flash.style.opacity = boltAge < 0.4 ? 0.38 * (1 - boltAge / 0.4) : 0;
+    burst.visible = boltAge < 0.7; if (burst.visible) { burst.scale.setScalar(6 + 26 * boltAge); burst.material.opacity = 0.9 * (1 - boltAge / 0.7); }
     for (const b of birds) { const a = b.ph + t * b.sp; b.g.position.set(b.cx + Math.cos(a) * b.rad, b.y + Math.sin(t * 0.4 + b.ph) * 1.5, b.cz + Math.sin(a) * b.rad); b.g.rotation.y = -a + (b.sp > 0 ? Math.PI : 0);
       const f = Math.sin(t * b.flap + b.ph) * 0.7; b.l.rotation.z = f; b.r.rotation.z = -f; } });
 

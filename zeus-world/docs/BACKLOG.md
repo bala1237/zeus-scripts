@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-026.**
+- **Next number: ZW-029.**
 
 ## Open
 
@@ -33,13 +33,16 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-016 | Enhancement | Winning a battle triggers a surprise celebration | Medium (proposed) | Open, not started | 22 Nov 2026, owner |
 | ZW-017 | Brainstorm | Make the city feel like a game | High (proposed) | Brainstorm written; waiting for the owner's choices | 22 Nov 2026, owner |
 | ZW-018 | Enhancement | Show a live battle between our city and the rival's during a TikTok battle | Medium | First version accepted by the owner; real battle events still to connect | 22 Nov 2026, owner |
-| ZW-019 | Enhancement | Cinematic camera during the battle: closer, moving between points of interest | High | Fix shipped | 22 Nov 2026, owner |
+| ZW-019 | Enhancement | Cinematic camera during the battle: closer, moving between points of interest | High | Superseded by ZW-028 | 22 Nov 2026, owner |
 | ZW-020 | Enhancement | A palace, with queens living in it | Medium (proposed) | Open, not started. Roadmap phase 2 | 22 Nov 2026, owner |
 | ZW-021 | Enhancement | A living day: people working, markets, celebrations, dancing, enough for long streams | High (proposed) | Open, not started. Roadmap phase 1 | 22 Nov 2026, owner |
 | ZW-022 | Enhancement | Walk through the battle MVP's property, in and out, to showcase it | Medium (proposed) | Open, not started. Roadmap phase 3 | 22 Nov 2026, owner |
 | ZW-023 | Brainstorm | The bigger plan: build it like an actual game, in phases | High | Roadmap written; waiting for the owner's choices | 22 Nov 2026, owner |
 | ZW-024 | Enhancement | Cinematic city tour in place of the 360 rotation | High | Fix shipped | 23 Nov 2026, owner |
 | ZW-025 | Enhancement | After a battle is won: the storm of gold, a triumph for the top three, a tour of the first one's home | High | Fix shipped | 23 Nov 2026, owner |
+| ZW-026 | Bug | Battle soldiers look like shapes: no hands, odd | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-027 | Bug | Battle arrows and lightning look basic: arrows are lines | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-028 | Enhancement | Battle camera as a cinematic action sequence with fast cuts | High | Fix shipped | 24 Nov 2026, owner |
 
 ## Closed
 
@@ -277,3 +280,25 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Checked:** stills at ten moments across the three parts, and the whole flow (battle, storm, triumph, tour, return) stepped through without errors. Not seen in motion.
 - **Waiting on the owner:** does the storm feel like a big moment; is the darkening too much or too little; the triumph's pace and shots; the house tour; the wreath; the titles.
 
+### ZW-026: Battle soldiers look like shapes
+
+- **Reported:** 24 Nov 2026, by the owner, after the cinematic camera brought the view closer: the battlefield characters do not look good. "It's just like a shape and no hands and it looks odd."
+- **Cause:** the soldiers were built from seven simple shapes each, meant for a distant view (ZW-018). The closer camera (ZW-019) shows what they are.
+- **Fix shipped 24 Nov 2026:** the soldiers are now real human figures with a bronze or iron helmet, a round shield and a spear, standing in a braced guard and thrusting in the front rank. Built free from the man citizen. Detail in `knowledge/battle.md`, "Rebuilt 24 Nov 2026".
+- **Limits:** they are all the same man; they do not fall or react to hits; the rival's tunics could only be made somewhat darker.
+- **Waiting on the owner:** do they look right now, close up and from a distance.
+
+### ZW-027: Battle arrows and lightning look basic
+
+- **Reported:** 24 Nov 2026, by the owner: "the arrows and lightning are very basic. Arrows are like lines."
+- **Cause:** an arrow is a thin dark box; the lightning is a chain of plain cylinders with a white flash.
+- **Fix shipped 24 Nov 2026:** arrows have a shaft, a bronze head and feathers, and stay standing where they land. Catapult stones burn, trail fire and smoke, and land with a burst and a jolt. Lightning has a glowing core, forks, a burst and sparks where it strikes, everywhere it is used.
+- **Waiting on the owner:** are the arrows and the lightning good enough now.
+
+### ZW-028: Battle camera as an action sequence
+
+- **Reported:** 24 Nov 2026, by the owner: "the camera work on battle is also very basic. The camera needs to be like a cinematic action sequence with fast cuts."
+- **Today:** nine kinds of shot, each held six to eight seconds with a slow move (ZW-019). That is a documentary pace, not an action pace.
+- **Fix shipped 24 Nov 2026:** the battle is cut every 1.5 to 3 seconds between twelve kinds of shot: low between the lines at a thrusting soldier, a fast run along the shields, a long lens down the helmets, over a shoulder, riding behind an arrow, riding a catapult stone to its landing, past a catapult, down from the wall, and a short wide view to keep bearings. Hand-held throughout, with a jolt on every impact. Replaces the slower camera of ZW-019.
+- **Checked:** a still of each shot and a full battle stepped through. The cutting and the camera shake have not been seen in motion.
+- **Waiting on the owner:** is it fast and exciting enough; too much shake or too little; any shot that does not work.
