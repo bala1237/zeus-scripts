@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 24 Nov 2026
 
+- **Brainstorm logged (ZW-030):** the stream as a journey. Enter by the gate and wake the city district by district as people take part; battles inside it; a Builders' Guild where MVPs choose what to build. Ideas in `BRAINSTORM-GAME.md`. Nothing built.
 - **Building labels no longer show during a battle (ZW-029).** The Bolts labels and home name plates are hidden for the battle and what follows it. The owner approved the rebuilt battle; ZW-026, ZW-027 and ZW-028 are closed.
 - **The battle rebuilt after the owner's review (ZW-026, ZW-027, ZW-028).** Soldiers are real human figures with helmets, shields and spears, standing guard and thrusting, in place of simple shapes. Arrows have heads and feathers and stay where they land; catapult stones burn and jolt the camera; lightning has a glowing core and forks. The camera cuts every 1.5 to 3 seconds between twelve close shots, hand-held. `assets/review/soldier.js`, `battle.js`, `life.js`.
 
