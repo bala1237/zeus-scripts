@@ -13,7 +13,6 @@ import { createBattle } from './battle.js';
 import { createTour } from './tour.js';
 import { createAftermath } from './aftermath.js';
 import { soldierKit } from './soldier.js';
-import { createConcert } from './concert.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const q = new URLSearchParams(location.search);
@@ -313,24 +312,14 @@ const battle = createBattle({ scene, camera, controls, tickers, kit, gateZ: Z1, 
 
 // ---------- the cinematic tour (ZW-024): runs whenever the tour is on and no battle is being fought. ?pace=lively shortens every shot.
 const film = createTour({ camera, controls, tickers, walkers: life.walkers, pace: q.get('pace') === 'lively' ? 0.6 : 1, setLabel: (n) => { document.getElementById('label').textContent = n; } });
-if (!CLASSIC) tickers.push((t) => { if (tour.on && !battle.state.on && !after.state.on && !concert.state.on) film.update(t); else film.stop(); });
+if (!CLASSIC) tickers.push((t) => { if (tour.on && !battle.state.on && !after.state.on) film.update(t); else film.stop(); });
 if (q.has('shot') && q.get('film')) { const [n, i, u] = q.get('film').split(','); film.pose(n, Number(i || 0), Number(u ?? 0.5)); controls.update(); }
 
 if (q.has('shot') && q.get('after')) await after.play({ heroes: topThree, startAt: q.get('after').split(',')[0] });
 
-// ---------- concert mode (ZW-033): the Concert button, or ?concert to start in it; ?bpm sets the tempo; ?listen=test checks the beat detector
-const concert = createConcert({ scene, camera, controls, renderer, tickers, life, get, urls: [M('char_citizen_woman'), M('char_soldier'), M('char_citizen_elder')], dn, towers: [[X0, Z0], [X1, Z0], [X0, Z1], [X1, Z1]],
-  onChange: (s) => { const $ = (id) => document.getElementById(id); if (!$('stage')) return; $('stage').style.display = s.on ? '' : 'none'; $('bpm').textContent = s.bpm; $('hearing').textContent = s.listening ? ' · listening' : ''; $('listen').textContent = s.listening ? 'Stop listening' : 'Listen'; } });
-{ const $ = (id) => document.getElementById(id), go = async () => { if (battle.state.on || after.state.on) return; if (concert.state.on) concert.stop(); else await concert.start({ bpm: Number(q.get('bpm') || concert.state.bpm) }); };
-  $('concert')?.addEventListener('click', go); $('endconcert')?.addEventListener('click', () => concert.stop()); $('tap')?.addEventListener('pointerdown', () => concert.tap());
-  $('slower')?.addEventListener('click', () => { concert.state.bpm = Math.max(50, concert.state.bpm - 1); $('bpm').textContent = concert.state.bpm; }); $('faster')?.addEventListener('click', () => { concert.state.bpm = Math.min(200, concert.state.bpm + 1); $('bpm').textContent = concert.state.bpm; });
-  $('listen')?.addEventListener('click', () => { if (concert.state.listening) concert.unlisten(); else concert.listen().catch((e) => { $('hearing').textContent = ' · could not listen: ' + e.message; }); });
-  renderer.domElement.addEventListener('pointerdown', () => concert.release());
-  if (q.has('concert')) { await concert.start({ bpm: Number(q.get('bpm') || 120) }); if (q.get('listen') === 'test') { concert.state.testBpm = Number(q.get('testbpm') || 128); await concert.listen('test'); } } }
-
 // ---------- during a battle and what follows it, the Bolts labels and the name plates are put away: they belong to the city tour,
 // and floated across the close shots of the fight (ZW-029)
-{ let busy = null; tickers.push(() => { const now = battle.state.on || after.state.on || concert.state.on; if (now !== busy) { busy = now; life.showLabels(!now); names.show(!now); } }); }
+{ let busy = null; tickers.push(() => { const now = battle.state.on || after.state.on; if (now !== busy) { busy = now; life.showLabels(!now); names.show(!now); } }); }
 
 // ---------- draw repeated pieces in one go. The city is built from copies: 340 tiles, 60 wall pieces, 27 river pieces and so on, each a
 // separate draw call. Every set of copies that shares a shape and a material becomes one instanced mesh: same picture, a third of the draw calls.
@@ -419,6 +408,6 @@ window.__ambient = createAmbient({ scene, tickers, placed, sway });
 if (!q.has('shot')) { renderer.render(scene, camera); sun.shadow.autoUpdate = false; }
 // a still is drawn once, with no animation loop to keep the camera pointed at its target, so point it here, then run the
 // tickers once more so that who is in view (citizens outside it are hidden) is worked out from where the camera now looks
-if (q.has('shot')) { if (q.has('concert')) concert.pose(Number(q.get('concert') || 0)); if (q.get('after') || q.has('concert')) { controls.update(); for (const f of tickers) f(shotEnd); controls.update(); } renderer.render(scene, camera); }
-window.__zw = { renderer, scene, camera, tickers, sun, cache, battle, film, after, concert };   // for measure.mjs
+if (q.has('shot')) { if (q.get('after')) { controls.update(); for (const f of tickers) f(shotEnd); controls.update(); } renderer.render(scene, camera); }
+window.__zw = { renderer, scene, camera, tickers, sun, cache, battle, film, after };   // for measure.mjs
 window.ready = true;

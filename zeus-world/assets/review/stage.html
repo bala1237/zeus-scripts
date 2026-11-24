@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus Stage</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
+  #ui { position: fixed; left: 16px; bottom: 14px; color: #fff; font: 600 13px system-ui; background: rgba(10,12,22,.78); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 32px); }
+  #ui.idle { opacity: 0; pointer-events: none; }
+  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  #ui button { background: #2f6fb0; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; min-width: 34px; }
+  #ui button.on { background: #e2a92e; color: #1d1a2e; }
+  body.idle { cursor: none; }
+</style>
+</head>
+<body>
+<div id="ui">
+  <div>♪ Zeus Stage · <span id="bpm">120</span> beats a minute<span id="hearing"></span> · <span id="scene"></span></div>
+  <div class="row">
+    <button id="tap" title="Tap in time with the music, three times or more (or press the space bar)">Tap the beat</button>
+    <button id="slower" title="Slower">−</button><button id="faster" title="Faster">＋</button>
+    <button id="listen" title="Let the stage hear the music: share the tab or screen that is playing it, with audio">Listen</button>
+  </div>
+  <div class="row">
+    <button id="next" title="Change the background now (or press N)">Next background</button>
+    <button id="auto" class="on" title="Change the background by itself every 32 beats">Auto: on</button>
+    <button id="mode" title="Show only the moving background, full screen, to put behind a camera">Backdrop only</button>
+    <button id="cam" class="on" title="Let the camera cut between angles">Camera cuts: on</button>
+  </div>
+  <div style="font-weight:500;font-size:12px;margin-top:7px;opacity:.75">This panel hides itself when the mouse is still. Press H to keep it hidden.</div>
+</div>
+<script type="module" src="./stage.js"></script>
+</body>
+</html>

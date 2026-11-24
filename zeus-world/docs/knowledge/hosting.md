@@ -5,7 +5,7 @@
 - **Link:** https://zeus-world-preview-bala-0416.vercel.app/city.html
 - Vercel project `zeus-world-preview`, team "Bala" (`team_sbCFPbyQjCI8e29mwR2c9t3U`), project id `prj_CxFJGUOEOvvLAiTCftIXpYpWqOds`.
 - Linked to this repository. Root directory `zeus-world/assets`, framework Vite, build `npm run build`, output `dist`.
-- The build (`review/vite.config.js`) has three pages: `index.html` (single-model review), `street.html`, `city.html`.
+- The build (`review/vite.config.js`) has four pages: `index.html` (single-model review), `street.html`, `city.html`, and `stage.html` (the music stage).
 - **The link is public and serves every model file.** Protect it or take it down before sharing more widely (ZW-011).
 
 ## Deploying
