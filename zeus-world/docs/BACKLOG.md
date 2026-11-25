@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-043.**
+- **Next number: ZW-044.**
 
 ## Open
 
@@ -54,6 +54,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
 | ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | Second version shipped 25 Nov after watching the video: stage rebuilt, warm light, the oracle cue. Waiting for the owner |
 | ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Shipped 25 Nov at `/andie.html`; "looks good for now" (owner). Waiting for her actual image to fix the rest | 25 Nov 2026, owner |
+| ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -452,3 +453,15 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Waiting on the owner:** does it look like her room; is point 4 read correctly; does it work in TikTok LIVE Studio (window capture to hear the music, or browser source at a fixed tempo); does she have her logo as an image file.
 - **Owner, 25 Nov 2026:** "looks good for now. once i get the actual image, i will share and we can fix rest. i want you to have the things placed in 16:9 and controls can be below. in that shape." Done the same day: the picture sits in a fixed 16:9 frame and the controls are a bar beneath it. The remaining fixes (furniture, plants, her real logo) wait for the image.
 - **Owner, 25 Nov 2026:** "give it in a small space with 16:9 and make that resizeable. so we have enough space around. preferably in the middle." Done the same day: the picture opens as a 16:9 box at 60% in the middle of the page, resized by a Size slider or by dragging its gold corner, and the size is remembered.
+
+### ZW-043: Andie's Place does not animate in TikTok LIVE Studio
+
+- **Reported:** 25 Nov 2026, by the owner: "its working in browser, but not seeing in the live studio. the animation is not showing up."
+- **Not known:** how it was added (browser source or window capture) and what is seen (the still room, a frozen frame, or nothing). LIVE Studio cannot be run on the build machine.
+- **Likely causes, in order (guesses until the owner reports back):**
+  1. Added as a browser source with the plain link. The page then shows the calm room and waits for someone to press Listen or Demo, which a browser source cannot do. By design it does not move without music, so nothing moves.
+  2. Added as a window capture with the Chrome window covered or minimised. Chrome stops drawing a window that cannot be seen, so the capture freezes.
+  3. LIVE Studio's built-in browser being an older one that cannot run the page's code, leaving only the still picture.
+- **Fix shipped 25 Nov 2026, for all three:** a page with its controls off now starts by itself at a steady tempo; a worker timer keeps the show stepping when the browser stops its drawing loop for a covered window; the build targets older browsers. Added a **Copy link for LIVE Studio** button that makes the browser-source link from the page's present settings, and `debug=1`, which writes what the page is doing across the picture.
+- **Limit, told to the owner:** a browser source cannot hear the music, so there the lights keep a steady tempo near the song's, not locked to it. Following the music needs the Chrome window with Listen, captured as a window.
+- **Waiting on the owner:** how he added it, and whether it now moves. If not, the `debug=1` line (or its absence) says which cause it is.

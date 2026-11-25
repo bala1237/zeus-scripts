@@ -1,5 +1,7 @@
 # Hosting, deploying and branches
 
+The build targets 2022-level JavaScript (2020 was tried and fails: the city and street pages use top-level await) (`build.target` in `assets/review/vite.config.js`), not the newest, so that pages also run in the older browsers built into streaming software (ZW-043).
+
 ## The preview
 
 - **Link:** https://zeus-world-preview-bala-0416.vercel.app/city.html
@@ -24,3 +26,5 @@
 ## Size
 
 `assets/models/` is about 85 MB in git, and every rebuilt model adds to the history. Moving models to file storage is an open question (ZW-011).
+
+**Trap: a failed build hidden by `tail`.** `npm run build | tail -1` prints the last line of an error as happily as "built in". Check for the words: `npm run build 2>&1 | grep -E "built in|error|failed"`. A build that fails here also fails on Vercel, and the preview then keeps showing the previous version.

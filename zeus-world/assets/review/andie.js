@@ -6,6 +6,7 @@
 //   ?mode=room | lasers      which lights            ?bright=20..100   brightness, percent
 //   ?bpm=124                 run at a fixed tempo without listening     ?demo           the same at 124
 //   ?top=WELCOME&big=AI MOGULS    the sign            ?name= ?place= ?tag=A|B|C     the name sign and its line of words
+//   ?calm=1                  with ui=0: stay calm, do not start by itself        ?debug=1   write what the page is doing on the picture
 //   ?ui=0                    never show the panel     ?shot&cue=chase&beats=3.2      one still, for checking
 import '@fontsource/great-vibes/400.css';
 import '@fontsource/dancing-script/700.css';
@@ -92,12 +93,26 @@ $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventLi
 let hidden = q.get('ui') === '0' || SHOT; const ui = $('ui'), showUi = () => { ui.classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area);
 addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'l') $('mode').click(); else if (k === 'h' && q.get('ui') !== '0') { hidden = !hidden; showUi(); } });
 
-window.__andie = { view, st, beat, show, update, pieces, get lasers() { return lasers; } };
+// ?debug=1 writes what the page is doing across the top of the picture, to find out what a browser source is up to
+let problem = ''; const debug = q.get('debug') === '1' ? Object.assign(document.createElement('div'), { id: 'debug' }) : null;
+if (debug) { debug.style.cssText = 'position:absolute;left:0;top:0;right:0;z-index:30;font:600 26px system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.75);padding:10px 16px'; debug.textContent = 'page loaded, script starting'; stage.append(debug); addEventListener('error', (e) => { problem = e.message; }); addEventListener('unhandledrejection', (e) => { problem = String(e.reason?.message || e.reason); }); }
+// the link for a browser source: this page as it is set now, with the controls off, running at the tempo it is on
+const sourceLink = () => { const p = new URLSearchParams({ ui: '0', mode: st.mode, bright: String(Math.round(st.bright * 100)), bpm: String(Math.round(beat.state.tempo || beat.state.bpm || 124)), top: $('ftop').value, big: $('fbig').value }); return `${location.origin}${location.pathname}?${p}`; };
+$('copy').addEventListener('click', async () => { const link = sourceLink(), b = $('copy'); try { await navigator.clipboard.writeText(link); b.textContent = 'Copied'; } catch { prompt('Copy this link into the browser source:', link); } setTimeout(() => { b.textContent = 'Copy link for LIVE Studio'; }, 1800); });
+window.__andie = { view, st, sourceLink, beat, show, update, pieces, get lasers() { return lasers; } };
 const fonts = document.fonts ? Promise.all([document.fonts.load('700 236px "Dancing Script"'), document.fonts.load('96px "Great Vibes"'), document.fonts.load('500 40px Montserrat'), document.fonts.load('700 104px Montserrat'), document.fonts.load('600 112px Montserrat')]).catch(() => {}) : Promise.resolve();
 if (SHOT) { document.body.classList.add('still'); const wait = st.mode === 'lasers' ? new Promise((r) => { const t = setInterval(() => { if (lasers || failed) { clearInterval(t); r(); } }, 50); }) : Promise.resolve();
   Promise.all([fonts, wait]).then(() => { if (q.get('beats') !== 'calm') { beat.tap(); const n = Number(q.get('beats') || 8) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); } else update(1 / 60); requestAnimationFrame(() => requestAnimationFrame(() => { window.ready = true; })); }); }
-else { if (q.has('bpm') || q.has('demo')) beat.tap(); let last = performance.now();
-  const frame = () => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); const b = beat.state;
+else {
+  // A page with its controls switched off (a browser source) has nobody to press Demo, so it starts by itself at a steady tempo,
+  // unless the address says calm=1. With controls, it waits to be told.
+  if (q.has('bpm') || q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap();
+  let last = performance.now(), seen = 0;
+  const frame = (viaTimer) => { const now = performance.now(), ms = now - last; if (viaTimer === true && ms < 90) return; last = now; update(Math.min(0.1, ms / 1000)); const b = beat.state; seen++;
     $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a2040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
-    $('status').textContent = failed || (b.mode === 'off' ? 'calm room' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
-    requestAnimationFrame(frame); }; fonts.then(() => { window.ready = true; }); requestAnimationFrame(frame); }
+    const status = failed || (b.mode === 'off' ? 'calm room' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
+    $('status').textContent = status; if (debug) debug.textContent = `${status} · cue ${st.cue} · beat ${Math.floor(b.beats)} · ${seen} frames · ${st.mode} · ${navigator.userAgent.match(/Chrom\w*\/[\d.]+/)?.[0] || navigator.userAgent.slice(0, 40)}${problem ? ' · ERROR ' + problem : ''}`; };
+  const loop = () => { frame(); requestAnimationFrame(loop); }; fonts.then(() => { window.ready = true; }); requestAnimationFrame(loop);
+  // A browser stops calling requestAnimationFrame for a window it thinks nobody can see (covered, minimised, in the background), and the
+  // picture freezes in a window capture. A timer in a worker keeps running then; it steps the show whenever the normal loop has gone quiet.
+  try { const w = new Worker(URL.createObjectURL(new Blob(['setInterval(() => postMessage(0), 33)'], { type: 'application/javascript' }))); w.onmessage = () => frame(true); } catch { /* no workers: the normal loop alone */ } }
