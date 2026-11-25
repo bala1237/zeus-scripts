@@ -92,6 +92,10 @@ The owner asked for different films made more cheaply. A film is now about 46 se
 - Requests, moving shots (Wan 3.0 Prime): banner hook `01a214a7-2bf3-70c0-885f-4ab084b9f3c8`, banner climax `01a214a7-321f-7621-a652-10e5d8f8dea3`, well hook `01a214a7-379f-7c83-8817-3f9a74d5f7f9`, well climax `01a214a7-3dfd-7331-b2b5-96fa00f5ffce`. Pictures: submission keys `zeus-hero-banner-still-1` to `4` and `zeus-hero-well-still-1` to `5`. Scores: banner `6a94fb2e-d2f0-4aa8-8c74-c7e7b543dc67` (used) and `bf2793bc-4376-4385-9da3-ff9720df777c`; well `476a8f10-167c-4ef2-824a-ef447dc3ec98` (used) and `a20f915e-4f8a-46c9-8d6a-e095384fee41`.
 - In The Well's climax the hero faces the camera for the first seconds, but the head-wrap covers the face entirely.
 
+## No children
+
+The owner, 25 Nov 2026: "We can't have kid in the video." The Well's first cut had a child drinking (asked for in the prompt) and small children by the oasis. Both pictures were made again with "Adults only: no children anywhere in the image" (keys `zeus-hero-well-still-4b`, `-5b`, about $0.16) and the film rebuilt. The Last Banner has none. **The Fire-Bringer still has a child** in its faces shot (shot 6, used in the opening and again after the climax); replacing it waits for the owner's word, because it means generating again.
+
 ## Checks
 
 - `node renders/herotest.mjs "Andie Howard" 40` presses Play with a real pointer and reports picture time, sound time and which name recording was used. On 25 Nov 2026: picture and sound within 0.1 s, the named recording used, on both cuts.
