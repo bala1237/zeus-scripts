@@ -39,14 +39,14 @@ function setName(n) { name = showName(n); const shown = (name || 'OUR HERO').toU
   // the narrator saying this name, if a recording of it has been made; otherwise the line without a name
   line.src = film.nameLine.generic; if (name) { const named = `${film.nameLine.named}${slug(name)}.mp3`; fetch(named, { method: 'HEAD' }).then((r) => { if (r.ok && (r.headers.get('content-type') || '').includes('audio')) line.src = named; }).catch(() => {}); } }
 // which film: the library is herofilms.js. Changing film changes the footage, the sound and the honour under the name.
-function setFilm(id) { if (!FILMS[id]) return; filmId = id; film = FILMS[id]; video.src = film.video; base.src = film.sound; setName(name); if (!PLAIN) $('filmSel').value = id; }
+function setFilm(id) { if (!FILMS[id]) return; filmId = id; film = FILMS[id]; video.src = film.video; base.src = film.sound; $('forge').style.top = `${film.forgeTop ?? 30}cqh`; setName(name); if (!PLAIN) $('filmSel').value = id; }
 // The hero's picture, for the end card (ZW-047). Any picture is cut to a square from its middle and made small, so that it can be sent
 // to the page in OBS along with the name. With no picture the end card is the laurel and the name alone.
 let pic = '';
 function setPic(src) { pic = src || ''; $('card').classList.toggle('pic', !!pic); $('cardPic').src = pic || 'data:,'; if (!PLAIN) { $('picOff').style.display = pic ? '' : 'none'; $('picBtn').textContent = pic ? 'Change picture' : 'Add picture'; } }
 function takePicture(file) { if (!file || !file.type.startsWith('image/')) return; const img = new Image(), url = URL.createObjectURL(file); img.onload = () => { const S = 360, c = document.createElement('canvas'), k = Math.min(img.width, img.height); c.width = c.height = S;
     c.getContext('2d').drawImage(img, (img.width - k) / 2, (img.height - k) / 2, k, k, 0, 0, S, S); URL.revokeObjectURL(url); setPic(c.toDataURL('image/jpeg', 0.86)); }; img.onerror = () => URL.revokeObjectURL(url); img.src = url; }
-video.src = film.video; base.src = film.sound; video.muted = true; setName(name); setPic(q.get('pic') || '');
+video.src = film.video; base.src = film.sound; video.muted = true; setName(name); setPic(q.get('pic') || ''); $('forge').style.top = `${film.forgeTop ?? 30}cqh`;
 if (!PLAIN) { const sel = $('filmSel'); for (const [id, f] of Object.entries(FILMS)) { const o = document.createElement('option'); o.value = id; o.textContent = f.title; sel.append(o); } sel.value = filmId; sel.addEventListener('change', () => { stop(); setFilm(sel.value); });
   $('picBtn').addEventListener('click', () => $('picFile').click()); $('picFile').addEventListener('change', () => { takePicture($('picFile').files[0]); $('picFile').value = ''; }); $('picOff').addEventListener('click', () => setPic(''));
   addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/')); if (f) { e.preventDefault(); takePicture(f); } });

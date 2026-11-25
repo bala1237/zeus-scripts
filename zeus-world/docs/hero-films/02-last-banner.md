@@ -1,6 +1,6 @@
 # Hero film 2: The Last Banner
 
-About 45 seconds. For a battle that was lost. Written 25 Nov 2026; nothing generated yet.
+About 45 seconds. For a battle that was lost. Written and made 25 Nov 2026.
 
 **The story in one line:** the day is lost and the army is scattered in the smoke; one of us goes back, raises the fallen banner on the hill and holds it through the night, and by it everyone finds the way home.
 
@@ -23,6 +23,6 @@ No gender anywhere: "one of us", "they". The hero is in a helmet and cloak, seen
 | 0:37 | **The answer, the honour** | S. Dawn. The whole army gathered round the banner on the hill, the cloth from the opening now seen for what it is. | "A day can be lost. Not the ones who stood in it." |
 | 0:42 | End card | Laurel, picture if there is one, **`[NAME]` · Keeper of the Banner**. | |
 
-## What has to be made
+## Made
 
-- 2 moving shots (about 5 s and 8 s), 4 still pictures, narration (about 330 characters plus the name line), one score.
+Made 25 Nov 2026: two moving shots (6 s and 9 s), four still pictures, narration, score. Plays at `/hero.html` (Film: The Last Banner). The spoken line with the name is "`[NAME]` held the banner."; without a recording for the name the narrator says "One of us held the banner." Prompts, request numbers and the cut: `docs/knowledge/hero-films.md` and `assets/hero-build/build.py`.

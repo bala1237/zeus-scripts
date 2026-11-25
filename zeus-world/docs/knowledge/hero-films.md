@@ -78,6 +78,20 @@ The owner on the first cut: "name is good. but we need good animation and font s
 - **Lettering.** Cinzel, weight 800. Three others can be tried without changing code: add `&font=Cinzel Decorative&weight=700`, `&font=Cormorant SC&weight=700` or `&font=Cinzel&weight=900` to the address. A sheet of all four was sent to the owner on 25 Nov 2026.
 - The words on screen (optional) are in Cormorant Garamond italic.
 
+## The cheaper way of making a film (films 2 and 3, 25 Nov 2026)
+
+The owner asked for different films made more cheaply. A film is now about 46 seconds: **two moving shots** (the hook and the climax) and **four or five still pictures** that the film moves slowly across.
+
+- **Cost of both films together:** moving shots 30 s at $0.05 = about $1.50; nine pictures at about $0.08 = about $0.72; so **about $2.22**, against about $3 for the first film alone. Narration 818 characters. Suno: two requests (two versions each) and two download credits.
+- **Pictures:** `fal-ai/nano-banana-2`, `aspect_ratio 16:9`, which gives 1376 × 768. The cheapest model offered ($0.003) was not used: these have to pass as film frames.
+- **Moving a still:** `assets/hero-build/build.py`. The picture is enlarged twofold, then `zoompan` pushes slowly in or out by 10 to 14 per cent toward a chosen point. Enlarging first is what stops the movement from stepping. Each piece dissolves into the next over 0.4 s.
+- **Keeping the hero the same** across a picture model and a video model: the same words in every prompt ("a bronze helmet and a long dark cloak … a torn deep-red banner with a thin gold border"; "long sand-coloured robes with a dark indigo head-wrap that hides the head completely"), always "seen from behind". It held.
+- **The name line** is now a whole sentence either way: "`[NAME]` held the banner." or, with no recording for that name, "One of us held the banner." Recordings for names go in `review/public/hero/names-<film>/`.
+- **Where the forged name sits** is set per film (`forgeTop` in `herofilms.js`) so that it is in the sky and clear of the hero.
+- **Scores** were asked for at 46 and 47 seconds with the turn at 27 seconds; the climaxes are at 29.4 and 28.8 s. Neither score has as sharp a lift as the first film's, so the name does not land on a hit in the music as exactly.
+- Requests, moving shots (Wan 3.0 Prime): banner hook `01a214a7-2bf3-70c0-885f-4ab084b9f3c8`, banner climax `01a214a7-321f-7621-a652-10e5d8f8dea3`, well hook `01a214a7-379f-7c83-8817-3f9a74d5f7f9`, well climax `01a214a7-3dfd-7331-b2b5-96fa00f5ffce`. Pictures: submission keys `zeus-hero-banner-still-1` to `4` and `zeus-hero-well-still-1` to `5`. Scores: banner `6a94fb2e-d2f0-4aa8-8c74-c7e7b543dc67` (used) and `bf2793bc-4376-4385-9da3-ff9720df777c`; well `476a8f10-167c-4ef2-824a-ef447dc3ec98` (used) and `a20f915e-4f8a-46c9-8d6a-e095384fee41`.
+- In The Well's climax the hero faces the camera for the first seconds, but the head-wrap covers the face entirely.
+
 ## Checks
 
 - `node renders/herotest.mjs "Andie Howard" 40` presses Play with a real pointer and reports picture time, sound time and which name recording was used. On 25 Nov 2026: picture and sound within 0.1 s, the named recording used, on both cuts.
