@@ -101,8 +101,8 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
   function playFilm(name, src, slow = false) { const f = loadFilm(name, src); film.cur = f; film.want = 1; film.rate = slow ? 0.55 : 2.2; try { f.v.currentTime = 0; const p = f.v.play(); p?.catch?.(() => {}); } catch { /* it will show its first frame */ } state.filmAt = time; }
   // for a still: put the clip at a given second and wait until that frame is there
   const seekFilm = (seconds) => new Promise((done) => { const f = film.cur; if (!f) return done(); const go = () => { f.v.pause(); f.v.addEventListener('seeked', () => setTimeout(done, 120), { once: true }); f.v.currentTime = Math.min(seconds, (f.v.duration || 10) - 0.05); }; if (f.v.readyState >= 1) go(); else f.v.addEventListener('loadedmetadata', go, { once: true }); setTimeout(done, 15000); });
-  let rainAcc = 0, flickAt = 0, time = 0;
-  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null, aurora = 0 }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
+  let rainAcc = 0, featherAcc = 0, flickAt = 0, time = 0;
+  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null, aurora = 0, feathers = 0 }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
     U.uCloud.value += (cloud * level - U.uCloud.value) * Math.min(1, dt * 2.2); U.uFlick.value *= Math.exp(-dt * 9); U.uFlash.value *= Math.exp(-dt * 7); state.shake *= Math.exp(-dt * 7);
     if (U.uRingI.value > 0.002) { U.uRing.value += dt * 1.25; U.uRingI.value *= Math.exp(-dt * 2.6); } else U.uRingI.value = 0;
     if (state.center) { const c = state.center.clone().project(camera); U.uCenter.value.set(c.x * 0.5 + 0.5, c.y * 0.5 + 0.5); }
@@ -123,6 +123,8 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
     eyePool.forEach((sp, i) => { const e = fig.f && fig.f.eyes[i]; if (!e || fig.awake <= 0 || fig.glow < 0.01) { sp.visible = false; return; } sp.visible = true; sky3(e, sp.position); const k = fig.glow * level * Math.min(1, fig.awake * 3) * (1.6 + 2.5 * fig.flare + 0.3 * Math.sin(time * 6)); sp.material.color.setRGB(2.2 * k, 2.6 * k, 3.0 * k); sp.scale.setScalar(0.5 * fig.scale); });
     // gold rain, and sparks thrown off the edge of a name as it is written
     rainAcc += rain * dt * 150; while (rainAcc >= 1) { rainAcc--; spawn((R() - 0.5) * 17, 9.5 + R() * 1.5, -6.5 + R() * 5.5, (R() - 0.5) * 0.5, -(3.2 + R() * 3), 0, 2.6, 0.6, 2.2, 1.5 + R() * 0.5, 0.35 + R() * 0.35); }
+    // feathers: large, white, slow, swaying as they fall (Pegasus)
+    featherAcc += feathers * dt * 26; while (featherAcc >= 1) { featherAcc--; spawn((R() - 0.5) * 18, 10 + R() * 2, -6.5 + R() * 6, (R() - 0.5) * 0.8, -(0.7 + R() * 0.7), 0, 6, -0.02, 2.3, 2.4, 2.6); }
     if (edge) for (let k = 0; k < 3; k++) spawn(edge.x, edge.y + (R() - 0.5) * 1.2, edge.z, (R() - 0.3) * 1.6, R() * 1.8, 0.6 + R(), 0.45 + R() * 0.4, 5, 2.8, 2.2, 1.2);
     for (let i = 0; i < N; i++) { if (life[i] <= 0) continue; life[i] -= dt; if (life[i] <= 0) { pos[i * 3 + 1] = -999; continue; } vel[i * 3 + 1] -= grav[i] * dt; pos[i * 3] += vel[i * 3] * dt; pos[i * 3 + 1] += vel[i * 3 + 1] * dt; pos[i * 3 + 2] += vel[i * 3 + 2] * dt;
       const k = Math.min(1, life[i] / span[i] * 2.5) * (0.75 + 0.25 * Math.sin(time * 31 + i)) * level; col[i * 3] = tint[i * 3] * k; col[i * 3 + 1] = tint[i * 3 + 1] * k; col[i * 3 + 2] = tint[i * 3 + 2] * k; }
