@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **The laser page reconnects to its sound input (ZW-048).** If the input goes dead or the computer changes its sound devices (headphones connecting does this), the page takes the input up again by itself instead of staying silent.
 - **A status line for the laser page without controls (ZW-048).** `debug=1` in the address shows, on the picture, whether it is on the beat, the tempo, which sound input it hears and a lamp that blinks on the beat. For checking an OBS browser source.
 - **The laser page can listen to a sound input (ZW-048).** Besides sharing a browser tab, it can now hear the music from a sound card or mixer such as the owner's RODECaster, or the microphone. A new button with a list of inputs, and `listen=input` in the address so that a controls-off page starts listening by itself.
 - **The Fire-Bringer, second cut (ZW-047).** After the owner's review. A new opening that hides what the film is about (faces looking up at something not shown), a low point before the climax, and the opening answered at the end. A new, authoritative narrator. The score added, with the fire erupting on the music's lift and the music stepping down under the voice. The name rebuilt as a film title: bevelled gold letters forged out of a streak of light, with the honour beneath, a glint and embers. No new footage was generated.
