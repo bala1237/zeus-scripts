@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **Laser page: the picture in a resizable 16:9 box, controls below (ZW-044).** The same layout as Andie's page, at the owner's request. It also gains `ui=0` for use as a browser source and keeps running when its window is covered.
 - **Andie's Place did not animate in TikTok LIVE Studio (ZW-043).** A page with its controls off now starts by itself; the show keeps running when the browser stops drawing a covered window; the build suits older built-in browsers. New "Copy link for LIVE Studio" button, and `debug=1` to see what the page is doing. Not yet confirmed in LIVE Studio.
 - **Andie's Place: the picture is a resizable 16:9 box in the middle of the page (ZW-042).** At the owner's request, so there is space round it. A Size slider and a draggable gold corner; the size is remembered.
 - **Andie's Place: picture in a fixed 16:9 frame, controls below it (ZW-042).** At the owner's request. Nothing is cropped any more and the controls never lie over the picture; H hides them.

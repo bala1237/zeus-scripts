@@ -46,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-044.** `/laser.html` now has the picture in a resizable 16:9 box with the controls below. Confirm it is as wanted.
 0. **ZW-043, Andie's Place in TikTok LIVE Studio.** Use the "Copy link for LIVE Studio" button and paste the link as a browser source. Does it move now. If not, add `&debug=1` and report the line across the top of the picture, or that there is none.
 0. **ZW-042, Andie's Place.** "Looks good for now" (owner, 25 Nov). He will share her actual image; then the furniture, plants and logo are fixed. Still to confirm: that it works in TikTok LIVE Studio.
 0. **ZW-041, the building cues, second version (after watching the video).** In Olympus: the oracle cue (the video's opening), chase, corners, colonnade, strobe, on a stage rebuilt as a temple with three pillars each side. Is this what he loved; how often should they come; which other moments of the video next (white-outs, white beams, red wash, temple as a screen).
