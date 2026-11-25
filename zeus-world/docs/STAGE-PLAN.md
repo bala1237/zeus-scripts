@@ -490,3 +490,22 @@ What worked in the prompt, for the next clip: describing the shot as a sequence 
 **How it is built.** A film can name a staging (`staging: 'zeus'` in `FILMS`), with its own start beat and tail. `gifts.js` has that staging's script; `laser.js` has its camera plan and fades the clip in slowly. Everything else is shared with the lion.
 
 **Checked:** a test of Zeus's script (the clip first; no lightning before the throw; the stage's bolt on the peak at the clip's strike; twelve pillar bolts, middle pillars first; twelve flames; no awakening set off); the Zeus button by a real click with the show played in real time in a browser (clip fading up from beat 2, views 9, 15, 19, 20, 19 in order, lasers off until the clip ends, everything back to normal after); eight stills (`assets/sheets/laser_gift_zeus.jpg`); the build. **Not checked:** motion at full frame rate; whether the stage's bolt and the clip's bolt meet to the eye, which is a matter of a tenth of a second and can only be judged moving. `roar` in `FILMS.zeus` is the number to nudge.
+
+## Terms for using the generated clips, read 25 Nov 2026
+
+The owner asked for the terms to be checked. Read: fal's Terms of Service (`fal.ai/terms`, "Last Updated: September 8, 2026"), its API Services terms (`fal.ai/legal/api-services`), its Acceptable Use Policy (`fal.ai/legal/acceptable-use-policy`) and the model's page (`fal.ai/models/alibaba/wan-3.0-prime/text-to-video`). This is a reading of those pages, not legal advice.
+
+**What they say**
+
+- **The model is marked for commercial use.** Its page carries the tags "Inference", "Commercial use" and "Partner". There is no licence text on the page and no link to the model maker's own terms.
+- **fal claims nothing over the clips.** The terms give fal a licence over what is sent in (the prompt), not over what comes out, and say fal does not claim "any intellectual property rights in any Output Content". They do not, in so many words, say the customer owns the output either.
+- **Use must be lawful and not infringe.** The API terms allow output to be used "in a lawful manner" and "in a manner... that does not infringe". The use policy forbids using someone's likeness without consent and infringing copyright or trademarks. Neither clip shows a real person, a brand or a known character: a lion, and a figure from myth.
+- **No conditions found** on plan type, attribution, or labelling the clip as AI-made, and no rule against hosting or redistributing the file.
+- **No protection either.** fal gives no warranty that output is "non-infringing" and says its use "is at Customer's sole risk"; output may be "not unique across users"; and the customer indemnifies fal, not the other way round.
+- **A gap.** fal's terms say models from partners "may be subject to additional terms" of the provider. The page names none for this model, and Alibaba's own terms were not found or read.
+
+**Reading.** Nothing found forbids showing these clips on a monetised stream or hosting them, and the model is tagged for commercial use. What is missing is a plain grant of ownership and any assurance; the risk of a claim sits with the owner. For a stream this is the ordinary position with generated media.
+
+**Not checked: TikTok's own rules.** TikTok has rules on labelling realistic AI-generated content. Whether a stage effect of a lion or of Zeus needs the label, and how it applies to a LIVE, was not read. That is the next thing to settle before using the clips on a real stream.
+
+**If certainty is wanted:** ask fal support in writing whether Wan 3.0 Prime output may be used in a monetised livestream and which provider terms apply.

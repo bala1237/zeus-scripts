@@ -42,7 +42,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 ## Open questions
 
 - A cost ceiling per batch on fal.
-- Licence terms of each fal generator for commercial on-stream use. Now pressing: a generated video clip (Wan 3.0 Prime) is on the laser stage for the largest gifts.
+- Licence terms of each fal generator for commercial on-stream use. For the gift clips (Wan 3.0 Prime) fal's terms were read on 25 Nov 2026: the model is tagged for commercial use and nothing forbids it, but there is no plain grant of ownership, no warranty, and the model maker's own terms were not found (`STAGE-PLAN.md`, "Terms for using the generated clips"). Still open: TikTok's rules on labelling AI-generated content, and the terms for the other generators (Trellis, Meshy, Nano Banana).
 - What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
 - That the "First 100 become Founders" promise is honoured at launch.
 - Whether every citizen gets the same plot size.
