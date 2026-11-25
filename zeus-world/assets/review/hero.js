@@ -11,6 +11,7 @@ import '@fontsource/cormorant-sc/700.css';
 import '@fontsource/marcellus-sc/400.css';
 import '@fontsource/cormorant-garamond/500-italic.css';
 import { FILMS, showName, slug, span } from './herofilms.js';
+import { connectObs } from './obsremote.js';
 
 const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'), PLAIN = q.get('ui') === '0' || SHOT;
 const film = FILMS[q.get('film')] || FILMS['fire-bringer'], video = $('film'), base = new Audio(), line = new Audio(); base.preload = line.preload = 'auto';
@@ -79,6 +80,20 @@ if (!PLAIN) { $('play').addEventListener('click', play); $('stop').addEventListe
 if (q.has('captions')) document.body.classList.add('captions');
 addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); playing ? stop() : play(); } else if (e.key.toLowerCase() === 'h' && q.get('ui') !== '0') { hidden = !hidden; showUi(); } });
 if (q.get('ui') === '0') { addEventListener('pointerdown', () => { if (!playing) play(); }); if (q.has('autoplay')) play(); } else if (q.has('autoplay')) play();
+// ---------- the remote (ZW-048). A page that runs without controls, as a browser source in OBS, does what it is told:
+// by OBS itself (an event that OBS hands to every browser source) or by another tab of the same browser.
+const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-hero') : null;
+const obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'play') { if (m.name != null) { setName(m.name); if (!PLAIN) $('name').value = name; } play(); } else if (m.cmd === 'stop') stop(); };
+addEventListener('zeusHero', (e) => obey(e.detail)); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data);
+// The page with controls is the remote. It reaches OBS on this computer through OBS's own remote control, tells the source to play,
+// and if OBS cannot pass that on, points the source at an address with the name in it, which makes it load again and play.
+if (!PLAIN) { let obs = null, src = null; const say = (t) => { $('obsStatus').textContent = t; }; $('obsPass').value = store.get('obspass') || '';
+  const connect = async () => { say('connecting'); try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: () => { obs = null; say('connection to OBS closed'); } }); store.set('obspass', $('obsPass').value);
+      src = await obs.findBrowserSource('hero.html').catch(() => null); say(src ? `connected · source "${src.name}"` : 'connected, but OBS has no browser source with hero.html in its address'); } catch (e) { obs = null; say(e.message); } };
+  const send = async (m) => { chan?.postMessage(m); if (!obs) { say('not connected to OBS'); return; }
+    try { await obs.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); }
+    catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
+  $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
 // the door for the stage or for TikFinity later: window.playHeroFilm('Andie Howard')
 window.playHeroFilm = (n) => { if (n != null) setName(n); play(); }; window.__hero = { film, video, base, line, draw, get name() { return name; }, get playing() { return playing; } };
 const fonts = document.fonts ? Promise.all([document.fonts.load('800 80px Cinzel'), document.fonts.load(`${Number(q.get('weight')) || 700} 80px '${(q.get('font') || 'Cinzel').replace(/[^\w ]/g, '')}'`), document.fonts.load("italic 500 20px 'Cormorant Garamond'"), document.fonts.load('500 20px Cinzel'), document.fonts.load('700 80px Cinzel'), document.fonts.load('600 40px Cinzel'), document.fonts.load('400 20px Cinzel')]).catch(() => {}) : Promise.resolve();
