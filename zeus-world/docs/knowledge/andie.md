@@ -43,7 +43,7 @@ Address settings: `mode=room|lasers`, `bright=20..100`, `size=25..100`, `bpm=`, 
 
 - The plain link shows the calm room and waits for Listen or Demo. In a browser source nobody can press them. Now a controls-off page starts itself.
 - A browser stops calling its drawing loop for a window it thinks nobody can see (covered, minimised, in the background), and a window capture freezes. Now a timer in a worker steps the show whenever the normal loop has gone quiet for a tenth of a second. Checked by switching the normal loop off: the beat count kept climbing.
-- The build now targets 2020-level JavaScript, not the newest, because the browser built into streaming software can be some years old.
+- The build now targets 2022-level JavaScript, not the newest (2020 does not build: other pages use top-level await), because the browser built into streaming software can be some years old.
 
 ## How it is built, and why
 
