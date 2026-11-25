@@ -26,6 +26,7 @@ export function createBeat({ bpm = 120, onChange = () => {} } = {}) {
   // Listening: Chrome is asked to share a tab or the screen "with audio"; if that is refused it falls back to the default sound input.
   // source 'test' feeds a made-up kick drum at state.testBpm, to check the listening without any music.
   // the sound inputs this computer has. Their names are only given once the page has been allowed to listen.
+  let wanted = '', reviving = false;
   const inputs = async () => (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput' && d.deviceId !== 'communications');
   async function listen(source = 'share', input = '') { const ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' }); let stream = null;
     const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' })); try { await ctx.audioWorklet.addModule(url); } finally { URL.revokeObjectURL(url); }
@@ -39,7 +40,11 @@ export function createBeat({ bpm = 120, onChange = () => {} } = {}) {
       if (source === 'input') { stream = await navigator.mediaDevices.getUserMedia({ audio: plain });
         if (input) { const want = String(input).toLowerCase(), dev = (await inputs()).find((d) => d.deviceId === input || d.label.toLowerCase().includes(want));
           if (dev && dev.deviceId !== stream.getAudioTracks()[0]?.getSettings().deviceId) { stream.getTracks().forEach((t) => t.stop()); stream = await navigator.mediaDevices.getUserMedia({ audio: { ...plain, deviceId: { exact: dev.deviceId } } }); } }
-        st.input = stream.getAudioTracks()[0]?.label || 'sound input'; }
+        st.input = stream.getAudioTracks()[0]?.label || 'sound input'; wanted = input;
+        // A sound input can go dead under the page: the device is unplugged, or the computer changes its devices (headphones connecting
+        // does this) and the feed carries on as silence. Then the input is taken up again, the same one by name if it is still there.
+        const tr = stream.getAudioTracks()[0], again = () => { if (audio && audio.stream === stream && !reviving) { reviving = true; setTimeout(() => { reviving = false; if (audio && audio.stream === stream) { unlisten(); listen('input', wanted).catch(() => {}); } }, 1200); } };
+        tr.addEventListener('ended', again); tr.addEventListener('mute', again); navigator.mediaDevices.addEventListener('devicechange', again, { once: true }); }
       else { try { stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: plain }); if (!stream.getAudioTracks().length) { stream.getTracks().forEach((t) => t.stop()); stream = null; } else stream.getVideoTracks().forEach((t) => t.stop()); } catch { stream = null; }
         if (!stream) stream = await navigator.mediaDevices.getUserMedia({ audio: plain }); st.input = ''; }
       ctx.createMediaStreamSource(stream).connect(node); a.stream = stream; }
