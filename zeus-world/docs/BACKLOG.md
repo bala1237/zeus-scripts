@@ -552,7 +552,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 
 - **"approved, go ahead", 25 Nov 2026. Made:** The Last Banner (46 s) and The Well (47.5 s), each from two moving shots and four or five still pictures, with narration in his "Zeus-authorative" voice and a Suno score. About $2.22 for both in pictures and video (estimate given: $2.10; the two climax shots were made 9 s long). Both play on `/hero.html` from the Film list and through the OBS remote. **Verified here:** stills at ten moments of each; a real-time run of The Well (picture and sound within 0.1 s, the named recording used); build and tests. **Not verifiable here:** sound, and how the moving stills look in motion.
 
-- **Owner, 25 Nov 2026:** "We can't have kid in the video." Now a rule for every film. **Fixed in The Well:** the child drinking and the children by the oasis are replaced with adults (two pictures, about $0.16), film rebuilt. **Open:** The Fire-Bringer has a child in its faces shot; options and cost put to him.
+- **Owner, 25 Nov 2026:** "We can't have kid in the video." Now a rule for every film. **Fixed in The Well:** the child drinking and the children by the oasis are replaced with adults (two pictures, about $0.16), film rebuilt. The Fire-Bringer had a child in its faces shot; he chose a new moving shot ("A"). Made again with adults only (about $0.55) and the film rebuilt. All three films are now without children.
 
 ### ZW-048: The pages as OBS browser sources
 
