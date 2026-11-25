@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-046.**
+- **Next number: ZW-047.**
 
 ## Open
 
@@ -57,6 +57,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
+| ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | First figure (the Lion) shipped 25 Nov as a proof of the idea. Waiting for the owner: is the idea right, and which gifts next | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -494,3 +495,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Owner on the test version, 25 Nov 2026:** "I need professional creativity please. It should make people say wow and wanna see it again." The first three moments were plain: a pillar flash, a run of light, everything on. **Being redesigned** as staged pieces with anticipation and a pay-off: a storm gathering over the temple, lightning that reaches down and strikes, a shockwave, sparks and gold rain, the name forged in light, and flames that stay lit on the pillars so that the stream fills the temple together.
 - **Redesign shipped 25 Nov 2026.** Small: lightning strikes a pillar and leaves a flame burning on it. Medium: lightning leaps from pillar to pillar along the row. Big: a storm gathers in two beats of black, a great bolt strikes the temple's peak with a flash and a spreading ring, the name is written across the temple in molten gold, gold rains, and it burns away at the end. Flames stay lit for two and a half minutes; when all twelve burn, the temple answers by itself ("OLYMPUS AWAKENS"). Detail in `STAGE-PLAN.md`, "Gift moments redesigned".
 - **Waiting on the owner:** does it make him say wow; the length of each; whether the flames and the awakening are the right reason to come back.
+
+### ZW-046: The biggest gifts animated as themselves
+
+- **Reported:** 25 Nov 2026, by the owner: "Check the gifts from TT and we need to animate some like that gift. For gifts 5k and above."
+- **Understood as:** for TikTok gifts worth 5,000 coins or more, the stage should show something that is recognisably that gift (a lion for the Lion, and so on), not only the general big moment of ZW-045.
+- **Researched 25 Nov 2026:** 93 TikTok gifts cost 5,000 coins or more (list and sources in `STAGE-PLAN.md`, "The largest gifts as figures in the sky"; the grouped list in `assets/review/giftcatalog.js`).
+- **Proposed and proved with one:** the gifts are grouped into ten families, and each family's figure is drawn in the sky above the temple as a constellation, by lightning, in our own line drawing (TikTok's artwork is not copied). The lion family is built; a "Lion (29,999)" test button plays it. Other families play the big moment until their figure is drawn.
+- **Waiting on the owner:** is a constellation the right way to be "like that gift"; which families or gifts first (TikTok has a gift called Zeus, at 34,000); the coin thresholds for small, medium, big and the largest.

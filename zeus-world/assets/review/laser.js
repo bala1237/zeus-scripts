@@ -15,6 +15,7 @@ import { createBeat } from './beat.js';
 import { createFlow } from './flow.js';
 import { createGifts } from './gifts.js';
 import { createGiftFx, makeNameMaterial } from './giftfx.js';
+import { stageGift } from './giftcatalog.js';
 import { createDirector, BUILDING, building, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
@@ -84,6 +85,7 @@ const CAMS = [{ p: [0, 1.45, 5.2], t: [0, 1.9, -1], f: 52 }, { p: [-2.6, 1.0, 4.
   // the festival views: low in the crowd looking up at the wall, to either side, and far back
   { p: [0, 0.9, 3.0], t: [0, 3.3, -4.5], f: 72 }, { p: [-2.8, 0.8, 2.4], t: [0.8, 3.2, -4.5], f: 70 }, { p: [2.8, 0.8, 2.4], t: [-0.8, 3.2, -4.5], f: 70 }, { p: [0, 2.2, 6.6], t: [0, 2.9, -4.5], f: 58 }];
 CAMS.push({ p: [-6.2, 1.1, -0.6], t: [-4.6, 2.9, -6], f: 46 }, { p: [6.2, 1.1, -0.6], t: [4.6, 2.9, -6], f: 46 }, { p: [-2.4, 1.3, 1.6], t: [1.5, 3.2, -6.2], f: 50 }, { p: [0, 1.6, 4.4], t: [0, 3.3, -6], f: 56 });   // close on a side group from each side, across the temple front, and square on
+CAMS.push({ p: [0, 0.7, 6.2], t: [0, 9.2, -7.5], f: 80 });   // 14: looking up over the temple at the sky, for a figure drawn there
 const CLUB_CAMS = [0, 1, 2, 3, 4, 5], FEST_CAMS = [6, 7, 8, 9], CUT_CAMS = [13, 6, 10, 13, 11, 9, 12, 6];
 const cam = { i: Number(q.get('cam') || 0), x: eased(0), y: eased(1.45), z: eased(5.2), tx: eased(0), ty: eased(1.9), tz: eased(-1), f: eased(52), moving: q.get('camera') !== '0', lastCue: -1, cut: -1 };
 const setCam = (i, snap = false) => { cam.i = i % CAMS.length; const c = CAMS[cam.i]; if (!c) return; for (const [k, v] of [['x', c.p[0]], ['y', c.p[1]], ['z', c.p[2]], ['tx', c.t[0]], ['ty', c.t[1]], ['tz', c.t[2]], ['f', c.f]]) { cam[k].to = v; if (snap) { cam[k].v = v; cam[k].vel = 0; } } }; setCam(cam.i, true);
@@ -98,7 +100,9 @@ const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Mat
 // ---------- gift moments (ZW-045). Fired by the test buttons today; window.zeusGift(size, name) is the door for TikFinity later.
 const gifts = createGifts(pillars.length), gift = { dim: 1, last: 0, sign: BOOTH_NAME, booth: '', hit: null, who: null, gold: 0, edge: new THREE.Vector3() };
 const fx = createGiftFx({ scene, pillars, peak: new THREE.Vector3(0, 7.2, -6.1), soft }), GOLD = new THREE.Color(0xffb436), PALE = new THREE.Color(0xfff0c8);
-window.zeusGift = (size, name) => gifts.add({ size, name });
+window.zeusGift = (size, name, figure) => gifts.add({ size, name, figure });
+// for TikFinity later: a real gift by its name and coins. The catalogue decides its size and, for the largest, its figure.
+window.zeusGiftFromTikTok = (giftName, coins, sender) => gifts.add({ ...stageGift(giftName, coins), name: sender });
 let drops = 0, gA = null;
 function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // the music's shape: quiet patterns while the bass is out, the biggest one the moment it comes back
@@ -107,13 +111,14 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // gifts keep their own time, so one can be played with no music: the beat when there is one, otherwise two beats a second
   { const playing = b.act > 0.3, dB = playing ? Math.max(0, Math.min(1, b.beats - gift.last)) : dt * 2, onBeat = playing ? Math.floor(b.beats) !== Math.floor(gift.last) : true; gift.last = b.beats;
     gA = gifts.update(dB, dt, onBeat, playing ? onBeat && Math.floor(b.beats) % 4 === 0 : onBeat);
-    if (gA !== gift.who) { gift.who = gA; gift.booth = ''; if (gA && gA.size === 'big' && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
+    if (gA !== gift.who) { gift.who = gA; gift.booth = ''; if (gA && (gA.size === 'big' || gA.size === 'legend') && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
     // the script's requests, each acted on once: lightning, the leap between pillars, the name arriving on the booth
-    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (gA && gA.name) gift.booth = gA.name; }
+    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (e.type === 'draw') fx.figure(e.figure); else if (e.type === 'wake') { fx.wake(); if (playing) dir.hit(); } else if (gA && gA.name) gift.booth = gA.name; }
+    const legend = gA && gA.size === 'legend', grand = gA && (gA.size === 'big' || legend);
     if (gA && gA.size === 'big' && gA.t >= 2.25 && gift.hit !== gA) { gift.hit = gA; if (playing) dir.hit(); }
     // while a small or medium gift plays the lasers step back; a big one is black while the storm gathers, then lets everything loose in gold
-    const want = !gA ? 1 : gA.size === 'big' ? (gA.t < 2.25 ? 0 : 1) : 0.18; gift.dim += (want - gift.dim) * Math.min(1, dt * (want < gift.dim ? 12 : 4));
-    gift.gold += ((gA && gA.size === 'big' && gA.t >= 1 && gA.t < 15 ? 1 : 0) - gift.gold) * Math.min(1, dt * 5);
+    const want = !gA ? 1 : legend ? (gA.t < 2.25 ? 0 : gA.t < 7 ? 0.1 : 0.4) : grand ? (gA.t < 2.25 ? 0 : 1) : 0.18;   // for the largest gifts the lasers also wait while the figure is drawn gift.dim += (want - gift.dim) * Math.min(1, dt * (want < gift.dim ? 12 : 4));
+    gift.gold += ((grand && gA.t >= 1 && gA.t < (legend ? 23 : 15) ? 1 : 0) - gift.gold) * Math.min(1, dt * 5);
     const text = gift.booth || BOOTH_NAME; if (text !== gift.sign) { gift.sign = text; drawSign(signCanvas, signMat.map, text); } }
   look.beams += ((look.mode === 'flow' ? 0 : 1) - look.beams) * Math.min(1, dt * 2.5); look.flow += ((look.mode === 'lasers' ? 0 : 1) - look.flow) * Math.min(1, dt * 1.2); const act = b.act * look.beams * gift.dim;
   // the flow keeps the theme's two colours and adds a third from across the colour wheel. It drifts faster with the energy of the music, calms in a breakdown, and stops with the music.
@@ -140,7 +145,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // The building cues (ZW-041): the lasers are dark and the building is lit, in warm light as in the video, pillar by pillar.
   // A lamp comes on at once and dies away quickly, as a real one does.
   const cueShow = BUILDING.has(d.pattern) && theme.festival, N = pillars.length; if (cueShow && !fest.set && !gA && !SHOT) dir.nextLook();
-  const gDark = !!gA && (gA.size !== 'big' || gA.t < 2.25), show = cueShow || gDark;
+  const gDark = !!gA && (gA.size === 'legend' ? gA.t < 7 : gA.size !== 'big' || gA.t < 2.25), show = cueShow || gDark;
   building(cueShow && !gA && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); if (gA) { gifts.lights(lit); lit[N + 2] = 3; }
   const fall = Math.exp(-dt * 16); if (show || gA) lampCol.lerp(WARM[lit[N + 2]], Math.min(1, dt * 14));
   temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.1 : 1);
@@ -150,10 +155,13 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     signMat.color.setScalar(fv * (gift.booth ? 2.2 : (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.06 : 1)));
     }
   // the storm, the lightning, the sparks and rain, the flames, and the name being forged and burned away
-  { const big = gA && gA.size === 'big', t = gA ? gA.t : 0, reveal = big && gA.name ? Math.min(1, Math.max(0, (t - 3) / 1.6)) : 0, writing = reveal > 0.001 && reveal < 0.999;
-    const u = nameMat.uniforms; u.uReveal.value = reveal; u.uBurn.value = big ? Math.min(1, Math.max(0, (t - 14.3) / 1.6)) : 0; u.uTime.value = st.t; u.uLevel.value = big ? fv * st.gain : 0;
+  { const legend = gA && gA.size === 'legend', big = gA && (gA.size === 'big' || legend), t = gA ? gA.t : 0, t0 = legend ? 8 : 3, end = legend ? 24 : 16;
+    const reveal = big && gA.name ? Math.min(1, Math.max(0, (t - t0) / 1.6)) : 0, writing = reveal > 0.001 && reveal < 0.999;
+    const u = nameMat.uniforms; u.uReveal.value = reveal; u.uBurn.value = big ? Math.min(1, Math.max(0, (t - (end - 1.7)) / 1.6)) : 0; u.uTime.value = st.t; u.uLevel.value = big ? fv * st.gain : 0;
     if (writing) gift.edge.set(-NAME_W / 2 + (reveal * 1.08 - 0.04) * NAME_W, 3.7, -4.85);
-    fx.update(dt, { cloud: !gA ? 0 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= 3.2 && t < 14.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null });
+    // the figure: drawn from beat 2.5 to 7, held, and let go over the last two beats, its stars falling
+    const sky = legend && t >= 2.5 ? { progress: Math.min(1, (t - 2.5) / 4.4), glow: t > end - 2 ? Math.max(0, (end - t) / 2) : 1, falling: t > end - 2.5 ? 1 : 0 } : null;
+    fx.update(dt, { cloud: !gA ? 0 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= t0 + 0.2 && t < end - 1.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null, sky });
     fx.draw(rig, st.gain); }
   rig.end(st.t, camera, renderer.domElement.height);
   // the camera moves on every second cue, or every cue in a lively theme; never in a still one
@@ -161,7 +169,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   if (cam.moving && d.cue !== cam.lastCue) { if (cam.lastCue !== -1 && theme.camera !== 'still' && (theme.camera === 'lively' || d.cue % 2 === 0)) setCam(views[(views.indexOf(cam.i) + 1 + (d.cue % 3 === 0 ? 1 : 0)) % views.length]); cam.lastCue = d.cue; }
   // in a building cue the view cuts, as the video does: a new angle every four beats, close on the pillars as often as wide
   // a gift is seen square on. For a big one the view starts far back, pushes in while the storm gathers, and draws back at the end.
-  if (cam.moving && gA && !SHOT) { const stage = gA.size !== 'big' ? 1 : gA.t < 0.15 ? 0 : gA.t < 12.5 ? 1 : 2; if (cam.cut !== -7 - stage) { cam.cut = -7 - stage; if (gA.size === 'big') setCam(stage === 1 ? 6 : 9, stage === 0); else setCam(gA.size === 'small' ? 13 : 6, true); } }
+  if (cam.moving && gA && !SHOT) { const L = gA.size === 'legend', B = gA.size === 'big' || L, stage = !B ? 1 : gA.t < 0.15 ? 0 : L ? (gA.t < 2.4 ? 1 : gA.t < 20.5 ? 3 : 2) : gA.t < 12.5 ? 1 : 2; if (cam.cut !== -7 - stage) { cam.cut = -7 - stage; if (B) setCam(stage === 3 ? 14 : stage === 1 ? 6 : 9, stage === 0); else setCam(gA.size === 'small' ? 13 : 6, true); } }
   else if (cam.moving && cueShow && !SHOT) { const n = Math.floor(b.beats / 4); if (n !== cam.cut) { cam.cut = n; setCam(CUT_CAMS[n % CUT_CAMS.length], true); } } else if (cam.cut !== -1 && !cueShow && !gA) { cam.cut = -1; if (!SHOT) setCam(views[0], true); }
   for (const k of ['x', 'y', 'z', 'tx', 'ty', 'tz', 'f']) step(cam[k], dt, 2.4, 3); const sway = cam.moving ? 1 : 0;
   camera.position.set(cam.x.v + Math.sin(st.t * 0.21) * 0.14 * sway, cam.y.v + Math.sin(st.t * 0.17 + 1) * 0.06 * sway, cam.z.v + Math.sin(st.t * 0.13 + 2) * 0.12 * sway); if (fx.shake > 0.001) { camera.position.x += (Math.random() - 0.5) * fx.shake; camera.position.y += (Math.random() - 0.5) * fx.shake; }   // the ground jumps when lightning lands
@@ -198,10 +206,10 @@ grip.addEventListener('pointerdown', (e) => { grip.setPointerCapture(e.pointerId
   const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); }; grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); });
 grip.addEventListener('dblclick', () => setSize(view.size > 0.99 ? 0.6 : 1));
 let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area); addEventListener('resize', fit);
-const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
+const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); $('g5').addEventListener('click', () => gifts.add({ ...stageGift('Lion', 29999), name: $('gname').value })); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
 addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' && e.target.type === 'text') return; if (['1', '2', '3'].includes(e.key)) { sendGift(['small', 'medium', 'big'][Number(e.key) - 1]); return; } const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h' && !PLAIN) { hidden = !hidden; showUi(); } });
 window.__laser = { gifts, gift, fx, view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
-if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); if (q.get('gift')) gifts.add({ size: q.get('gift'), name: q.get('gname') || '' }); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
+if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); if (q.get('gift')) gifts.add({ size: q.get('gift'), name: q.get('gname') || '', figure: q.get('figure') }); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
 else {
   // a page with its controls off (a browser source) has nobody to press Demo, so it starts by itself, unless the address says calm=1
   if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;

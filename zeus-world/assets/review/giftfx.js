@@ -7,6 +7,7 @@
 //   fx.shake  how hard the camera should be shaken this frame, in metres
 //   makeNameMaterial(texture)  the material for a name: uReveal 0..1 writes it on from the left behind a white-hot edge, uBurn 0..1 burns it away
 import * as THREE from 'three';
+import { prepare } from './constellations.js';
 
 const NOISE = `
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -68,8 +69,16 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
   function arc(i, j) { const a = top(i), b = top(j), mid = a.clone().add(b).multiplyScalar(0.5); mid.y += 0.55 + R() * 0.3; const pts = jag(a, mid, 2, 0.5).concat(jag(mid, b, 2, 0.5).slice(1));
     bolts.push({ main: pts, forks: [], age: 0, leader: 0, power: 0.7, life: 0.2, struck: true, to: b }); burst(b, 14, 1.6); state.shake = Math.max(state.shake, 0.012); }
 
+  // ---------- a figure in the sky (ZW-046): a constellation drawn by a point of lightning, with a star at every corner.
+  // It stands above and behind the temple. progress 0..1 is how much has been drawn; glow is its brightness; wake() makes it flare.
+  const SKY = { cx: 0, cy: 13.6, z: -8.5, s: 5.6 }, sky3 = (p, out) => out.set(SKY.cx + p[0] * SKY.s, SKY.cy + p[1] * SKY.s, SKY.z), fig = { f: null, progress: 0, glow: 0, flare: 0, pen: new THREE.Vector3(), drawing: false };
+  const starPool = Array.from({ length: 90 }, () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); sp.visible = false; scene.add(sp); return sp; });
+  const gold = new THREE.Color(0xffd27a), A3 = new THREE.Vector3(), B3 = new THREE.Vector3();
+  function figure(name) { fig.f = prepare(name); fig.progress = 0; fig.glow = 0; fig.flare = 0; }
+  function wake() { if (!fig.f) return; fig.flare = 1; const c = sky3([0, -0.1], new THREE.Vector3()); state.center = c; U.uRing.value = 0.01; U.uRingI.value = 1.2; U.uFlash.value = Math.max(U.uFlash.value, 0.6); state.shake = Math.max(state.shake, 0.09); U.uFlick.value = 1; U.uFlickX.value = 0.5;
+    for (const st of fig.f.stars) if (R() < 0.6) burst(sky3([st.x, st.y], A3), 5, 2.2); burst(sky3([0, -0.4], A3), 90, 4.5); }
   let rainAcc = 0, flickAt = 0, time = 0;
-  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
+  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
     U.uCloud.value += (cloud * level - U.uCloud.value) * Math.min(1, dt * 2.2); U.uFlick.value *= Math.exp(-dt * 9); U.uFlash.value *= Math.exp(-dt * 7); state.shake *= Math.exp(-dt * 7);
     if (U.uRingI.value > 0.002) { U.uRing.value += dt * 1.25; U.uRingI.value *= Math.exp(-dt * 2.6); } else U.uRingI.value = 0;
     if (state.center) { const c = state.center.clone().project(camera); U.uCenter.value.set(c.x * 0.5 + 0.5, c.y * 0.5 + 0.5); }
@@ -77,6 +86,12 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
     if (anticipation > 0 && time > flickAt) { flickAt = time + 0.5 - 0.38 * anticipation + R() * 0.25; U.uFlick.value = 0.35 + 0.65 * R() * anticipation; U.uFlickX.value = 0.2 + R() * 0.6; }
     for (const b of bolts) { b.age += dt; if (!b.struck && b.age >= b.leader) { b.struck = true; const s = b.main[0].clone().project(camera); U.uFlickX.value = s.x * 0.5 + 0.5; b.onStrike?.(); } }
     for (let i = bolts.length - 1; i >= 0; i--) if (bolts[i].age > bolts[i].life) bolts.splice(i, 1);
+    // the figure in the sky: the pen throws sparks as it draws; the stars come out as it passes; at the end the stars fall as rain
+    fig.flare *= Math.exp(-dt * 1.6); if (!skyState) { fig.glow += (0 - fig.glow) * Math.min(1, dt * 3); if (fig.glow < 0.01) fig.f = null; }
+    else if (fig.f) { fig.progress = skyState.progress; fig.glow += (skyState.glow - fig.glow) * Math.min(1, dt * 4); fig.drawing = fig.progress > 0.001 && fig.progress < 0.999;
+      if (fig.drawing) { const g = fig.f.segs.find((q) => q.to >= fig.progress) || fig.f.segs.at(-1), u = Math.min(1, Math.max(0, (fig.progress - g.from) / Math.max(1e-6, g.to - g.from))); sky3([g.a[0] + (g.b[0] - g.a[0]) * u, g.a[1] + (g.b[1] - g.a[1]) * u], fig.pen); for (let k = 0; k < 2; k++) spawn(fig.pen.x, fig.pen.y, fig.pen.z, (R() - 0.5) * 2.2, (R() - 0.2) * 2, 0.5 + R(), 0.4 + R() * 0.5, 4.5, 2.8, 2.3, 1.3); }
+      if (skyState.falling > 0) for (const st of fig.f.stars) if (R() < skyState.falling * dt * 5) { sky3([st.x, st.y], A3); spawn(A3.x, A3.y, A3.z, (R() - 0.5) * 0.6, -1 - R() * 2, 0, 2.6, 2.2, 2.4, 1.8, 0.6); } }
+    starPool.forEach((sp, i) => { const st = fig.f && fig.f.stars[i]; if (!st || st.at > fig.progress || fig.glow < 0.01) { sp.visible = false; return; } sp.visible = true; sky3([st.x, st.y], sp.position); const tw = 0.7 + 0.3 * Math.sin(time * 5 + i * 2.3), k = fig.glow * level * tw * (1 + 2.2 * fig.flare); sp.material.color.setRGB(2.4 * k, 2.1 * k, 1.5 * k); sp.scale.setScalar(0.34 + 0.12 * tw + 0.25 * fig.flare); });
     // gold rain, and sparks thrown off the edge of a name as it is written
     rainAcc += rain * dt * 150; while (rainAcc >= 1) { rainAcc--; spawn((R() - 0.5) * 17, 9.5 + R() * 1.5, -6.5 + R() * 5.5, (R() - 0.5) * 0.5, -(3.2 + R() * 3), 0, 2.6, 0.6, 2.2, 1.5 + R() * 0.5, 0.35 + R() * 0.35); }
     if (edge) for (let k = 0; k < 3; k++) spawn(edge.x, edge.y + (R() - 0.5) * 1.2, edge.z, (R() - 0.3) * 1.6, R() * 1.8, 0.6 + R(), 0.45 + R() * 0.4, 5, 2.8, 2.2, 1.2);
@@ -87,11 +102,17 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
       const fl = 0.78 + 0.22 * Math.sin(time * 17 + f.ph) * Math.sin(time * 7.3 + f.ph * 2.1), k = f.v * level * fl; f.outer.visible = f.inner.visible = k > 0.01; f.outer.material.color.setRGB(2.4 * k, 1.05 * k, 0.16 * k); f.inner.material.color.setRGB(2.6 * k, 2.2 * k, 1.3 * k); f.outer.scale.set(0.62, 0.9 + 0.3 * fl, 1); }); }
 
   // drawn with the same beams as the lasers: a thin white-hot core and a wider, fainter sleeve
-  function draw(rig, gain = 1) { for (const b of bolts) { const a = b.age; let I, shown = b.main.length;
+  function draw(rig, gain = 1) {
+    if (fig.f && fig.glow > 0.01) { const I = gain * fig.glow * (1.5 + 3.5 * fig.flare + 0.25 * Math.sin(time * 2.2));
+      for (const g of fig.f.segs) { if (g.from >= fig.progress) break; const u = Math.min(1, (fig.progress - g.from) / Math.max(1e-6, g.to - g.from)); sky3(g.a, A3); sky3([g.a[0] + (g.b[0] - g.a[0]) * u, g.a[1] + (g.b[1] - g.a[1]) * u], B3); tmp.copy(B3).sub(A3); const len = tmp.length(); if (len < 0.005) continue; tmp.multiplyScalar(1 / len);
+        rig.beam(A3, tmp, len, gold, I * 1.4, 0.045, 0); rig.beam(A3, tmp, len, gold, I * 0.16, 0.2, 0); }
+      // the point of lightning that does the drawing
+      if (fig.drawing) { tmp.set(0, 1, 0); rig.beam(A3.copy(fig.pen).addScaledVector(tmp, -0.12), tmp, 0.24, white, 9 * gain, 0.09, 0); } }
+    for (const b of bolts) { const a = b.age; let I, shown = b.main.length;
       if (a < b.leader) { I = 0.22; shown = Math.max(2, Math.ceil(b.main.length * a / b.leader)); } else { const s = a - b.leader; I = s < 0.07 ? 1 : (Math.sin(s * 75) > -0.2 ? 0.6 : 0.1) * Math.max(0, 1 - s / (b.life - b.leader)); }
       I *= 6.5 * gain * (0.7 + 0.3 * b.power); if (I <= 0.01) continue; const w = 0.02 + 0.02 * b.power;
       const seg = (p, q, k, width) => { tmp.copy(q).sub(p); const len = tmp.length(); if (len < 0.01) return; tmp.multiplyScalar(1 / len); rig.beam(p, tmp, len, white, I * k, width, 0); };
       for (let i = 0; i < shown - 1; i++) { seg(b.main[i], b.main[i + 1], 1, w); if (a >= b.leader) seg(b.main[i], b.main[i + 1], 0.16, w * 5); }
       for (const f of b.forks) if (f.at < shown) for (let i = 0; i < f.pts.length - 1; i++) seg(f.pts[i], f.pts[i + 1], 0.55, w * 0.6); } }
-  return { bolt, arc, update, draw, burst, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
+  return { bolt, arc, figure, wake, update, draw, burst, sky: SKY, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
 }
