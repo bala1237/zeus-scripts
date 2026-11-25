@@ -45,6 +45,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-038, the new beat tracker.** On `/laser.html` press Listen with music playing. Does the status say "on the beat at ..." with the right tempo; do the lights land on the beat (slide Beat timing if they are early or late); does it go quiet in a breakdown and hit on the drop; which tracks still fool it. And **ZW-037**: confirm the reading of his three reference videos (a flowing liquid-colour mode, and a much denser, many-coloured laser look).
 1. **ZW-036, phase 3 of the lasers (the gate).** Open `/laser.html`, press Demo or Listen, try the theme list, Next look, Blackout and the Camera button, and put it over your camera in LIVE Studio. Does it feel 3D; are the themes different enough; camera moves on or off; any pattern to change. Still open from phase 2: does it combine by Add or Screen blending or as a transparent source; what frame rate does the panel report.
 2. **ZW-035, the stage.** With music playing, press Listen to the music and share its tab or screen with audio. Does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the neon glow right.
 3. **ZW-030, the stream as a journey.** Answer the five questions at the end of that section in `BRAINSTORM-GAME.md`.
