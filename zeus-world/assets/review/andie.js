@@ -18,8 +18,8 @@ import { roomCue, createRoomShow, PIECES } from './roomcues.js';
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id), stage = $('stage');
 const store = { get: (k) => { try { return localStorage.getItem('andie-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('andie-' + k, v); } catch { /* private window */ } } };
 
-// ---------- the room fills the window, cropped at the edges if the shape differs
-const fit = () => { const k = Math.max(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `scale(${k}) translate(-50%, -50%)`; }; fit(); addEventListener('resize', fit);
+// ---------- the picture is always 16:9: the largest 16:9 frame that fits above the controls (or in the whole window when they are hidden)
+const frame = $('frame'), fit = () => { const below = $('ui').offsetHeight, k = Math.max(0.05, Math.min(innerWidth / 1920, (innerHeight - below) / 1080)); frame.style.width = `${Math.floor(1920 * k)}px`; frame.style.height = `${Math.floor(1080 * k)}px`; frame.style.margin = below ? '0' : 'auto 0'; stage.style.transform = `scale(${k})`; }; addEventListener('resize', fit);
 
 // ---------- drawn parts: plants, chairs, roses
 const NS = 'http://www.w3.org/2000/svg', el = (parent, tag, attrs) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent.append(e); return e; };
@@ -79,13 +79,12 @@ const setBright = (v) => { st.bright = v; stage.style.filter = v < 0.995 ? `brig
 $('mode').addEventListener('click', () => setMode(st.mode === 'lasers' ? 'room' : 'lasers')); $('bright').addEventListener('input', () => { setBright(Number($('bright').value) / 100); store.set('bright', $('bright').value); });
 $('listen').addEventListener('click', () => { failed = ''; if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); });
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = beat.state.tempo = 124; beat.tap(); });
-let idle = null, hidden = q.get('ui') === '0'; const ui = $('ui'), hide = () => { ui.classList.add('idle'); document.body.classList.add('idle'); }, wake = () => { ui.classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { if (!ui.contains(document.activeElement) || document.activeElement.tagName !== 'INPUT') hide(); }, 3500); };
-if (hidden) { ui.style.display = 'none'; hide(); } else { addEventListener('pointermove', () => { if (!hidden) wake(); }); wake(); }
-addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'l') $('mode').click(); else if (k === 'h' && q.get('ui') !== '0') { hidden = !hidden; if (hidden) { clearTimeout(idle); hide(); } else wake(); } });
+let hidden = q.get('ui') === '0' || SHOT; const ui = $('ui'), showUi = () => { ui.classList.toggle('gone', hidden); fit(); }; showUi(); new ResizeObserver(fit).observe(ui);
+addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'l') $('mode').click(); else if (k === 'h' && q.get('ui') !== '0') { hidden = !hidden; showUi(); } });
 
 window.__andie = { st, beat, show, update, pieces, get lasers() { return lasers; } };
 const fonts = document.fonts ? Promise.all([document.fonts.load('700 236px "Dancing Script"'), document.fonts.load('96px "Great Vibes"'), document.fonts.load('500 40px Montserrat'), document.fonts.load('700 104px Montserrat'), document.fonts.load('600 112px Montserrat')]).catch(() => {}) : Promise.resolve();
-if (SHOT) { ui.style.display = 'none'; document.body.classList.add('still'); const wait = st.mode === 'lasers' ? new Promise((r) => { const t = setInterval(() => { if (lasers || failed) { clearInterval(t); r(); } }, 50); }) : Promise.resolve();
+if (SHOT) { document.body.classList.add('still'); const wait = st.mode === 'lasers' ? new Promise((r) => { const t = setInterval(() => { if (lasers || failed) { clearInterval(t); r(); } }, 50); }) : Promise.resolve();
   Promise.all([fonts, wait]).then(() => { if (q.get('beats') !== 'calm') { beat.tap(); const n = Number(q.get('beats') || 8) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); } else update(1 / 60); requestAnimationFrame(() => requestAnimationFrame(() => { window.ready = true; })); }); }
 else { if (q.has('bpm') || q.has('demo')) beat.tap(); let last = performance.now();
   const frame = () => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); const b = beat.state;

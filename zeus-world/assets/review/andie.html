@@ -8,7 +8,10 @@
   /* The room is drawn at 1920 x 1080 and scaled to fill the window. Layers, from the back: the room itself (wall, shelves,
      furniture), a black sheet that dims it, the neon pieces, the lasers, the control panel. */
   html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Montserrat', system-ui, sans-serif; }
-  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #050407; }
+  /* The picture is always 16:9: the largest 16:9 frame that fits above the controls, centred. The controls sit below it, never over it. */
+  body { display: flex; flex-direction: column; align-items: center; }
+  #frame { position: relative; flex: none; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #050407; }
   #stage > div, #stage > svg { position: absolute; }
   #room, #dark, #pieces { inset: 0; }
   #room div, #room svg, #pieces > div { position: absolute; }
@@ -55,18 +58,17 @@
 
   /* ---- the lasers and the panel. The picture never takes clicks and the panel sits above it (the trap met in ZW-040). */
   canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; mix-blend-mode: screen; }
-  #ui { z-index: 10; position: fixed; left: 14px; bottom: 12px; color: #fff; font: 600 13px system-ui, sans-serif; background: rgba(16, 10, 26, .86); border: 1px solid rgba(217, 174, 74, .5); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 28px); }
-  #ui.idle { opacity: 0; pointer-events: none; }
-  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; align-items: center; }
+  #ui { z-index: 10; flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui, sans-serif; background: #100a1a; border-top: 1px solid rgba(217, 174, 74, .5); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; justify-content: center; }
+  #ui.gone { display: none; }
+  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   #ui button { background: #6a2bb8; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
   #ui button.on { background: #e2b04a; color: #1d1326; }
   #ui label { font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 6px; }
   #ui input[type=text] { font: inherit; font-weight: 500; padding: 5px 7px; border-radius: 6px; border: 1px solid #5a3f86; background: #120b1e; color: #fff; width: 150px; }
-  body.idle { cursor: none; }
 </style>
 </head>
 <body>
-<div id="stage">
+<div id="frame"><div id="stage">
   <div id="room">
     <div class="wall"></div>
     <div class="feature"></div>
@@ -108,7 +110,7 @@
     <div class="piece" id="p4" style="left:1668px;top:28px;width:220px"><div class="halo"></div><div class="neon" style="font-size:44px">YOU<br>CAN<br>DO<br>HARD<br>THINGS</div></div>
     <div class="piece" id="p5" style="left:1640px;top:704px;width:250px"><div class="halo"></div><div class="neon" style="font-size:40px">CREATE<br>LEARN<br>ELEVATE<br>MONETIZE</div></div>
   </div>
-</div>
+</div></div>
 <div id="ui">
   <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a2040;flex:none"></span><span>Andie's Place · <span id="status" style="font-weight:500"></span></span></div>
   <div class="row">
@@ -124,7 +126,7 @@
   <div class="row">
     <label>Sign <input id="ftop" type="text" maxlength="18"></label><label><input id="fbig" type="text" maxlength="14"></label>
   </div>
-  <div style="font-weight:500;font-size:12px;margin-top:7px;opacity:.7">This panel hides when the mouse is still. Press H to keep it hidden.</div>
+  <div style="font-weight:500;font-size:12px;opacity:.7">Press H to hide these controls and fill the window with the picture.</div>
 </div>
 <script type="module" src="./andie.js"></script>
 </body>
