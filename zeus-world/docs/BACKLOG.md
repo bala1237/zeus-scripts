@@ -51,7 +51,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | First version shipped 25 Nov: a Flow mode (ribbons of colour that never stop). Waiting for the owner: is this what he meant | 25 Nov 2026, owner |
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
-| ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fix shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
+| ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -424,3 +424,4 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Not explained:** why it showed only now. Nothing in the page's layout changed in today's work, so it should have been so before. The earlier checks pressed buttons from script, which reaches a covered button; that is why they passed.
 - **Fix:** the panel is given a place above the picture, and the picture no longer takes clicks at all.
 - **Checked:** every button clicked with a real pointer in a browser (`assets/clicktest.mjs`, new, kept for this). **Waiting on the owner** to confirm on the preview.
+- **Confirmed by the owner 25 Nov 2026:** "perfect."
