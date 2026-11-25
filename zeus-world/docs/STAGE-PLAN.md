@@ -270,3 +270,25 @@ The owner sent the Transmission Prague 2016 video again on its own: "this is som
 - The big patterns of the club rig used to light "everything that is not the floor", which lit the wall too. Patterns must name the groups they use.
 
 **Checked:** ten director tests (the wall and the club rig never light together; left and right mirror, including lean and roll); the fifteen-minute stepped run with no errors, seven themes and fifteen patterns seen; a still of each pattern and one without the set over the stand-in camera (`assets/sheets/laser_festival.jpg`); the build. **Not checked:** motion; frame rate with 245 beams on a real graphics card, which is the main risk of this look; how close the movement is to the reference, which could not be watched.
+
+## Building cues for Olympus (ZW-041), built 25 Nov 2026
+
+The owner, on what Olympus was missing from the video: "it does blackout and highlight different corners. where the building blinks fast, corner one pillar blinks and it shows from left to right and right to left which gives the feeling of it moving or getting focus. rest are black." Built from that description; the video still could not be watched.
+
+Four cues in which every laser is off and the temple is the show. They sit in the Olympus rotation between the laser patterns.
+
+- **Chase:** one pillar lit, stepping along the row every half beat from left to right and back. The light seems to travel.
+- **Corners:** the pillar at one corner blinks fast (four times a beat), then the other corner, then each corner's pair. Everything else black.
+- **Colonnade:** pillars come on one after another from the left until all eight are lit, go out again, then the same from the right.
+- **Strobe:** the whole building blinks.
+
+**How**
+
+- Each pillar has its own lamp: its own material, a fluted texture that is bright at the foot and fades upward and is brightest on the side facing the audience, and a soft glow at its base. A lamp comes on at once and dies away over about a tenth of a second, which leaves a short trail behind the chase.
+- What is lit is decided by `building(pattern, beats, n)` in `director.js`, so it is tested without a browser. In the director these patterns simply switch every projector off.
+- With "Stage set: off" there is nothing to light, so the page skips these cues.
+- In a breakdown the director may choose corners or colonnade; the drop still fires the sunburst.
+
+**A limit set on purpose.** The whole-building strobe blinks twice a beat (about four times a second at 128), not faster. Fast flashing of a large part of the picture is a known risk for photosensitive viewers, and platforms act on it. The single-pillar blink is faster because it is a small part of the picture. If the owner wants the building strobe faster, that is his call to make knowingly.
+
+**Checked:** a test of each cue's sequence (the chase visits 0 to 7 and back one pillar at a time; corners touch only the end pillars; the strobe flashes sixteen times in eight beats; the colonnade fills from both sides); the two rigs and the building never light together; a still of each cue (`assets/sheets/laser_building.jpg`); the stepped run and the click check; the build. **Not checked:** the timing and feel in motion, and whether this matches the video.
