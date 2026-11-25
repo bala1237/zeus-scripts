@@ -94,7 +94,7 @@ The owner asked for different films made more cheaply. A film is now about 46 se
 
 ## No children
 
-The owner, 25 Nov 2026: "We can't have kid in the video." The Well's first cut had a child drinking (asked for in the prompt) and small children by the oasis. Both pictures were made again with "Adults only: no children anywhere in the image" (keys `zeus-hero-well-still-4b`, `-5b`, about $0.16) and the film rebuilt. The Last Banner has none. **The Fire-Bringer still has a child** in its faces shot (shot 6, used in the opening and again after the climax); replacing it waits for the owner's word, because it means generating again.
+The owner, 25 Nov 2026: "We can't have kid in the video." The Well's first cut had a child drinking (asked for in the prompt) and small children by the oasis. Both pictures were made again with "Adults only: no children anywhere in the image" (keys `zeus-hero-well-still-4b`, `-5b`, about $0.16) and the film rebuilt. The Last Banner has none. The Fire-Bringer had a child in its faces shot (shot 6, used in the opening and again after the climax). The owner chose a new moving shot over a still; shot 6 was made again with adults only (request `01a214f0-adef-7bb0-a849-a31e0338a95c`, 11 s, about $0.55) and the film rebuilt with the same cut: the faces again begin about 6 s into the shot, so no timing changed.
 
 ## Checks
 
