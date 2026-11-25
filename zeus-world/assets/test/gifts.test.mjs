@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createGifts, GIFT_BEATS, FLAME_SECONDS, AWAKEN } from '../review/gifts.js';
+import { createGifts, GIFT_BEATS, FLAME_SECONDS, AWAKEN, LEGEND } from '../review/gifts.js';
 import { stageGift, FAMILIES, DRAWN } from '../review/giftcatalog.js';
 import { prepare, FIGURES } from '../review/constellations.js';
 
@@ -38,12 +38,16 @@ test('a name is trimmed and kept short; an unknown size is treated as small', ()
 
 test('the largest gifts: sized by coins, a known gift gets its family\'s figure, and one not drawn yet falls back to the big moment', () => {
   assert.deepEqual(stageGift('Rose', 1), { size: 'small', figure: null }); assert.equal(stageGift('Galaxy', 1000).size, 'big'); assert.equal(stageGift('x', 150).size, 'medium');
-  assert.deepEqual(stageGift('Lion', 29999), { size: 'legend', figure: 'lion' }); assert.deepEqual(stageGift('leon and lion', 34000), { size: 'legend', figure: 'lion' });
+  assert.deepEqual(stageGift('Lion', 29999), { size: 'legend', figure: 'lion', tier: 2, label: 'Lion' }); assert.equal(stageGift('leon and lion', 34000).tier, 3); assert.equal(stageGift('Wolf', 5500).tier, 1);
   const other = stageGift('TikTok Universe', 44999); assert.equal(other.size, 'big'); assert.equal(other.family, 'cosmos'); assert.equal(stageGift('Something New', 9000).size, 'big');
   const all = Object.values(FAMILIES).flat(); assert.equal(new Set(all.map((n) => n.toLowerCase())).size, new Set(all).size - 1, 'no gift is in two families (one name is listed in two spellings)'); for (const f of DRAWN) assert.ok(FIGURES[f], f); });
 
 test('a figure is prepared as segments that cover the whole drawing in order, and the legend script draws it after the bolt and wakes it before the name', () => {
   const f = prepare('lion'); assert.ok(f.segs.length > 40); assert.equal(f.segs[0].from, 0); assert.ok(Math.abs(f.segs.at(-1).to - 1) < 1e-9); for (let i = 1; i < f.segs.length; i++) assert.ok(f.segs[i].from >= f.segs[i - 1].from); for (const g of f.segs) for (const p of [g.a, g.b]) assert.ok(Math.abs(p[0]) <= 1.01 && Math.abs(p[1]) <= 1.01);
-  const g = createGifts(); g.add({ size: 'legend', name: 'Leo', figure: 'lion' }); run(g, 30); assert.deepEqual(g.state.fx.map((e) => e.type), ['bolt', 'draw', 'wake', 'forge', 'bolt', 'bolt']); assert.equal(g.state.fx[1].figure, 'lion');
+  const g = createGifts(); g.add({ size: 'legend', name: 'Leo', figure: 'lion' }); run(g, 30); assert.deepEqual(g.state.fx.map((e) => e.type), ['bolt', 'draw', 'wake', 'forge', 'bolt', 'bolt', 'ascend']); assert.equal(g.state.fx[1].figure, 'lion');
   const h = createGifts(); h.add({ size: 'legend', name: 'x' }); assert.equal(h.state.queue[0].size, 'big', 'a legend with no figure is a big gift'); });
+
+test('the bigger the gift the bigger the show: each tier runs longer and asks the sky and the pillars for more', () => { const shows = [1, 2, 3].map((tier) => { const g = createGifts(); let beats = 0; g.add({ size: 'legend', name: 'x', figure: 'lion', tier }); run(g, 60, (a) => { if (a) beats += 0.05; }); const count = (t) => g.state.fx.filter((e) => e.type === t).length; return { beats: Math.round(beats), bolts: count('bolt'), rings: count('ring'), webs: count('web'), meteors: count('meteors'), ended: count('ascend') }; });
+  assert.deepEqual(shows.map((x) => x.beats), [LEGEND[1].beats, LEGEND[2].beats, LEGEND[3].beats]); assert.ok(shows[0].beats < shows[1].beats && shows[1].beats < shows[2].beats);
+  assert.deepEqual(shows.map((x) => x.bolts), [3, 7, 13]); assert.deepEqual(shows.map((x) => x.meteors), [0, 1, 1]); assert.deepEqual(shows.map((x) => x.rings), [0, 0, 2]); assert.deepEqual(shows.map((x) => x.webs), [0, 0, 3]); assert.ok(shows.every((x) => x.ended === 1)); });
 

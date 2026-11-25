@@ -23,4 +23,5 @@ const BY_NAME = new Map(); for (const [family, names] of Object.entries(FAMILIES
 export const DRAWN = new Set(['lion']);
 // what a gift becomes on the stage: its size, and for the largest the figure to draw (null: not drawn yet, play the big moment)
 export function stageGift(giftName, coins) { const size = SIZES.find(([min]) => coins >= min)[1]; if (size !== 'legend') return { size, figure: null };
-  const family = BY_NAME.get(String(giftName).toLowerCase()) || null; return family && DRAWN.has(family) ? { size, figure: family } : { size: 'big', figure: null, family }; }
+  const family = BY_NAME.get(String(giftName).toLowerCase()) || null, tier = coins >= 30000 ? 3 : coins >= 15000 ? 2 : 1;   // the bigger the gift, the bigger the show
+  return family && DRAWN.has(family) ? { size, figure: family, tier, label: String(giftName) } : { size: 'big', figure: null, family }; }

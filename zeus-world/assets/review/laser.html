@@ -21,6 +21,12 @@
   #mock::before { content: ''; position: absolute; left: 50%; bottom: -6%; width: 19.1%; height: 62%; transform: translateX(-50%); border-radius: 46% 46% 12% 12% / 38% 38% 6% 6%; background: linear-gradient(#3a3440, #1c1a22); box-shadow: 0 0 60px rgba(0,0,0,.6); }
   #mock::after { content: ''; position: absolute; left: 50%; bottom: 52%; width: 9.6%; height: 21%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 45% 40%, #8a6f62, #4a3a36); }
   body.mock #mock { display: block; }
+  /* cinema bars and a title for the largest gifts: the bars slide in from top and bottom, and the title sits in the lower one */
+  .bar { position: absolute; left: 0; right: 0; height: 0; background: #000; z-index: 3; transition: height 1.1s cubic-bezier(.6, 0, .2, 1); pointer-events: none; }
+  .bar.top { top: 0; } .bar.bot { bottom: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  #frame.cine .bar { height: 10.5%; }
+  #title { font: 600 1.9vh Georgia, 'Times New Roman', serif; letter-spacing: .42em; color: #f3d48a; white-space: nowrap; opacity: 0; transition: opacity 1.4s; text-shadow: 0 0 12px rgba(255, 190, 90, .5); }
+  #frame.titled #title { opacity: 1; }
   /* the picture never takes clicks (the trap from ZW-040) */
   canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
   #ui { z-index: 10; flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui; background: #0b0d16; border-top: 1px solid rgba(120, 160, 220, .4); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; justify-content: center; }
@@ -32,7 +38,7 @@
 </style>
 </head>
 <body>
-<div id="area"><div id="frame"><div id="mock"></div></div><div id="grip" title="Drag to resize the picture. Double-click to fill the space."></div></div>
+<div id="area"><div id="frame"><div id="mock"></div><div class="bar top"></div><div class="bar bot"><span id="title"></span></div></div><div id="grip" title="Drag to resize the picture. Double-click to fill the space."></div></div>
 <div id="ui">
   <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a3040;flex:none"></span><span>Zeus Lasers · <span id="status"></span></span></div>
   <div class="row">
@@ -63,7 +69,9 @@
     <button id="g1" title="Lightning strikes one pillar and leaves a flame burning on it; the name on the booth (or press 1)">Small gift</button>
     <button id="g2" title="Lightning leaps from pillar to pillar along the whole row; three flames stay (or press 2)">Medium gift</button>
     <button id="g3" title="A storm gathers, a great bolt strikes the temple, the name is forged in gold and gold rains (or press 3)">Big gift</button>
-    <button id="g5" title="A gift of 5,000 coins or more becomes a figure in the sky: here TikTok's Lion (29,999), drawn over the temple as a constellation by lightning">Lion (29,999)</button>
+    <button id="g5" title="A gift of 5,000 coins or more becomes a figure in the sky, as a short film. Here Wolf, 5,500 coins: the first size of show (about 12 seconds)">5,500</button>
+    <button id="g6" title="Black Tiger, 22,000 coins: the second size (about 18 seconds). Adds an aurora, a shower of meteors and lightning walking in along six pillars">22,000</button>
+    <button id="g7" title="Leon and Lion, 34,000 coins: the largest show (about 26 seconds). Adds two more rings, a web of lightning across the sky, and all twelve pillars struck">34,000</button>
     <button id="g4" title="Lights all twelve flames at once, to see what happens when the stream fills the temple: it answers by itself">Light all 12</button>
     <span id="flames" style="font-weight:500;font-size:12px;opacity:.85"></span>
   </div>

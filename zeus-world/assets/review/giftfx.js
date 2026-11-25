@@ -29,14 +29,17 @@ export function makeNameMaterial(map) { return new THREE.ShaderMaterial({ transp
 
 export function createGiftFx({ scene, pillars, peak, soft }) {
   // ---------- the sky: storm cloud lit from inside, the flash of a strike, and the ring that spreads from it. One full-screen shader.
-  const U = { uT: { value: 0 }, uCloud: { value: 0 }, uFlick: { value: 0 }, uFlickX: { value: 0.5 }, uFlash: { value: 0 }, uRing: { value: 0 }, uRingI: { value: 0 }, uCenter: { value: new THREE.Vector2(0.5, 0.6) }, uAspect: { value: 16 / 9 } };
+  const U = { uT: { value: 0 }, uCloud: { value: 0 }, uFlick: { value: 0 }, uFlickX: { value: 0.5 }, uFlash: { value: 0 }, uRing: { value: 0 }, uRingI: { value: 0 }, uCenter: { value: new THREE.Vector2(0.5, 0.6) }, uAspect: { value: 16 / 9 }, uAurora: { value: 0 } };
   const sky = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ uniforms: U, depthTest: false, depthWrite: false, transparent: true, blending: THREE.AdditiveBlending, toneMapped: false,
     vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
-    fragmentShader: `precision highp float; varying vec2 vUv; uniform float uT, uCloud, uFlick, uFlickX, uFlash, uRing, uRingI, uAspect; uniform vec2 uCenter; ${NOISE}
+    fragmentShader: `precision highp float; varying vec2 vUv; uniform float uT, uCloud, uFlick, uFlickX, uFlash, uRing, uRingI, uAspect, uAurora; uniform vec2 uCenter; ${NOISE}
       void main() { vec2 uv = vUv, p = vec2(uv.x * uAspect, uv.y); vec3 col = vec3(0.0);
         if (uCloud > 0.002) { float mask = smoothstep(0.38, 0.98, uv.y), c = smoothstep(0.32, 0.82, fbm(p * vec2(1.5, 2.6) + vec2(uT * 0.045, -uT * 0.02))), c2 = fbm(p * 4.2 + vec2(-uT * 0.09, uT * 0.03));
           col += vec3(0.085, 0.06, 0.17) * c * mask * uCloud * (0.5 + 0.9 * c2);
           float d = uv.x - uFlickX; col += vec3(0.72, 0.68, 1.0) * uFlick * exp(-d * d * 7.0) * mask * (0.25 + 1.5 * c * c2) * uCloud; }
+        // an aurora for the larger shows: curtains of green rising into violet, hanging across the top of the sky and slowly folding
+        if (uAurora > 0.002) { float a = fbm(vec2(uv.x * 2.2 + uT * 0.06, uT * 0.04)), band = 0.76 + 0.09 * sin(uv.x * 4.0 + uT * 0.25 + a * 4.0), curt = exp(-pow((uv.y - band) / 0.14, 2.0)), rays = 0.5 + 0.5 * sin(uv.x * 46.0 + a * 26.0 + uT * 0.6);
+          col += mix(vec3(0.08, 0.85, 0.5), vec3(0.55, 0.22, 0.95), smoothstep(band - 0.06, band + 0.17, uv.y)) * curt * (0.35 + 0.65 * rays) * uAurora * 0.5; }
         float r = length((uv - uCenter) * vec2(uAspect, 1.0));
         // the flash is strongest where the bolt lands and is held well under white everywhere else
         col += vec3(1.0, 0.92, 0.76) * uFlash * (0.14 + 0.55 * exp(-r * 2.4));
@@ -71,14 +74,21 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
 
   // ---------- a figure in the sky (ZW-046): a constellation drawn by a point of lightning, with a star at every corner.
   // It stands above and behind the temple. progress 0..1 is how much has been drawn; glow is its brightness; wake() makes it flare.
-  const SKY = { cx: 0, cy: 13.6, z: -8.5, s: 5.6 }, sky3 = (p, out) => out.set(SKY.cx + p[0] * SKY.s, SKY.cy + p[1] * SKY.s, SKY.z), fig = { f: null, progress: 0, glow: 0, flare: 0, pen: new THREE.Vector3(), drawing: false };
-  const starPool = Array.from({ length: 90 }, () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); sp.visible = false; scene.add(sp); return sp; });
-  const gold = new THREE.Color(0xffd27a), A3 = new THREE.Vector3(), B3 = new THREE.Vector3();
-  function figure(name) { fig.f = prepare(name); fig.progress = 0; fig.glow = 0; fig.flare = 0; }
-  function wake() { if (!fig.f) return; fig.flare = 1; const c = sky3([0, -0.1], new THREE.Vector3()); state.center = c; U.uRing.value = 0.01; U.uRingI.value = 1.2; U.uFlash.value = Math.max(U.uFlash.value, 0.6); state.shake = Math.max(state.shake, 0.09); U.uFlick.value = 1; U.uFlickX.value = 0.5;
-    for (const st of fig.f.stars) if (R() < 0.6) burst(sky3([st.x, st.y], A3), 5, 2.2); burst(sky3([0, -0.4], A3), 90, 4.5); }
+  // Once awake it breathes: a slow ripple runs out through it from the middle. At the end it rises and lets its stars fall.
+  const SKY = { cx: 0, cy: 13.6, z: -8.5, s: 5.6 }, fig = { f: null, progress: 0, glow: 0, flare: 0, pen: new THREE.Vector3(), drawing: false, scale: 1, awake: 0, rise: 0, rising: false };
+  const sky3 = (p, out) => { let k = fig.scale; if (fig.awake > 0) k *= 1 + 0.03 * Math.min(1, fig.awake) * Math.sin(time * 3.2 - Math.hypot(p[0], p[1]) * 7); return out.set(SKY.cx + p[0] * SKY.s * k, SKY.cy + fig.rise + p[1] * SKY.s * k, SKY.z); };
+  const mkStar = () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); sp.visible = false; scene.add(sp); return sp; };
+  const starPool = Array.from({ length: 90 }, mkStar), eyePool = [mkStar(), mkStar()], gold = new THREE.Color(0xffd27a), A3 = new THREE.Vector3(), B3 = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+  function figure(name, tier = 1) { fig.f = prepare(name); fig.progress = 0; fig.glow = 0; fig.flare = 0; fig.scale = [1, 1.16, 1.34][tier - 1] || 1; fig.awake = 0; fig.rise = 0; fig.rising = false; }
+  function ring(power = 1) { state.center = sky3([0, -0.1], new THREE.Vector3()); U.uRing.value = 0.01; U.uRingI.value = 1.2 * power; U.uFlash.value = Math.max(U.uFlash.value, 0.5 * power); state.shake = Math.max(state.shake, 0.07 * power); U.uFlick.value = 1; U.uFlickX.value = 0.5; fig.flare = Math.max(fig.flare, power); }
+  function wake() { if (!fig.f) return; fig.awake = 0.001; ring(1.2); for (const st of fig.f.stars) if (R() < 0.6) burst(sky3([st.x, st.y], A3), 5, 2.2); burst(sky3([0, -0.4], A3), 90, 4.5); }
+  const ascend = () => { fig.rising = true; };
+  // meteors for the larger shows: streaks falling across the sky behind the figure
+  const meteors = []; let meteorUntil = 0, meteorNext = 0; const shower = (seconds) => { meteorUntil = time + seconds; };
+  // a web of lightning from one side of the sky to the other, for the largest
+  function web() { for (let k = 0; k < 4; k++) { const y1 = 8.5 + R() * 9, y2 = 8.5 + R() * 9, flip = R() < 0.5 ? -1 : 1; addBolt(new THREE.Vector3(-15 * flip, y1, -9.5), new THREE.Vector3(15 * flip, y2, -9.5), 1.4, { leader: 0.04 + k * 0.05 }); } U.uFlick.value = 1; U.uFlash.value = Math.max(U.uFlash.value, 0.35); state.shake = Math.max(state.shake, 0.04); }
   let rainAcc = 0, flickAt = 0, time = 0;
-  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
+  function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null, aurora = 0 }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
     U.uCloud.value += (cloud * level - U.uCloud.value) * Math.min(1, dt * 2.2); U.uFlick.value *= Math.exp(-dt * 9); U.uFlash.value *= Math.exp(-dt * 7); state.shake *= Math.exp(-dt * 7);
     if (U.uRingI.value > 0.002) { U.uRing.value += dt * 1.25; U.uRingI.value *= Math.exp(-dt * 2.6); } else U.uRingI.value = 0;
     if (state.center) { const c = state.center.clone().project(camera); U.uCenter.value.set(c.x * 0.5 + 0.5, c.y * 0.5 + 0.5); }
@@ -87,11 +97,15 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
     for (const b of bolts) { b.age += dt; if (!b.struck && b.age >= b.leader) { b.struck = true; const s = b.main[0].clone().project(camera); U.uFlickX.value = s.x * 0.5 + 0.5; b.onStrike?.(); } }
     for (let i = bolts.length - 1; i >= 0; i--) if (bolts[i].age > bolts[i].life) bolts.splice(i, 1);
     // the figure in the sky: the pen throws sparks as it draws; the stars come out as it passes; at the end the stars fall as rain
+    U.uAurora.value += (aurora * level - U.uAurora.value) * Math.min(1, dt * 0.9); if (fig.awake > 0) fig.awake += dt; if (fig.rising) fig.rise += dt * (0.4 + fig.rise * 0.9);
+    if (time < meteorUntil && time > meteorNext) { meteorNext = time + 0.07 + R() * 0.16; const v = new THREE.Vector3(-7 - R() * 5, -5 - R() * 4, 0); meteors.push({ p: new THREE.Vector3(-4 + R() * 30, 17 + R() * 6, -10 - R() * 3), v, life: 1.5, span: 1.5 }); }
+    for (let i = meteors.length - 1; i >= 0; i--) { const m = meteors[i]; m.life -= dt; m.p.addScaledVector(m.v, dt); if (m.life <= 0) meteors.splice(i, 1); }
     fig.flare *= Math.exp(-dt * 1.6); if (!skyState) { fig.glow += (0 - fig.glow) * Math.min(1, dt * 3); if (fig.glow < 0.01) fig.f = null; }
     else if (fig.f) { fig.progress = skyState.progress; fig.glow += (skyState.glow - fig.glow) * Math.min(1, dt * 4); fig.drawing = fig.progress > 0.001 && fig.progress < 0.999;
       if (fig.drawing) { const g = fig.f.segs.find((q) => q.to >= fig.progress) || fig.f.segs.at(-1), u = Math.min(1, Math.max(0, (fig.progress - g.from) / Math.max(1e-6, g.to - g.from))); sky3([g.a[0] + (g.b[0] - g.a[0]) * u, g.a[1] + (g.b[1] - g.a[1]) * u], fig.pen); for (let k = 0; k < 2; k++) spawn(fig.pen.x, fig.pen.y, fig.pen.z, (R() - 0.5) * 2.2, (R() - 0.2) * 2, 0.5 + R(), 0.4 + R() * 0.5, 4.5, 2.8, 2.3, 1.3); }
       if (skyState.falling > 0) for (const st of fig.f.stars) if (R() < skyState.falling * dt * 5) { sky3([st.x, st.y], A3); spawn(A3.x, A3.y, A3.z, (R() - 0.5) * 0.6, -1 - R() * 2, 0, 2.6, 2.2, 2.4, 1.8, 0.6); } }
-    starPool.forEach((sp, i) => { const st = fig.f && fig.f.stars[i]; if (!st || st.at > fig.progress || fig.glow < 0.01) { sp.visible = false; return; } sp.visible = true; sky3([st.x, st.y], sp.position); const tw = 0.7 + 0.3 * Math.sin(time * 5 + i * 2.3), k = fig.glow * level * tw * (1 + 2.2 * fig.flare); sp.material.color.setRGB(2.4 * k, 2.1 * k, 1.5 * k); sp.scale.setScalar(0.34 + 0.12 * tw + 0.25 * fig.flare); });
+    starPool.forEach((sp, i) => { const st = fig.f && fig.f.stars[i]; if (!st || st.at > fig.progress || fig.glow < 0.01) { sp.visible = false; return; } sp.visible = true; sky3([st.x, st.y], sp.position); const tw = 0.7 + 0.3 * Math.sin(time * 5 + i * 2.3), k = fig.glow * level * tw * (1 + 2.2 * fig.flare); sp.material.color.setRGB(2.4 * k, 2.1 * k, 1.5 * k); sp.scale.setScalar((0.34 + 0.12 * tw + 0.25 * fig.flare) * fig.scale); });
+    eyePool.forEach((sp, i) => { const e = fig.f && fig.f.eyes[i]; if (!e || fig.awake <= 0 || fig.glow < 0.01) { sp.visible = false; return; } sp.visible = true; sky3(e, sp.position); const k = fig.glow * level * Math.min(1, fig.awake * 3) * (1.6 + 2.5 * fig.flare + 0.3 * Math.sin(time * 6)); sp.material.color.setRGB(2.2 * k, 2.6 * k, 3.0 * k); sp.scale.setScalar(0.5 * fig.scale); });
     // gold rain, and sparks thrown off the edge of a name as it is written
     rainAcc += rain * dt * 150; while (rainAcc >= 1) { rainAcc--; spawn((R() - 0.5) * 17, 9.5 + R() * 1.5, -6.5 + R() * 5.5, (R() - 0.5) * 0.5, -(3.2 + R() * 3), 0, 2.6, 0.6, 2.2, 1.5 + R() * 0.5, 0.35 + R() * 0.35); }
     if (edge) for (let k = 0; k < 3; k++) spawn(edge.x, edge.y + (R() - 0.5) * 1.2, edge.z, (R() - 0.3) * 1.6, R() * 1.8, 0.6 + R(), 0.45 + R() * 0.4, 5, 2.8, 2.2, 1.2);
@@ -106,13 +120,16 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
     if (fig.f && fig.glow > 0.01) { const I = gain * fig.glow * (1.5 + 3.5 * fig.flare + 0.25 * Math.sin(time * 2.2));
       for (const g of fig.f.segs) { if (g.from >= fig.progress) break; const u = Math.min(1, (fig.progress - g.from) / Math.max(1e-6, g.to - g.from)); sky3(g.a, A3); sky3([g.a[0] + (g.b[0] - g.a[0]) * u, g.a[1] + (g.b[1] - g.a[1]) * u], B3); tmp.copy(B3).sub(A3); const len = tmp.length(); if (len < 0.005) continue; tmp.multiplyScalar(1 / len);
         rig.beam(A3, tmp, len, gold, I * 1.4, 0.045, 0); rig.beam(A3, tmp, len, gold, I * 0.16, 0.2, 0); }
+      // while it is being drawn, a shaft of light stands from the temple's peak up to it: the lightning that struck, going back to the sky
+      if (fig.progress < 1) { const h = SKY.cy - peak.y - 1; rig.beam(peak, UP, h, gold, 1.6 * gain, 0.34, 0); rig.beam(peak, UP, h, white, 2.6 * gain, 0.06, 0); }
       // the point of lightning that does the drawing
       if (fig.drawing) { tmp.set(0, 1, 0); rig.beam(A3.copy(fig.pen).addScaledVector(tmp, -0.12), tmp, 0.24, white, 9 * gain, 0.09, 0); } }
+    for (const m of meteors) { tmp.copy(m.v).normalize().negate(); const k = Math.min(1, m.life / m.span * 3) * Math.min(1, (m.span - m.life) * 6); rig.beam(m.p, tmp, 2.6, white, 2.6 * gain * k, 0.035, 0); rig.beam(m.p, tmp, 1.1, gold, 1.2 * gain * k, 0.12, 0); }
     for (const b of bolts) { const a = b.age; let I, shown = b.main.length;
       if (a < b.leader) { I = 0.22; shown = Math.max(2, Math.ceil(b.main.length * a / b.leader)); } else { const s = a - b.leader; I = s < 0.07 ? 1 : (Math.sin(s * 75) > -0.2 ? 0.6 : 0.1) * Math.max(0, 1 - s / (b.life - b.leader)); }
       I *= 6.5 * gain * (0.7 + 0.3 * b.power); if (I <= 0.01) continue; const w = 0.02 + 0.02 * b.power;
       const seg = (p, q, k, width) => { tmp.copy(q).sub(p); const len = tmp.length(); if (len < 0.01) return; tmp.multiplyScalar(1 / len); rig.beam(p, tmp, len, white, I * k, width, 0); };
       for (let i = 0; i < shown - 1; i++) { seg(b.main[i], b.main[i + 1], 1, w); if (a >= b.leader) seg(b.main[i], b.main[i + 1], 0.16, w * 5); }
       for (const f of b.forks) if (f.at < shown) for (let i = 0; i < f.pts.length - 1; i++) seg(f.pts[i], f.pts[i + 1], 0.55, w * 0.6); } }
-  return { bolt, arc, figure, wake, update, draw, burst, sky: SKY, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
+  return { bolt, arc, figure, wake, ring, web, ascend, shower, update, draw, burst, sky: SKY, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
 }
