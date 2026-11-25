@@ -43,18 +43,25 @@ for (const p of RIG) { p.P = new THREE.Vector3(...p.pos); p.e = Object.fromEntri
 
 // ---------- the festival stage set: a temple front (it is Zeus's stage) and the booth with the name on it. Dark shapes; the lasers do the lighting.
 const fest = { v: 0, set: q.get('set') !== '0' }, temple = new THREE.Group(), templeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }), signMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, toneMapped: false }), pillars = [], lit = [], hall = { v: 0 };
+// The layout follows the Transmission stage: a temple of six pillars in the middle, and three free-standing pillars either side.
+const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new THREE.Color(0xff2f52), new THREE.Color(0xffe23c)], lampCol = new THREE.Color(0xffa84a);
 { const add = (g, x, y, z, m = templeMat) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); temple.add(o); return o; };
   // each pillar has its own light, so the building cues can pick them out one at a time. The picture on it gives the fluting and
   // the fall-off of a lamp at its foot: bright low down, fading towards the top, brightest on the side that faces the audience.
   const flute = document.createElement('canvas'); flute.width = 256; flute.height = 256; { const g = flute.getContext('2d'), im = g.createImageData(256, 256);
-    for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { const u = x / 256, h = 1 - y / 255, face = Math.pow(Math.max(0, Math.cos(u * Math.PI * 2)), 0.55), fl = 0.62 + 0.38 * Math.abs(Math.sin(u * Math.PI * 20)), up = 0.16 + 0.84 * Math.pow(1 - h, 1.6), v = Math.min(255, 255 * (0.08 + 0.92 * face) * fl * up), k = (y * 256 + x) * 4; im.data[k] = im.data[k + 1] = im.data[k + 2] = v; im.data[k + 3] = 255; } g.putImageData(im, 0, 0); }
+    for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { const u = x / 256, h = 1 - y / 255, face = Math.pow(Math.max(0, Math.cos(u * Math.PI * 2)), 0.55), fl = 0.62 + 0.38 * Math.abs(Math.sin(u * Math.PI * 20)), up = 0.3 + 0.7 * Math.pow(1 - h, 1.3), v = Math.min(255, 255 * (0.08 + 0.92 * face) * fl * up), k = (y * 256 + x) * 4; im.data[k] = im.data[k + 1] = im.data[k + 2] = v; im.data[k + 3] = 255; } g.putImageData(im, 0, 0); }
   const fluteTex = new THREE.CanvasTexture(flute); fluteTex.colorSpace = THREE.SRGBColorSpace;
-  for (let i = 0; i < 8; i++) { const x = -5.6 + i * 1.6, m = new THREE.MeshBasicMaterial({ color: 0x000000, map: fluteTex, toneMapped: false }), flat = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false }); const lamp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); lamp.position.set(x, 0.85, -5.8); lamp.scale.set(1.5, 0.9, 1); temple.add(lamp); pillars.push({ m, flat, lamp, v: 0 });
-    add(new THREE.CylinderGeometry(0.26, 0.3, 4.6, 24), x, 2.9, -6.2, m); add(new THREE.BoxGeometry(0.8, 0.16, 0.8), x, 5.28, -6.2, flat); add(new THREE.BoxGeometry(0.8, 0.2, 0.8), x, 0.6, -6.2, flat); }
-  add(new THREE.BoxGeometry(12.6, 0.55, 1.0), 0, 5.63, -6.2); add(new THREE.BoxGeometry(13.4, 0.5, 2.4), 0, 0.25, -5.6);
-  const ped = new THREE.Shape(); ped.moveTo(-6.5, 0); ped.lineTo(6.5, 0); ped.lineTo(0, 1.7); ped.closePath(); add(new THREE.ShapeGeometry(ped), 0, 5.9, -6.2);
+  const pillar = (x, z, h) => { const m = new THREE.MeshBasicMaterial({ color: 0x000000, map: fluteTex, toneMapped: false }), flat = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false });
+    const lamp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); lamp.position.set(x, 0.85, z + 0.4); lamp.scale.set(1.5, 0.9, 1); temple.add(lamp);
+    add(new THREE.CylinderGeometry(0.25, 0.3, h, 24), x, 0.7 + h / 2, z, m); add(new THREE.BoxGeometry(0.8, 0.16, 0.8), x, 0.78 + h, z, flat); add(new THREE.BoxGeometry(0.8, 0.2, 0.8), x, 0.6, z, flat); pillars.push({ m, flat, lamp, v: 0 }); };
+  for (const x of [-6.6, -5.5, -4.4]) pillar(x, -5.9, 3.9); for (let i = 0; i < 6; i++) pillar(-2.25 + i * 0.9, -6.2, 4.6); for (const x of [4.4, 5.5, 6.6]) pillar(x, -5.9, 3.9);
+  add(new THREE.BoxGeometry(5.9, 0.55, 1.0), 0, 5.73, -6.2); add(new THREE.BoxGeometry(6.6, 0.5, 2.0), 0, 0.25, -5.9);
+  const ped = new THREE.Shape(); ped.moveTo(-3.15, 0); ped.lineTo(3.15, 0); ped.lineTo(0, 1.25); ped.closePath(); add(new THREE.ShapeGeometry(ped), 0, 6.0, -6.2);
   add(new THREE.BoxGeometry(4.6, 1.05, 1.2), 0, 0.55, -3.4);   // the booth
-  const c = document.createElement('canvas'); c.width = 1024; c.height = 192; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.font = '600 150px Georgia, "Times New Roman", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText((q.get('name') || 'ZEUS').toUpperCase().split('').join('\u2009'), 512, 104);
+  // the rows of warm bulbs round the temple: an arch over it and a row by each side group
+  const bulb = (x, y) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); sp.position.set(x, y, -5.5); sp.scale.setScalar(0.25); temple.add(sp); bulbs.push(sp); };
+  for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.12 + 0.76 * i / 12); bulb(Math.cos(a) * 4.3, 5.6 + Math.sin(a) * 2.9); } for (const s of [-1, 1]) for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) bulb(s * (4.0 + i * 1.0), 5.2 + r * 0.7);
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 192; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.font = '600 150px Georgia, "Times New Roman", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText((q.get('name') || 'ZEUS').toUpperCase().split('').join(' '), 512, 104);
   signMat.map = new THREE.CanvasTexture(c); add(new THREE.PlaneGeometry(3.4, 0.64), 0, 0.58, -2.79, signMat); temple.visible = false; scene.add(temple); }
 
 // ---------- output: glow only from what is brighter than white (the beams), tone mapping, then an alpha so the page can be laid over a camera
@@ -68,14 +75,15 @@ composer.addPass(new ShaderPass({ uniforms: { tDiffuse: { value: null } }, verte
 const CAMS = [{ p: [0, 1.45, 5.2], t: [0, 1.9, -1], f: 52 }, { p: [-2.6, 1.0, 4.6], t: [0.5, 2.1, -1.5], f: 50 }, { p: [2.6, 1.0, 4.6], t: [-0.5, 2.1, -1.5], f: 50 }, { p: [0, 0.75, 4.2], t: [0, 2.5, -2], f: 58 }, { p: [0, 2.9, 6.4], t: [0, 1.6, -1.5], f: 44 }, { p: [-1.6, 1.6, 3.4], t: [1.2, 2.0, -3], f: 56 },
   // the festival views: low in the crowd looking up at the wall, to either side, and far back
   { p: [0, 0.9, 3.0], t: [0, 3.3, -4.5], f: 72 }, { p: [-2.8, 0.8, 2.4], t: [0.8, 3.2, -4.5], f: 70 }, { p: [2.8, 0.8, 2.4], t: [-0.8, 3.2, -4.5], f: 70 }, { p: [0, 2.2, 6.6], t: [0, 2.9, -4.5], f: 58 }];
-const CLUB_CAMS = [0, 1, 2, 3, 4, 5], FEST_CAMS = [6, 7, 8, 9];
-const cam = { i: Number(q.get('cam') || 0), x: eased(0), y: eased(1.45), z: eased(5.2), tx: eased(0), ty: eased(1.9), tz: eased(-1), f: eased(52), moving: q.get('camera') !== '0', lastCue: -1 };
-const setCam = (i, snap = false) => { cam.i = i % CAMS.length; const c = CAMS[cam.i]; for (const [k, v] of [['x', c.p[0]], ['y', c.p[1]], ['z', c.p[2]], ['tx', c.t[0]], ['ty', c.t[1]], ['tz', c.t[2]], ['f', c.f]]) { cam[k].to = v; if (snap) { cam[k].v = v; cam[k].vel = 0; } } }; setCam(cam.i, true);
+CAMS.push({ p: [-6.2, 1.1, -0.6], t: [-4.6, 2.9, -6], f: 46 }, { p: [6.2, 1.1, -0.6], t: [4.6, 2.9, -6], f: 46 }, { p: [-2.4, 1.3, 1.6], t: [1.5, 3.2, -6.2], f: 50 }, { p: [0, 1.6, 4.4], t: [0, 3.3, -6], f: 56 });   // close on a side group from each side, across the temple front, and square on
+const CLUB_CAMS = [0, 1, 2, 3, 4, 5], FEST_CAMS = [6, 7, 8, 9], CUT_CAMS = [13, 6, 10, 13, 11, 9, 12, 6];
+const cam = { i: Number(q.get('cam') || 0), x: eased(0), y: eased(1.45), z: eased(5.2), tx: eased(0), ty: eased(1.9), tz: eased(-1), f: eased(52), moving: q.get('camera') !== '0', lastCue: -1, cut: -1 };
+const setCam = (i, snap = false) => { cam.i = i % CAMS.length; const c = CAMS[cam.i]; if (!c) return; for (const [k, v] of [['x', c.p[0]], ['y', c.p[1]], ['z', c.p[2]], ['tx', c.t[0]], ['ty', c.t[1]], ['tz', c.t[2]], ['f', c.f]]) { cam[k].to = v; if (snap) { cam[k].v = v; cam[k].vel = 0; } } }; setCam(cam.i, true);
 
 // ---------- the show
 const st = { t: 0, gain: Number(q.get('gain') ?? 1) }, beat = createBeat({ bpm: 124 }), dir = createDirector({ seed: 11 });
 if (q.get('theme') !== null) { dir.setTheme(Number(q.get('theme'))); dir.state.auto = false; }
-const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.Color(THEMES[dir.state.theme].accent), C = new THREE.Color(), D = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3(), E = new THREE.Euler();
+const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.Color(THEMES[dir.state.theme].accent), C = new THREE.Color(), E2 = new THREE.Color(), D = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3(), E = new THREE.Euler();
 // a direction in the projector's own frame, turned to where the projector is pointing. ax is the angle across the fan; roll tips the fan's plane.
 const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Math.cos(e.roll.v), cy = Math.sin(ax) * Math.sin(e.roll.v), k = e.cone.v;
   out.set(cx * (1 - k) + Math.sin(coneA) * Math.cos(phi) * k, cy * (1 - k) + Math.sin(coneA) * Math.sin(phi) * k, Math.cos(ax) * (1 - k) + Math.cos(coneA) * k).normalize().applyEuler(E.set(-(p.pitch + e.tilt.v), p.yaw + e.pan.v, 0, 'YXZ')); return out; };
@@ -104,19 +112,23 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // the festival stage: a lattice of laser lines drawn on the structure behind, and the temple itself, barely lit by the colour in the air
   fest.v += ((theme.festival ? 1 : 0) - fest.v) * Math.min(1, dt * 1.5); const fv = fest.v * (fest.set ? 1 : 0);
   if (fv > 0.01 && act > 0.01 && !d.dark && !BUILDING.has(d.pattern)) { const I = act * st.gain * fv * (0.28 + 0.12 * b.pulse);
-    for (let i = 0; i <= 10; i++) rig.beam(A.set(-3.5 + i * 0.7, 0.9, -5.6), D.set(0, 1, 0), 4.3, main, I, 0.006, 0);
-    for (let i = 0; i <= 6; i++) rig.beam(A.set(-3.6, 1.3 + i * 0.6, -5.6), D.set(1, 0, 0), 7.2, main, I, 0.006, 0); }
-  // The building cues (ZW-041): the lasers are dark and the pillars are lit one by one. A lamp comes on at once and dies away quickly, as a real one does.
-  const show = BUILDING.has(d.pattern) && theme.festival; if (show && !fest.set && !SHOT) dir.nextLook();   // with the stage set off there is nothing to light, so move on
-  building(show && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, pillars.length, lit); const fall = Math.exp(-dt * 16);
-  temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.15 : 1);
-    hall.v = Math.max(lit[pillars.length], hall.v * fall); templeMat.color.copy(main).multiplyScalar(amb + 0.07 * hall.v * fv * st.gain);
-    pillars.forEach((p, i) => { p.v = Math.max(lit[i], p.v * fall); const k = fv * st.gain * p.v; p.m.color.copy(main).lerp(C.set(0xffffff), 0.35).multiplyScalar(amb * 6 + 2.4 * k); p.flat.color.copy(main).multiplyScalar(amb + 0.14 * k); p.lamp.material.color.copy(main).lerp(C.set(0xffffff), 0.5).multiplyScalar(1.1 * k); });
-    signMat.color.setScalar(fv * (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.12 : 1)); }
+    for (let i = 0; i <= 8; i++) rig.beam(A.set(-2.8 + i * 0.7, 0.9, -5.6), D.set(0, 1, 0), 4.6, main, I, 0.006, 0);
+    for (let i = 0; i <= 6; i++) rig.beam(A.set(-2.9, 1.3 + i * 0.65, -5.6), D.set(1, 0, 0), 5.8, main, I, 0.006, 0); }
+  // The building cues (ZW-041): the lasers are dark and the building is lit, in warm light as in the video, pillar by pillar.
+  // A lamp comes on at once and dies away quickly, as a real one does.
+  const show = BUILDING.has(d.pattern) && theme.festival, N = pillars.length; if (show && !fest.set && !SHOT) dir.nextLook();
+  building(show && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); const fall = Math.exp(-dt * 16); if (show) lampCol.lerp(WARM[lit[N + 2]], Math.min(1, dt * 14));
+  temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.1 : 1);
+    hall.v = Math.max(lit[N], hall.v * fall); templeMat.color.copy(main).multiplyScalar(amb).add(C.copy(lampCol).multiplyScalar(0.10 * hall.v * fv * st.gain));
+    pillars.forEach((p, i) => { p.v = Math.max(lit[i], p.v * fall); const k = fv * st.gain * p.v; p.m.color.copy(main).multiplyScalar(amb * 6).add(C.copy(lampCol).lerp(E2.set(0xffffff), 0.25).multiplyScalar(2.6 * k)); p.flat.color.copy(main).multiplyScalar(amb).add(C.copy(lampCol).multiplyScalar(0.3 * k)); p.lamp.material.color.copy(lampCol).lerp(E2.set(0xffffff), 0.4).multiplyScalar(1.2 * k); });
+    bulbGlow.v = Math.max(lit[N + 1], bulbGlow.v * Math.exp(-dt * 7)); for (const sp of bulbs) { sp.material.color.copy(WARM[0]).lerp(E2.set(0xffffff), 0.3).multiplyScalar(2.2 * bulbGlow.v * fv * st.gain); sp.scale.setScalar(0.2 + 0.3 * bulbGlow.v); }
+    signMat.color.setScalar(fv * (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.06 : 1)); }
   rig.end(st.t, camera, renderer.domElement.height);
   // the camera moves on every second cue, or every cue in a lively theme; never in a still one
-  const views = theme.festival ? FEST_CAMS : CLUB_CAMS; if (!SHOT && !views.includes(cam.i)) setCam(views[0]);   // each rig has its own views
+  const views = theme.festival ? FEST_CAMS : CLUB_CAMS; if (!SHOT && !views.includes(cam.i) && cam.cut === -1) setCam(views[0]);   // each rig has its own views
   if (cam.moving && d.cue !== cam.lastCue) { if (cam.lastCue !== -1 && theme.camera !== 'still' && (theme.camera === 'lively' || d.cue % 2 === 0)) setCam(views[(views.indexOf(cam.i) + 1 + (d.cue % 3 === 0 ? 1 : 0)) % views.length]); cam.lastCue = d.cue; }
+  // in a building cue the view cuts, as the video does: a new angle every four beats, close on the pillars as often as wide
+  if (cam.moving && show && !SHOT) { const n = Math.floor(b.beats / 4); if (n !== cam.cut) { cam.cut = n; setCam(CUT_CAMS[n % CUT_CAMS.length], true); } } else if (cam.cut !== -1 && !show) { cam.cut = -1; if (!SHOT) setCam(views[0], true); }
   for (const k of ['x', 'y', 'z', 'tx', 'ty', 'tz', 'f']) step(cam[k], dt, 2.4, 3); const sway = cam.moving ? 1 : 0;
   camera.position.set(cam.x.v + Math.sin(st.t * 0.21) * 0.14 * sway, cam.y.v + Math.sin(st.t * 0.17 + 1) * 0.06 * sway, cam.z.v + Math.sin(st.t * 0.13 + 2) * 0.12 * sway); camera.lookAt(cam.tx.v, cam.ty.v, cam.tz.v);
   if (Math.abs(camera.fov - cam.f.v) > 0.01) { camera.fov = cam.f.v; camera.updateProjectionMatrix(); } }

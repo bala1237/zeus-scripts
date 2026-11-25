@@ -52,7 +52,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
 | ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
-| ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | First version shipped 25 Nov: four building cues. Waiting for the owner |
+| ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | Second version shipped 25 Nov after watching the video: stage rebuilt, warm light, the oracle cue. Waiting for the owner |
 
 ## Closed
 
@@ -435,3 +435,6 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **First version shipped 25 Nov 2026:** four cues in the Olympus rotation with the lasers off and the temple lit: chase (one pillar travelling left to right and back), corners (an end pillar blinking fast, then the other end), colonnade (pillars filling from one side, then the other) and strobe (the whole building blinking). Detail in `STAGE-PLAN.md`, "Building cues".
 - **Set on purpose:** the whole-building strobe blinks twice a beat, not faster, because fast flashing of a large part of the picture is a risk for photosensitive viewers. The owner can ask for it faster.
 - **Waiting on the owner:** do these match what he saw; how often they should come; strobe speed; pillar colour (theme green now, or white).
+- **The video was watched, 25 Nov 2026.** The owner uploaded the file; it was read frame by frame. What it shows is written up in `STAGE-PLAN.md`, "The reference video, watched". The first version above was wrong in three ways: the stage is a temple of six pillars with three free-standing pillars each side, not eight in a row; the building is lit in warm amber, red and gold, not green; and the heart of it is short flashes with black between, jumping from one part of the stage to another.
+- **Second version shipped 25 Nov 2026:** the stage rebuilt to that layout with rows of warm bulbs; a new cue, oracle, that reproduces the opening; the other cues over twelve pillars in warm light; the view cutting between wide and close during building cues.
+- **Waiting on the owner:** is this now what he loved; how often building cues should come; which of the video's other moments he wants next (white-outs, white moving-head beams, the red wash, the temple front as a screen).

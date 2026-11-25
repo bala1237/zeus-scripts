@@ -10,7 +10,7 @@
 
 export const THEMES = [
   // the festival look, after the Transmission Prague show the owner loves: a wall of projectors throwing wide fans, with magenta shafts through them
-  { name: 'Olympus', main: 0x12ff48, accent: 0xff2bd0, cue: 16, patterns: ['cathedral', 'chase', 'crown', 'corners', 'wavewall', 'colonnade', 'spears', 'strobe', 'sunburst'], camera: 'calm', festival: true, budget: 110 },
+  { name: 'Olympus', main: 0x12ff48, accent: 0xff2bd0, cue: 16, patterns: ['oracle', 'cathedral', 'chase', 'crown', 'corners', 'wavewall', 'colonnade', 'spears', 'strobe', 'sunburst'], camera: 'calm', festival: true, budget: 110 },
   { name: 'Emerald', main: 0x10ff60, accent: 0xdfffe8, cue: 16, patterns: ['fan', 'ceiling', 'sweep', 'single', 'opposing', 'explosion'], camera: 'calm' },
   { name: 'Ice', main: 0x18c8ff, accent: 0xffffff, cue: 16, patterns: ['tunnel', 'ceiling', 'cage', 'single', 'architecture', 'fan'], camera: 'calm' },
   { name: 'Inferno', main: 0xff2a1e, accent: 0xffa01e, cue: 8, patterns: ['opposing', 'explosion', 'sweep', 'fan', 'cage', 'finale'], camera: 'lively' },
@@ -37,7 +37,7 @@ export const PATTERNS = {
   // almost everything off: one beam, moving slowly
   single: (p, u, v) => p.group === 'back' && p.side === 0 ? { level: 1.3, spread: 0.0, tilt: 0.02 + 0.2 * ease(u), pan: (v > 0.5 ? 1 : -1) * (0.5 - 0.35 * ease(u)), time: 0.9 } : off,   // it passes over the camera's shoulder, never straight into the lens
   // ---- the building as the show (ZW-041): every laser off, and the temple's pillars lit one by one. What is lit comes from building() below.
-  chase: () => off, corners: () => off, strobe: () => off, colonnade: () => off,
+  oracle: () => off, chase: () => off, corners: () => off, strobe: () => off, colonnade: () => off,
   // ---- the festival rig
   // the picture from the reference: every wall projector throws a tall fan leaning outwards, and magenta shafts rise through the middle and from the sides
   // lean tips a fan sideways in its own plane. With the projector tilted well up and roll 0, the fan stands open towards the audience like a hand fan.
@@ -64,18 +64,27 @@ export const PATTERNS = {
 const DEFAULTS = { lean: 0, pan: 0, tilt: -0.25, spread: 0.1, roll: 0, level: 0, sheet: 0, sheetSpread: 0.9, cone: 0, spin: 0, accent: false, time: 0.42 };
 const BIG = new Set(['explosion', 'finale', 'sunburst']);
 
-// The building cues. In these the lasers are dark and the stage building is lit instead: n pillars, counted from the left.
-// building(pattern, beats, n, out) fills out[0..n-1] with each pillar's light (0 or 1) and out[n] with the rest of the building.
+// The building cues (ZW-041), after the opening of the Transmission video. The lasers are dark and the stage building is the show.
+// The building is a temple of six pillars in the middle with three free-standing pillars either side: twelve pillars, counted from the left
+// (0-2 left group, 3-8 temple, 9-11 right group). building(pattern, beats, n, out) fills out[0..n-1] with each pillar's light (0 or 1),
+// out[n] with the temple's roof and steps, out[n+1] with the rows of warm bulbs round it, and out[n+2] with the colour (0 amber, 1 red-pink, 2 gold).
+//   oracle     the video's opening: short flashes with black between them, jumping between the whole stage, the temple alone, the side
+//              pillars alone, one pillar each side (stepping inwards, so it seems to move), and a single corner; the colour changes as it goes
 //   chase      one pillar lit, running left to right and back, a step every half beat: the light seems to travel
 //   corners    the pillar at one corner blinks fast, then the other corner, then each corner's pair; everything else black
 //   colonnade  pillars come on one after another from one side until all are lit, go out the same way, then from the other side
-//   strobe     the whole building blinks, twice a beat. Not faster: rapid full-picture flashing is a risk for photosensitive viewers
-export const BUILDING = new Set(['chase', 'corners', 'strobe', 'colonnade']);
-export function building(pattern, beats, n, out = []) { for (let i = 0; i <= n; i++) out[i] = 0; const fr = (x) => x - Math.floor(x);
-  if (pattern === 'chase') { const s = Math.floor(beats * 2) % (2 * n - 2); out[s < n ? s : 2 * n - 2 - s] = 1; }
-  else if (pattern === 'corners') { const seg = Math.floor(beats / 2) % 4; if (fr(beats / 2) < 0.75 && fr(beats * 4) < 0.5) { if (seg === 0) out[0] = 1; else if (seg === 1) out[n - 1] = 1; else if (seg === 2) out[0] = out[1] = 1; else out[n - 1] = out[n - 2] = 1; } }
-  else if (pattern === 'colonnade') { const s = Math.floor(beats * 2) % (4 * n), half = s % (2 * n), lit = half < n ? half + 1 : 2 * n - 1 - half, fromRight = s >= 2 * n; for (let i = 0; i < lit; i++) out[fromRight ? n - 1 - i : i] = 1; }
-  else if (pattern === 'strobe') { if (fr(beats * 2) < 0.4) for (let i = 0; i <= n; i++) out[i] = 1; }
+//   strobe     the whole stage and its bulbs blink, twice a beat. Not faster: rapid full-picture flashing is a risk for photosensitive viewers
+export const BUILDING = new Set(['oracle', 'chase', 'corners', 'strobe', 'colonnade']);
+// A all, T temple, F both side groups, 0 1 2 one pillar each side (outermost first), L and R a single corner, - black. One letter per half beat.
+const ORACLE = 'A-TF-T-A' + '0-1-2T--' + 'FTFT-A--' + 'L-R-LRA-' + 'T--F--T-' + '2-1-0-A-' + 'TFTF0120' + 'A---A-T-';
+export function building(pattern, beats, n, out = []) { for (let i = 0; i <= n + 2; i++) out[i] = 0; const fr = (x) => x - Math.floor(x), half = Math.floor(beats * 2), side = Math.floor(n / 4);
+  const temple = () => { for (let i = side; i < n - side; i++) out[i] = 1; out[n] = 1; }, flanks = () => { for (let i = 0; i < side; i++) out[i] = out[n - 1 - i] = 1; };
+  if (pattern === 'oracle') { const c = ORACLE[half % ORACLE.length]; out[n + 2] = Math.floor(half / 5) % 3; if (c === '-' || fr(beats * 2) > 0.5) return out;
+    if (c === 'A') { temple(); flanks(); out[n + 1] = 1; } else if (c === 'T') temple(); else if (c === 'F') flanks(); else if (c === 'L') out[0] = 1; else if (c === 'R') out[n - 1] = 1; else { const k = Number(c); out[k] = out[n - 1 - k] = 1; } }
+  else if (pattern === 'chase') { const s = half % (2 * n - 2); out[s < n ? s : 2 * n - 2 - s] = 1; }
+  else if (pattern === 'corners') { const seg = Math.floor(beats / 2) % 4; out[n + 2] = 1; if (fr(beats / 2) < 0.75 && fr(beats * 4) < 0.5) { if (seg === 0) out[0] = 1; else if (seg === 1) out[n - 1] = 1; else if (seg === 2) out[0] = out[1] = 1; else out[n - 1] = out[n - 2] = 1; } }
+  else if (pattern === 'colonnade') { const s = half % (4 * n), h = s % (2 * n), lit = h < n ? h + 1 : 2 * n - 1 - h, fromRight = s >= 2 * n; for (let i = 0; i < lit; i++) out[fromRight ? n - 1 - i : i] = 1; if (lit === n) out[n] = 1; }
+  else if (pattern === 'strobe') { out[n + 2] = Math.floor(beats / 4) % 3; if (fr(beats * 2) < 0.4) { temple(); flanks(); out[n + 1] = 1; } }
   return out; }
 
 const QUIET = new Set(['ceiling', 'single', 'sweep', 'architecture', 'spears', 'crown', 'corners', 'colonnade']);

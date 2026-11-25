@@ -292,3 +292,30 @@ Four cues in which every laser is off and the temple is the show. They sit in th
 **A limit set on purpose.** The whole-building strobe blinks twice a beat (about four times a second at 128), not faster. Fast flashing of a large part of the picture is a known risk for photosensitive viewers, and platforms act on it. The single-pillar blink is faster because it is a small part of the picture. If the owner wants the building strobe faster, that is his call to make knowingly.
 
 **Checked:** a test of each cue's sequence (the chase visits 0 to 7 and back one pillar at a time; corners touch only the end pillars; the strobe flashes sixteen times in eight beats; the colonnade fills from both sides); the two rigs and the building never light together; a still of each cue (`assets/sheets/laser_building.jpg`); the stepped run and the click check; the build. **Not checked:** the timing and feel in motion, and whether this matches the video.
+
+## The reference video, watched (25 Nov 2026), and the building cues rebuilt
+
+The owner uploaded the video file (Armin van Buuren, Vini Vici and Hilight Tribe, "Great Spirit", Transmission Prague 2016; 6 min 12 s). It was read frame by frame with ffmpeg: a sheet of one frame every two seconds for the whole show, and five frames a second for the first 26 seconds. The frames are not kept in the repository (they are someone else's film); this is what they show. **It supersedes the guesses above that were made from the cover frame alone.**
+
+**The stage.** A temple front in the middle (six pillars, a roof with a pediment) and, either side of it, a group of three free-standing pillars. Twelve pillars in all. Rows of warm bulbs: an arch over the temple and rows beside the side groups. The artist's name on the booth. Later the temple front is also used as a screen (chevron patterns, 2:12 to 2:38).
+
+**The opening, 0:00 to 0:25, which is what the owner loves.** No lasers. Timeline:
+
+- 0:00 to 0:02: every bulb on, the whole hall washed in warm white haze, then it fades.
+- 0:02 to 0:25: short flashes, about a fifth of a second each, with black between them, often a half second or more of nothing. Each flash lights one thing: the whole stage; the temple alone; the two side groups alone; one pillar on each side (and the pair that is lit changes from flash to flash, which reads as the light moving); a single pillar. The gaps are uneven; it follows the music's stabs.
+- The colour changes from flash to flash: warm amber, red-pink, and a gold with a cool edge.
+- The picture cuts as well: wide from the front, a low angle along one side group, and close on a single pillar.
+
+**After that.** 0:25 lasers and red wash begin, chaotic, yellow and green on red. 1:40 to 1:52: a long, still passage of green fans on black making a symmetrical W shape, slowly opening. 1:54, 2:00, 2:04, 4:32, 5:16: white-outs, the whole picture flooded. 2:12 on: white moving-head beams with green lasers. 2:58: yellow zigzag lasers with white beams. 3:00 on: red, white and blue. 3:50 to 4:24: the pillars and temple held in red against blue, calm. 4:26 to 4:40: bulbs and pink temple. 4:42 to 4:48: single pillars in red again. 5:00 to the end: blue and white, lasers and beams.
+
+**What that changes.** The cover frame (green fans, magenta shafts) is one moment of a show that is mostly red, amber, white and blue, and whose signature is the building itself. So:
+
+- The stage set is rebuilt to the real layout: temple of six pillars, three free-standing pillars each side, bulbs in an arch and in rows.
+- The building is lit in warm colours (amber, red-pink, gold), not the theme's green.
+- A new cue, **oracle**, reproduces the opening: flashes with black between, jumping between the whole stage, the temple, the side groups, a pair stepping inwards, and single corners, changing colour as it goes. It is written as a string of letters, one per half beat (`ORACLE` in `director.js`), so it is easy to rewrite.
+- Chase, corners, colonnade and strobe now run over twelve pillars; the strobe includes the bulbs.
+- In building cues the view **cuts** every four beats between wide, close on a side group, and across the temple front, as the video does. Elsewhere it still glides.
+
+**Checked:** twelve director tests, including the oracle cue (lit under 40% of the time, mirrored, every kind of flash present, three colours); eight stills (`assets/sheets/laser_building.jpg`); the stepped run, the click check and the build. **Not checked:** timing against music, and the cuts, which only show in motion.
+
+**Not yet taken from the video:** the white-outs; white moving-head beams; the red wash with yellow lasers; the long still green passage at 1:40; the temple front as a screen; the red-on-blue hold. The oracle cue follows a fixed script on the beat, where the video follows the music's stabs.

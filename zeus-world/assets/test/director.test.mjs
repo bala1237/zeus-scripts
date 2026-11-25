@@ -38,9 +38,16 @@ test('the festival theme uses the wall and the shafts and leaves the club rig da
     const club = RIG.filter(lit).length, wall = [0, 1, 2, 3, 4].filter((k) => lit({ group: 'wall', side: 1, k })).length + [0, 1, 2].filter((k) => lit({ group: 'wash', side: 1, k })).length;
     if (THEMES[s.theme].festival) { fest++; assert.equal(club, 0); if (BUILDING.has(s.pattern)) { assert.equal(wall, 0, 'the lasers are dark while the building is the show'); return; } assert.ok(wall >= 5, `${s.pattern}: ${wall}`); } else assert.equal(wall, 0, s.pattern); }); assert.ok(fest > 100); });
 
-test('building cues: the chase is one pillar travelling to the far end and back; corners touch only the end pillars; the strobe is no faster than twice a beat', () => { const n = 8, o = [];
-  const seq = []; for (let b = 0; b < 14; b += 0.05) { building('chase', b, n, o); const lit = o.slice(0, n).map((v, i) => v ? i : -1).filter((i) => i >= 0); assert.equal(lit.length, 1); assert.equal(o[n], 0); if (seq.at(-1) !== lit[0]) seq.push(lit[0]); }
-  assert.deepEqual(seq.slice(0, 15), [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0]);
-  const seen = new Set(); for (let b = 0; b < 16; b += 0.01) { building('corners', b, n, o); o.slice(0, n).forEach((v, i) => { if (v) seen.add(i); }); assert.equal(o[n], 0); } assert.deepEqual([...seen].sort(), [0, 1, 6, 7]);
+test('building cues: the chase is one pillar travelling to the far end and back; corners touch only the end pillars; the strobe is no faster than twice a beat', () => { const n = 12, o = [];
+  const seq = []; for (let b = 0; b < 22; b += 0.05) { building('chase', b, n, o); const lit = o.slice(0, n).map((v, i) => v ? i : -1).filter((i) => i >= 0); assert.equal(lit.length, 1); assert.equal(o[n], 0); if (seq.at(-1) !== lit[0]) seq.push(lit[0]); }
+  assert.deepEqual(seq.slice(0, 23), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
+  const seen = new Set(); for (let b = 0; b < 16; b += 0.01) { building('corners', b, n, o); o.slice(0, n).forEach((v, i) => { if (v) seen.add(i); }); assert.equal(o[n], 0); } assert.deepEqual([...seen].sort((a, b) => a - b), [0, 1, 10, 11]);
   let flashes = 0, was = 0; for (let b = 0; b < 8; b += 0.005) { building('strobe', b, n, o); if (o[n] && !was) flashes++; was = o[n]; } assert.equal(flashes, 16);
-  let max = 0, sides = new Set(); for (let b = 0; b < 32; b += 0.05) { building('colonnade', b, n, o); const c = o.slice(0, n).reduce((a, v) => a + v, 0); max = Math.max(max, c); if (c === 1) sides.add(o[0] ? 'left' : o[n - 1] ? 'right' : 'middle'); } assert.equal(max, n); assert.deepEqual([...sides].sort(), ['left', 'right']); });
+  let max = 0, sides = new Set(); for (let b = 0; b < 48; b += 0.05) { building('colonnade', b, n, o); const c = o.slice(0, n).reduce((a, v) => a + v, 0); max = Math.max(max, c); if (c === 1) sides.add(o[0] ? 'left' : o[n - 1] ? 'right' : 'middle'); } assert.equal(max, n); assert.deepEqual([...sides].sort(), ['left', 'right']); });
+
+test('the oracle cue: mostly black, in short flashes, showing the temple alone, the side pillars alone, a pair that steps inwards, one corner alone, and three colours', () => { const n = 12, o = [], kinds = new Set(), cols = new Set(); let lit = 0, total = 0, mirrored = true;
+  for (let b = 0; b < 32; b += 0.01) { building('oracle', b, n, o); total++; const p = o.slice(0, n), c = p.reduce((a, v) => a + v, 0); if (!c) continue; lit++; cols.add(o[n + 2]);
+    const key = p.join(''); kinds.add(key === '000111111000' ? 'temple' : key === '111000000111' ? 'sides' : c === n ? 'all' : c === 2 ? 'pair' + p.indexOf(1) : c === 1 ? 'single' + p.indexOf(1) : 'other');
+    if (c !== 1) for (let i = 0; i < n; i++) if (p[i] !== p[n - 1 - i]) mirrored = false; }
+  assert.ok(lit / total < 0.4, `lit ${(100 * lit / total).toFixed(0)}% of the time`); assert.ok(mirrored);
+  for (const k of ['temple', 'sides', 'all', 'pair0', 'pair1', 'pair2', 'single0', 'single11']) assert.ok(kinds.has(k), k); assert.ok(!kinds.has('other')); assert.equal(cols.size, 3); });
