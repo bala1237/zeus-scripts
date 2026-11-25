@@ -35,6 +35,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | The owner's setup (24 Nov 2026) | Music is played on the same computer that streams. He goes live with OBS or TikTok LIVE Studio. His games run in a browser |
 | Order of the stream features (24 Nov 2026) | Concert mode first, then the game stage |
 | Music (24 Nov 2026) | Music gets its own stage, separate from the city. Concert mode inside the city was tried and rejected by the owner |
+| Stage direction (25 Nov 2026) | The stage is to become a professional virtual laser and lighting system: 70% premium underground nightclub, 20% minimalist industrial techno, 10% festival spectacle; dark, restrained, physically coherent. Built in phases, each passed by the owner. The owner streams from macOS |
 
 ## Open questions
 
