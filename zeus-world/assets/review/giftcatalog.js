@@ -15,14 +15,18 @@ export const FAMILIES = {
   citadel: ['Light Castle', 'Skyforge Citadel', 'Castle Fantasy', 'Fantasy Castle', 'Gyeongbokgung', 'Big Ben', 'Berlin', 'Pyramids', 'Amusement Park', 'Sweetopia', 'Star Throne'],
   chariot: ['Golden sports car', 'Golden Sports Car', 'Sports Car', 'Silver Sports Car', 'Race Car', 'Bolide', 'Sunset Speedway', 'Red Lightning', 'Motorcycle Together', 'Flying Jets', 'Desert Adventure'],
   heart: ['Infinite Heart', 'Fly Love', 'Rose Carriage', 'Legacy in Bloom', 'Maggie'],
-  hero: ['Zeus', 'Julius the Champion', 'Valerian\'s Oath', 'Legend Marcellus', 'Yuki\'s Vigilance', 'Rin the Snowborn', 'Vulcan', 'Adam\'s Dream', 'Superhero fight', 'Gorilla', 'Guardian Rhino', 'Ellie the Elephant', 'Community Legends', 'Goal of Glory', 'Creator of the week'],
+  zeus: ['Zeus'],
+  hero: ['Julius the Champion', 'Valerian\'s Oath', 'Legend Marcellus', 'Yuki\'s Vigilance', 'Rin the Snowborn', 'Vulcan', 'Adam\'s Dream', 'Superhero fight', 'Gorilla', 'Guardian Rhino', 'Ellie the Elephant', 'Community Legends', 'Goal of Glory', 'Creator of the week'],
   revel: ['Fiesta', 'Flamenco dancers', 'Corgi\'s Drone Show', 'Red Devil Corgi', 'Festival Flags', 'LIVE Fest Grand Finale', 'Celebration Time', 'Happy Party', 'Birthday Party', 'Saxofone', '1st Anniversary', '2nd Anniversary', '3rd Anniversary'],
 };
 const BY_NAME = new Map(); for (const [family, names] of Object.entries(FAMILIES)) for (const n of names) BY_NAME.set(n.toLowerCase(), family);
 // Figures that are a film clip: a realistic animated clip made for the family, played as the sky behind the temple.
 // roar: the clip's big moment, in seconds; the stage's ring, sparks and lasers land on it. seconds: the clip's length.
-// The lion clip was generated on fal with Wan 3.0 Prime (text to video, 10 s, 1080p), 25 Nov 2026; the prompt is in docs/STAGE-PLAN.md.
-export const FILMS = { lion: { src: 'films/lion.webm', roar: 6.2, seconds: 10 } };
+// The clips were generated on fal with Wan 3.0 Prime (text to video, 1080p), 25 Nov 2026; the prompts are in docs/STAGE-PLAN.md.
+export const FILMS = { lion: { src: 'films/lion.webm', roar: 6.2, seconds: 10 },
+  // Zeus has a staging of his own (gifts.js): the clip opens a beat in, on his eyes in the dark; "roar" is the second his thunderbolt
+  // lands at the foot of the picture, where the temple stands; the show runs five beats past the clip for the lasers to return.
+  zeus: { src: 'films/zeus.webm', roar: 8.0, seconds: 14, start: 1, after: 5, staging: 'zeus' } };
 // which figures are drawn so far (constellations.js)
 export const DRAWN = new Set(['lion']);
 // what a gift becomes on the stage: its size, and for the largest the figure to draw (null: not drawn yet, play the big moment)
