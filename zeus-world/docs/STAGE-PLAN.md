@@ -92,3 +92,64 @@ Backlog: ZW-036. Written 25 Nov 2026. This is the working document for turning t
 3. **Which mode first.** Full-screen show (A), or overlay behind or over the owner's camera (B)?
 4. **Mostly what music.** House and techno, or a wide mix? This sets how much the state engine can be trusted.
 5. **Which Mac.** Model and year, to set the performance target.
+
+## The owner's answers, 25 Nov 2026
+
+| Question | Answer | What follows |
+| --- | --- | --- |
+| How the music is played | In a browser tab | Chrome's tab sharing with audio is the capture route; no loop-back device needed |
+| Which mode first | Overlay: "overlay works better to add as source overlay with my camera" | Phase 2 is built as an overlay. There is no room and no screen in it, so the question about the screen backgrounds no longer applies to this mode |
+| Streaming software | "I have the ability to have different sources with TikTok LIVE Studio" | The overlay must work as a source in LIVE Studio. Open point below |
+| Music | A wide mix | The state engine must be conservative: energy and beat first, structure (build, breakdown, drop) only when confident |
+| Computer | M3 Pro | A strong graphics chip; 1920 × 1080 at 60 frames a second is a reasonable target. Still to be measured |
+
+**Open point: how LIVE Studio combines the overlay with the camera.** Three ways exist, and which is available decides the output:
+
+1. A blending setting on the source ("Add" or "Screen"). Best: the page stays black and light is added to the camera picture.
+2. A browser source with a transparent background. Good, but a page inside LIVE Studio's own browser cannot be given access to the music, so it could not listen.
+3. Capturing a Chrome window. This is the route that can listen to the tab's music, but a captured window has no transparency, so it needs option 1, or a colour key that removes black.
+
+The prototype supports all three (`?bg=black`, `?bg=clear`, and black is also what a key would remove) so the owner can try them in LIVE Studio.
+
+**Known limit of an overlay:** the lasers are drawn over the camera picture, so a beam cannot pass behind the owner. The projector is placed high so that beams cross above and beside him.
+
+## Phase 2: the rendering prototype, built 25 Nov 2026
+
+**Where:** `assets/review/laser.html`, `laser.js` and `beams.js`; hosted at `/laser.html`. The current stage (`stage.html`) is untouched.
+
+**What it is:** one projector, high and behind where the performer sits, facing the camera. It runs a four-part loop of sixteen beats each: a nine-beam fan opening; the fan sweeping side to side; a single scanned sheet tilting down; fan and sheet together. One colour at a time from a list of six, changing every 64 beats.
+
+**How a beam is drawn now (`beams.js`).**
+
+- A ribbon divided into 56 parts along its length, turned to face the camera, shaded per pixel: a tight core and a faint skirt.
+- Width follows the real beam (6 mm at the aperture, spreading slightly) but is held between about one and three pixels, so it is a clean thin line at any distance.
+- Brightness goes well above white; the picture is tone-mapped at the end (ACES), so cores burn to white with the colour in the halo. The glow pass only acts on what is brighter than white, so only the beams glow.
+- Haze: three layers of drifting 3D noise sampled where the beam is, so the light is patchy the way it is in smoke. No fog is laid over the picture, so black stays black.
+- A beam is brighter when seen nearly end-on (you look through more of it) and when it points towards the viewer (haze throws light forward).
+- It fades over distance, at the aperture, at its far end, and as it comes within a few metres of the lens.
+- **A sheet** is a fan-shaped surface with the same haze, bright when seen edge-on and a faint veil face-on, with brighter lines at the two ends of the scan.
+- Beams and sheets are each drawn in one call, and nothing is allocated per frame.
+
+**Movement.** Every angle eases to its target under a speed limit. Measured over 70 seconds of the loop: the largest change in one frame was 0.47 degrees of pan and 1.29 degrees of spread. Nothing jumps.
+
+**Output for an overlay.** The page shows only light. `?bg=black` is for a source set to Add or Screen blending; `?bg=clear` makes the page transparent, with each pixel as see-through as it is dark; `?bg=mock` puts a stand-in camera picture behind it for judging. The Background button cycles the three.
+
+**Controls.** Listen to the music, tap, demo (124 beats a minute without music), stop; sliders for brightness, haze and glow; a readout of frames a second, the slowest frame and memory.
+
+**What was learned.**
+
+- A ribbon with only its two ends cannot work: its width in pixels depends on distance from the camera, and a beam that passes the lens was drawn as a fat wedge because the width was worked out at the far end, behind the camera. It needs dividing along its length.
+- The first settings flooded the frame with colour. The skirt had to be cut to a quarter and the glow made tighter; a closed fan is nine beams on top of each other and must be dimmed to match an open one.
+- A comment placed in the middle of a line of shader code silently removed the rest of the line and the beams vanished with no error. Comments in shader strings go on their own line.
+
+**Known flaws in the prototype.**
+
+- A beam pointing almost straight at the lens shows a slight wobble near the camera.
+- Beams do not land on anything; in an overlay there is nothing for them to land on.
+- The sheet has a faint seam down its middle.
+- Light is drawn over the camera picture, so it cannot pass behind the performer.
+
+**Checked:** stills at six moments, on black and over the stand-in camera picture; the loop stepped through with no errors; still when stopped (nothing drawn). **Not checked:** motion; frame rate on a real graphics card (the page reports it); listening to real music; how it combines in TikTok LIVE Studio.
+
+**The gate.** The owner looks at it over his own camera and says whether the light itself now looks like real laser light. Phase 3 does not start until it passes.
+

@@ -4,6 +4,8 @@ Backlog: ZW-034. A show for the owner's music, separate from the city. Built 24 
 
 Source: `assets/review/stage.html`, `stage.js` and `beat.js`. Hosted with the other pages at `/stage.html`. The city's controls have a **♪ Stage** link that opens it in a new tab.
 
+**From 25 Nov 2026 the stage is being rebuilt as a professional laser and lighting system.** The brief, the audit of what is described below, the plan and the phase 2 prototype (`laser.html`, `beams.js`) are in `../STAGE-PLAN.md`. The page described here still works and is unchanged.
+
 ## Why it is separate
 
 Concert mode was first built inside the city (ZW-033): evening light, pulsing lamps, beams, lantern strings and citizens dancing in the plaza. The owner tried it and rejected it: "no, it's not looking good." He asked for "a separate module and staging with laser light and something interesting background transitioning". The city version was removed. What was kept from it: the beat logic (now `beat.js`), and the city's ability to hold a time of day (`dn.hold`), which nothing uses at present.
