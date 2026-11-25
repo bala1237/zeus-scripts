@@ -1,6 +1,6 @@
 # Hero film 3: The Well
 
-About 45 seconds. For pure generosity: a win, or simply the person who gave most. Written 25 Nov 2026; nothing generated yet.
+About 45 seconds. For pure generosity: a win, or simply the person who gave most. Written and made 25 Nov 2026.
 
 **The story in one line:** a caravan is dying of thirst in the desert; one of us walks into the dunes alone with an empty jar, finds water, and carries it back for everyone.
 
@@ -22,6 +22,6 @@ No gender anywhere: "one of us", "they". The hero is robed with the face wrapped
 | 0:36 | **The answer, the honour** | S. The caravan: a child drinking from cupped hands, an elder with wet eyes, jars being filled. Then green palms around a well. | "No one who drank that day ever forgot who brought it. That is how a desert becomes a home." |
 | 0:43 | End card | Laurel, picture if there is one, **`[NAME]` · Water-Bearer**. | |
 
-## What has to be made
+## Made
 
-- 2 moving shots (about 6 s and 8 s), 4 or 5 still pictures, narration (about 340 characters plus the name line), one score.
+Made 25 Nov 2026: two moving shots (6 s and 9 s), five still pictures, narration, score. Plays at `/hero.html` (Film: The Well). The spoken line with the name is "`[NAME]` found the water."; without a recording for the name the narrator says "One of us found the water." Prompts, request numbers and the cut: `docs/knowledge/hero-films.md` and `assets/hero-build/build.py`.

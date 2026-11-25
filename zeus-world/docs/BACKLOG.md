@@ -58,7 +58,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
-| ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | Second cut of The Fire-Bringer on `/hero.html` (new hook, new narrator, score, new lettering). Waiting for the owner to watch it | 25 Nov 2026, owner |
+| ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | Three films on `/hero.html`: The Fire-Bringer (approved, "looks good"), The Last Banner and The Well (new; waiting for the owner to watch them) | 25 Nov 2026, owner |
 | ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. Built: sound input for the lasers (works in OBS on his Mac), controls-off for Zeus World, tempo in the address, a remote for the hero film. Waiting for the owner to try the remote and the RODECaster | 25 Nov 2026, owner |
 
 ## Closed
@@ -549,6 +549,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Next films, owner's direction, 25 Nov 2026:** "We need to do different videos. We can go for cheaper options now. Is you are able to pull in their profile pict, we can show that. Otherwise just the name. The script should be generic without gender so it's easy to use for both." So: a library of different films (not variations of one); a cheaper way of making them; the person's profile picture when it can be had, the name alone when not; no gender in any script. Under discussion; nothing generated.
 
 - **Owner's choices, 25 Nov 2026:** "Last Banner and The Well, stills approach is fine, add picture box". **Built:** the picture box and the picture on the end card; a choice of film on the page and in the remote. **Written:** both scripts (`docs/hero-films/02-last-banner.md`, `03-the-well.md`). **Waiting:** his word on the spend before anything is generated.
+
+- **"approved, go ahead", 25 Nov 2026. Made:** The Last Banner (46 s) and The Well (47.5 s), each from two moving shots and four or five still pictures, with narration in his "Zeus-authorative" voice and a Suno score. About $2.22 for both in pictures and video (estimate given: $2.10; the two climax shots were made 9 s long). Both play on `/hero.html` from the Film list and through the OBS remote. **Verified here:** stills at ten moments of each; a real-time run of The Well (picture and sound within 0.1 s, the named recording used); build and tests. **Not verifiable here:** sound, and how the moving stills look in motion.
 
 ### ZW-048: The pages as OBS browser sources
 
