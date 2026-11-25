@@ -30,12 +30,20 @@ Her studio from the screenshot she streams with, rebuilt in code: black, gold an
 
 ## Using it in TikTok LIVE Studio
 
-Two ways. **Neither has been tried in LIVE Studio itself; that is for the owner or Andie to confirm.**
+LIVE Studio cannot be run on the build machine, so everything here is built to the two ways a page can be added and confirmed only by the owner or Andie.
 
-1. **So that it hears the music (recommended):** open the page in Chrome, press "Listen to the music", pick the tab that is playing the songs and tick its audio. In LIVE Studio add that Chrome window as a window capture, and either crop the capture to the picture or press H to hide the controls.
-2. **As a browser source:** a browser source usually cannot ask to listen and often cannot be clicked, so everything is set in the address, for example `andie.html?ui=0&mode=room&bright=80&bpm=124&big=AI%20MOGULS`. `bpm` runs the lights at a fixed tempo; leave it out for the calm room.
+1. **As a browser source (simplest).** Set the page up in Chrome as wanted, press **Copy link for LIVE Studio**, and paste that link as the browser source's address. The link carries the mode, brightness, sign words and tempo, and switches the controls off. A page with its controls off **starts by itself** at a steady tempo (124, or `bpm=` in the link); `calm=1` keeps it still. **It cannot hear the music this way**: a browser source cannot ask to listen. The lights keep a steady beat that is near the song's, not locked to it.
+2. **As a window capture (follows the music).** Open the page in Chrome, press "Listen to the music", pick the tab playing the songs and tick its audio. In LIVE Studio capture that Chrome window and crop to the picture. Keep the Chrome window open and not minimised.
 
-Address settings: `mode=room|lasers`, `bright=20..100`, `size=25..100`, `bpm=`, `demo`, `top=`, `big=`, `name=`, `place=`, `tag=A|B|C`, `ui=0`.
+**If nothing moves in LIVE Studio (ZW-043).** Add `&debug=1` to the link: a line across the top of the picture says what the page is doing (running or calm, the cue, a frame count that should climb, the browser's version, and any error). No line at all means the page's code did not run in that browser.
+
+Address settings: `mode=room|lasers`, `bright=20..100`, `size=25..100`, `bpm=`, `demo`, `calm=1`, `debug=1`, `top=`, `big=`, `name=`, `place=`, `tag=A|B|C`, `ui=0`.
+
+### Why it did not animate at first, and what was changed
+
+- The plain link shows the calm room and waits for Listen or Demo. In a browser source nobody can press them. Now a controls-off page starts itself.
+- A browser stops calling its drawing loop for a window it thinks nobody can see (covered, minimised, in the background), and a window capture freezes. Now a timer in a worker steps the show whenever the normal loop has gone quiet for a tenth of a second. Checked by switching the normal loop off: the beat count kept climbing.
+- The build now targets 2020-level JavaScript, not the newest, because the browser built into streaming software can be some years old.
 
 ## How it is built, and why
 

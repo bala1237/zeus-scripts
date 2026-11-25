@@ -20,8 +20,8 @@ export function createBeat({ bpm = 120, onChange = () => {} } = {}) {
   let saved = 0; try { saved = Number(localStorage.getItem('zeus-beat-offset')) || 0; } catch { saved = 0; }
   const st = { mode: 'off', bpm, tempo: bpm, beats: 0, pulse: 0, act: 0, level: 0, bass: 0, low: 0, mid: 0, high: 0, energy: 0.8, heard: 99, locked: false, conf: 0, section: 'groove', drops: 0, offset: saved, testBpm: 128, testGain: 1 };
   const taps = []; let audio = null, lastBeat = -1, wasLocked = false;
-  function tap(now = performance.now() / 1000) { if (taps.length && (now - taps.at(-1) > 2.5 || now < taps.at(-1))) taps.length = 0;   // a pause starts a fresh count
-    taps.push(now); while (taps.length > 6) taps.shift(); if (taps.length >= 3) { const d = (taps.at(-1) - taps[0]) / (taps.length - 1); st.bpm = Math.round(Math.min(200, Math.max(50, 60 / d))); st.tempo = st.bpm; }
+  function tap(now = performance.now() / 1000) { if (taps.length && (now - taps[taps.length - 1] > 2.5 || now < taps[taps.length - 1])) taps.length = 0;   // a pause starts a fresh count
+    taps.push(now); while (taps.length > 6) taps.shift(); if (taps.length >= 3) { const d = (taps[taps.length - 1] - taps[0]) / (taps.length - 1); st.bpm = Math.round(Math.min(200, Math.max(50, 60 / d))); st.tempo = st.bpm; }
     if (st.mode === 'off') st.mode = 'tap'; st.beats = Math.ceil(st.beats); st.pulse = 1; onChange(st); }
   // Listening: Chrome is asked to share a tab or the screen "with audio"; if that is refused it falls back to the default sound input.
   // source 'test' feeds a made-up kick drum at state.testBpm, to check the listening without any music.

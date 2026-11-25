@@ -1,5 +1,7 @@
 # Hosting, deploying and branches
 
+The build targets 2020-level JavaScript (`build.target` in `assets/review/vite.config.js`), not the newest, so that pages also run in the older browsers built into streaming software (ZW-043).
+
 ## The preview
 
 - **Link:** https://zeus-world-preview-bala-0416.vercel.app/city.html
