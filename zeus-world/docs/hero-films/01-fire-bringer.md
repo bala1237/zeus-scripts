@@ -1,24 +1,27 @@
 # Hero film 1: The Fire-Bringer
 
-60 seconds. Epic. A narrator. Written 25 Nov 2026; not yet approved, nothing generated.
+63 seconds. Epic. A narrator. Written 25 Nov 2026; first cut made the same day; second cut (new opening, new narrator, score, new lettering) after the owner's review.
 
 **The story in one line:** on the night the great fire of Olympus was dying, one of us carried a flame up the mountain through the storm and lit it again; and every light in the city was lit from theirs.
 
 **Why this story:** in the myth, fire was carried to mankind out of love, at a cost. A gift given "out of pure heart to elevate or support someone" is that. The hero does not win a fight; they bring light to everyone.
 
-## The film
+## The film (second cut)
 
-`[NAME]` is put in when the film plays. Narration is 78 words; at a slow, weighty pace that leaves room for the music.
+`[NAME]` is put in when the film plays.
 
-| Time | Beat | What we see | Narrator | Music |
-| --- | --- | --- | --- | --- |
-| 0:00 to 0:06 | **The hook** | Black. Wind. One ember drifts across the dark and goes out. | "Every city has one night it almost fell." | Silence, then one low note |
-| 0:06 to 0:14 | **The need** | Olympus under storm, seen from far off. On the temple at the summit the great fire is a dull red glow, dying. Along the walls the last torches go out one by one. | "The great fire was dying. And in the dark, the city held its breath." | Low strings, a slow pulse |
-| 0:14 to 0:22 | **The choice** | The foot of the mountain stair, in the rain. A hooded figure, seen from behind, with a small flame cupped in both hands. They look up at the height of it. They begin to climb. | "One of us did not wait to be asked." | A single theme begins, quietly |
-| 0:22 to 0:32 | **The climb** | The storm tears at the cloak. The flame gutters; they turn their back to the wind and shield it with their body. Lightning shows how far there is still to go. Far below, people in the dark city begin to look up. | "Through the storm. Past the fear. Carrying a flame no bigger than a heartbeat, and never once letting it go." | Builds: drums enter, the theme rises |
-| 0:32 to 0:42 | **The heroic moment** | The summit. The cold bowl of the great fire. They raise the flame and bring it down. One beat of nothing. Then the fire goes up into the sky like a pillar. **`[NAME]` is forged across the screen in gold.** | (one beat of silence as the name appears) "`[NAME]` brought the fire home." | Everything stops for the beat, then the full orchestra and choir |
-| 0:42 to 0:52 | **The heart** | Light runs down the mountain: torch after torch, window after window. Faces turning gold: a child lifted onto shoulders, an old soldier lowering his shield, a hand over a heart. | "And every light you see tonight was lit from theirs." | The theme at full strength, warm |
-| 0:52 to 1:00 | **The honour** | Dawn. The figure stands small before the great fire, and the whole city below is turned towards them. The name is cut into the temple's stone. End card: a laurel wreath, their picture, **`[NAME]` · Fire-Bringer of Olympus**. | "Olympus stands. Because one heart gave." | One last chord, held, and out |
+| Time | Beat | What we see | Narrator |
+| --- | --- | --- | --- |
+| 0:00 | **The hook** | Faces in a marble street, wet with rain, lit gold, all looking up at something we are not shown: a child pointing, a woman with her hand on her heart, an old soldier. | "Ask anyone who was there that night what they saw." |
+| 0:04 | | Black. One ember crosses the dark. | "They will not speak of the storm." |
+| 0:09 | **The world, the stakes** | Olympus under storm; on the summit the great fire is a dying red glow; the torches go out. | "The great fire of Olympus was dying. And when it went out, the city would go with it." |
+| 0:15 | **The choice** | The foot of the stair. A hooded figure, from behind, a small flame in both hands. They begin to climb. | "No one was sent. One of us simply stood, and began to climb." |
+| 0:21 | **The struggle, all but lost** | The storm tears at the cloak; the flame gutters; they shield it with their body. | "The storm took everything it could. Halfway up, the flame was almost gone." Then, alone: "Almost." |
+| 0:29 | **The climax** | The summit. The flame goes into the cold bowl. Nothing. Then, at 0:33, a pillar of fire, and **`[NAME]` forged in gold** with "Fire-Bringer of Olympus" beneath. | "`[NAME]` brought the fire home." |
+| 0:39 | **The answer to the hook** | Fire runs down the mountain; then the same faces as the opening. | "And every light you see tonight was lit from theirs." Then: "That is what they saw." |
+| 0:50 | **The honour** | Dawn; the whole city turned to the summit; the name cut in stone; the end card. | "Olympus stands. Because one heart gave." |
+
+The first cut opened on the ember with "Every city has one night it almost fell", which told the audience at once what kind of story it was. The owner asked for a hook that hides it.
 
 ## For the top three, as a team
 
@@ -37,7 +40,7 @@ The same film, with these changes.
 
 ## Made, 25 Nov 2026
 
-The single-hero version is made and plays at `/hero.html`. Six shots (the ember is drawn by the page), narration in the owner's "movie" voice, and a score that is generated but not yet added. Costs, files and the cut are in `docs/knowledge/hero-films.md`.
+The single-hero version is made and plays at `/hero.html`. Six shots (the ember is drawn by the page), narration, and the score. The second cut uses the owner's "Zeus-authorative" voice (he found the first voice, "movie", very poor) and has the Suno score under it. Costs, files and the cut are in `docs/knowledge/hero-films.md`.
 
 ## The prompts for the shots
 
@@ -53,5 +56,4 @@ The hero is described in the same words every time, which is what kept the figur
 ## Not yet made
 
 - The team version (three names).
-- The score in the film (waiting for the owner's word on one download credit).
 - The person's profile picture on the end card.
