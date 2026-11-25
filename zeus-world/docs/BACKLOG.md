@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-036.**
+- **Next number: ZW-037.**
 
 ## Open
 
@@ -47,6 +47,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Rejected by the owner; replaced by ZW-034 | 24 Nov 2026, owner |
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
+| ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 1 (audit) done; waiting for the owner's answers before the prototype | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -370,3 +371,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
   - Detail in `knowledge/stage.md`.
 - **Checked:** stills of the glow; the stillness and the beat with exact made-up input. **Not checked:** motion, and listening to real music.
 - **Waiting on the owner:** with music playing and Listen on, does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the glow right.
+
+### ZW-036: Professional virtual laser and stage lighting system
+
+- **Reported:** 25 Nov 2026, by the owner, as a full written brief. The stage is to become "a professional, realistic, music-synchronized virtual laser and stage-lighting production system suitable for live DJ performances on TikTok", by enhancing what exists, in six phases, starting with an audit and no rewriting.
+- **The brief (condensed), the audit and the plan:** `STAGE-PLAN.md`.
+- **Phase 1, the audit, done 25 Nov 2026.** Conclusion: the engine stays; the way a beam is drawn and the way the rig is driven must be replaced. Nine specific causes of the artificial look are listed.
+- **Next:** five questions to the owner, then phase 2, a prototype of one projector on its own page. Nothing else is built until the owner passes it.
+- New fact from the brief: the owner streams from **macOS**.
+

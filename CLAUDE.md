@@ -25,6 +25,7 @@ Then read whatever the task touches:
 | The bigger plan, in phases | `zeus-world/docs/ROADMAP.md` |
 | Ideas for making it a game (not decided) | `zeus-world/docs/BRAINSTORM-GAME.md` |
 | Research behind the game direction | `reports/Zeus World game design research.md`, notes in `research_notes/` |
+| The music stage: the owner's brief, audit and phased plan | `zeus-world/docs/STAGE-PLAN.md` |
 | Art style and model catalogue | `zeus-world/docs/ASSET-BIBLE.md` |
 | Asset pipeline commands | `zeus-world/assets/README.md` |
 

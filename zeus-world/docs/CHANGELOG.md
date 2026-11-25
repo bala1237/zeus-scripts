@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 25 Nov 2026
+
+- **Brief received and audit written for a professional laser and lighting system (ZW-036).** `STAGE-PLAN.md` holds the owner's brief, an assessment of the current stage, the causes of its artificial look, a phased plan and five questions. Nothing built.
+
 ## 24 Nov 2026
 
 - **Stage: still without music, visibly on the beat, neon glow (ZW-035).** The stage now stands still and dark until it hears music or the beat is tapped; a lamp and a bar in the panel show the beat and what it hears; the lights hit on the beat itself; a glow pass gives the lasers and screen a neon halo against black.
