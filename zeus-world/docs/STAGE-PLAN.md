@@ -250,3 +250,23 @@ Built from the owner's first reference (the liquid-art screensaver), as somethin
 - **How:** one full-screen shader (`review/flow.js`) drawn behind the beams, through the same glow and overlay output. A ribbon is a band along a wandering line; the whole space is bent by noise (that is the liquid feel); a twist term narrows it to a bright edge and opens it again; strands are sine lines across its width, pushed about by noise.
 - **Checked:** four stills in three themes and with lasers (`assets/sheets/laser_flow.jpg`); the page's fifteen-minute stepped run with no errors; the build. **Not checked:** the motion itself, which is the whole point of it, and its cost on a real graphics card.
 - **Not yet done from the references:** the smoky, cloud-like version of the liquid (the reference's main image is more smoke than ribbon); the dense many-coloured laser look of the two concert videos.
+
+## The festival look, "Olympus" (ZW-039), built 25 Nov 2026
+
+The owner sent the Transmission Prague 2016 video again on its own: "this is something i loved it". Only its cover frame could be studied from the build machine (YouTube pages are blocked; thumbnails are not). What that frame shows is listed in the backlog entry. This look is built from it, as a seventh theme that opens the show.
+
+- **A second rig, used only by this theme:** a wall of ten projectors at five heights across a wide stage, twenty beams each, and six projectors that throw wide soft shafts (two at the booth, four at the sides). Up to 245 beams at once, against 51 in the club themes.
+- **Colour:** green fans with magenta shafts, as in the reference.
+- **Five patterns:** cathedral (the reference picture: every fan standing open and leaning outwards, shafts rising through the middle and crossing from the sides), crown (level fans in tiers, breathing), wave wall (upright fans swinging one after another), spears (each projector a tight ray, like a rising sun), sunburst (the big one: everything wide and turning).
+- **The stage:** a temple front with eight columns and a pediment (it is Zeus's stage), the booth with ZEUS on it in white, and a lattice of laser lines on the structure behind. All dark shapes that only catch the colour in the air. The "Stage set" button turns it off, leaving only the light, for use over a camera. `?name=` changes the word on the booth.
+- **Views:** four of its own, low in the crowd looking up, to either side, and further back.
+- The club themes are unchanged and follow it in the rotation.
+
+**Worked out the hard way**
+
+- A fan's plane always contains the projector's forward direction. Pointed at the audience, every fan is seen edge-on and they pile into one bundle. For fans that stand open like a hand fan, the projector is tilted steeply up (about one radian) with roll 0, and a new value, **lean**, tips the fan sideways within its own plane.
+- A shaft seen face-on is thin, so it needs about five times the strength of a sheet seen along its length.
+- The intensity budget is set per theme (`budget` in the theme): 110 here against 13 for the club, or two hundred beams come out as faint threads.
+- The big patterns of the club rig used to light "everything that is not the floor", which lit the wall too. Patterns must name the groups they use.
+
+**Checked:** ten director tests (the wall and the club rig never light together; left and right mirror, including lean and roll); the fifteen-minute stepped run with no errors, seven themes and fifteen patterns seen; a still of each pattern and one without the set over the stand-in camera (`assets/sheets/laser_festival.jpg`); the build. **Not checked:** motion; frame rate with 245 beams on a real graphics card, which is the main risk of this look; how close the movement is to the reference, which could not be watched.

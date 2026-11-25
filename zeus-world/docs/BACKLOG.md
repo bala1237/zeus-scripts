@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-039.**
+- **Next number: ZW-040.**
 
 ## Open
 
@@ -50,6 +50,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 3 (seven-projector rig, Lighting Director, six themes, camera moves) shipped 25 Nov; waiting for the owner to pass it | 25 Nov 2026, owner |
 | ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | First version shipped 25 Nov: a Flow mode (ribbons of colour that never stop). Waiting for the owner: is this what he meant | 25 Nov 2026, owner |
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
+| ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
 
 ## Closed
 
@@ -405,3 +406,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Planned fix:** this is phase 4 of ZW-036 (music intelligence): analysis on the audio thread, separate low, mid and high bands, a tempo and beat-position tracker that holds through quiet parts, and a delay setting.
 - **Fix shipped 25 Nov 2026:** a new beat tracker (`assets/review/tracker.js`). It finds the tempo and where the beat falls, holds both through parts with no drums, and drives the lights from the predicted beat. A Beat timing slider on the laser page corrects any delay. The show also goes quiet in a breakdown and fires its biggest pattern on the drop. Detail in `STAGE-PLAN.md`, "Phase 4, first part". Checked on made-up music only (15 tests); real music is for the owner to judge.
 - **Waiting on the owner:** with real music, does the status line say "on the beat at ..." with the right tempo; do the lights land on the beat (use the Beat timing slider if they are early or late); which tracks still fool it.
+
+### ZW-039: A festival look after the Transmission Prague show
+
+- **Reported:** 25 Nov 2026, by the owner, sending the video of Armin van Buuren, Vini Vici and Hilight Tribe at Transmission Prague 2016 again on its own: "this is something i loved it".
+- **What the reference shows (from its cover frame; the video itself cannot be watched from the build machine):** about a dozen projectors at several heights across a wide stage, each throwing a fan of twenty or more thin green beams up and out over the crowd; wide soft magenta shafts from the centre and the far sides; a green lattice of laser lines drawn on the structure behind; a temple front with columns; the booth with the artist's name lit in white; hands in the air along the bottom.
+- **What it settles:** the question put to him under ZW-037, whether the lasers should move towards the dense, many-coloured look. Yes. This changes the "dark, restrained club" direction of the first brief (`DECISIONS.md` updated).
+- **Not known:** how the show moves, since only still frames could be seen.
+- **First version shipped 25 Nov 2026:** the Olympus theme on `/laser.html`, which now opens the show: a wall of ten projectors with twenty beams each, magenta shafts, five patterns, a temple stage with ZEUS on the booth and a laser lattice, four views of its own, and a Stage set button to leave only the light. Detail in `STAGE-PLAN.md`, "The festival look". Checked in stills and by tests.
+- **Waiting on the owner:** is this the look he loved; frame rate with this many beams on his Mac; stage set on or off over his camera; what in the video's movement he wants that the stills could not show.

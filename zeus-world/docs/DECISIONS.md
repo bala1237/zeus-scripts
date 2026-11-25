@@ -36,6 +36,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Order of the stream features (24 Nov 2026) | Concert mode first, then the game stage |
 | Music (24 Nov 2026) | Music gets its own stage, separate from the city. Concert mode inside the city was tried and rejected by the owner |
 | Stage direction (25 Nov 2026) | The stage is to become a professional virtual laser and lighting system: 70% premium underground nightclub, 20% minimalist industrial techno, 10% festival spectacle; dark, restrained, physically coherent. Built in phases, each passed by the owner. The owner streams from macOS |
+| Stage direction, revised (25 Nov 2026) | The owner sent the Transmission Prague 2016 laser show as "something i loved": many projectors, fans of twenty or more beams each, green with magenta shafts, a temple stage. The lasers get a festival look in that manner alongside the club themes. This relaxes the "dark, restrained" rule of the first brief for that look |
 
 ## Open questions
 
