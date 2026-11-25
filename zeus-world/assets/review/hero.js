@@ -14,7 +14,7 @@ import { FILMS, showName, slug, span } from './herofilms.js';
 import { connectObs } from './obsremote.js';
 
 const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'), PLAIN = q.get('ui') === '0' || SHOT;
-const film = FILMS[q.get('film')] || FILMS['fire-bringer'], video = $('film'), base = new Audio(), line = new Audio(); base.preload = line.preload = 'auto';
+let filmId = FILMS[q.get('film')] ? q.get('film') : 'fire-bringer', film = FILMS[filmId]; const video = $('film'), base = new Audio(), line = new Audio(); base.preload = line.preload = 'auto';
 const store = { get: (k) => { try { return localStorage.getItem('hero-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('hero-' + k, v); } catch { /* private window */ } } };
 let name = showName(q.get('name') ?? store.get('name') ?? ''), playing = false, lineStarted = false, failed = '';
 
@@ -38,7 +38,19 @@ function setName(n) { name = showName(n); const shown = (name || 'OUR HERO').toU
   const k = Math.min(1, 13 / Math.max(13, shown.length)); $('forge').style.fontSize = `${(11 * k).toFixed(2)}cqh`; $('cardName').style.fontSize = `${(8.4 * k).toFixed(2)}cqh`; $('stone').querySelector('.n').style.fontSize = `${(5.2 * Math.min(1, 18 / Math.max(18, shown.length))).toFixed(2)}cqh`;
   // the narrator saying this name, if a recording of it has been made; otherwise the line without a name
   line.src = film.nameLine.generic; if (name) { const named = `${film.nameLine.named}${slug(name)}.mp3`; fetch(named, { method: 'HEAD' }).then((r) => { if (r.ok && (r.headers.get('content-type') || '').includes('audio')) line.src = named; }).catch(() => {}); } }
-video.src = film.video; base.src = film.sound; video.muted = true; setName(name); if (!PLAIN) { $('name').value = name; $('name').addEventListener('input', () => { setName($('name').value); store.set('name', name); }); }
+// which film: the library is herofilms.js. Changing film changes the footage, the sound and the honour under the name.
+function setFilm(id) { if (!FILMS[id]) return; filmId = id; film = FILMS[id]; video.src = film.video; base.src = film.sound; setName(name); if (!PLAIN) $('filmSel').value = id; }
+// The hero's picture, for the end card (ZW-047). Any picture is cut to a square from its middle and made small, so that it can be sent
+// to the page in OBS along with the name. With no picture the end card is the laurel and the name alone.
+let pic = '';
+function setPic(src) { pic = src || ''; $('card').classList.toggle('pic', !!pic); $('cardPic').src = pic || 'data:,'; if (!PLAIN) { $('picOff').style.display = pic ? '' : 'none'; $('picBtn').textContent = pic ? 'Change picture' : 'Add picture'; } }
+function takePicture(file) { if (!file || !file.type.startsWith('image/')) return; const img = new Image(), url = URL.createObjectURL(file); img.onload = () => { const S = 360, c = document.createElement('canvas'), k = Math.min(img.width, img.height); c.width = c.height = S;
+    c.getContext('2d').drawImage(img, (img.width - k) / 2, (img.height - k) / 2, k, k, 0, 0, S, S); URL.revokeObjectURL(url); setPic(c.toDataURL('image/jpeg', 0.86)); }; img.onerror = () => URL.revokeObjectURL(url); img.src = url; }
+video.src = film.video; base.src = film.sound; video.muted = true; setName(name); setPic(q.get('pic') || '');
+if (!PLAIN) { const sel = $('filmSel'); for (const [id, f] of Object.entries(FILMS)) { const o = document.createElement('option'); o.value = id; o.textContent = f.title; sel.append(o); } sel.value = filmId; sel.addEventListener('change', () => { stop(); setFilm(sel.value); });
+  $('picBtn').addEventListener('click', () => $('picFile').click()); $('picFile').addEventListener('change', () => { takePicture($('picFile').files[0]); $('picFile').value = ''; }); $('picOff').addEventListener('click', () => setPic(''));
+  addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/')); if (f) { e.preventDefault(); takePicture(f); } });
+  addEventListener('dragover', (e) => e.preventDefault()); addEventListener('drop', (e) => { e.preventDefault(); takePicture(e.dataTransfer?.files?.[0]); }); } if (!PLAIN) { $('name').value = name; $('name').addEventListener('input', () => { setName($('name').value); store.set('name', name); }); }
 
 // ---------- what is drawn at each moment of the film
 const ease = (x) => x * x * (3 - 2 * x), clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), out3 = (p) => 1 - (1 - p) ** 3;
@@ -56,7 +68,7 @@ function embers(t, since, level, cy, spread) { const W = sparks.width, H = spark
   sctx.globalCompositeOperation = 'lighter'; for (let k = 0; k < 90; k++) { const per = 2.2 + hash(k, 1) * 2.4, ph = (since / per + hash(k, 2)) % 1; if (since < hash(k, 2) * 0.9) continue;
     const x = W * (0.5 + (hash(k, 3) - 0.5) * spread + 0.018 * Math.sin(ph * 7 + k)), y = H * (cy + 0.06 - ph * (0.2 + 0.34 * hash(k, 4))), a = Math.sin(Math.PI * ph) ** 1.5 * level * (0.45 + 0.55 * hash(k, 5)), r = H * (0.0022 + 0.004 * hash(k, 6)) * (1 - 0.5 * ph);
     const gr = sctx.createRadialGradient(x, y, 0, x, y, r * 4); gr.addColorStop(0, `rgba(255,236,190,${a.toFixed(3)})`); gr.addColorStop(0.25, `rgba(255,170,60,${(a * 0.7).toFixed(3)})`); gr.addColorStop(1, 'rgba(255,90,10,0)'); sctx.fillStyle = gr; sctx.beginPath(); sctx.arc(x, y, r * 4, 0, 6.3); sctx.fill(); } }
-function draw(t) { const e = span(t, [film.ember[0], film.ember[0] + 0.6, film.ember[1] - 1.2, film.ember[1]]), u = (t - film.ember[0]) / (film.ember[1] - film.ember[0]);
+function draw(t) { const em = film.ember || [-9, -8], e = span(t, [em[0], em[0] + 0.6, em[1] - 1.2, em[1]]), u = (t - em[0]) / (em[1] - em[0]);
   $('ember').style.opacity = String(e * (0.75 + 0.25 * Math.sin(t * 23))); $('ember').style.transform = `translate(${(12 + 70 * u).toFixed(2)}cqw, ${(52 - 9 * Math.sin(u * 3.1) + 2 * Math.sin(u * 17)).toFixed(2)}cqh) scale(${(1 - 0.5 * Math.max(0, u - 0.7) / 0.3).toFixed(3)})`;
   // the heroic moment
   const f = film.forge, R = f[1] - f[0], fu = t - f[0], exit = clamp((t - f[2]) / (f[3] - f[2])), on = t >= f[0] - 0.3 && t < f[3], forge = $('forge'); forge.style.opacity = on ? '1' : '0';
@@ -64,9 +76,9 @@ function draw(t) { const e = span(t, [film.ember[0], film.ember[0] + 0.6, film.e
     forge.querySelector('.under').style.setProperty('--r', (ease(clamp((fu - R * 0.9) / 0.9)) * (1 - exit)).toFixed(3)); forge.style.backgroundSize = `${(100 * (1 - exit)).toFixed(1)}% 100%`; }
   const card = ease(span(t, film.card)), dim = on ? 0.2 * clamp((fu + 0.3) / 0.6) * (1 - exit) : 0;
   $('shade').style.opacity = String(Math.max(film.fadeIn && t < film.fadeIn[1] ? 1 - clamp((t - film.fadeIn[0]) / (film.fadeIn[1] - film.fadeIn[0])) : 0, card * 0.92, dim));
-  $('stone').style.opacity = String(ease(span(t, film.stone))); $('card').style.opacity = String(card);
+  $('stone').style.opacity = String(film.stone ? ease(span(t, film.stone)) : 0); $('card').style.opacity = String(card);
   // the end card: the same lettering, arriving the same way but slower, under the laurel
-  const cu = t - film.card[0] - 0.4; forged($('cardName'), cardLs, cu, 1.8); $('laurel').style.transform = `scale(${(0.86 + 0.14 * out3(clamp((t - film.card[0]) / 2))).toFixed(3)})`; $('cardTitle').style.opacity = ease(clamp((cu - 1.5) / 1)).toFixed(3);
+  const cu = t - film.card[0] - 0.4; forged($('cardName'), cardLs, cu, 1.8); $('crest').style.transform = `scale(${(0.86 + 0.14 * out3(clamp((t - film.card[0]) / 2))).toFixed(3)})`; $('cardTitle').style.opacity = ease(clamp((cu - 1.5) / 1)).toFixed(3);
   sctx.clearRect(0, 0, sparks.width, sparks.height); embers(t, fu - 0.2, on ? (1 - exit) * clamp((fu + 0.2) / 0.8) : 0, 0.46, 0.62); embers(t, cu, card, 0.56, 0.5);
   const c = film.captions.find((x) => t >= x[0] && t <= x[1]), cap = $('caption'); cap.classList.toggle('on', !!c); if (c) cap.textContent = c[2].replace('[NAME]', name || 'One of us'); }
 
@@ -83,7 +95,7 @@ if (q.get('ui') === '0') { addEventListener('pointerdown', () => { if (!playing)
 // ---------- the remote (ZW-048). A page that runs without controls, as a browser source in OBS, does what it is told:
 // by OBS itself (an event that OBS hands to every browser source) or by another tab of the same browser.
 const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-hero') : null;
-const obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'play') { if (m.name != null) { setName(m.name); if (!PLAIN) $('name').value = name; } play(); } else if (m.cmd === 'stop') stop(); };
+const obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'play') { if (m.film && m.film !== filmId) setFilm(m.film); if ('pic' in m) setPic(m.pic); if (m.name != null) { setName(m.name); if (!PLAIN) $('name').value = name; } play(); } else if (m.cmd === 'stop') stop(); };
 addEventListener('zeusHero', (e) => obey(e.detail)); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data);
 // The page with controls is the remote. It reaches OBS on this computer through OBS's own remote control, tells the source to play,
 // and if OBS cannot pass that on, points the source at an address with the name in it, which makes it load again and play.
@@ -92,10 +104,10 @@ if (!PLAIN) { let obs = null, src = null; const say = (t) => { $('obsStatus').te
       src = await obs.findBrowserSource('hero.html').catch(() => null); say(src ? `connected · source "${src.name}"` : 'connected, but OBS has no browser source with hero.html in its address'); } catch (e) { obs = null; say(e.message); } };
   const send = async (m) => { chan?.postMessage(m); if (!obs) { say('not connected to OBS'); return; }
     try { await obs.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); }
-    catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
-  $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
+    catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('film', m.film || filmId); u.searchParams.delete('pic'); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
+  $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name, film: filmId, pic })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
 // the door for the stage or for TikFinity later: window.playHeroFilm('Andie Howard')
-window.playHeroFilm = (n) => { if (n != null) setName(n); play(); }; window.__hero = { film, video, base, line, draw, get name() { return name; }, get playing() { return playing; } };
+window.playHeroFilm = (n) => { if (n != null) setName(n); play(); }; window.__hero = { get film() { return film; }, get pic() { return pic; }, video, base, line, draw, get name() { return name; }, get playing() { return playing; } };
 const fonts = document.fonts ? Promise.all([document.fonts.load('800 80px Cinzel'), document.fonts.load(`${Number(q.get('weight')) || 700} 80px '${(q.get('font') || 'Cinzel').replace(/[^\w ]/g, '')}'`), document.fonts.load("italic 500 20px 'Cormorant Garamond'"), document.fonts.load('500 20px Cinzel'), document.fonts.load('700 80px Cinzel'), document.fonts.load('600 40px Cinzel'), document.fonts.load('400 20px Cinzel')]).catch(() => {}) : Promise.resolve();
 if (SHOT) { const t = Number(q.get('t') || 0); fonts.then(() => new Promise((done) => { const go = () => { video.addEventListener('seeked', () => setTimeout(done, 150), { once: true }); video.currentTime = Math.min(t, (video.duration || 60) - 0.05); }; if (video.readyState >= 1) go(); else video.addEventListener('loadedmetadata', go, { once: true }); setTimeout(done, 15000); })).then(() => { draw(t); requestAnimationFrame(() => { window.ready = true; }); }); }
 else { draw(0); fonts.then(() => { window.ready = true; }); requestAnimationFrame(tick); }

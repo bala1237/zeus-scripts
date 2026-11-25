@@ -41,7 +41,12 @@
   #stone .rule { width: 34cqh; height: .18cqh; margin: 1.2cqh auto; background: linear-gradient(90deg, transparent, #e9c275, transparent); }
   /* the end card */
   #card { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; background: radial-gradient(ellipse at 50% 45%, rgba(60, 34, 6, .55), #000 70%); }
-  #card svg { flex: none; width: 26cqh; height: 26cqh; }
+  #crest { position: relative; flex: none; width: 26cqh; height: 26cqh; }
+  #crest svg { width: 100%; height: 100%; }
+  /* the hero's picture, in a ring of gold inside the laurel; without one, the laurel alone */
+  #cardPic { display: none; position: absolute; left: 50%; top: 52%; width: 58%; height: 58%; transform: translate(-50%, -50%); border-radius: 50%; object-fit: cover; border: .45cqh solid #e9c275; box-shadow: 0 0 0 .15cqh #7a4709, 0 0 3cqh rgba(255, 170, 60, .55); }
+  #card.pic #crest { width: 40cqh; height: 40cqh; margin-top: -2cqh; } #card.pic #cardPic { display: block; }
+  #card.pic .n { margin-top: .5cqh; } #card.pic .t { margin-top: 2.5cqh; }
   #card .n { font-size: 8.4cqh; margin-top: 2cqh; }
   #card .t { font-weight: 400; font-size: 3cqh; letter-spacing: .42em; margin: 4cqh 0 6cqh .42em; color: #e9c98a; white-space: nowrap; }
   #caption { left: 0; right: 0; bottom: 3.2cqh; text-align: center; font: italic 500 3.1cqh 'Cormorant Garamond', Georgia, serif; letter-spacing: .02em; color: #fff; text-shadow: 0 0 1cqh #000, 0 0 .4cqh #000; opacity: 0; transition: opacity .3s; padding: 0 8cqh; }
@@ -62,7 +67,7 @@
   <div id="forge"><div class="flare"></div><div class="name" id="forgeName"></div><div class="under"><i></i><span id="forgeTitle"></span><i></i></div></div>
   <div id="stone"><div class="rule"></div><div class="n" id="stoneName"></div><div class="rule"></div></div>
   <div id="card">
-    <svg viewBox="0 0 200 200" fill="none" stroke="#e9c275" stroke-width="2.2" stroke-linecap="round" id="laurel"></svg>
+    <div id="crest"><svg viewBox="0 0 200 200" fill="none" stroke="#e9c275" stroke-width="2.2" stroke-linecap="round" id="laurel"></svg><img id="cardPic" alt="" src="data:,"></div>
     <div class="n name" id="cardName"></div><div class="t" id="cardTitle"></div>
   </div>
   <canvas id="sparks"></canvas>
@@ -70,7 +75,10 @@
 </div></div>
 <div id="ui">
   <span id="status" style="font-weight:500;opacity:.85"></span>
+  <label>Film <select id="filmSel" style="font:inherit;font-weight:500;padding:6px 8px;border-radius:6px;border:1px solid #6a4a1a;background:#1a1206;color:#fff"></select></label>
   <label>Hero <input id="name" type="text" maxlength="24" placeholder="the name to honour"></label>
+  <button id="picBtn" title="The hero's picture for the end card: choose a file, or copy a picture and paste it on this page, or drop one here">Add picture</button>
+  <button id="picOff" style="display:none">Remove picture</button><input id="picFile" type="file" accept="image/*" style="display:none">
   <button id="play" class="on" title="Play the film from the start (or press the space bar)">Play the film</button>
   <button id="stop">Stop</button>
   <button id="caps" title="Show the narrator's words on screen, for viewers with the sound off">Words on screen: off</button>

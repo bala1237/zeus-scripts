@@ -22,6 +22,11 @@ The film runs in OBS as a browser source with the address `hero.html?ui=0` (1920
 - **Checked** with `node renders/obstest.mjs`, a stand-in for OBS's remote control with a password: wrong password refused, right one connected and the source found, Play sent the event with the name, the other tab played, Stop stopped, and the load-again route set the right address. **Not checked: OBS itself.** In particular, that OBS hands the event to browser sources is from OBS's documentation and has not been seen working by us.
 - The film only shows if its scene is on screen; the remote does not switch scenes.
 
+## The hero's picture, and choosing a film
+
+- **Picture.** On the page with controls: "Add picture" (choose a file), or copy a picture and paste it on the page, or drop a file on it. It is cut to a square from its middle, made 360 pixels, and shown in a gold ring inside the laurel on the end card. "Play in OBS" sends it along with the name. With no picture the card is the laurel and the name. Not kept between visits: it belongs to one hero. A picture cannot be fetched from TikTok by name (TikTok blocks that); TikFinity hands one over with each gift, for when that is connected. `&pic=<address of a picture>` also works.
+- **Film.** A list on the page chooses the film; the remote sends the choice to OBS. In the address: `&film=fire-bringer`. Films are entries in `herofilms.js`; `ember` and `stone` are optional in an entry.
+
 ## How the name gets in
 
 The film itself is generic. The name is added by the page when it plays:

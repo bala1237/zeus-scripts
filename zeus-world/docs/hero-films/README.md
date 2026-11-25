@@ -27,8 +27,17 @@ The hero is **never seen from the front**: from behind, hooded, or in silhouette
 
 ## Scripts
 
-| File | Story | State |
-| --- | --- | --- |
-| `01-fire-bringer.md` | Carries a flame through the storm to relight the great fire | Written 25 Nov 2026; waiting for the owner's approval of the words. Nothing generated |
+| No. | Film | For | State |
+| --- | --- | --- | --- |
+| 1 | [The Fire-Bringer](01-fire-bringer.md) | a win; the top giver | Made, second cut |
+| 2 | [The Last Banner](02-last-banner.md) | a battle that was lost | Written; waiting for the owner's word on the spend |
+| 3 | [The Well](03-the-well.md) | pure generosity | Written; waiting for the owner's word on the spend |
 
-Ideas for later scripts: The Shield at the Gate (stands alone in the gateway when the wall breaks); The Builder (raises the city again after it falls); a version of each for a battle that was lost ("We fell tonight. But one of us never stopped.").
+Ideas not yet written: The Lighthouse (a storm at sea; a close win), The Bell (a village in snow; coming back from behind), The Shield at the Gate, The Builder.
+
+## Rules added 25 Nov 2026 (the owner)
+
+- **Different films, not one film varied:** each has its own world.
+- **Cheaper to make:** about 45 seconds; moving shots only for the hook and the climax; the rest are still pictures the film moves slowly across.
+- **The person's picture** on the end card when there is one; the name alone when not.
+- **No gender in any script**, so one film serves anyone.
