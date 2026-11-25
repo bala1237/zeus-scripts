@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **Andie's Place: the picture is a resizable 16:9 box in the middle of the page (ZW-042).** At the owner's request, so there is space round it. A Size slider and a draggable gold corner; the size is remembered.
 - **Andie's Place: picture in a fixed 16:9 frame, controls below it (ZW-042).** At the owner's request. Nothing is cropped any more and the controls never lie over the picture; H hides them.
 - **Andie's Place (ZW-042).** A stream backdrop for Andie Howard, who plays the owner's songs on her stream: her black, gold and purple studio rebuilt in code, whose own neon follows the music (chase, flashes, fill, strobe), with an optional layer of purple and gold lasers, a brightness control, an editable welcome sign, and every setting available in the address for a TikTok LIVE Studio browser source. `/andie.html`; `knowledge/andie.md`.
 - **The reference video watched, and the building cues rebuilt (ZW-041).** The owner uploaded the Transmission video and it was read frame by frame. The stage is now what the video has: a temple of six pillars with three free-standing pillars each side and rows of warm bulbs, lit in amber, red and gold. A new cue, oracle, reproduces the opening: short flashes with black between, jumping from the temple to the side pillars to single pillars. During building cues the view cuts between wide and close. The video's timeline is written up in `STAGE-PLAN.md`.
