@@ -57,7 +57,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
-| ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov with a realistic film clip for the lion family, played as the sky behind the temple. Waiting for the owner: is this it, and which gifts next | 25 Nov 2026, owner |
+| ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family and for Zeus (his own staging), played as the sky behind the temple. Waiting for the owner | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -512,3 +512,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Also fixed:** since the cinematic version the lasers had not been stepping back during any gift (a swallowed line of code). They do again.
 - **Open:** the licence terms for using a generated clip on a commercial stream are not checked. A longer show for a bigger gift needs a longer or a second clip.
 - **Waiting on the owner:** is this the show he wanted; approval to make clips for more families (about $0.50 each at the same settings, more if a clip needs a second try); which first.
+- **Owner, 25 Nov 2026:** "Let's try Zeus. But I want it to be in a very creative staging." Approval for a Zeus clip, with a staging of its own and not the lion's template.
+- **Zeus shipped 25 Nov 2026**, with a staging of his own: his eyes open in the dark above a temple in black silhouette, he raises a thunderbolt and throws it, the stage's own bolt lands on the temple where the clip's bolt comes down, and lightning runs along the pillars lighting all twelve flames. 17 seconds. One clip, about $0.70. Test button "Zeus". Detail in `STAGE-PLAN.md`, "Zeus, with a staging of his own".
+- **Spend so far on clips:** about $1.20 (lion $0.50, Zeus $0.70, at the listed rate).
+- **Waiting on the owner:** is Zeus's staging what he meant by creative; does the thrown bolt meet the stage's bolt to the eye; which family next, and whether each should get a staging of its own.

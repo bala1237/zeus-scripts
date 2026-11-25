@@ -462,3 +462,31 @@ The owner on the constellation show: "I wanted it like a show. A 3d animation li
 - **A comment put in the middle of a line swallowed `gift.dim += ...`**, so from the cinematic version onwards the lasers never stepped back for any gift, and a check that only looked at the end state ("lasers back to 1") passed. Found because the lasers were blazing over the film. This is the trap that has been met several times before; comments go on their own line.
 
 **Checked:** eleven tests for gifts (the film's start, waking beat and length among them); the 22,000 button by a real click with the show played in real time in a browser (clip fades in at beat 4, the view pushes in for the roar, the clip fades at beat 22, lasers and stage back to normal after); stills of the strike, the lion walking out, the roar and the name (`assets/sheets/laser_gift_lion.jpg`); the build, with the clip copied into it. **Not checked:** the clip in motion on the stage at full frame rate; playback inside TikTok LIVE Studio.
+
+## Zeus, with a staging of his own (ZW-046), 25 Nov 2026
+
+The owner: "Let's try Zeus. But I want it to be in a very creative staging." TikTok has a gift called Zeus (34,000 coins); on this stage it is the one that must be different.
+
+**The idea: the bolt leaves the film and lands on the stage.** In the lion's show the stage strikes first and the clip follows. Here there is no lightning at all until Zeus throws it, and the bolt he throws in the clip is the one that hits our temple.
+
+**What plays (34 beats on the clock, 17 seconds)**
+
+1. *Black.* A beat of nothing, from far back.
+2. *The eyes.* A cut to the foot of the temple, looking straight up it. Far above, two eyes glowing white-blue open in the storm; the clip fades up slowly from black so they are the first thing seen. The temple stands in front as a **black silhouette**: nothing on the stage is lit.
+3. *The reveal.* Lightning in the cloud shows Zeus: white beard, laurel wreath, towering over the temple, looking down at it. He raises his fist and a thunderbolt forms in it.
+4. *The throw.* A cut to the whole picture. He hurls the bolt down, and it comes to the foot of the frame, where the temple stands.
+5. *The strike* (8.0 s into the clip, beat 17). The stage's own bolt lands on the temple's peak, the hardest there is: flash, ring, the ground jumps. Two more rings. Then **lightning runs out along the pillars from the middle, one every quarter of a beat, and every pillar it touches takes a flame.** The dark temple is alight in three beats. Zeus has lit all twelve himself.
+6. *The name.* Forged across the temple, gold rain, meteors behind. The view goes closer; he lowers his arm and watches.
+7. *The end.* The clip fades, the lasers return in gold, and the twelve flames stay burning for over a minute.
+
+The flames he lights do not trigger "OLYMPUS AWAKENS" (the script holds that off for a minute and a half): he is the awakening.
+
+**The clip.** Made on fal with Wan 3.0 Prime, text to video, 14 s, 1080p, 16:9, audio off, prompt expansion on, seed 150392040; **about $0.70** at the listed rate ($0.05 a second). One attempt, used as it came. Stored as `assets/review/public/films/zeus.webm` (VP9, 1600 × 900, 6.6 MB).
+
+Prompt: "Photorealistic cinematic visual effects shot, low camera angle looking steeply up into a night sky of towering black storm clouds. The shot begins in near-total darkness: only two eyes glowing white-blue with lightning open high in the clouds. Lightning flickers inside the clouds and slowly reveals Zeus, the colossal Greek god of thunder: a powerful old man with a long flowing white beard and white hair blowing in the wind, a stern majestic face, bare muscular shoulders and chest draped in white and gold cloth, a golden laurel wreath on his head. He fills the upper two thirds of the frame, centred, towering over the viewer and looking straight down at the camera. He slowly raises his right arm above his head and a blazing white-gold thunderbolt forms crackling in his fist, lighting his face and beard. Then he hurls the thunderbolt straight down toward the bottom centre of the frame and the whole frame flashes bright white-gold for an instant. After the flash he lowers his arm, sparks and golden embers rise around him, and he gazes down calmly with glowing eyes as the storm rolls. The bottom third of the frame stays dark storm cloud only, with no ground, no buildings, no people, no text, no logos. Dramatic low-key lighting, strong rim light from the lightning, volumetric cloud, extremely detailed skin, hair and cloth, epic scale, film grain, anamorphic lens."
+
+What worked in the prompt, for the next clip: describing the shot as a sequence in time (begins, then, after); saying where in the frame the action must end ("toward the bottom centre"), which is what lets the stage pick it up; and keeping the bottom third empty for the temple. The model did add a little rocky ground with fire at the foot of the frame for a second around the strike; the temple and the flash cover it.
+
+**How it is built.** A film can name a staging (`staging: 'zeus'` in `FILMS`), with its own start beat and tail. `gifts.js` has that staging's script; `laser.js` has its camera plan and fades the clip in slowly. Everything else is shared with the lion.
+
+**Checked:** a test of Zeus's script (the clip first; no lightning before the throw; the stage's bolt on the peak at the clip's strike; twelve pillar bolts, middle pillars first; twelve flames; no awakening set off); the Zeus button by a real click with the show played in real time in a browser (clip fading up from beat 2, views 9, 15, 19, 20, 19 in order, lasers off until the clip ends, everything back to normal after); eight stills (`assets/sheets/laser_gift_zeus.jpg`); the build. **Not checked:** motion at full frame rate; whether the stage's bolt and the clip's bolt meet to the eye, which is a matter of a tenth of a second and can only be judged moving. `roar` in `FILMS.zeus` is the number to nudge.

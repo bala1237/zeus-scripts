@@ -13,7 +13,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeamRenderer } from './beams.js';
 import { createBeat } from './beat.js';
 import { createFlow } from './flow.js';
-import { createGifts, LEGEND, giftBeats, legendWake, FILM_START } from './gifts.js';
+import { createGifts, LEGEND, giftBeats, legendWake, filmStart } from './gifts.js';
 import { createGiftFx, makeNameMaterial } from './giftfx.js';
 import { stageGift, FILMS } from './giftcatalog.js';
 import { createDirector, BUILDING, building, THEMES } from './director.js';
@@ -116,7 +116,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     gA = gifts.update(dB, dt, onBeat, playing ? onBeat && Math.floor(b.beats) % 4 === 0 : onBeat);
     if (gA !== gift.who) { gift.who = gA; gift.booth = ''; if (gA && (gA.size === 'big' || gA.size === 'legend') && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
     // the script's requests, each acted on once: lightning, the leap between pillars, the name arriving on the booth
-    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (e.type === 'draw') fx.figure(e.figure, e.tier); else if (e.type === 'film') fx.playFilm(e.figure, FILMS[e.figure].src); else if (e.type === 'wake') { if (gA && gA.film) fx.roar(); else { fx.wake(); if (playing) dir.hit(); } } else if (e.type === 'ring') fx.ring(0.8); else if (e.type === 'web') fx.web(); else if (e.type === 'meteors') fx.shower(e.beats * (playing ? 60 / b.tempo : 0.5)); else if (e.type === 'ascend') fx.ascend(); else if (gA && gA.name) gift.booth = gA.name; }
+    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (e.type === 'draw') fx.figure(e.figure, e.tier); else if (e.type === 'film') fx.playFilm(e.figure, FILMS[e.figure].src, FILMS[e.figure].staging === 'zeus'); else if (e.type === 'wake') { if (gA && gA.film) fx.roar(); else { fx.wake(); if (playing) dir.hit(); } } else if (e.type === 'ring') fx.ring(0.8); else if (e.type === 'web') fx.web(); else if (e.type === 'meteors') fx.shower(e.beats * (playing ? 60 / b.tempo : 0.5)); else if (e.type === 'ascend') fx.ascend(); else if (gA && gA.name) gift.booth = gA.name; }
     const legend = gA && gA.size === 'legend', grand = gA && (gA.size === 'big' || legend), W = legend ? legendWake(gA) : 0, gEnd = gA ? giftBeats(gA) : 0;
     if (gA && gA.size === 'big' && gA.t >= 2.25 && gift.hit !== gA) { gift.hit = gA; if (playing) dir.hit(); }
     // while a small or medium gift plays the lasers step back; a big one is black while the storm gathers, then lets everything loose in gold
@@ -168,7 +168,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     const sky = legend && !gA.film && t >= 2.5 ? { progress: Math.min(1, (t - 2.5) / (W - 2.6)), glow: t > end - 3 ? Math.max(0, (end - t) / 3) : 1, falling: t > end - 4 ? 1 : 0 } : null;
     // the cinema bars and the title: who gave, and what
     if (frameEl.classList.contains('cine') !== !!legend) { frameEl.classList.toggle('cine', !!legend); if (legend) $('title').textContent = [gA.name, gA.label].filter(Boolean).join('  ·  ').toUpperCase(); } frameEl.classList.toggle('titled', !!legend && t >= W + 1 && t < end - 3);
-    fx.update(dt, { cloud: !gA ? 0 : legend && gA.film && t > FILM_START + 0.5 ? 0.15 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= t0 + 0.2 && t < end - 1.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null, sky, aurora: legend && !gA.film && gA.tier >= 2 && t >= W && t < end - 4 ? 1 : 0 });
+    fx.update(dt, { cloud: !gA ? 0 : legend && gA.film && t > filmStart(gA) + 0.5 ? 0.15 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= t0 + 0.2 && t < end - 1.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null, sky, aurora: legend && !gA.film && gA.tier >= 2 && t >= W && t < end - 4 ? 1 : 0 });
     if (!gA) fx.stopFilm();
     fx.draw(rig, st.gain); }
   rig.end(st.t, camera, renderer.domElement.height);
@@ -181,7 +181,10 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     if (L) { const Wk = legendWake(gA), end = giftBeats(gA), turn = Math.floor((t - Wk - 3) / 8);
       // the omen from far back, pushing in; the strike from the foot of the temple; up into the sky as the figure is drawn; a cut to the
       // whole picture as it wakes; then slow passes from side to side for as long as the show runs; and back, far, for the farewell
-      if (t < 0.15) { view = 9; snap = true; } else if (t < 1.9) view = 6; else if (t < 2.7) { view = 15; snap = true; }
+      // Zeus: from far back; then a cut to the foot of the temple, looking straight up it into the dark as the eyes open; a cut to the
+      // whole picture in time to see the thunderbolt thrown and land; then closer, and back out for the end
+      if (gA.film && gA.film.staging === 'zeus') { if (t < 0.6) { view = 9; snap = true; } else if (t < Wk - 3) { view = 15; snap = true; } else if (t < Wk + 3.5) { view = 19; snap = t < Wk - 2.5; } else if (t < end - 5) view = 20; else view = 19; }
+      else if (t < 0.15) { view = 9; snap = true; } else if (t < 1.9) view = 6; else if (t < 2.7) { view = 15; snap = true; }
       // with a film for a sky: a cut to the whole picture as the clip begins, a slow push up towards it for its big moment, and back
       else if (gA.film) { if (t < Wk - 3) { view = 19; snap = t < 3.2; } else if (t < Wk + 6) view = 20; else view = 19; }
       else if (t < Wk) view = 14; else if (t < Wk + 3) { view = 16; snap = true; } else if (t > end - 4) view = 16; else view = gA.tier === 1 ? 14 : [17, 14, 18, 16][turn % 4]; key = 'L' + view; }
@@ -223,12 +226,12 @@ grip.addEventListener('pointerdown', (e) => { grip.setPointerCapture(e.pointerId
   const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); }; grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); });
 grip.addEventListener('dblclick', () => setSize(view.size > 0.99 ? 0.6 : 1));
 let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area); addEventListener('resize', fit);
-const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, g, coins] of [['g5', 'Wolf', 5500], ['g6', 'Black Tiger', 22000], ['g7', 'Leon and Lion', 34000]]) $(id).addEventListener('click', () => gifts.add({ ...stageGift(g, coins), name: $('gname').value })); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
+const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, g, coins] of [['g5', 'Wolf', 5500], ['g6', 'Black Tiger', 22000], ['g7', 'Leon and Lion', 34000], ['g8', 'Zeus', 34000]]) $(id).addEventListener('click', () => gifts.add({ ...stageGift(g, coins), name: $('gname').value })); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
 addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' && e.target.type === 'text') return; if (['1', '2', '3'].includes(e.key)) { sendGift(['small', 'medium', 'big'][Number(e.key) - 1]); return; } const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h' && !PLAIN) { hidden = !hidden; showUi(); } });
 window.__laser = { gifts, gift, fx, view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
 if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); if (q.get('gift')) gifts.add({ size: q.get('gift'), name: q.get('gname') || '', figure: q.get('figure'), tier: Number(q.get('tier') || 1), label: q.get('label') || '', film: q.has('film') ? FILMS[q.get('figure')] : null }); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60);
   // a film clip is put at the second the show has reached, and the still waits for that frame
-  const act = gifts.state.active; (act && act.film && act.t > FILM_START ? fx.seekFilm((act.t - FILM_START) / 2) : Promise.resolve()).then(() => { update(0.0001); draw(); requestAnimationFrame(() => { draw(); window.ready = true; }); }); }
+  const act = gifts.state.active; (act && act.film && act.t > filmStart(act) ? fx.seekFilm((act.t - filmStart(act)) / 2) : Promise.resolve()).then(() => { update(0.0001); draw(); requestAnimationFrame(() => { draw(); window.ready = true; }); }); }
 else {
   // a page with its controls off (a browser source) has nobody to press Demo, so it starts by itself, unless the address says calm=1
   if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;

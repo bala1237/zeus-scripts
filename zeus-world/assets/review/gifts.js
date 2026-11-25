@@ -21,11 +21,14 @@ export const LEGEND = { 1: { beats: 24, wake: 7 }, 2: { beats: 36, wake: 8 }, 3:
 // music's tempo. The clip starts at beat 2.5; the stage "wakes" on the clip's big moment (film.roar, seconds into the clip), and
 // the show runs until a beat and a half after the clip is over, whatever the size of the gift (a bigger show needs a longer clip).
 export const FILM_START = 2.5;
-export const legendWake = (g) => g.film ? FILM_START + g.film.roar * 2 : LEGEND[g.tier || 1].wake;
-export const giftBeats = (g) => g.size !== 'legend' ? GIFT_BEATS[g.size] : g.film ? Math.ceil(FILM_START + g.film.seconds * 2 + 3) : LEGEND[g.tier || 1].beats;
+// A film can have a staging of its own (film.staging). 'zeus': there is no bolt before the clip; it opens on eyes in the dark, a beat
+// in; the clip's big moment is Zeus throwing his thunderbolt, and the bolt that then lands on the temple is the stage's own.
+export const filmStart = (g) => g.film && g.film.start != null ? g.film.start : FILM_START;
+export const legendWake = (g) => g.film ? filmStart(g) + g.film.roar * 2 : LEGEND[g.tier || 1].wake;
+export const giftBeats = (g) => g.size !== 'legend' ? GIFT_BEATS[g.size] : g.film ? Math.ceil(filmStart(g) + g.film.seconds * 2 + (g.film.after ?? 3)) : LEGEND[g.tier || 1].beats;
 export const GIFT_BEATS = { small: 4, medium: 8, big: 16, legend: 24 }, FLAME_SECONDS = 150, AWAKEN = 'OLYMPUS AWAKENS';
 const ORDER = [2, 9, 5, 7, 0, 11, 4, 6, 1, 10, 3, 8];   // which pillar a flame goes to next: spread about, never a neat row
-export function createGifts(n = 12) { const st = { active: null, queue: [], served: 0, flames: new Array(n).fill(0), fx: [], awakenings: 0 };
+export function createGifts(n = 12) { const st = { active: null, queue: [], served: 0, flames: new Array(n).fill(0), fx: [], awakenings: 0, quiet: 0 };
   const add = ({ size = 'small', name = '', figure = null, tier = 1, label = '', film = null } = {}) => { if (!GIFT_BEATS[size]) size = 'small'; if (size === 'legend' && !figure) size = 'big'; st.queue.push({ size, figure, film, tier: LEGEND[tier] ? tier : 1, label: String(label).slice(0, 24), name: String(name).replace(/\s+/g, ' ').trim().slice(0, 18) }); return st.queue.length; };
   const unlit = (skip = []) => ORDER.find((i) => i < n && st.flames[i] <= 0 && !skip.includes(i)) ?? ORDER.find((i) => i < n && !skip.includes(i));
   function update(dBeats, dSeconds, onBeat, onBar) { const a = st.active;
@@ -40,7 +43,15 @@ export function createGifts(n = 12) { const st = { active: null, queue: [], serv
       // Act by act. The omen (black, the storm). The strike (2). The drawing (2.5 to wake). The awakening (wake): the bigger the gift,
       // the more the sky does: a second and third ring, a shower of meteors, a web of lightning from side to side. The glory: the name
       // forged, and lightning walking in along the pillars from both ends (two strikes for the smallest, six, then all twelve). The farewell.
-      else if (a.size === 'legend') { const T = a.tier, W = legendWake(a), len = giftBeats(a); if (at(2)) st.fx.push({ type: 'bolt', pillar: -1, power: 2.5 + 0.5 * T }); if (at(FILM_START)) st.fx.push(a.film ? { type: 'film', figure: a.figure } : { type: 'draw', figure: a.figure, tier: T });
+      // Zeus (ZW-046). The omen: black, and two eyes open in the storm above the temple (the clip, from beat 1). He is revealed, raises
+      // the thunderbolt, and throws it. Where the clip's bolt leaves the picture the stage's own bolt lands on the temple's peak (W), the
+      // hardest strike there is; lightning then runs out along the pillars from the middle, one every quarter of a beat, and each one
+      // it touches takes a flame: Zeus lights the whole temple himself. Then the name, and he watches until the clip ends.
+      else if (a.size === 'legend' && a.film && a.film.staging === 'zeus') { const W = legendWake(a), len = giftBeats(a), mid = (n - 1) / 2; if (at(filmStart(a))) st.fx.push({ type: 'film', figure: a.figure });
+        if (at(W)) { st.fx.push({ type: 'bolt', pillar: -1, power: 4 }, { type: 'wake' }); st.quiet = 90; }
+        for (let k = 0; k < n; k++) { const pl = k % 2 ? Math.ceil(mid) + (k >> 1) : Math.floor(mid) - (k >> 1); if (at(W + 0.75 + k * 0.25)) { st.fx.push({ type: 'bolt', pillar: pl, power: 1.2 }); st.flames[pl] = 75; } }
+        if (at(W + 1) || at(W + 2)) st.fx.push({ type: 'ring' }); if (at(W + 4.5)) st.fx.push({ type: 'forge' }); if (at(W + 6)) st.fx.push({ type: 'meteors', beats: 10 }); if (at(len - 4)) st.fx.push({ type: 'ascend' }); }
+      else if (a.size === 'legend') { const T = a.tier, W = legendWake(a), len = giftBeats(a); if (at(2)) st.fx.push({ type: 'bolt', pillar: -1, power: 2.5 + 0.5 * T }); if (at(filmStart(a))) st.fx.push(a.film ? { type: 'film', figure: a.figure } : { type: 'draw', figure: a.figure, tier: T });
         if (at(W)) st.fx.push({ type: 'wake' }); if (T >= 2 && at(W + 0.5)) st.fx.push({ type: 'meteors', beats: T === 3 ? 14 : 8 }); if (T === 3) { if (at(W + 1) || at(W + 2)) st.fx.push({ type: 'ring' }); if (at(W + 0.25) || at(W + 12) || at(len - 14)) st.fx.push({ type: 'web' }); }
         if (at(W + 1.5)) st.fx.push({ type: 'forge' });
         const walk = T === 1 ? [1, n - 2] : T === 2 ? [0, n - 1, 2, n - 3, 4, n - 5] : Array.from({ length: n }, (_, k) => k % 2 ? n - 1 - (k >> 1) : k >> 1), gap = T === 1 ? 4 : 0.5;
@@ -48,7 +59,8 @@ export function createGifts(n = 12) { const st = { active: null, queue: [], serv
       else { if (at(2)) st.fx.push({ type: 'bolt', pillar: -1, power: 3 }); if (at(3)) st.fx.push({ type: 'forge' }); if (at(6)) st.fx.push({ type: 'bolt', pillar: 1, power: 1.3 }); if (at(10)) st.fx.push({ type: 'bolt', pillar: n - 2, power: 1.3 }); }
       if (a.t >= giftBeats(a)) { if (a.awaken) st.flames.fill(0); st.active = null; } }
     // every flame alight and nothing playing or waiting: the temple answers by itself
-    if (!st.active && !st.queue.length && st.flames.every((f) => f > 0)) { st.queue.push({ size: 'big', name: AWAKEN, awaken: true }); st.awakenings++; }
+    st.quiet = Math.max(0, st.quiet - dSeconds);   // flames that Zeus lit himself do not set the temple off again
+    if (!st.active && !st.queue.length && !st.quiet && st.flames.every((f) => f > 0)) { st.queue.push({ size: 'big', name: AWAKEN, awaken: true }); st.awakenings++; }
     if (!st.active && st.queue.length && (st.queue[0].size === 'big' || st.queue[0].size === 'legend' ? onBar : onBeat)) { const g = st.queue.shift(), p = unlit(), p2 = unlit([p]), p3 = unlit([p, p2]);
       st.active = { ...g, t: 0, pillar: p, keep: [p, p2, p3], dir: st.served % 2 ? -1 : 1 }; st.served++; }
     return st.active; }
@@ -57,6 +69,7 @@ export function createGifts(n = 12) { const st = { active: null, queue: [], serv
     else if (a.size === 'medium') { const first = a.dir > 0 ? 0 : n - 1;
       if (t >= 4.5) { for (let i = 0; i < n; i++) out[i] = (fr < 0.5 ? 1 : 0.6) * fade; out[n] = 0.7 * fade; }
       else if (t >= 0.5) { const head = Math.min(n - 1, Math.floor((t - 0.5) * 3)); for (let k = 0; k <= head; k++) out[first + a.dir * k] = k === head ? 1 : 0.55; } }
+    else if (a.film && a.film.staging === 'zeus') { const W = legendWake(a), mid = (n - 1) / 2; for (let i = 0; i < n; i++) if (t >= W + 0.75 + Math.abs(i - mid) * 0.5) out[i] = (fr < 0.5 ? 1 : 0.8) * fade; if (t >= W + 0.2) out[n] = fade; if (t >= W + 0.5) out[n + 1] = (fr < 0.5 ? 1 : 0.4) * fade; }
     else if (t >= 2.25) { const mid = (n - 1) / 2; for (let i = 0; i < n; i++) if (t >= 2.25 + Math.abs(i - mid) / mid) out[i] = (fr < 0.5 ? 1 : 0.75) * fade;   // the bolt is sent at beat 2 and lands a quarter of a beat later; then the pillars catch from the middle outwards, over one beat
       if (t >= 2.5) out[n] = fade; if (t >= 2.75) out[n + 1] = (fr < 0.5 ? 1 : 0.4) * fade; }
     return out; }

@@ -55,3 +55,9 @@ test('a gift whose figure is a film: the clip starts after the strike, the stage
   run(g, 40, (a) => { if (!a) return; len = a.t; for (const e of g.state.fx.splice(0)) { if (e.type === 'film') filmAt = a.t; if (e.type === 'wake') wokeAt = a.t; assert.notEqual(e.type, 'draw', 'no drawing in the sky when there is a film'); } });
   assert.ok(Math.abs(filmAt - 2.5) < 0.06); assert.ok(Math.abs(wokeAt - 14.5) < 0.06, `woke at ${wokeAt}`); assert.equal(legendWake({ film, tier: 3 }), 14.5); assert.equal(giftBeats({ size: 'legend', film, tier: 3 }), 26); assert.ok(len > 25.5 && len <= 26.1); });
 
+test('Zeus: no bolt before the clip; the stage\'s bolt lands when his does; lightning then lights all twelve flames from the middle out, and they do not set the temple off again', () => { const g = createGifts(), film = FILMS.zeus, events = []; g.add({ ...stageGift('Zeus', 34000), name: 'Hera' }); assert.equal(g.state.queue[0].figure, 'zeus'); let lenSeen = 0;
+  run(g, 45, (a) => { if (!a) return; lenSeen = a.t; for (const e of g.state.fx.splice(0)) events.push([+a.t.toFixed(1), e.type, e.pillar]); });
+  const W = film.start + film.roar * 2, bolts = events.filter((e) => e[1] === 'bolt'); assert.equal(events[0][1], 'film'); assert.ok(Math.abs(events[0][0] - film.start) < 0.11);
+  assert.ok(bolts.every((b) => b[0] >= W - 0.06), 'no lightning before he throws'); assert.equal(bolts[0][2], -1); assert.equal(bolts.length, 13); assert.deepEqual(bolts.slice(1).map((b) => b[2]).sort((x, y) => x - y), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]); assert.deepEqual(bolts.slice(1, 3).map((b) => b[2]).sort(), [5, 6], 'the middle pillars first');
+  assert.equal(g.state.flames.filter((f) => f > 0).length, 12); assert.equal(g.state.awakenings, 0, 'flames Zeus lit do not wake the temple'); assert.ok(lenSeen > film.start + film.seconds * 2 + 4); });
+
