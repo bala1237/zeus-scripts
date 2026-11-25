@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-041.**
+- **Next number: ZW-042.**
 
 ## Open
 
@@ -51,7 +51,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | First version shipped 25 Nov: a Flow mode (ribbons of colour that never stop). Waiting for the owner: is this what he meant | 25 Nov 2026, owner |
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
-| ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fix shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
+| ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
+| ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | First version shipped 25 Nov: four building cues. Waiting for the owner |
 
 ## Closed
 
@@ -424,3 +425,13 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Not explained:** why it showed only now. Nothing in the page's layout changed in today's work, so it should have been so before. The earlier checks pressed buttons from script, which reaches a covered button; that is why they passed.
 - **Fix:** the panel is given a place above the picture, and the picture no longer takes clicks at all.
 - **Checked:** every button clicked with a real pointer in a browser (`assets/clicktest.mjs`, new, kept for this). **Waiting on the owner** to confirm on the preview.
+- **Confirmed by the owner 25 Nov 2026:** "perfect."
+
+### ZW-041: Blackouts where the building is lit, pillar by pillar
+
+- **Reported:** 25 Nov 2026, by the owner, on the Olympus look: "the only missing is, in the video i shared, it does blackout and highlight different corners. where the building blinks fast, corner one pillar blinks and it shows from left to right and right to left which gives the feeling of it moving or getting focus. rest are black."
+- **What he describes, as understood:** moments with the lasers off and everything black, in which the stage building is the show: the whole building blinking fast; a single pillar at one corner blinking; light running along the pillars from left to right and back, which reads as movement or as a spotlight travelling.
+- He also asked whether the video could be watched. It could not: only its cover frame (YouTube pages are blocked from the build machine). So this is built from his description.
+- **First version shipped 25 Nov 2026:** four cues in the Olympus rotation with the lasers off and the temple lit: chase (one pillar travelling left to right and back), corners (an end pillar blinking fast, then the other end), colonnade (pillars filling from one side, then the other) and strobe (the whole building blinking). Detail in `STAGE-PLAN.md`, "Building cues".
+- **Set on purpose:** the whole-building strobe blinks twice a beat, not faster, because fast flashing of a large part of the picture is a risk for photosensitive viewers. The owner can ask for it faster.
+- **Waiting on the owner:** do these match what he saw; how often they should come; strobe speed; pillar colour (theme green now, or white).

@@ -13,7 +13,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeamRenderer } from './beams.js';
 import { createBeat } from './beat.js';
 import { createFlow } from './flow.js';
-import { createDirector, THEMES } from './director.js';
+import { createDirector, BUILDING, building, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: SHOT, powerPreference: 'high-performance' });
@@ -42,9 +42,15 @@ for (const p of RIG) { p.P = new THREE.Vector3(...p.pos); p.e = Object.fromEntri
   p.glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false })); p.glow.position.copy(p.P); scene.add(p.glow); }
 
 // ---------- the festival stage set: a temple front (it is Zeus's stage) and the booth with the name on it. Dark shapes; the lasers do the lighting.
-const fest = { v: 0, set: q.get('set') !== '0' }, temple = new THREE.Group(), templeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }), signMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, toneMapped: false });
+const fest = { v: 0, set: q.get('set') !== '0' }, temple = new THREE.Group(), templeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }), signMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, toneMapped: false }), pillars = [], lit = [], hall = { v: 0 };
 { const add = (g, x, y, z, m = templeMat) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); temple.add(o); return o; };
-  for (let i = 0; i < 8; i++) { const x = -5.6 + i * 1.6; add(new THREE.CylinderGeometry(0.26, 0.3, 4.6, 14), x, 2.9, -6.2); add(new THREE.BoxGeometry(0.8, 0.16, 0.8), x, 5.28, -6.2); add(new THREE.BoxGeometry(0.8, 0.2, 0.8), x, 0.6, -6.2); }
+  // each pillar has its own light, so the building cues can pick them out one at a time. The picture on it gives the fluting and
+  // the fall-off of a lamp at its foot: bright low down, fading towards the top, brightest on the side that faces the audience.
+  const flute = document.createElement('canvas'); flute.width = 256; flute.height = 256; { const g = flute.getContext('2d'), im = g.createImageData(256, 256);
+    for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { const u = x / 256, h = 1 - y / 255, face = Math.pow(Math.max(0, Math.cos(u * Math.PI * 2)), 0.55), fl = 0.62 + 0.38 * Math.abs(Math.sin(u * Math.PI * 20)), up = 0.16 + 0.84 * Math.pow(1 - h, 1.6), v = Math.min(255, 255 * (0.08 + 0.92 * face) * fl * up), k = (y * 256 + x) * 4; im.data[k] = im.data[k + 1] = im.data[k + 2] = v; im.data[k + 3] = 255; } g.putImageData(im, 0, 0); }
+  const fluteTex = new THREE.CanvasTexture(flute); fluteTex.colorSpace = THREE.SRGBColorSpace;
+  for (let i = 0; i < 8; i++) { const x = -5.6 + i * 1.6, m = new THREE.MeshBasicMaterial({ color: 0x000000, map: fluteTex, toneMapped: false }), flat = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false }); const lamp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); lamp.position.set(x, 0.85, -5.8); lamp.scale.set(1.5, 0.9, 1); temple.add(lamp); pillars.push({ m, flat, lamp, v: 0 });
+    add(new THREE.CylinderGeometry(0.26, 0.3, 4.6, 24), x, 2.9, -6.2, m); add(new THREE.BoxGeometry(0.8, 0.16, 0.8), x, 5.28, -6.2, flat); add(new THREE.BoxGeometry(0.8, 0.2, 0.8), x, 0.6, -6.2, flat); }
   add(new THREE.BoxGeometry(12.6, 0.55, 1.0), 0, 5.63, -6.2); add(new THREE.BoxGeometry(13.4, 0.5, 2.4), 0, 0.25, -5.6);
   const ped = new THREE.Shape(); ped.moveTo(-6.5, 0); ped.lineTo(6.5, 0); ped.lineTo(0, 1.7); ped.closePath(); add(new THREE.ShapeGeometry(ped), 0, 5.9, -6.2);
   add(new THREE.BoxGeometry(4.6, 1.05, 1.2), 0, 0.55, -3.4);   // the booth
@@ -97,10 +103,16 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     const on = act * Math.max(lvl, sh); p.glow.material.color.copy(col).multiplyScalar(1.5 * Math.min(1.2, on) * kick); p.glow.scale.setScalar(0.26 + 0.1 * on); p.glow.visible = on > 0.01; }
   // the festival stage: a lattice of laser lines drawn on the structure behind, and the temple itself, barely lit by the colour in the air
   fest.v += ((theme.festival ? 1 : 0) - fest.v) * Math.min(1, dt * 1.5); const fv = fest.v * (fest.set ? 1 : 0);
-  if (fv > 0.01 && act > 0.01 && !d.dark) { const I = act * st.gain * fv * (0.28 + 0.12 * b.pulse);
+  if (fv > 0.01 && act > 0.01 && !d.dark && !BUILDING.has(d.pattern)) { const I = act * st.gain * fv * (0.28 + 0.12 * b.pulse);
     for (let i = 0; i <= 10; i++) rig.beam(A.set(-3.5 + i * 0.7, 0.9, -5.6), D.set(0, 1, 0), 4.3, main, I, 0.006, 0);
     for (let i = 0; i <= 6; i++) rig.beam(A.set(-3.6, 1.3 + i * 0.6, -5.6), D.set(1, 0, 0), 7.2, main, I, 0.006, 0); }
-  temple.visible = fv > 0.01; if (temple.visible) { templeMat.color.copy(main).multiplyScalar(0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1)); signMat.color.setScalar(fv * (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1)); }
+  // The building cues (ZW-041): the lasers are dark and the pillars are lit one by one. A lamp comes on at once and dies away quickly, as a real one does.
+  const show = BUILDING.has(d.pattern) && theme.festival; if (show && !fest.set && !SHOT) dir.nextLook();   // with the stage set off there is nothing to light, so move on
+  building(show && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, pillars.length, lit); const fall = Math.exp(-dt * 16);
+  temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.15 : 1);
+    hall.v = Math.max(lit[pillars.length], hall.v * fall); templeMat.color.copy(main).multiplyScalar(amb + 0.07 * hall.v * fv * st.gain);
+    pillars.forEach((p, i) => { p.v = Math.max(lit[i], p.v * fall); const k = fv * st.gain * p.v; p.m.color.copy(main).lerp(C.set(0xffffff), 0.35).multiplyScalar(amb * 6 + 2.4 * k); p.flat.color.copy(main).multiplyScalar(amb + 0.14 * k); p.lamp.material.color.copy(main).lerp(C.set(0xffffff), 0.5).multiplyScalar(1.1 * k); });
+    signMat.color.setScalar(fv * (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.12 : 1)); }
   rig.end(st.t, camera, renderer.domElement.height);
   // the camera moves on every second cue, or every cue in a lively theme; never in a still one
   const views = theme.festival ? FEST_CAMS : CLUB_CAMS; if (!SHOT && !views.includes(cam.i)) setCam(views[0]);   // each rig has its own views

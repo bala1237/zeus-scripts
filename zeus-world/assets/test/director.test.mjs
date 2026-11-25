@@ -1,7 +1,7 @@
 // Rules the Lighting Director must keep. Run from assets/: node --test test/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDirector, THEMES, PATTERNS } from '../review/director.js';
+import { createDirector, THEMES, PATTERNS, BUILDING, building } from '../review/director.js';
 
 const RIG = [{ group: 'back', side: 0 }, { group: 'back', side: -1 }, { group: 'back', side: 1 }, { group: 'side', side: -1 }, { group: 'side', side: 1 }, { group: 'floor', side: -1 }, { group: 'floor', side: 1 }];
 const run = (beats, f, opts) => { const d = createDirector(opts); for (let b = 0; b < beats; b += 0.25) f(d.update(b), d, b); return d; };
@@ -36,4 +36,11 @@ test('a breakdown brings a quiet pattern at once and keeps to quiet ones; the dr
 test('the festival theme uses the wall and the shafts and leaves the club rig dark; club themes leave the wall dark', () => { const t = {}; let fest = 0;
   run(6000, (s, d) => { if (s.dark) return; const lit = (p) => { d.target(p, t); return t.level > 0.01 || t.sheet > 0.01; };
     const club = RIG.filter(lit).length, wall = [0, 1, 2, 3, 4].filter((k) => lit({ group: 'wall', side: 1, k })).length + [0, 1, 2].filter((k) => lit({ group: 'wash', side: 1, k })).length;
-    if (THEMES[s.theme].festival) { fest++; assert.equal(club, 0); assert.ok(wall >= 5, `${s.pattern}: ${wall}`); } else assert.equal(wall, 0, s.pattern); }); assert.ok(fest > 100); });
+    if (THEMES[s.theme].festival) { fest++; assert.equal(club, 0); if (BUILDING.has(s.pattern)) { assert.equal(wall, 0, 'the lasers are dark while the building is the show'); return; } assert.ok(wall >= 5, `${s.pattern}: ${wall}`); } else assert.equal(wall, 0, s.pattern); }); assert.ok(fest > 100); });
+
+test('building cues: the chase is one pillar travelling to the far end and back; corners touch only the end pillars; the strobe is no faster than twice a beat', () => { const n = 8, o = [];
+  const seq = []; for (let b = 0; b < 14; b += 0.05) { building('chase', b, n, o); const lit = o.slice(0, n).map((v, i) => v ? i : -1).filter((i) => i >= 0); assert.equal(lit.length, 1); assert.equal(o[n], 0); if (seq.at(-1) !== lit[0]) seq.push(lit[0]); }
+  assert.deepEqual(seq.slice(0, 15), [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0]);
+  const seen = new Set(); for (let b = 0; b < 16; b += 0.01) { building('corners', b, n, o); o.slice(0, n).forEach((v, i) => { if (v) seen.add(i); }); assert.equal(o[n], 0); } assert.deepEqual([...seen].sort(), [0, 1, 6, 7]);
+  let flashes = 0, was = 0; for (let b = 0; b < 8; b += 0.005) { building('strobe', b, n, o); if (o[n] && !was) flashes++; was = o[n]; } assert.equal(flashes, 16);
+  let max = 0, sides = new Set(); for (let b = 0; b < 32; b += 0.05) { building('colonnade', b, n, o); const c = o.slice(0, n).reduce((a, v) => a + v, 0); max = Math.max(max, c); if (c === 1) sides.add(o[0] ? 'left' : o[n - 1] ? 'right' : 'middle'); } assert.equal(max, n); assert.deepEqual([...sides].sort(), ['left', 'right']); });

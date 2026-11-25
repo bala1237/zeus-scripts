@@ -8,6 +8,8 @@ Source: `assets/review/stage.html`, `stage.js` and `beat.js`. Hosted with the ot
 
 **Trap: the picture over the panel (ZW-040).** three.js adds its canvas to the end of the page, after the control panel. Both are fixed in place, so without a stacking order the canvas covers the panel and takes every click. The panel has `z-index`, and the canvas `pointer-events: none`. A button pressed from script (`element.click()`) still works when covered, so checks must click with a real pointer: `node clicktest.mjs` in `assets/`.
 
+**Building cues (ZW-041).** Four Olympus patterns turn the lasers off and light the temple's pillars instead; `building()` in `director.js` says which pillars are lit. See `../STAGE-PLAN.md`, "Building cues", including the limit on strobe speed and why.
+
 **The festival look (ZW-039).** The Olympus theme uses a second rig (a wall of ten projectors and six shaft projectors), its own patterns and views, and a temple stage set; see `../STAGE-PLAN.md`, "The festival look", including why fans need the `lean` value to stand open towards the audience.
 
 **Flow (ZW-037).** `flow.js` is a full-screen shader of endlessly drifting ribbons, shown by the laser page's Show button; see `../STAGE-PLAN.md`, "Flow".
