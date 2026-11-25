@@ -58,7 +58,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
-| ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High (proposed) | Open, under discussion. Nothing to be built yet | 25 Nov 2026, owner |
+| ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | First film made (The Fire-Bringer, for one hero), on `/hero.html`. Waiting for the owner to watch it; score not yet added | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -536,3 +536,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Fits the constitution:** a battle's MVPs are its top three, honoured without amounts.
 - **Owner's choices, 25 Nov 2026:** 60 seconds; a narrator; the story left to Claude; epic.
 - **First script written 25 Nov 2026:** The Fire-Bringer, in `docs/hero-films/01-fire-bringer.md`, with the rules for all hero films in `docs/hero-films/README.md`. Waiting for his approval of the words, and of the spend, before anything is generated.
+- **Go-ahead, 25 Nov 2026:** "Let's have the name as Andie Howard", then "Continue" when asked whether to make it. Taken as approval of the words and of the spend, with the narrator's voice left to Claude.
+- **Made 25 Nov 2026.** Six generated shots (60 s, about $3.00), cut to a 63-second film; narration in the owner's "movie" voice, which says "Andie Howard brought the fire home"; a new page, `/hero.html`, that plays it and puts the name in: forged in gold as the fire erupts, cut in stone over the dawn, and on the end card under a laurel. Any other name can be typed; without a recording for it the narrator says "Brought the fire home" and the letters give the name.
+- **Not finished:** the score. Two versions were generated on Suno, but fetching the file uses one of his download credits (9 left) and waits for his word. Until then the film has the narrator only.
+- **Verified here:** stills at seven moments; a real-time run with Play pressed by a real pointer (picture and sound within 0.1 s, the named recording used); the build. **Not verifiable here:** how it sounds and how it moves.
+- **Still to do:** the score; the team version; more scripts; starting it after a battle; the profile picture on the end card. How it all works: `docs/knowledge/hero-films.md`.

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus · Hero film</title>
+<style>
+  /* A hero film (ZW-047): a one-minute story film that honours the person who carried a battle. The footage and the sound are made
+     in advance; the name is drawn here when it plays, so the same film serves anyone. The picture is always 16:9. */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Cinzel', Georgia, 'Times New Roman', serif; }
+  body { display: flex; flex-direction: column; }
+  #area { position: relative; flex: 1; min-height: 0; background: #000; }
+  #frame { position: absolute; overflow: hidden; background: #000; container-type: size; }
+  #frame > * { position: absolute; }
+  video { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #shade { inset: 0; background: #000; opacity: 1; pointer-events: none; }
+  /* the hook: one ember crossing the dark */
+  #ember { left: 0; top: 0; width: 2.2cqh; height: 2.2cqh; border-radius: 50%; opacity: 0; background: radial-gradient(circle, #fff6d8 0 18%, #ffb347 40%, rgba(255, 110, 20, .5) 62%, transparent 75%); box-shadow: 0 0 3cqh 1cqh rgba(255, 140, 40, .55), 0 0 9cqh 3cqh rgba(255, 90, 10, .25); }
+  /* the name, forged: written on from the left behind a white-hot edge, then left as molten gold */
+  #forge { left: 0; right: 0; top: 33cqh; padding: 5cqh 0; background: radial-gradient(ellipse 46% 50% at 50% 50%, rgba(0, 0, 0, .62), rgba(0, 0, 0, .3) 50%, transparent 92%); text-align: center; font-weight: 700; font-size: 11cqh; letter-spacing: .12em; white-space: nowrap; opacity: 0; }
+  #forge span { display: inline-block; padding: 0 .12em; background: linear-gradient(180deg, #fff7dc 0%, #ffd77a 38%, #ff9a1f 72%, #b85a0a 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 1.2cqh rgba(255, 170, 60, .9)) drop-shadow(0 0 5cqh rgba(255, 120, 20, .55)); -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--w, 0) * 1%), transparent calc(var(--w, 0) * 1% + 4%)); mask-image: linear-gradient(90deg, #000 calc(var(--w, 0) * 1%), transparent calc(var(--w, 0) * 1% + 4%)); }
+  /* the name, cut in stone, low in the picture */
+  #stone { left: 0; right: 0; bottom: 9cqh; text-align: center; opacity: 0; }
+  #stone .n { font-weight: 600; font-size: 5.2cqh; letter-spacing: .34em; margin-left: .34em; color: #f4e3bd; text-shadow: 0 .2cqh 0 rgba(0, 0, 0, .7), 0 0 2.4cqh rgba(255, 200, 110, .55); white-space: nowrap; }
+  #stone .rule { width: 34cqh; height: .18cqh; margin: 1.2cqh auto; background: linear-gradient(90deg, transparent, #e9c275, transparent); }
+  /* the end card */
+  #card { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; background: radial-gradient(ellipse at 50% 45%, rgba(60, 34, 6, .55), #000 70%); }
+  #card svg { width: 24cqh; height: 24cqh; }
+  #card .n { font-weight: 700; font-size: 8.4cqh; letter-spacing: .14em; margin-top: 2cqh; white-space: nowrap; background: linear-gradient(180deg, #fff7dc, #ffd77a 45%, #d98a1c); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 2.5cqh rgba(255, 170, 60, .6)); }
+  #card .t { font-weight: 400; font-size: 3cqh; letter-spacing: .42em; margin: 4cqh 0 6cqh .42em; color: #e9c98a; white-space: nowrap; }
+  #caption { left: 0; right: 0; bottom: 3.2cqh; text-align: center; font: 500 2.6cqh Georgia, serif; color: #fff; text-shadow: 0 0 1cqh #000, 0 0 .4cqh #000; opacity: 0; transition: opacity .3s; padding: 0 8cqh; }
+  body.captions #caption.on { opacity: .95; }
+  #ui { flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui, sans-serif; background: #100c06; border-top: 1px solid rgba(233, 194, 117, .45); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: center; }
+  #ui.gone { display: none; }
+  #ui button { background: #8a5a12; color: #fff; padding: 7px 12px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
+  #ui button.on { background: #e2b04a; color: #1d1305; }
+  #ui input[type=text] { font: inherit; font-weight: 500; padding: 6px 8px; border-radius: 6px; border: 1px solid #6a4a1a; background: #1a1206; color: #fff; width: 190px; }
+  #ui label { font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+<div id="area"><div id="frame">
+  <video id="film" playsinline preload="auto"></video>
+  <div id="shade"></div>
+  <div id="ember"></div>
+  <div id="forge"><span id="forgeName"></span></div>
+  <div id="stone"><div class="rule"></div><div class="n" id="stoneName"></div><div class="rule"></div></div>
+  <div id="card">
+    <svg viewBox="0 0 200 200" fill="none" stroke="#e9c275" stroke-width="2.2" stroke-linecap="round" id="laurel"></svg>
+    <div class="n" id="cardName"></div><div class="t" id="cardTitle"></div>
+  </div>
+  <div id="caption"></div>
+</div></div>
+<div id="ui">
+  <span id="status" style="font-weight:500;opacity:.85"></span>
+  <label>Hero <input id="name" type="text" maxlength="24" placeholder="the name to honour"></label>
+  <button id="play" class="on" title="Play the film from the start (or press the space bar)">Play the film</button>
+  <button id="stop">Stop</button>
+  <button id="caps" title="Show the narrator's words on screen, for viewers with the sound off">Words on screen: off</button>
+  <span style="font-weight:500;font-size:12px;opacity:.7">Press H to hide these controls.</span>
+</div>
+<script type="module" src="./hero.js"></script>
+</body>
+</html>

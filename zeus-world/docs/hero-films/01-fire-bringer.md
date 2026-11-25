@@ -32,19 +32,26 @@ The same film, with these changes.
 
 ## How the name gets in
 
-- **On screen:** forged in gold at 0:33, cut into the stone at 0:54, and on the end card. These are drawn by the stage when the film plays, so any name works.
-- **Spoken:** in the first version the narrator's line is recorded without the name and the name is a beat of silence filled by the gold letters ("... brought the fire home"). Speaking the name itself needs a voice generated at the moment of playing, which needs the owner's own account set up for it; planned as a second step.
-- **Names that will not fit or should not be shown:** shortened to 18 letters; the owner can type a display name before playing.
+- **On screen:** forged in gold at 0:33 as the fire erupts, cut into the stone at 0:53, and on the end card. Drawn by the page when the film plays, so any name works.
+- **Spoken:** the line with the name is a separate short recording. If one exists for this person the narrator says the name ("Andie Howard brought the fire home."); if not, the narrator says "Brought the fire home." while the gold letters give the name. How to add a name: `docs/knowledge/hero-films.md`.
 
-## What has to be made
+## Made, 25 Nov 2026
 
-- **Eight shots**, about 60 seconds of video in all. The hero must look the same in every shot, so one picture of the hooded figure is made first and every shot is made from it.
-- **The narration:** one voice, deep and unhurried. Seven lines, and the team's variants.
-- **The score:** one piece of 60 seconds from Suno with the shape in the last column: silence, a quiet theme, a build, a full stop at 0:32, the full orchestra, a held chord.
-- **The player:** takes one name or three, plays the shots in order with the narration and the score, and draws the names where the script says.
+The single-hero version is made and plays at `/hero.html`. Six shots (the ember is drawn by the page), narration in the owner's "movie" voice, and a score that is generated but not yet added. Costs, files and the cut are in `docs/knowledge/hero-films.md`.
 
-## Not yet decided
+## The prompts for the shots
 
-- The narrator's voice.
-- Whether the end card shows the person's profile picture (needs it to be fetched when the film plays).
-- Whether the film plays on the laser stage's page or on a page of its own.
+The hero is described in the same words every time, which is what kept the figure the same across shots. Seconds asked for are in brackets.
+
+- **Shot 2, the need (9 s).** Photorealistic epic cinematic wide establishing shot at night in a violent storm. An ancient Greek city of white marble is built up the side of a great mountain, with a temple of tall columns on the summit. On the summit terrace a colossal bronze fire bowl holds only a dull red dying glow. Rain lashes down, lightning flickers inside black clouds. Along the city walls and streets a line of small torches goes out one by one until the city is almost dark. Slow push-in toward the mountain. Cold blue-black palette with the single dying red glow at the top. Volumetric rain and mist, epic scale, film grain, anamorphic lens. No text, no logos.
+- **Shot 3, the choice (9 s).** Photorealistic epic cinematic shot at night in a violent storm, at the foot of an immense white marble stairway that climbs a great mountain toward a distant temple. Seen from behind: a lone figure in a long deep-crimson hooded cloak with a thin gold hem, hood up, the face never visible, cupping a small bright flame in both hands close to the chest. The flame lights the edges of the hood and glints on the wet marble steps. The figure stands still, looking up at the endless stair as lightning shows its height, then takes the first step and begins to climb. Camera low behind the figure, slowly following. Heavy rain, wind pulling at the cloak, cold blue night with the one warm flame. Film grain, anamorphic lens. No text, no logos, the face is never shown.
+- **Shot 4, the climb (11 s).** Photorealistic epic cinematic shot at night in a violent storm, high on a vast white marble stairway on a mountainside. Seen from behind and slightly above: a lone figure in a long deep-crimson hooded cloak with a thin gold hem, hood up, the face never visible, climbing step by step, carrying a small flame cupped in both hands. The wind tears at the cloak. The small flame gutters and nearly dies; the figure stops, turns their back to the wind and hunches over the flame, shielding it with their whole body, and it steadies and glows again. Lightning reveals how much higher the stair still climbs toward a temple on the summit. The figure climbs on. Far below lies a dark city. Camera tracking behind the figure. Driving rain, cold blue night, the one warm flame. Film grain, anamorphic lens. No text, no logos, the face is never shown.
+- **Shot 5, the heroic moment (11 s).** Photorealistic epic cinematic shot at night in a violent storm, on the summit terrace of a white marble Greek temple on a mountain top. Seen from behind: a lone figure in a long deep-crimson hooded cloak with a thin gold hem, hood up, the face never visible, walks up to a colossal cold dark bronze fire bowl, raises a small flame high in both hands, and lowers it into the bowl. For a moment nothing happens. Then a tremendous pillar of golden fire erupts from the bowl straight up into the storm clouds, blasting the rain away and lighting the whole summit gold, the crimson cloak streaming back in the heat. The figure stands before it, small against the blaze, arms slowly lowering. Camera behind the figure, slowly rising. Sparks and embers fly upward. Film grain, anamorphic lens. No text, no logos, the face is never shown.
+- **Shot 6, the heart (11 s).** Photorealistic epic cinematic sequence at night after a storm. A great golden fire blazes on the summit of a white marble Greek mountain city. Golden light races down the mountain as torch after torch and window after window ignite in a spreading wave, street by street. Then the camera is among the people of the city in a marble street, all looking up toward the summit, their rain-wet faces turning from blue shadow to warm gold: a small child lifted onto a parent's shoulders, pointing up in wonder; an old soldier slowly lowering his bronze shield; a woman pressing her hand to her heart with tears in her eyes; neighbours embracing. Ancient Greek dress. Warm gold light on faces against the deep blue night. Emotional, hopeful, intimate. Film grain, anamorphic lens, shallow depth of field. No text, no logos.
+- **Shot 7, the honour (9 s).** Photorealistic epic cinematic shot at dawn after a storm, clear sky of gold and rose. On the summit terrace of a white marble Greek temple on a mountain top a great fire burns steadily in a colossal bronze bowl. Seen from behind and from far back: a lone figure in a long deep-crimson hooded cloak with a thin gold hem, hood up, the face never visible, stands small and still before the fire. Far below, the whole marble city fills its streets and rooftops with thousands of tiny figures, all turned toward the summit, raising small torches. A slow majestic pull-back, the camera rising above the temple to reveal the city and the sunrise. Peaceful, triumphant, vast. Warm dawn light, long shadows, drifting mist in the valleys. Film grain, anamorphic lens. No text, no logos, the face is never shown.
+
+## Not yet made
+
+- The team version (three names).
+- The score in the film (waiting for the owner's word on one download credit).
+- The person's profile picture on the end card.
