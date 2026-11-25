@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-037.**
+- **Next number: ZW-039.**
 
 ## Open
 
@@ -48,6 +48,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
 | ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 3 (seven-projector rig, Lighting Director, six themes, camera moves) shipped 25 Nov; waiting for the owner to pass it | 25 Nov 2026, owner |
+| ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | Open, to be discussed with the owner before anything is built | 25 Nov 2026, owner |
+| ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Open | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -385,3 +387,17 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Phase 2 passed 25 Nov 2026.** The owner: "I love it. If it's more like 3D it will be extraordinary. All having different themes will up the ante, and cinematic camera movements." Phase 3 adds a rig of projectors in depth, a Lighting Director with patterns, themes and camera moves.
 - **Phase 3 shipped 25 Nov 2026** on `/laser.html`: seven projectors in depth, a Lighting Director with ten patterns and rules (no repeats, darkness before big moments, at most five projectors lit), six themes, a gliding camera, Next look and Blackout. Detail in `STAGE-PLAN.md`, "Phase 3". Checked by tests and stills only.
 - **Waiting on the owner:** does it feel 3D; are the themes different enough; camera moves on or off over his camera; and the two questions still open from phase 2 (how it combines in LIVE Studio, frame rate on the Mac).
+
+### ZW-037: An "infinite move" version of the lasers
+
+- **Reported:** 25 Nov 2026, by the owner, after trying phase 3: "i want like some infinite move version as well. lets discuss first."
+- **Known:** it is wanted as well as the present show, not in place of it. He wants to talk before anything is built.
+- **Not known:** what "infinite move" means to him. Guesses, put to him as options: the view travelling forward for ever through gates of light (an endless tunnel); a show that never stops or repeats; one pattern that loops seamlessly.
+- Nothing built.
+
+### ZW-038: The beat capture is not perfect
+
+- **Reported:** 25 Nov 2026, by the owner, after trying phase 3: "also the beat capture is not perfect."
+- **Not known:** how it fails for him (late, early, drifting, wrong tempo, lost in quiet parts) and on which music.
+- **Likely causes, from reading `assets/review/beat.js` (guesses until tested on real music):** it listens for jumps in overall loudness of the low end, checked once per drawn frame, so timing is only as fine as the frame rate; the tempo is the middle value of the last twelve gaps between hits, so it jumps on music without a steady kick; it has no memory of where the beat falls, so it cannot carry through a breakdown; half and double tempo are folded by a fixed rule; no correction for the delay between the sound and the picture.
+- **Planned fix:** this is phase 4 of ZW-036 (music intelligence): analysis on the audio thread, separate low, mid and high bands, a tempo and beat-position tracker that holds through quiet parts, and a delay setting.
