@@ -75,6 +75,15 @@
   <button id="stop">Stop</button>
   <button id="caps" title="Show the narrator's words on screen, for viewers with the sound off">Words on screen: off</button>
   <span style="font-weight:500;font-size:12px;opacity:.7">Press H to hide these controls.</span>
+
+  <div id="obsRow" style="flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:center;border-top:1px solid rgba(233,194,117,.2);padding-top:8px">
+    <span style="font-weight:500;opacity:.85">The film in OBS:</span>
+    <button id="sendPlay" class="on" title="Play the film, with this name, in the OBS browser source. It does not play here.">Play in OBS</button>
+    <button id="sendStop">Stop in OBS</button>
+    <label title="OBS: Tools, WebSocket Server Settings, Show Connect Info">OBS password <input id="obsPass" type="password" autocomplete="off" style="font:inherit;font-weight:500;padding:6px 8px;border-radius:6px;border:1px solid #6a4a1a;background:#1a1206;color:#fff;width:130px"></label>
+    <button id="obsConnect" title="Connect this page to OBS on this computer">Connect to OBS</button>
+    <span id="obsStatus" style="font-weight:500;opacity:.85">not connected</span>
+  </div>
 </div>
 <script type="module" src="./hero.js"></script>
 </body>

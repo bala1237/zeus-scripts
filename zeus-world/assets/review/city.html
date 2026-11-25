@@ -32,11 +32,14 @@
   #panel button, #panel a { background: rgba(255,255,255,.85); color: #1d1a2e; padding: 7px 11px; border-radius: 8px; text-decoration: none; border: 0; font: inherit; cursor: pointer; min-width: 34px; }
   #panel a.on { background: #2f6fb0; color: #fff; }
   #panel.shut #body { display: none; }
+  /* ?ui=0: nothing over the picture, for a browser source in OBS (ZW-048) */
+  body.plain #panel, body.plain #label { display: none; }
 </style>
 <script>
   // view links; the rest of the panel is wired up in city.js
   const q = new URLSearchParams(location.search), nav = document.getElementById('nav'), panel = document.getElementById('panel');
   const link = (t, k, v, d) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; if ((q.get(k) || d) === v) a.className = 'on'; nav.append(a); };
+  if (q.get('ui') === '0') document.body.classList.add('plain');
   if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'battle', 'top']) link(v, 'view', v, q.has('view') ? 'wide' : ''); link('☀ ↔ 🌙 cycle', 'light', 'cycle', 'cycle'); link('day', 'light', 'day', 'cycle'); link('dusk', 'light', 'dusk', 'cycle'); }
   document.getElementById('fold')?.addEventListener('click', () => { panel.classList.toggle('shut'); try { localStorage.setItem('zw-panel', panel.classList.contains('shut') ? '1' : ''); } catch {} });
   try { if (localStorage.getItem('zw-panel')) panel.classList.add('shut'); } catch {}

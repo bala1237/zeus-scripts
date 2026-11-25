@@ -25,6 +25,7 @@
     "@gltf-transform/extensions": "^4.5.1",
     "@gltf-transform/functions": "^4.5.1",
     "meshoptimizer": "^0.22.0",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "ws": "^8.23.0"
   }
 }

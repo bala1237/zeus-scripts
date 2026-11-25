@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **A remote for the hero film, Zeus World without controls, tempo in the laser address (ZW-048).** The hero page in Chrome can now play the film inside OBS with the name typed there ("Play in OBS"), through OBS's built-in remote control. `city.html?ui=0` shows Zeus World with nothing over the picture. `bpm=128` in the laser address sets its tempo when it is not listening.
 - **The laser page reconnects to its sound input (ZW-048).** If the input goes dead or the computer changes its sound devices (headphones connecting does this), the page takes the input up again by itself instead of staying silent.
 - **A status line for the laser page without controls (ZW-048).** `debug=1` in the address shows, on the picture, whether it is on the beat, the tempo, which sound input it hears and a lamp that blinks on the beat. For checking an OBS browser source.
 - **The laser page can listen to a sound input (ZW-048).** Besides sharing a browser tab, it can now hear the music from a sound card or mixer such as the owner's RODECaster, or the microphone. A new button with a list of inputs, and `listen=input` in the address so that a controls-off page starts listening by itself.

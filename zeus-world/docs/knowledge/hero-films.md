@@ -11,6 +11,17 @@ The rules and the scripts are in `docs/hero-films/`. This file is the how: the p
 - From another page or a tool: `window.playHeroFilm('A Name')`.
 - Code: `assets/review/hero.html`, `hero.js` (the player), `herofilms.js` (the library: one entry per film with its files and every timing).
 
+## Playing it in OBS from a remote (ZW-048)
+
+The film runs in OBS as a browser source with the address `hero.html?ui=0` (1920 × 1080, "Control audio via OBS" ticked). The same page opened in Chrome, with its controls, is the remote: type the name, press **Play in OBS**. It does not play in Chrome when sent this way.
+
+- **How it reaches OBS.** OBS has a remote control built in (Tools, WebSocket Server Settings: switch it on; "Show Connect Info" gives the password). The page connects to it on the same computer (`ws://127.0.0.1:4455`; `&obsport=` for another port), finds the browser source whose address contains `hero.html`, and asks OBS to hand every browser source an event named `zeusHero` carrying `{ cmd: 'play', name }` or `{ cmd: 'stop' }`. If OBS cannot pass the event on, the remote instead points the source at an address with the name and `autoplay` in it, which makes it load again and play (slower by a second or two). Code: `obsremote.js` (the connection), the remote section of `hero.js`.
+- **The password** is kept in that browser on that computer so the page reconnects by itself next time. It is the password of OBS's own remote control, nothing else.
+- **Use Chrome** for the remote: it lets a web page reach a program on the same computer; Safari does not.
+- Two tabs of one browser also work without OBS (the tab with `ui=0` obeys the other), which is how it was checked here.
+- **Checked** with `node renders/obstest.mjs`, a stand-in for OBS's remote control with a password: wrong password refused, right one connected and the source found, Play sent the event with the name, the other tab played, Stop stopped, and the load-again route set the right address. **Not checked: OBS itself.** In particular, that OBS hands the event to browser sources is from OBS's documentation and has not been seen working by us.
+- The film only shows if its scene is on screen; the remote does not switch scenes.
+
 ## How the name gets in
 
 The film itself is generic. The name is added by the page when it plays:

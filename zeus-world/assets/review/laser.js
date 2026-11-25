@@ -94,7 +94,7 @@ const cam = { i: Number(q.get('cam') || 0), x: eased(0), y: eased(1.45), z: ease
 const setCam = (i, snap = false) => { cam.i = i % CAMS.length; const c = CAMS[cam.i]; if (!c) return; for (const [k, v] of [['x', c.p[0]], ['y', c.p[1]], ['z', c.p[2]], ['tx', c.t[0]], ['ty', c.t[1]], ['tz', c.t[2]], ['f', c.f]]) { cam[k].to = v; if (snap) { cam[k].v = v; cam[k].vel = 0; } } }; setCam(cam.i, true);
 
 // ---------- the show
-const st = { t: 0, gain: Number(q.get('gain') ?? 1) }, beat = createBeat({ bpm: 124 }), dir = createDirector({ seed: 11 });
+const st = { t: 0, gain: Number(q.get('gain') ?? 1) }, BPM = Math.min(200, Math.max(60, Number(q.get('bpm')) || 124)), beat = createBeat({ bpm: BPM }), dir = createDirector({ seed: 11 });
 if (q.get('theme') !== null) { dir.setTheme(Number(q.get('theme'))); dir.state.auto = false; }
 const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.Color(THEMES[dir.state.theme].accent), C = new THREE.Color(), E2 = new THREE.Color(), D = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3(), E = new THREE.Euler();
 // a direction in the projector's own frame, turned to where the projector is pointing. ax is the angle across the fan; roll tips the fan's plane.
@@ -212,7 +212,7 @@ const fillInputs = async () => { const sel = $('inputs'), list = await beat.inpu
 const listenInput = (which) => { failed = ''; return beat.listen('input', which).then(() => { store.set('input', beat.state.input); return fillInputs(); }).catch((e) => { failed = 'could not listen to a sound input: ' + e.message; throw e; }); };
 $('listenIn').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else listenInput(q.get('input') || store.get('input') || '').catch(() => {}); });
 $('inputs').addEventListener('change', () => { beat.unlisten(); listenInput($('inputs').value).catch(() => {}); });
-$('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = 124; beat.tap(); });
+$('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = BPM; beat.tap(); });
 $('sync').value = String(Math.round(beat.state.offset * 1000)); const showSync = () => { const v = Number($('sync').value); $('syncv').textContent = v === 0 ? 'as heard' : `${Math.abs(v)} ms ${v > 0 ? 'later' : 'earlier'}`; }; showSync();
 $('sync').addEventListener('input', () => { beat.setOffset(Number($('sync').value) / 1000); showSync(); });
 const setLook = (m) => { look.mode = m; $('look').textContent = `Show: ${m}`; }; setLook(look.mode); $('look').addEventListener('click', () => setLook({ lasers: 'flow', flow: 'both', both: 'lasers' }[look.mode]));
