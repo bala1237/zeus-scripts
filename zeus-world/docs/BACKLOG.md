@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-045.**
+- **Next number: ZW-046.**
 
 ## Open
 
@@ -56,6 +56,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Shipped 25 Nov at `/andie.html`; "looks good for now" (owner). Waiting for her actual image to fix the rest | 25 Nov 2026, owner |
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
+| ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Test version shipped 25 Nov: three gift moments fired by buttons. TikFinity connection later, as the owner asked | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -473,3 +474,20 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Understood as:** the same layout as Andie's page (ZW-042): the picture a 16:9 box in the middle with space round it, resizable by a slider and by dragging its corner, and the controls in a bar below, never over the picture.
 - **Shipped 25 Nov 2026:** `/laser.html` now opens with the picture as a 16:9 box at 60% in the middle; a Size slider and a draggable blue corner resize it; the size is remembered; the controls are a bar below and no longer hide by themselves (H hides them). Also brought over from Andie's page: `ui=0` in the address for a browser source (no controls, the picture fills the window, the show starts by itself; `calm=1` keeps it still), and the timer that keeps the show running when the window is covered.
 - **Checked:** resizing with a real pointer (out, in, slider, reload), all eight buttons by real clicks, a still, the stepped run, tests, the build.
+
+### ZW-045: Animations when people send gifts
+
+- **Reported:** 25 Nov 2026, by the owner: "I want to pick your brain on showing some animation when people send gifts."
+- **A brainstorm, not a build.** Ideas put to him the same day: gift moments in three sizes on the laser stage (a pillar flash with the sender's name on the booth; a chase in a new colour; a full sunburst with the name in lights), a lightning bolt from Zeus as the signature, a shared storm meter that gifts charge, and the same idea in Andie's room.
+- **The open technical question:** how a page learns that a gift was sent. TikTok gives pages no official feed of gifts. Routes: buttons or hotkeys pressed by the host (works today, no risk); TikTok LIVE Studio's own alert widgets (cannot drive our pages); third-party tools that read the stream's events unofficially (they work, but are outside TikTok's rules and can break).
+- **Constitution:** amounts are never shown, and nobody is ranked by spend on screen. Gift moments must honour the person without showing what they paid.
+- **Owner, 25 Nov 2026:** "We have ways to get the info. Even tikfinity gives that details. Analyze." So the route is TikFinity, which he already uses.
+- **What was found (25 Nov 2026, from TikFinity's own pages and a web search; not yet tried):**
+  - TikFinity has an **Event API**: "a WebSocket endpoint that allows you to receive all events of your TikTok livestream. You can use it to build your own games and interactive widgets." Its page states "The TikFinity Desktop App must run on the same computer!" (`tikfinity.zerody.one/tiktok/dapi`).
+  - A search result for that page gives the address as `ws://localhost:21213/`, each message as JSON with an event name and its data, and the events as chat, gift, share, follow, like, roomUser and subscribe, with the data in the shape used by the open-source TikTok-Live-Connector library. The page itself could not be read in full from the build machine (it is drawn by script), and the search result is some years old, so **the address and the field names must be confirmed against the running app**.
+  - Expected in a gift event, going by that library: the sender's handle, display name and profile picture; the gift's name and picture; its coin value; and for gifts sent in a streak, a running count and a flag on the last one.
+  - TikFinity's own actions use the placeholders `%username%`, `%nickname%`, `%profilePicturUrl%`, `%giftName%`, `%coins%`, `%repeatCount%` (its Streamer.bot page), which confirms it holds those details.
+- **What it means for the build:** a page open on the same computer as the TikFinity Desktop App can connect to it directly and receive gifts with no server of ours in between. For Andie's page, TikFinity must run on her computer, connected to her stream. Open risks: whether a page served over https may connect to a local address inside TikTok LIVE Studio's browser source (Chrome allows it; unknown there); streaks (one gift sent twenty times arrives as many events); and that TikFinity reads TikTok unofficially, so it can stop working when TikTok changes.
+- **Owner, 25 Nov 2026:** "We can work on it later. For now it can be more with buttons to test."
+- **Test version shipped 25 Nov 2026** on `/laser.html`: a Gift test row (a name box and Small, Medium, Big buttons; keys 1, 2, 3). Small: lightning on one pillar and the name on the booth. Medium: a run of light along all the pillars and back. Big: a beat of black, lightning on three pillars, everything lit, the big laser pattern and the name in lights. Gifts queue and land on the beat. Detail in `STAGE-PLAN.md`, "Gift moments".
+- **Later:** connect TikFinity (through `window.zeusGift`), coin thresholds for the three sizes, profile pictures, streaks, and the same in Andie's room.
