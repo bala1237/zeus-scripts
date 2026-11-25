@@ -17,7 +17,7 @@ import { createDirector, BUILDING, building, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: SHOT, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; document.body.append(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; $('frame').append(renderer.domElement);
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 200);
 const rig = createBeamRenderer({ maxBeams: 340, maxSheets: 14 }); scene.add(rig.group);
 // what is shown: the lasers, the flow (ribbons of colour that never stop), or both
@@ -148,15 +148,32 @@ $('theme').addEventListener('change', (e) => { if (e.target.value === 'auto') di
 const blackout = () => { dir.state.blackout = !dir.state.blackout; $('blackout').classList.toggle('on', dir.state.blackout); }, camToggle = () => { cam.moving = !cam.moving; $('cam').classList.toggle('on', cam.moving); $('cam').textContent = `Camera: ${cam.moving ? 'moving' : 'still'}`; if (!cam.moving) setCam(THEMES[dir.state.theme].festival ? FEST_CAMS[0] : 0); };
 $('next').addEventListener('click', () => dir.nextLook()); $('blackout').addEventListener('click', blackout); $('cam').addEventListener('click', camToggle); if (!cam.moving) { cam.moving = true; camToggle(); }
 for (const [id, f] of [['gain', (v) => { st.gain = v; }], ['haze', (v) => { rig.uniforms.uHaze.value = v; }], ['glow', (v) => { bloom.strength = v; }]]) { if (q.get(id)) $(id).value = q.get(id); $(id).addEventListener('input', (e) => f(Number(e.target.value))); f(Number($(id).value)); }
-let idle = null, hidden = false; const wake = () => { $('ui').classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { $('ui').classList.add('idle'); document.body.classList.add('idle'); }, 3500); };
-addEventListener('pointermove', () => { if (!hidden) wake(); }); wake();
-addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
-addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
-window.__laser = { st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
-if (SHOT) { $('ui').style.display = 'none'; cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
-else { if (q.has('demo')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
-  renderer.setAnimationLoop(() => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
+// ---------- layout (ZW-044): the picture is a 16:9 box in the middle of the space above the controls. size is its share of the largest box that fits.
+// With ?ui=0 (a browser source) or in a still there are no controls and the picture fills the window, whatever its shape.
+const frameEl = $('frame'), area = $('area'), grip = $('grip'), PLAIN = q.get('ui') === '0' || SHOT, store = { get: (k) => { try { return localStorage.getItem('laser-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('laser-' + k, v); } catch { /* private window */ } } };
+const view = { size: Math.max(0.25, Math.min(1, Number(q.get('size') ?? store.get('size') ?? 60) / 100)), max: 1 }; if (PLAIN) document.body.classList.add('plain');
+const fit = () => { const W = area.clientWidth, H = area.clientHeight; let w = W, h = H, x = 0, y = 0;
+  if (!PLAIN) { view.max = Math.max(0.02, Math.min(W / 1920, H / 1080)); const k = view.max * view.size; w = Math.floor(1920 * k); h = Math.floor(1080 * k); x = Math.round((W - w) / 2); y = Math.round((H - h) / 2); }
+  if (w < 2 || h < 2) return; frameEl.style.width = `${w}px`; frameEl.style.height = `${h}px`; frameEl.style.left = `${x}px`; frameEl.style.top = `${y}px`; grip.style.left = `${x + w - 14}px`; grip.style.top = `${y + h - 14}px`;
+  renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+const setSize = (v, save = true) => { view.size = Math.max(0.25, Math.min(1, v)); $('size').value = String(Math.round(view.size * 100)); $('sizev').textContent = `${Math.round(view.size * 100)}%`; if (save) store.set('size', String(Math.round(view.size * 100))); fit(); };
+$('size').addEventListener('input', () => setSize(Number($('size').value) / 100));
+// dragging the corner: the box stays centred and 16:9, so its width is twice the pointer's distance from the middle
+grip.addEventListener('pointerdown', (e) => { grip.setPointerCapture(e.pointerId); const move = (m) => { const r = area.getBoundingClientRect(), half = Math.max(m.clientX - (r.left + r.width / 2), (m.clientY - (r.top + r.height / 2)) * 16 / 9); setSize(2 * half / (1920 * view.max)); };
+  const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); }; grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); });
+grip.addEventListener('dblclick', () => setSize(view.size > 0.99 ? 0.6 : 1));
+let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area); addEventListener('resize', fit);
+addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h' && !PLAIN) { hidden = !hidden; showUi(); } });
+window.__laser = { view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
+if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
+else {
+  // a page with its controls off (a browser source) has nobody to press Demo, so it starts by itself, unless the address says calm=1
+  if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
+  const frame = (viaTimer) => { const now = performance.now(), ms = now - last; if (viaTimer === true && ms < 90) return; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
     const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
     $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
-    if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } });
+    if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } };
+  renderer.setAnimationLoop(() => frame());
+  // a browser stops its drawing loop for a window it thinks nobody can see, and a window capture freezes; a worker's timer keeps the show stepping then (ZW-043)
+  try { const w = new Worker(URL.createObjectURL(new Blob(['setInterval(() => postMessage(0), 33)'], { type: 'application/javascript' }))); w.onmessage = () => frame(true); } catch { /* no workers: the normal loop alone */ }
   window.ready = true; }

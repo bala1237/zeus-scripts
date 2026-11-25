@@ -6,25 +6,33 @@
 <title>Zeus Lasers</title>
 <style>
   html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
-  body.clear { background: transparent; }
+  /* The picture is a 16:9 box in the middle of the space above the controls, with room round it (ZW-044, as on Andie's page). Its size is
+     set by the Size slider or by dragging the corner grip. The grip and the thin outline lie just outside the box, so a capture cropped
+     to the box is clean. With ?ui=0 (a browser source) there are no controls and the picture fills the window. */
+  body { display: flex; flex-direction: column; }
+  #area { position: relative; flex: 1; min-height: 0; background: #06070b; }
+  #frame { position: absolute; overflow: hidden; background: #000; box-shadow: 0 0 0 1px rgba(120, 160, 220, .35), 0 12px 60px rgba(0, 0, 0, .8); }
+  #grip { position: absolute; width: 20px; height: 20px; cursor: nwse-resize; z-index: 20; touch-action: none; border-right: 3px solid #7fb2ee; border-bottom: 3px solid #7fb2ee; border-radius: 0 0 5px 0; opacity: .75; }
+  #grip:hover { opacity: 1; }
+  body.plain #area { background: #000; } body.plain #frame { box-shadow: none; } body.plain #grip { display: none; }
+  body.clear #frame { background: transparent; } body.clear.plain, body.clear.plain #area { background: transparent; }
   /* a stand-in for the camera picture, to judge the overlay against something */
-  #mock { position: fixed; inset: 0; display: none; background: radial-gradient(ellipse 60% 55% at 50% 38%, #2b2f3d 0%, #14161d 55%, #07080b 100%); }
-  #mock::before { content: ''; position: absolute; left: 50%; bottom: -6%; width: 34vh; height: 62vh; transform: translateX(-50%); border-radius: 46% 46% 12% 12% / 38% 38% 6% 6%; background: linear-gradient(#3a3440, #1c1a22); box-shadow: 0 0 60px rgba(0,0,0,.6); }
-  #mock::after { content: ''; position: absolute; left: 50%; bottom: 52vh; width: 17vh; height: 21vh; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 45% 40%, #8a6f62, #4a3a36); }
+  #mock { position: absolute; inset: 0; display: none; background: radial-gradient(ellipse 60% 55% at 50% 38%, #2b2f3d 0%, #14161d 55%, #07080b 100%); }
+  #mock::before { content: ''; position: absolute; left: 50%; bottom: -6%; width: 19.1%; height: 62%; transform: translateX(-50%); border-radius: 46% 46% 12% 12% / 38% 38% 6% 6%; background: linear-gradient(#3a3440, #1c1a22); box-shadow: 0 0 60px rgba(0,0,0,.6); }
+  #mock::after { content: ''; position: absolute; left: 50%; bottom: 52%; width: 9.6%; height: 21%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 45% 40%, #8a6f62, #4a3a36); }
   body.mock #mock { display: block; }
-  /* the picture never takes clicks, and the panel sits above it: the picture is added to the page after the panel, so without this it covers the buttons */
-  canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  #ui { z-index: 10; position: fixed; left: 16px; bottom: 14px; color: #fff; font: 600 13px system-ui; background: rgba(10,12,22,.8); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 32px); }
-  #ui.idle { opacity: 0; pointer-events: none; }
-  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; align-items: center; }
+  /* the picture never takes clicks (the trap from ZW-040) */
+  canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  #ui { z-index: 10; flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui; background: #0b0d16; border-top: 1px solid rgba(120, 160, 220, .4); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; justify-content: center; }
+  #ui.gone { display: none; }
+  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   #ui button { background: #2f6fb0; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
   #ui button.on { background: #e2a92e; color: #1d1a2e; }
   #ui label { font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 6px; }
-  body.idle { cursor: none; }
 </style>
 </head>
 <body>
-<div id="mock"></div>
+<div id="area"><div id="frame"><div id="mock"></div></div><div id="grip" title="Drag to resize the picture. Double-click to fill the space."></div></div>
 <div id="ui">
   <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a3040;flex:none"></span><span>Zeus Lasers · <span id="status"></span></span></div>
   <div class="row">
@@ -42,6 +50,7 @@
     <button id="blackout" title="All light off, until pressed again (or press B)">Blackout</button>
   </div>
   <div class="row">
+    <label title="How big the picture is in the window. You can also drag the blue corner. It is remembered.">Size <input id="size" type="range" min="25" max="100" step="1" value="60"> <span id="sizev"></span></label>
     <label>Brightness <input id="gain" type="range" min="0.2" max="2" step="0.05" value="1"></label>
     <label>Haze <input id="haze" type="range" min="0" max="1" step="0.05" value="1"></label>
     <label>Glow <input id="glow" type="range" min="0" max="1.5" step="0.05" value="0.45"></label>
@@ -53,7 +62,7 @@
     <button id="bg" title="What is behind the light: black (for Add or Screen blending), clear (for a transparent source), or a stand-in for the camera">Background: black</button>
     <span id="stats" style="font-weight:500;font-size:12px;opacity:.8"></span>
   </div>
-  <div style="font-weight:500;font-size:12px;margin-top:7px;opacity:.7">This panel hides when the mouse is still. Press H to keep it hidden.</div>
+  <div style="font-weight:500;font-size:12px;opacity:.7">Drag the blue corner to resize the picture. Press H to hide these controls.</div>
 </div>
 <script type="module" src="./laser.js"></script>
 </body>
