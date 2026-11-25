@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-047.**
+- **Next number: ZW-048.**
 
 ## Open
 
@@ -58,6 +58,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
+| ZW-047 | Enhancement | Gifts: make the giver the hero, not the creature (brainstorm) | High (proposed) | Open, under discussion. Nothing to be built yet | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -522,3 +523,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Pegasus shipped 25 Nov 2026**, with a staging of his own and no lightning: he gallops in from far off across the clouds while hoofbeats of silver light run along the pillars; when he spreads his wings the stage's lasers open into two wings of white light and feathers fall; he flies up and the view follows. 15 seconds. One clip, about $0.60. Test button "Pegasus". Detail in `STAGE-PLAN.md`, "Pegasus, with a staging of his own".
 - **Spend so far on clips:** about $1.80 for three.
 - **Waiting on the owner:** how Zeus and Pegasus look in motion; which next (Fire Phoenix, Thunder Falcon and TikTok Universe are the remaining top gifts).
+
+### ZW-047: Make the giver the hero
+
+- **Reported:** 25 Nov 2026, by the owner, on the lion, Zeus and Pegasus shows: "I guess this looks very basic like everyone does. Can we discuss something that can make them feel heroic that they have done something out of pure heart to elevate or support someone?"
+- **What it says about ZW-046:** a creature appearing for a big gift is what every platform does, however well it is staged. The spectacle was about the creature. He wants it to be about the person who gave, and about what their giving did.
+- **A brainstorm, not a build.** Directions put to him the same day: the giver as fire-bringer (their gift is a flame they carry to the temple, which burns under their name); a crowning and a hall of heroes (laurel, their name carved on the temple, remembered when they return); the gift visibly building something lasting in Zeus World with their name on it; the room saluting them; and the clips already made recast as honours paid to the giver (Zeus crowns them, Pegasus carries their name to the stars) instead of being the show.
+- **Constitution:** honour the act, never the amount. No amounts on screen and no ranking by spend.
