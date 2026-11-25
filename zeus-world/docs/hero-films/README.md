@@ -41,3 +41,4 @@ Ideas not yet written: The Lighthouse (a storm at sea; a close win), The Bell (a
 - **Cheaper to make:** about 45 seconds; moving shots only for the hook and the climax; the rest are still pictures the film moves slowly across.
 - **The person's picture** on the end card when there is one; the name alone when not.
 - **No gender in any script**, so one film serves anyone.
+- **No children in any film** (the owner, 25 Nov 2026: "We can't have kid in the video."). Every prompt that shows people says "adults only, no children". Check every picture and shot for it before it goes in.

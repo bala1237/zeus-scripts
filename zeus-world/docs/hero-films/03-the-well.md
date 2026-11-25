@@ -19,7 +19,7 @@ No gender anywhere: "one of us", "they". The hero is robed with the face wrapped
 | 0:13 | **The choice** | S. From behind: one robed figure walking away alone over a dune, an empty clay jar on the shoulder, a long line of footprints. | "One of us picked up an empty jar, and walked into the sand alone." |
 | 0:20 | **All but lost** | S. Night, a sandstorm. The figure on their knees beside a dead tree, digging with bare hands. | "The storm buried the road behind. There was nothing left to follow but hope." |
 | 0:27 | **The climax** | M. First light. Water wells up through the sand around the figure's hands and spreads, catching the sun. **`[NAME]` forged in gold**, "Water-Bearer" beneath. | "`[NAME]` found the water. And carried it back for everyone." |
-| 0:36 | **The answer, the honour** | S. The caravan: a child drinking from cupped hands, an elder with wet eyes, jars being filled. Then green palms around a well. | "No one who drank that day ever forgot who brought it. That is how a desert becomes a home." |
+| 0:36 | **The answer, the honour** | S. The caravan: an elder drinking from cupped hands, jars being filled. Then green palms around a well. (Adults only.) | "No one who drank that day ever forgot who brought it. That is how a desert becomes a home." |
 | 0:43 | End card | Laurel, picture if there is one, **`[NAME]` · Water-Bearer**. | |
 
 ## Made
