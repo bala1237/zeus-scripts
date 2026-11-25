@@ -319,3 +319,31 @@ The owner uploaded the video file (Armin van Buuren, Vini Vici and Hilight Tribe
 **Checked:** twelve director tests, including the oracle cue (lit under 40% of the time, mirrored, every kind of flash present, three colours); eight stills (`assets/sheets/laser_building.jpg`); the stepped run, the click check and the build. **Not checked:** timing against music, and the cuts, which only show in motion.
 
 **Not yet taken from the video:** the white-outs; white moving-head beams; the red wash with yellow lasers; the long still green passage at 1:40; the temple front as a screen; the red-on-blue hold. The oracle cue follows a fixed script on the beat, where the video follows the music's stabs.
+
+## Gift moments, test version (ZW-045), built 25 Nov 2026
+
+The owner: "We can work on it later. For now it can be more with buttons to test." So the moments are built and fired by buttons; reading real gifts from TikFinity comes later.
+
+On `/laser.html`: a "Gift test" row with a name box and three buttons (keys 1, 2, 3).
+
+- **Small gift (4 beats):** lightning strikes one pillar, which blinks gold and dies away; the sender's name replaces ZEUS on the booth. The lasers step back to a fifth.
+- **Medium gift (8 beats):** a run of light along all twelve pillars and back, then two flashes of the whole row; the name on the booth.
+- **Big gift (16 beats):** one beat of black, then lightning on three pillars at once, every pillar and bulb lit in gold, the lasers' biggest pattern, and the name in lights across the temple front. Lightning again every four beats.
+
+**Rules built in**
+
+- Gifts wait their turn in a queue; none cuts another short.
+- With music, a gift starts on the beat, and a big one on a bar of four. With no music it starts at once and runs at two beats a second, so it can be tried on a still stage.
+- A gift brings the temple on whatever theme is playing and whether or not "Stage set" is on, and the view cuts to a square-on angle for it, then goes back.
+- No amount is ever shown; only the name.
+
+**How**
+
+- `review/gifts.js` holds the queue, the timing and which pillars are lit (tested, four tests). It knows nothing about TikTok.
+- **The door for later:** `window.zeusGift(size, name)` adds a gift. Reading TikFinity's events and deciding the size from the coin value will call that; the moments do not change.
+- Lightning is drawn with the same beams as the lasers: a jagged line of nine short beams from above the picture to the pillar's top, with one or two forks, bright for a tenth of a second and gone in a third.
+- The booth sign is now redrawn on a canvas whenever its words change, fitted to the width.
+
+**Checked:** four tests of the gift logic; the three buttons clicked with a real pointer; gifts stepped through with no music and with music (order kept, lightning seen, names on the booth, the big pattern fired, the sign and the lasers back to normal afterwards); stills (`assets/sheets/laser_gifts.jpg`); the build. **Not checked:** the timing and feel in motion; a still of the small gift never caught the bolt, which lasts a third of a second, though the stepped run counted it.
+
+**Still to do:** the sender's profile picture; streaks; the TikFinity connection and coin thresholds; the same moments in Andie's room.

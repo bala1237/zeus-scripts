@@ -56,7 +56,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Shipped 25 Nov at `/andie.html`; "looks good for now" (owner). Waiting for her actual image to fix the rest | 25 Nov 2026, owner |
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
-| ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Open, under discussion. Nothing to be built yet | 25 Nov 2026, owner |
+| ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Test version shipped 25 Nov: three gift moments fired by buttons. TikFinity connection later, as the owner asked | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -488,4 +488,6 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
   - Expected in a gift event, going by that library: the sender's handle, display name and profile picture; the gift's name and picture; its coin value; and for gifts sent in a streak, a running count and a flag on the last one.
   - TikFinity's own actions use the placeholders `%username%`, `%nickname%`, `%profilePicturUrl%`, `%giftName%`, `%coins%`, `%repeatCount%` (its Streamer.bot page), which confirms it holds those details.
 - **What it means for the build:** a page open on the same computer as the TikFinity Desktop App can connect to it directly and receive gifts with no server of ours in between. For Andie's page, TikFinity must run on her computer, connected to her stream. Open risks: whether a page served over https may connect to a local address inside TikTok LIVE Studio's browser source (Chrome allows it; unknown there); streaks (one gift sent twenty times arrives as many events); and that TikFinity reads TikTok unofficially, so it can stop working when TikTok changes.
-
+- **Owner, 25 Nov 2026:** "We can work on it later. For now it can be more with buttons to test."
+- **Test version shipped 25 Nov 2026** on `/laser.html`: a Gift test row (a name box and Small, Medium, Big buttons; keys 1, 2, 3). Small: lightning on one pillar and the name on the booth. Medium: a run of light along all the pillars and back. Big: a beat of black, lightning on three pillars, everything lit, the big laser pattern and the name in lights. Gifts queue and land on the beat. Detail in `STAGE-PLAN.md`, "Gift moments".
+- **Later:** connect TikFinity (through `window.zeusGift`), coin thresholds for the three sizes, profile pictures, streaks, and the same in Andie's room.

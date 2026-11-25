@@ -58,6 +58,12 @@
   <div class="row">
     <label title="If the lights hit before or after the beat you hear, slide this until they land together. It is remembered.">Beat timing <input id="sync" type="range" min="-250" max="250" step="5" value="0"> <span id="syncv" style="font-weight:500;font-size:12px"></span></label>
   </div>
+  <div class="row" style="border:1px solid rgba(255,200,90,.45);border-radius:9px;padding:4px 8px">
+    <label title="Try the gift moments without anyone sending a gift. Later these will be fired by real gifts.">Gift test <input id="gname" type="text" maxlength="18" value="Athena" style="font:inherit;padding:5px 7px;border-radius:6px;border:1px solid #445;background:#0e1220;color:#fff;width:120px"></label>
+    <button id="g1" title="Lightning strikes one pillar; the name on the booth (or press 1)">Small gift</button>
+    <button id="g2" title="A run of light along all the pillars and back (or press 2)">Medium gift</button>
+    <button id="g3" title="A beat of black, then lightning, every pillar lit and the name in lights (or press 3)">Big gift</button>
+  </div>
   <div class="row">
     <button id="bg" title="What is behind the light: black (for Add or Screen blending), clear (for a transparent source), or a stand-in for the camera">Background: black</button>
     <span id="stats" style="font-weight:500;font-size:12px;opacity:.8"></span>
