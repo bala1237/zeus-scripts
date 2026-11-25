@@ -546,6 +546,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Verified here:** stills of the opening, the reveal at nine moments, the end card; a real-time run (picture and sound within 0.1 s, the named recording used); build and tests. **Not verifiable here:** how the voice and the mix sound, and how the reveal moves.
 - **Still to do:** the team version; more scripts; starting it after a battle; the profile picture on the end card. How it all works: `docs/knowledge/hero-films.md`.
 
+- **Next films, owner's direction, 25 Nov 2026:** "We need to do different videos. We can go for cheaper options now. Is you are able to pull in their profile pict, we can show that. Otherwise just the name. The script should be generic without gender so it's easy to use for both." So: a library of different films (not variations of one); a cheaper way of making them; the person's profile picture when it can be had, the name alone when not; no gender in any script. Under discussion; nothing generated.
+
 ### ZW-048: The pages as OBS browser sources
 
 - **Reported:** 25 Nov 2026, by the owner, after approving the hero film's second cut ("looks good"): "now i will be using obs to have this added as source. and also for laser show and zeus world. how do we address it by adding as url rather than window capture".
