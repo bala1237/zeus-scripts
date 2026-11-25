@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **Gift moments redesigned (ZW-045).** The owner asked for "professional creativity" that makes people say wow. Every gift is now lightning: a small one strikes a pillar and leaves a flame burning; a medium one leaps along the whole row; a big one gathers a storm, strikes the temple, writes the name in molten gold and rains gold. When all twelve flames burn, the temple answers by itself. `assets/review/giftfx.js`, `gifts.js`.
 - **Gift moments, fired by test buttons (ZW-045).** On the laser stage: a small gift brings lightning onto one pillar and the sender's name onto the booth; a medium one a run of light along all the pillars; a big one a beat of black, then lightning, every pillar lit, the big laser pattern and the name in lights. Gifts queue and land on the beat. Real gifts from TikFinity are to be connected later. `assets/review/gifts.js`.
 - **Laser page: the picture in a resizable 16:9 box, controls below (ZW-044).** The same layout as Andie's page, at the owner's request. It also gains `ui=0` for use as a browser source and keeps running when its window is covered.
 - **Andie's Place did not animate in TikTok LIVE Studio (ZW-043).** A page with its controls off now starts by itself; the show keeps running when the browser stops drawing a covered window; the build suits older built-in browsers. New "Copy link for LIVE Studio" button, and `debug=1` to see what the page is doing. Not yet confirmed in LIVE Studio.

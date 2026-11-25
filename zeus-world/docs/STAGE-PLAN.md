@@ -347,3 +347,32 @@ On `/laser.html`: a "Gift test" row with a name box and three buttons (keys 1, 2
 **Checked:** four tests of the gift logic; the three buttons clicked with a real pointer; gifts stepped through with no music and with music (order kept, lightning seen, names on the booth, the big pattern fired, the sign and the lasers back to normal afterwards); stills (`assets/sheets/laser_gifts.jpg`); the build. **Not checked:** the timing and feel in motion; a still of the small gift never caught the bolt, which lasts a third of a second, though the stepped run counted it.
 
 **Still to do:** the sender's profile picture; streaks; the TikFinity connection and coin thresholds; the same moments in Andie's room.
+
+## Gift moments redesigned (ZW-045), 25 Nov 2026
+
+The owner on the first test version: "I need professional creativity please. It should make people say wow and wanna see it again." The first three moments were lights going on and off. They are replaced. **The section above ("Gift moments, test version") describes what was thrown away.**
+
+**The idea.** A gift is a short piece of theatre: a wait, a pay-off, and something left behind. And Zeus's sign is the thunderbolt, so every gift is lightning.
+
+- **Small (4 beats).** Lightning feels its way down from the dark and strikes one pillar. Sparks burst from its top, the sender's name arrives on the booth, and **a flame is lit on that pillar and stays burning** for two and a half minutes.
+- **Medium (8 beats).** Lightning strikes the end pillar, then **leaps from pillar to pillar** along the whole row, each one staying lit as it passes, to a full-row finish. Three flames stay.
+- **Big (16 beats).** Two beats of black while **a storm gathers** over the temple and flickers from inside, more and more often, and the view pushes in. Then **a great bolt on the temple's peak**: a flash, a ring of gold spreading from where it lands, the ground jumping, sparks. The pillars catch from the middle outwards. The lasers come back in gold. **The name is written across the temple front** behind a white-hot edge that throws sparks, and settles into molten gold with a travelling shine. **Gold rains.** Two more strikes. At the end the name burns away to embers and the view draws back.
+- **The flames are the reason to come back.** Small and medium gifts leave flames on the pillars, and "Flames 5 of 12" shows in the controls. When all twelve burn at once **the temple answers by itself** with the big moment, under the name OLYMPUS AWAKENS, and the flames start again. So the smallest gift moves the whole stream towards something, and the stream fills the temple together.
+
+**How it is built**
+
+- `review/gifts.js` is the script: the queue, the timing in beats, which pillars are lit, the flames, and a list of requests for the picture (`bolt`, `arc`, `forge`, `name`). Seven tests. It still knows nothing about TikTok; `window.zeusGift(size, name)` is still the door.
+- `review/giftfx.js` is the picture:
+  - **the sky**, one full-screen shader: storm cloud from drifting noise in the upper part of the picture, lit from inside; the flash of a strike, strongest where it lands and held well under white elsewhere; the spreading ring.
+  - **lightning**, drawn with the lasers' own beams: a jagged line made by halving and nudging four times, with forks. It first feels its way down dimly over a tenth of a second (the leader), then the full stroke runs along it and flickers out. A thin white core and a wider faint sleeve.
+  - **sparks and gold rain**: 1,100 points that fly, fall and fade.
+  - **flames**: two soft sprites on each pillar top, flickering; they gutter in their last twelve seconds.
+  - **the name**: a shader that writes it on from the left behind a hot edge and later eats it away with noise, leaving an ember rim.
+- The lasers are held dark until the bolt has landed (a quarter of a beat after it is sent); lighting them on the same instant stole the strike.
+- **Buttons for testing:** Small, Medium, Big, and "Light all 12" to see the temple answer without sending twelve gifts.
+
+**Kept in mind.** One flash per strike, not a strobe, and the flash is capped. No amounts shown.
+
+**Checked:** seven tests of the script (queue, start on the beat and bar, one bolt and one flame for a small gift, eleven leaps in order for a medium one, two beats of black then the cascade for a big one, twelve small gifts waking the temple, a flame burning out); the buttons by real clicks; a stepped run with and without music; stills of the storm, the strike, the name being written, the full moment, the burn-away and a flame (`assets/sheets/laser_gifts.jpg`); the build. **Not checked:** how it plays in motion, which is everything for a piece like this; frame rate while it runs.
+
+**Ideas not built yet:** the sender's profile picture inside the pediment; a streak making the bolt strike again and again, each time bigger; thunder (sound); the same language in Andie's room (her neon and crown in place of lightning).

@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createGifts, GIFT_BEATS } from '../review/gifts.js';
+import { createGifts, GIFT_BEATS, FLAME_SECONDS, AWAKEN } from '../review/gifts.js';
 
-// run the clock in steps of a twentieth of a beat, reporting what plays at each step
-function run(g, beats, each) { let b = 0; for (let i = 0; i < beats * 20; i++) { const prev = b; b += 0.05; const onBeat = Math.floor(b + 1e-9) !== Math.floor(prev + 1e-9), onBar = onBeat && Math.floor(b + 1e-9) % 4 === 0; each(g.update(0.05, onBeat, onBar), b); } }
+// run the clock in steps of a twentieth of a beat (two beats a second), reporting what plays at each step
+function run(g, beats, each = () => {}) { let b = g.clock || 0; for (let i = 0; i < beats * 20; i++) { const prev = b; b += 0.05; const onBeat = Math.floor(b + 1e-9) !== Math.floor(prev + 1e-9), onBar = onBeat && Math.floor(b + 1e-9) % 4 === 0; each(g.update(0.05, 0.025, onBeat, onBar), b); } g.clock = b; }
+const lit = (g) => g.state.flames.filter((f) => f > 0).length;
 
 test('gifts wait their turn, each plays for its full length, and none overlaps another', () => { const g = createGifts(), seen = []; g.add({ size: 'small', name: 'Ana' }); g.add({ size: 'medium', name: 'Ben' }); g.add({ size: 'small', name: 'Cy' }); let last = null;
   run(g, 30, (a, b) => { if (a && a !== last) seen.push([a.name, a.size, Math.round(b)]); last = a || last; });
@@ -12,10 +13,23 @@ test('gifts wait their turn, each plays for its full length, and none overlaps a
 test('a gift starts on a beat, and a big one on a bar of four', () => { const g = createGifts(); let b0 = null; g.add({ size: 'big', name: 'Zed' });
   run(g, 10, (a, b) => { if (a && b0 === null) b0 = b; }); assert.ok(Math.abs(b0 % 4) < 0.06 || Math.abs(b0 % 4 - 4) < 0.06, `started at beat ${b0}`); });
 
-test('small: lightning once, one pillar only. medium: the run visits every pillar there and back, then the whole row flashes. big: a beat of black, then everything, with lightning more than once', () => { const n = 12, o = [];
-  let g = createGifts(); g.add({ size: 'small', name: 'A' }); const pillarsLit = new Set(); run(g, 6, (a) => { if (!a) return; g.lights(n, o); o.slice(0, n).forEach((v, i) => { if (v) pillarsLit.add(i); }); assert.equal(o[n], 0); }); assert.equal(pillarsLit.size, 1); assert.equal(g.state.strikes, 1);
-  g = createGifts(); g.add({ size: 'medium', name: 'B' }); const seq = []; let all = false; run(g, 10, (a) => { if (!a) return; g.lights(n, o); const lit = o.slice(0, n).map((v, i) => v ? i : -1).filter((i) => i >= 0); if (lit.length === 1 && seq.at(-1) !== lit[0]) seq.push(lit[0]); if (lit.length === n) all = true; });
-  assert.deepEqual(seq.slice(0, 23), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]); assert.ok(all);
-  g = createGifts(); g.add({ size: 'big', name: 'C' }); let darkFirst = true, full = false; run(g, 22, (a) => { if (!a) return; g.lights(n, o); const c = o.slice(0, n).reduce((x, v) => x + v, 0); if (a.t < 0.95 && c) darkFirst = false; if (c === n && o[n] && o[n + 1]) full = true; }); assert.ok(darkFirst && full); assert.ok(g.state.strikes >= 3, `${g.state.strikes} strikes`); });
+test('small: one bolt on one pillar, and a flame left burning there', () => { const g = createGifts(), o = [], pillars = new Set(); g.add({ size: 'small', name: 'A' });
+  run(g, 6, (a) => { if (!a) return; g.lights(o); o.slice(0, 12).forEach((v, i) => { if (v) pillars.add(i); }); assert.equal(o[12], 0); });
+  const bolts = g.state.fx.filter((f) => f.type === 'bolt'); assert.equal(bolts.length, 1); assert.deepEqual([...pillars], [bolts[0].pillar]); assert.equal(lit(g), 1); assert.ok(g.state.flames[bolts[0].pillar] > 0); assert.ok(g.state.fx.some((f) => f.type === 'name')); });
+
+test('medium: a bolt on the end pillar, then the light leaps pillar to pillar along the whole row, and three flames stay', () => { const g = createGifts(), o = []; let most = 0, all = false; g.add({ size: 'medium', name: 'B' });
+  run(g, 10, (a) => { if (!a) return; g.lights(o); const c = o.slice(0, 12).filter((v) => v > 0).length; if (a.t < 4.5) { assert.ok(c >= most, 'pillars stay lit as the light passes'); most = c; } else if (c === 12) all = true; });
+  const arcs = g.state.fx.filter((f) => f.type === 'arc'); assert.equal(arcs.length, 11); assert.deepEqual(arcs.map((x) => x.from), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); assert.deepEqual(arcs.map((x) => x.to), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  assert.equal(g.state.fx[0].type, 'bolt'); assert.equal(g.state.fx[0].pillar, 0); assert.ok(all); assert.equal(lit(g), 3); });
+
+test('big: two beats of black, then the bolt on the peak, the pillars catching from the middle outwards, the name forged, two more strikes', () => { const g = createGifts(), o = []; let darkFirst = true, order = [], full = false; g.add({ size: 'big', name: 'C' });
+  run(g, 22, (a) => { if (!a) return; g.lights(o); const on = o.slice(0, 12).map((v, i) => v > 0 ? i : -1).filter((i) => i >= 0); if (a.t < 1.95 && on.length) darkFirst = false; for (const i of on) if (!order.includes(i)) order.push(i); if (on.length === 12 && o[12] && o[13]) full = true; });
+  assert.ok(darkFirst && full); assert.ok(order.indexOf(5) < order.indexOf(0) && order.indexOf(6) < order.indexOf(11), `caught in the order ${order}`);
+  const fx = g.state.fx.map((f) => f.type + (f.pillar ?? '')); assert.deepEqual(fx, ['bolt-1', 'forge', 'bolt1', 'bolt10']); });
+
+test('small gifts add up: when all twelve flames burn the temple answers by itself, then the flames start again; a flame left alone burns out', () => { const g = createGifts(); let awaken = false;
+  for (let i = 0; i < 12; i++) g.add({ size: 'small', name: 'S' + i }); run(g, 12 * 5 + 2); assert.equal(lit(g), 12, 'twelve small gifts light twelve different pillars'); assert.equal(g.state.awakenings, 1);
+  run(g, 24, (a) => { if (a && a.awaken && a.name === AWAKEN && a.size === 'big') awaken = true; }); assert.ok(awaken); assert.equal(lit(g), 0); assert.equal(g.state.awakenings, 1);
+  const h = createGifts(); h.add({ size: 'small', name: 'x' }); run(h, 6); assert.equal(lit(h), 1); run(h, FLAME_SECONDS * 2 + 4); assert.equal(lit(h), 0); });
 
 test('a name is trimmed and kept short; an unknown size is treated as small', () => { const g = createGifts(); g.add({ size: 'huge', name: '   A   very long name indeed for a sign   ' }); assert.equal(g.state.queue[0].size, 'small'); assert.equal(g.state.queue[0].name, 'A very long name i'); });
