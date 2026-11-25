@@ -27,6 +27,7 @@ Then read whatever the task touches:
 | Ideas for making it a game (not decided) | `zeus-world/docs/BRAINSTORM-GAME.md` |
 | Research behind the game direction | `reports/Zeus World game design research.md`, notes in `research_notes/` |
 | The music stage: the owner's brief, audit and phased plan | `zeus-world/docs/STAGE-PLAN.md` |
+| Hero films: story films that celebrate a battle's top givers; the rules and the scripts | `zeus-world/docs/hero-films/` |
 | Art style and model catalogue | `zeus-world/docs/ASSET-BIBLE.md` |
 | Asset pipeline commands | `zeus-world/assets/README.md` |
 
