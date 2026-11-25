@@ -6,6 +6,8 @@ Source: `assets/review/stage.html`, `stage.js` and `beat.js`. Hosted with the ot
 
 **From 25 Nov 2026 the stage is being rebuilt as a professional laser and lighting system.** The brief, the audit of what is described below, the plan, the phase 2 prototype and the phase 3 show (`laser.html`, `laser.js`, `beams.js`, `director.js`; seven projectors, a Lighting Director, themes, camera) are in `../STAGE-PLAN.md`, with how each was worked out. The director's rules are tested: `npm test` in `assets/`.
 
+**Flow (ZW-037).** `flow.js` is a full-screen shader of endlessly drifting ribbons, shown by the laser page's Show button; see `../STAGE-PLAN.md`, "Flow".
+
 **The beat (from 25 Nov 2026, ZW-038).** `beat.js` no longer detects beats itself. `tracker.js` finds the tempo and the beat from the audio and holds them through quiet parts; `beat.js` runs the count of beats at that tempo and eases it onto the tracker's beat. How it works, the traps met and what was tested are in `../STAGE-PLAN.md`, "Phase 4, first part". The description of beat detection further down this file is the old method and no longer applies. Check it in a real browser with `node beattest.mjs 128` (review server running). The page described here still works and is unchanged.
 
 ## Why it is separate

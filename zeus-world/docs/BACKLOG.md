@@ -48,7 +48,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
 | ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 3 (seven-projector rig, Lighting Director, six themes, camera moves) shipped 25 Nov; waiting for the owner to pass it | 25 Nov 2026, owner |
-| ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | Open. The owner sent three reference videos; reading of them put to him | 25 Nov 2026, owner |
+| ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | First version shipped 25 Nov: a Flow mode (ribbons of colour that never stop). Waiting for the owner: is this what he meant | 25 Nov 2026, owner |
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 
 ## Closed
@@ -394,7 +394,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Known:** it is wanted as well as the present show, not in place of it. He wants to talk before anything is built.
 - **Not known:** what "infinite move" means to him. Guesses, put to him as options: the view travelling forward for ever through gates of light (an endless tunnel); a show that never stops or repeats; one pattern that loops seamlessly.
 - **References from the owner, 25 Nov 2026:** three videos. A liquid-art screensaver (ribbons and smoke of colour flowing endlessly on black), Gareth Emery's LSR/CITY laser show (hundreds of beams, every colour at once) and Transmission Prague 2016 (dense green fans, magenta accents, white moving-head beams). Described in `STAGE-PLAN.md`, "The owner's references". So "infinite move" most likely means the endlessly flowing liquid visual, and the laser shows he likes are much denser and more colourful than the first brief.
-- Nothing built.
+- **First version shipped 25 Nov 2026:** a Flow mode on `/laser.html` (Show button, or key L): ribbons of coloured silk that wind and twist for ever on black, alone or behind the lasers, following the music's energy. Detail in `STAGE-PLAN.md`, "Flow". Checked in stills only.
+- **Waiting on the owner:** is this the "infinite move" he meant; ribbons or more smoke; and whether the lasers should move towards the dense, many-coloured look of his two concert references, which is a change from the restrained brief.
 
 ### ZW-038: The beat capture is not perfect
 

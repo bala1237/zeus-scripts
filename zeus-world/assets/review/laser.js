@@ -12,6 +12,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeamRenderer } from './beams.js';
 import { createBeat } from './beat.js';
+import { createFlow } from './flow.js';
 import { createDirector, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
@@ -19,6 +20,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premul
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; document.body.append(renderer.domElement);
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 200);
 const rig = createBeamRenderer({ maxBeams: 64, maxSheets: 8 }); scene.add(rig.group);
+// what is shown: the lasers, the flow (ribbons of colour that never stop), or both
+const flow = createFlow(), look = { mode: ['lasers', 'flow', 'both'].includes(q.get('look')) ? q.get('look') : 'lasers', beams: 1, flow: 0, third: new THREE.Color(), t: Number(q.get('flowt') || 0) }; scene.add(flow.mesh); flow.uniforms.uT.value = look.t;
 
 // ---------- the rig. Three across the back and high, one each side at shoulder height firing inward, two on the floor firing up.
 // yaw and pitch are which way a projector faces; n is how many beams it can throw.
@@ -57,7 +60,11 @@ let drops = 0;
 function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // the music's shape: quiet patterns while the bass is out, the biggest one the moment it comes back
   if (b.mode === 'listen') { dir.setCalm(b.section === 'breakdown'); if (b.drops !== drops) { drops = b.drops; dir.hit(); } } else dir.setCalm(false);
-  const d = dir.update(b.beats), theme = THEMES[d.theme], act = b.act, kick = 0.74 + 0.26 * b.pulse;
+  const d = dir.update(b.beats), theme = THEMES[d.theme], kick = 0.74 + 0.26 * b.pulse;
+  look.beams += ((look.mode === 'flow' ? 0 : 1) - look.beams) * Math.min(1, dt * 2.5); look.flow += ((look.mode === 'lasers' ? 0 : 1) - look.flow) * Math.min(1, dt * 1.2); const act = b.act * look.beams;
+  // the flow keeps the theme's two colours and adds a third from across the colour wheel. It drifts faster with the energy of the music, calms in a breakdown, and stops with the music.
+  { const hsl = {}; main.getHSL(hsl); look.third.setHSL((hsl.h + 0.42) % 1, 1, 0.55);
+    flow.update(dt * b.act, { level: look.flow * b.act * (d.blackout ? 0 : 1) * st.gain * (look.mode === 'both' ? 0.55 : 1), speed: (b.section === 'breakdown' ? 0.6 : 0.8 + 1.4 * b.energy), pulse: b.pulse, a: main, b: accent, c: look.third, aspect: camera.aspect }); }
   main.lerp(C.set(theme.main), Math.min(1, dt * 1.2)); accent.lerp(C.set(theme.accent), Math.min(1, dt * 1.2));
   if (SHOT && q.get('pattern')) d.pattern = q.get('pattern');
   // an intensity budget: the more beams are lit, the less each gets, so a full rig does not flood the picture and a single beam is strong
@@ -85,6 +92,7 @@ $('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') 
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = 124; beat.tap(); });
 $('sync').value = String(Math.round(beat.state.offset * 1000)); const showSync = () => { const v = Number($('sync').value); $('syncv').textContent = v === 0 ? 'as heard' : `${Math.abs(v)} ms ${v > 0 ? 'later' : 'earlier'}`; }; showSync();
 $('sync').addEventListener('input', () => { beat.setOffset(Number($('sync').value) / 1000); showSync(); });
+const setLook = (m) => { look.mode = m; $('look').textContent = `Show: ${m}`; }; setLook(look.mode); $('look').addEventListener('click', () => setLook({ lasers: 'flow', flow: 'both', both: 'lasers' }[look.mode]));
 $('theme').innerHTML = '<option value="auto">Automatic</option>' + THEMES.map((t, i) => `<option value="${i}">${t.name}</option>`).join(''); if (!dir.state.auto) $('theme').value = String(dir.state.theme);
 $('theme').addEventListener('change', (e) => { if (e.target.value === 'auto') dir.state.auto = true; else { dir.state.auto = false; dir.setTheme(Number(e.target.value)); } });
 const blackout = () => { dir.state.blackout = !dir.state.blackout; $('blackout').classList.toggle('on', dir.state.blackout); }, camToggle = () => { cam.moving = !cam.moving; $('cam').classList.toggle('on', cam.moving); $('cam').textContent = `Camera: ${cam.moving ? 'moving' : 'still'}`; if (!cam.moving) setCam(0); };
@@ -92,9 +100,9 @@ $('next').addEventListener('click', () => dir.nextLook()); $('blackout').addEven
 for (const [id, f] of [['gain', (v) => { st.gain = v; }], ['haze', (v) => { rig.uniforms.uHaze.value = v; }], ['glow', (v) => { bloom.strength = v; }]]) { if (q.get(id)) $(id).value = q.get(id); $(id).addEventListener('input', (e) => f(Number(e.target.value))); f(Number($(id).value)); }
 let idle = null, hidden = false; const wake = () => { $('ui').classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { $('ui').classList.add('idle'); document.body.classList.add('idle'); }, 3500); };
 addEventListener('pointermove', () => { if (!hidden) wake(); }); wake();
-addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'b') blackout(); else if (k === 'h') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
+addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
-window.__laser = { st, beat, dir, update, draw, RIG, rig, cam, camera };
+window.__laser = { st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
 if (SHOT) { $('ui').style.display = 'none'; cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
 else { if (q.has('demo')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
   renderer.setAnimationLoop(() => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);

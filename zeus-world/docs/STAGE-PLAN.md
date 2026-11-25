@@ -238,3 +238,15 @@ Three videos sent after phase 3, with "i want like some infinite move version as
 3. Armin van Buuren, Vini Vici and Hilight Tribe at Transmission Prague 2016: dense green fans with magenta accents, moving-head white beams, built stage architecture.
 
 What they say about direction: far denser and more colourful than the brief's "70% club, restrained". Many more beams, several colours on stage at once, and a screen-style flowing visual as well as beams. Recorded under ZW-037; to be confirmed with the owner since it changes the visual direction he set.
+
+## Flow: the "infinite move", first version (ZW-037), built 25 Nov 2026
+
+Built from the owner's first reference (the liquid-art screensaver), as something for him to react to. It may not be what he meant; that is the question put to him.
+
+- **What it is:** three ribbons of coloured silk that wind, twist and cross on pure black, with fine strands, bright edges and a little smoke. It never repeats, because the shapes come from slowly drifting noise and not from a loop.
+- **Where:** the laser page. The "Show" button (key L) switches between lasers, flow, and both together. `?look=flow` opens it directly.
+- **Colour:** the theme's two colours plus a third from across the colour wheel, so every theme gives a different flow.
+- **Music:** it drifts faster as the music's energy rises, calms in a breakdown, brightens a touch on each beat, and stops and goes dark when the music stops (the owner's rule from ZW-035).
+- **How:** one full-screen shader (`review/flow.js`) drawn behind the beams, through the same glow and overlay output. A ribbon is a band along a wandering line; the whole space is bent by noise (that is the liquid feel); a twist term narrows it to a bright edge and opens it again; strands are sine lines across its width, pushed about by noise.
+- **Checked:** four stills in three themes and with lasers (`assets/sheets/laser_flow.jpg`); the page's fifteen-minute stepped run with no errors; the build. **Not checked:** the motion itself, which is the whole point of it, and its cost on a real graphics card.
+- **Not yet done from the references:** the smoky, cloud-like version of the liquid (the reference's main image is more smoke than ribbon); the dense many-coloured laser look of the two concert videos.
