@@ -8,6 +8,7 @@ How each part works and how it was built. One file per topic. Update the file in
 | `models.md` | How models are made: Blender scripts, fal generation, Poly Haven, the normaliser, naming, budgets |
 | `characters.md` | The citizens: rigs, animations, how to check an animation with a frame sheet, how a broken binding was repaired |
 | `battle.md` | The siege at the south gate: what it shows, how to see it, how it is driven and built |
+| `andie.md` | Andie's Place: a branded stream backdrop for another host, built on the same beat and laser code; how she uses it in TikTok LIVE Studio |
 | `stage.md` | The Zeus Stage: a separate show for music with lasers and changing backgrounds; the beat (tap and listen); why concert mode in the city was dropped |
 | `hosting.md` | The Vercel preview, how to deploy, branches and merging |
 | `environment.md` | Setting up a session: Blender, Node, rendering stills, connected services and their limits |

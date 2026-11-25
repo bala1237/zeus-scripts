@@ -5,6 +5,7 @@ This file is loaded by every Claude session. It is the entry point; the detail i
 ## Projects
 
 - `zeus-world/`: Zeus World, a community-built miniature civilisation for the Zeus TikTok LIVE stream. The active project.
+- Andie's Place: a branded stream backdrop for another host, at `zeus-world/assets/review/andie.html`. Uses Zeus World's beat and laser code; see `zeus-world/docs/knowledge/andie.md`.
 - `bougie-prototype/`: an older 2D character animation prototype. Not active.
 
 ## Start of a session

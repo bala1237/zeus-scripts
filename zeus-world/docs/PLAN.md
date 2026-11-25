@@ -14,6 +14,7 @@ Last updated: 25 Nov 2026.
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
 | Building labels showing during the battle | ZW-029 | Fix shipped 24 Nov. Waiting for the owner to confirm |
 | Professional laser and lighting system | ZW-036 to ZW-039 | On `/laser.html`: the club rig with a Lighting Director and six themes (phase 3), a new beat tracker (ZW-038), a Flow mode (ZW-037) and the festival look, Olympus (ZW-039), all shipped 25 Nov. Waiting for the owner on each |
+| Andie's Place: a branded backdrop for another host | ZW-042 | First version shipped 25 Nov at `/andie.html`. Waiting for the owner |
 | The Zeus Stage for music | ZW-034, ZW-035 | Look approved by the owner 24 Nov. Follow-up shipped: still without music, visibly on the beat, neon glow. Waiting for the owner to try it with music |
 | After a battle is won | ZW-025 | Shipped 23 Nov: storm of gold, triumph, house tour. Waiting for the owner to watch it |
 | Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
@@ -45,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-042, Andie's Place.** `/andie.html`. Does it look like her room; is "her background as lights" read correctly (a room-only mode); does it work in TikTok LIVE Studio; does she have her logo as an image file.
 0. **ZW-041, the building cues, second version (after watching the video).** In Olympus: the oracle cue (the video's opening), chase, corners, colonnade, strobe, on a stage rebuilt as a temple with three pillars each side. Is this what he loved; how often should they come; which other moments of the video next (white-outs, white beams, red wash, temple as a screen).
 0. **ZW-039, the festival look (Olympus).** It opens the show on `/laser.html`. Is it the look he loved in the Transmission video; what frame rate does the panel show with this many beams; Stage set on or off over his camera; what in the video's movement should be added.
 0. **ZW-038, the new beat tracker.** On `/laser.html` press Listen with music playing. Does the status say "on the beat at ..." with the right tempo; do the lights land on the beat (slide Beat timing if they are early or late); does it go quiet in a breakdown and hit on the drop; which tracks still fool it. And **ZW-037**: press Show (or L) for the new Flow mode. Is this the "infinite move" he meant; ribbons or more smoke; and should the lasers move towards the dense, many-coloured look of his two concert references.

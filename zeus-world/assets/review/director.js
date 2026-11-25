@@ -16,6 +16,8 @@ export const THEMES = [
   { name: 'Inferno', main: 0xff2a1e, accent: 0xffa01e, cue: 8, patterns: ['opposing', 'explosion', 'sweep', 'fan', 'cage', 'finale'], camera: 'lively' },
   { name: 'Ultraviolet', main: 0xa02bff, accent: 0xff2bd0, cue: 16, patterns: ['architecture', 'tunnel', 'opposing', 'ceiling', 'single', 'finale'], camera: 'lively' },
   { name: 'Monochrome', main: 0xdfe8ff, accent: 0xdfe8ff, cue: 32, patterns: ['single', 'sweep', 'cage', 'ceiling', 'architecture', 'fan'], camera: 'still' },
+  // Andie's Place (ZW-042): her purple with gold. Used only by her page, so the automatic rotation passes over it.
+  { name: 'Mogul', main: 0xa63cff, accent: 0xffc247, cue: 16, patterns: ['fan', 'ceiling', 'sweep', 'opposing', 'tunnel', 'architecture', 'explosion'], camera: 'still', only: 'andie' },
   { name: 'Solar', main: 0xffb21e, accent: 0xfff2c0, cue: 16, patterns: ['fan', 'explosion', 'tunnel', 'sweep', 'opposing', 'finale'], camera: 'calm' },
 ];
 
@@ -98,7 +100,7 @@ export function createDirector({ seed = 7 } = {}) {
   // The pattern after this one is chosen as each cue starts, so the director knows in time whether to go dark before it.
   function update(beats) { const cue = Math.floor(beats / THEMES[st.theme].cue);
     if (cue !== st.cue) { let fresh = st.cue < 0 || st.coming === null; st.themeCues++;
-      if (st.auto && st.themeCues > 8) { st.theme = (st.theme + 1) % THEMES.length; st.themeCues = 1; st.history = []; fresh = true; }   // a theme holds for eight cues, then the next one takes over
+      if (st.auto && st.themeCues > 8) { do st.theme = (st.theme + 1) % THEMES.length; while (THEMES[st.theme].only); st.themeCues = 1; st.history = []; fresh = true; }   // a theme holds for eight cues, then the next one takes over
       const len = THEMES[st.theme].cue; st.cue = Math.floor(beats / len); st.cueStart = st.cue * len;
       st.pattern = st.force || (fresh ? choose(true) : st.coming); st.force = null;   // a theme never opens on its biggest moment
       st.history.push(st.pattern); if (st.history.length > 8) st.history.shift(); st.v = rnd(); st.coming = choose(); }

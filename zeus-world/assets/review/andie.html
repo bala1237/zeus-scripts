@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Andie's Place</title>
+<style>
+  /* The room is drawn at 1920 x 1080 and scaled to fill the window. Layers, from the back: the room itself (wall, shelves,
+     furniture), a black sheet that dims it, the neon pieces, the lasers, the control panel. */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Montserrat', system-ui, sans-serif; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #050407; }
+  #stage > div, #stage > svg { position: absolute; }
+  #room, #dark, #pieces { inset: 0; }
+  #room div, #room svg, #pieces > div { position: absolute; }
+  #dark { background: #000; opacity: 0; pointer-events: none; }
+
+  /* ---- the room */
+  .wall { inset: 0; background:
+      radial-gradient(ellipse 46% 60% at 50% 30%, rgba(120, 60, 200, .16), transparent 70%),
+      repeating-linear-gradient(90deg, transparent 0 158px, rgba(255, 255, 255, .028) 158px 160px),
+      linear-gradient(#0d0b12, #08070b 60%, #040306); }
+  .feature { left: 480px; top: 0; width: 960px; height: 1080px; background: linear-gradient(#15121b, #0b0a10 70%, #060509); box-shadow: inset 0 0 120px rgba(0, 0, 0, .8); }
+  .trim { top: 0; width: 12px; height: 1080px; background: linear-gradient(90deg, #6b4a12, #f3d27e 45%, #fff1c2 55%, #8a611a); box-shadow: 0 0 22px rgba(255, 196, 90, .25); }
+  .sconce { width: 26px; height: 92px; border-radius: 6px; background: linear-gradient(#fff4cf, #ffcf73 40%, #c98a23); box-shadow: 0 0 34px 10px rgba(255, 190, 90, .55), 0 0 120px 40px rgba(255, 170, 70, .18); }
+  .spot { top: -40px; width: 300px; height: 520px; background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(255, 214, 150, .34), rgba(255, 200, 120, .08) 45%, transparent 70%); }
+  .spot::before { content: ''; position: absolute; left: 50%; top: 40px; width: 40px; height: 12px; margin-left: -20px; border-radius: 50%; background: #fff3d2; box-shadow: 0 0 26px 10px rgba(255, 220, 160, .8); }
+  .shelf { border: 5px solid #c9982f; border-image: linear-gradient(160deg, #8a611a, #f6dc92 35%, #b98425 70%, #f1d27c) 1; background: linear-gradient(#0e0c12, #08070b); box-shadow: inset 0 0 50px rgba(0, 0, 0, .9), 0 0 24px rgba(255, 190, 90, .12); }
+  .board { height: 5px; background: linear-gradient(90deg, #8a611a, #f6dc92 40%, #b98425); }
+  .frame { background: #0b0a0e; border: 3px solid #b98a2c; box-shadow: 0 6px 18px rgba(0, 0, 0, .8), inset 0 0 18px rgba(255, 200, 100, .06); display: flex; align-items: center; justify-content: center; text-align: center; }
+  .goldtext { background: linear-gradient(100deg, #8a5a12 0%, #f7d27a 22%, #fff3c4 38%, #d79a2b 55%, #f9df9a 72%, #9a6a1a 100%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .plaque { font-weight: 600; letter-spacing: .08em; line-height: 1.32; }
+  .bulb { width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #fff6dc 0 12%, #ffcf7a 30%, rgba(255, 180, 80, .25) 60%, transparent 72%); box-shadow: 0 0 30px 6px rgba(255, 190, 90, .35); }
+  .pot { border-radius: 8px 8px 46% 46%; background: linear-gradient(100deg, #7a5413, #f6dc92 40%, #a8771f 75%, #5d400e); }
+  .gold { background: linear-gradient(120deg, #7a5413, #f8e09c 38%, #c08d28 62%, #6a4810); box-shadow: 0 0 18px rgba(255, 190, 90, .25); }
+  .strip { left: 730px; top: 1034px; width: 460px; height: 6px; border-radius: 3px; background: #e9c8ff; box-shadow: 0 0 14px 4px #b65cff, 0 0 60px 18px rgba(150, 60, 255, .7), 0 -60px 140px 60px rgba(130, 50, 230, .28); }
+  .floor { left: 0; top: 960px; width: 1920px; height: 120px; background: linear-gradient(transparent, rgba(40, 14, 70, .55)); }
+
+  /* ---- the neon pieces. --l is each piece's light, 0 to 1, set from the script. */
+  .piece { opacity: calc(.03 + .97 * var(--l, 1)); }
+  .halo { position: absolute; inset: -70px; border-radius: 40%; background: radial-gradient(ellipse at center, rgba(160, 70, 255, .30), rgba(120, 40, 220, .10) 45%, transparent 70%); filter: blur(10px); }
+  .neon { position: relative; color: #f6e6ff; font-weight: 500; letter-spacing: .07em; text-align: center; line-height: 1.24;
+    text-shadow: 0 0 2px #fff, 0 0 8px #d59bff, 0 0 18px #a63cff, 0 0 42px #8a2be2, 0 0 84px #6a1bd0; }
+  .script { font-family: 'Great Vibes', cursive; letter-spacing: 0; font-weight: 400; }
+  #logo .name { font-family: 'Dancing Script', 'Great Vibes', cursive; font-weight: 700; font-size: 236px; line-height: 1.12; white-space: nowrap; padding: 0 30px; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .7)) drop-shadow(0 0 26px rgba(255, 190, 80, .38)); animation: shimmer 9s linear infinite; }
+  #logo .place { margin-top: -6px; font-size: 104px; font-weight: 600; letter-spacing: .34em; margin-left: .34em; line-height: 1; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .7)) drop-shadow(0 0 20px rgba(255, 190, 80, .3)); animation: shimmer 9s linear infinite; }
+  #logo .tag { color: #f4efe6; font-size: 29px; font-weight: 500; letter-spacing: .22em; margin-top: 30px; text-shadow: 0 0 12px rgba(255, 255, 255, .25); white-space: nowrap; }
+  #logo .tag i { color: #e9b94a; font-style: normal; margin: 0 .5em; }
+  #logo .halo { background: radial-gradient(ellipse at center, rgba(255, 190, 90, .16), transparent 68%); }
+  @keyframes shimmer { from { background-position: 220% 0; } to { background-position: 0% 0; } }
+  body.still #logo .name, body.still #logo .place { animation-play-state: paused; }
+  #welcome { border: 3px solid #d9ae4a; border-radius: 6px; background: linear-gradient(#17102a, #0d0918); box-shadow: 0 0 0 2px rgba(0, 0, 0, .6), inset 0 0 0 3px rgba(190, 110, 255, .55), inset 0 0 46px rgba(150, 60, 255, .5), 0 0 44px rgba(150, 60, 255, .5), 0 0 140px rgba(120, 40, 230, .35);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #welcome .top { color: #fff; font-size: 48px; font-weight: 500; letter-spacing: .22em; margin-left: .22em; text-shadow: 0 0 14px rgba(255, 255, 255, .45); white-space: nowrap; }
+  #welcome .big { font-size: 92px; font-weight: 700; letter-spacing: .02em; line-height: 1.1; white-space: nowrap; }
+
+  /* ---- the lasers and the panel. The picture never takes clicks and the panel sits above it (the trap met in ZW-040). */
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; mix-blend-mode: screen; }
+  #ui { z-index: 10; position: fixed; left: 14px; bottom: 12px; color: #fff; font: 600 13px system-ui, sans-serif; background: rgba(16, 10, 26, .86); border: 1px solid rgba(217, 174, 74, .5); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 28px); }
+  #ui.idle { opacity: 0; pointer-events: none; }
+  #ui .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; align-items: center; }
+  #ui button { background: #6a2bb8; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
+  #ui button.on { background: #e2b04a; color: #1d1326; }
+  #ui label { font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  #ui input[type=text] { font: inherit; font-weight: 500; padding: 5px 7px; border-radius: 6px; border: 1px solid #5a3f86; background: #120b1e; color: #fff; width: 150px; }
+  body.idle { cursor: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="room">
+    <div class="wall"></div>
+    <div class="feature"></div>
+    <div class="spot" style="left:590px"></div><div class="spot" style="left:810px"></div><div class="spot" style="left:1030px"></div>
+    <div class="trim" style="left:428px"></div><div class="trim" style="left:1480px"></div>
+    <div class="sconce" style="left:421px;top:205px"></div><div class="sconce" style="left:1473px;top:205px"></div>
+
+    <!-- left shelves -->
+    <div class="shelf" style="left:14px;top:346px;width:326px;height:290px"></div>
+    <div class="board" style="left:19px;top:520px;width:170px"></div>
+    <div class="pot" style="left:44px;top:462px;width:66px;height:58px"></div>
+    <svg id="fern" style="left:20px;top:372px" width="120" height="100" viewBox="0 0 120 100"></svg>
+    <div class="bulb" style="left:122px;top:470px"></div><div class="bulb" style="left:76px;top:560px;width:58px;height:58px"></div>
+    <div class="frame" style="left:192px;top:440px;width:128px;height:186px"><div class="goldtext plaque" style="font-size:14px;letter-spacing:.04em">DISCIPLINE<br>TODAY<br>FREEDOM<br>TOMORROW</div></div>
+    <div class="frame" style="left:50px;top:664px;width:226px;height:104px;border-color:#3a2c16"><div class="goldtext plaque" style="font-size:30px">BUILDING<br>MY LEGACY</div></div>
+
+    <!-- right shelves -->
+    <div class="shelf" style="left:1586px;top:346px;width:322px;height:340px"></div>
+    <div class="board" style="left:1591px;top:560px;width:322px"></div>
+    <div class="frame" style="left:1618px;top:380px;width:150px;height:172px"><div class="plaque" style="font-size:19px;color:#e9dcc0"><span class="goldtext" style="font-size:40px;font-weight:700">AI</span><br>IS MY<br>ASSISTANT<br>NOT MY<br>REPLACEMENT</div></div>
+    <div class="gold" style="left:1792px;top:386px;width:112px;height:166px;border-radius:4px;display:flex;align-items:center;justify-content:center"><div style="width:62px;height:44px;border-radius:12px;background:#4a330c;display:flex;align-items:center;justify-content:center"><div style="border-left:18px solid #f6dc92;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></div></div></div>
+    <svg style="left:1612px;top:586px" width="190" height="92" viewBox="0 0 190 92"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a5413"/><stop offset=".4" stop-color="#f8e09c"/><stop offset=".7" stop-color="#c08d28"/><stop offset="1" stop-color="#6a4810"/></linearGradient></defs>
+      <path fill="url(#gg)" d="M6 80 L14 58 C10 50 12 44 20 40 L26 30 L34 38 C52 32 78 30 104 34 C126 36 142 44 152 54 C164 50 176 40 184 26 C184 44 174 60 158 66 L164 84 L152 84 L146 68 C130 70 110 70 96 66 L88 84 L76 84 L80 64 C66 62 52 60 42 62 L34 84 L22 84 L26 66 L16 82 Z"/></svg>
+    <div class="bulb" style="left:1838px;top:596px;width:66px;height:66px"></div>
+
+    <!-- plants, chairs, the lit step under the panel -->
+    <svg id="palmL" style="left:300px;top:420px" width="300" height="430" viewBox="0 0 300 430"></svg>
+    <svg id="palmR" style="left:1320px;top:420px" width="300" height="430" viewBox="0 0 300 430"></svg>
+    <div class="floor"></div><div class="strip"></div>
+    <svg id="chairs" style="left:0;top:812px" width="1920" height="300" viewBox="0 0 1920 300"></svg>
+  </div>
+  <div id="dark"></div>
+  <div id="pieces">
+    <div class="piece" id="p0" style="left:40px;top:66px;width:250px"><div class="halo"></div><div class="neon" style="font-size:38px">FOCUS<br>PURPOSE<br>ABUNDANCE<br>IMPACT</div></div>
+    <div class="piece" id="p1" style="left:26px;top:806px;width:290px"><div class="halo"></div><div class="neon" style="font-size:50px;line-height:1">WINNING<div class="script" style="font-size:96px;margin-top:-6px;transform:rotate(-7deg)">Season</div></div></div>
+    <div class="piece" id="logo" style="left:480px;top:8px;width:960px;text-align:center"><div class="halo"></div><div class="name goldtext" id="tname">Andie's</div><div class="place goldtext" id="tplace">PLACE</div><div class="tag" id="ttag"></div></div>
+    <div class="piece" id="welcome" style="left:652px;top:556px;width:616px;height:280px"><div class="top" id="ttop">WELCOME</div><div class="neon big" id="tbig">AI MOGULS</div>
+      <svg width="92" height="54" viewBox="0 0 92 54" style="margin-top:4px;filter:drop-shadow(0 0 8px rgba(255,200,90,.7))"><path d="M10 44 L4 14 L26 30 L46 6 L66 30 L88 14 L82 44 Z M10 50 H82" fill="none" stroke="#f2c85a" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    <div class="piece" id="p4" style="left:1668px;top:28px;width:220px"><div class="halo"></div><div class="neon" style="font-size:44px">YOU<br>CAN<br>DO<br>HARD<br>THINGS</div></div>
+    <div class="piece" id="p5" style="left:1640px;top:704px;width:250px"><div class="halo"></div><div class="neon" style="font-size:40px">CREATE<br>LEARN<br>ELEVATE<br>MONETIZE</div></div>
+  </div>
+</div>
+<div id="ui">
+  <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a2040;flex:none"></span><span>Andie's Place · <span id="status" style="font-weight:500"></span></span></div>
+  <div class="row">
+    <button id="listen" title="Share the browser tab that is playing the music, with its audio ticked">Listen to the music</button>
+    <button id="tap" title="Tap in time, three times or more (or press the space bar)">Tap the beat</button>
+    <button id="demo" title="Run without music, at 124 beats a minute">Demo</button>
+    <button id="stop" title="Back to the calm room">Stop</button>
+  </div>
+  <div class="row">
+    <button id="mode" title="Room lights only: just the room's own neon reacts. Room + lasers: purple and gold laser light joins in on the big moments (or press L)">Lights: room only</button>
+    <label title="Turn the whole picture down. It is remembered.">Brightness <input id="bright" type="range" min="20" max="100" step="5" value="100"> <span id="brightv"></span></label>
+  </div>
+  <div class="row">
+    <label>Sign <input id="ftop" type="text" maxlength="18"></label><label><input id="fbig" type="text" maxlength="14"></label>
+  </div>
+  <div style="font-weight:500;font-size:12px;margin-top:7px;opacity:.7">This panel hides when the mouse is still. Press H to keep it hidden.</div>
+</div>
+<script type="module" src="./andie.js"></script>
+</body>
+</html>
