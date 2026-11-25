@@ -12,7 +12,7 @@ test('no pattern is repeated within three cues', () => { const seen = []; let la
   run(4000, (s) => { if (s.cue !== last) { last = s.cue; seen.push([s.theme, s.pattern]); } });
   for (let i = 1; i < seen.length; i++) for (let k = 1; k <= 3 && i - k >= 0; k++) if (seen[i][0] === seen[i - k][0] && seen.slice(i - k, i).every((x) => x[0] === seen[i][0])) assert.notEqual(seen[i][1], seen[i - k][1], `cue ${i} repeats a pattern from ${k} back`); });
 
-test('every theme is reached, and each holds for eight cues', () => { const cues = {}; let last = -1; run(6000, (s) => { if (s.cue !== last) { last = s.cue; cues[s.theme] = (cues[s.theme] || 0) + 1; } }); assert.equal(Object.keys(cues).length, THEMES.length); });
+test('every theme is reached, and each holds for eight cues', () => { const cues = {}; let last = -1; run(6000, (s) => { if (s.cue !== last) { last = s.cue; cues[s.theme] = (cues[s.theme] || 0) + 1; } }); assert.equal(Object.keys(cues).length, THEMES.filter((t) => !t.only).length); assert.ok(Object.keys(cues).every((i) => !THEMES[i].only), 'a theme kept for one page is never rotated in'); });
 
 test('the rig is never fully lit: at most five of seven projectors at once outside the finale and explosion', () => { const t = {};
   run(3000, (s, d) => { if (s.dark || s.pattern === 'finale' || s.pattern === 'explosion' || THEMES[s.theme].festival) return; const lit = RIG.filter((p) => { d.target(p, t); return t.level > 0.01 || t.sheet > 0.01; }).length; assert.ok(lit <= 5 && lit >= 1, `${s.pattern}: ${lit} lit`); }); });

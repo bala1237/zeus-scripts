@@ -53,7 +53,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
 | ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
 | ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | Second version shipped 25 Nov after watching the video: stage rebuilt, warm light, the oracle cue. Waiting for the owner |
-| ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Open, under discussion with the owner before any coding | 25 Nov 2026, owner |
+| ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | First version shipped 25 Nov at `/andie.html`. Waiting for the owner | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -447,3 +447,6 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Not known yet:** what the page is for (a moving backdrop, an overlay, something interactive), who will run it and where, whether it should react to music, which words must be editable, and whether it belongs in this repository beside Zeus World. Questions put to the owner.
 - Nothing built.
 - **Owner, 25 Nov 2026:** "i'm building for her. she uses my songs and plays it in her stream and i'm gonna give her this with her branding and she can use it." So it is a gift for Andie, to be run by her on her own stream while she plays the owner's songs, and "this" is understood as the light show built today, in her branding. Still under discussion; nothing built.
+- **Owner's requirements, 25 Nov 2026:** "1. tiktok live studio. she can attach browser source. 2. the backdrop will be like background and she will be on cam with cutout. 3. match her color style and also provide an option to reduce brightness. 4. an option to just use her background as lights as one option." Point 4 is read as: a mode where the room's own lights are the whole show, with no lasers.
+- **First version shipped 25 Nov 2026** at `/andie.html`: her room rebuilt in code; two modes (room only, room + lasers); five room cues; brightness; an editable sign; every setting also available in the address for a browser source. Detail in `knowledge/andie.md`.
+- **Waiting on the owner:** does it look like her room; is point 4 read correctly; does it work in TikTok LIVE Studio (window capture to hear the music, or browser source at a fixed tempo); does she have her logo as an image file.

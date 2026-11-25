@@ -52,3 +52,7 @@ Scripted models are built at real size, facing the front, so the normaliser only
 ## Lasers
 
 `review/laser.html` is the laser show (ZW-036). Stills: `PAGE=laser.html node shot.mjs renders/x.png "shot&pattern=tunnel&theme=3&cam=1&beats=6&bg=mock" 800 450` (patterns and themes are listed in `review/director.js`; `bg` is black, clear or mock). `npm test` runs the Lighting Director's rule tests in `test/`. It also runs the beat tracker's tests on made-up music. `node beattest.mjs 128` (review server running) plays a test kick to the page in a real browser and prints the tempo it locked to. Add `look=flow` or `look=both` to a laser still for the Flow mode, and `flowt=40` to choose a moment in it. `node clicktest.mjs` clicks every button on the laser page with a real pointer.
+
+## Andie's Place
+
+`review/andie.html`. Stills: `PAGE=andie.html node shot.mjs renders/x.png "shot&beats=calm"` for the calm room; `"shot&beats=3.2&cue=chase"` for a cue (glow, chase, oracle, fill, strobe); add `mode=lasers&lasers&pattern=fan` for the lasers. Buttons: `node clicktest.mjs http://localhost:4180/andie.html demo,mode,tap,stop,listen`.
