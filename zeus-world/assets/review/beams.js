@@ -42,6 +42,8 @@ export function createBeamRenderer({ maxBeams = 64, maxSheets = 8 } = {}) {
         float toward = 1.0 + 1.1 * pow(max(-vCos, 0.0), 6.0);                                                    // haze throws light forwards: a beam aimed near you flares
         float d = vT * vLen, along = smoothstep(0.0, 0.25, d) * (1.0 - smoothstep(0.86, 1.0, vT)) * exp(-d * uFade);
         float h = mix(1.0, haze(vW, uTime), uHaze);
+        // dust: a few bright specks drifting through the core, as in any real beam
+        h += uHaze * 2.2 * step(0.972, n3(vW * 34.0 + vec3(uTime * 0.7, -uTime * 0.4, uTime * 0.5))) * core;
         float I = vC.a * uGain * along * h * thick * toward * (core + skirt) * vK;
         gl_FragColor = vec4(vC.rgb * I + vec3(1.0) * I * core * 0.22, 1.0); }` }));
   beams.frustumCulled = false; group.add(beams);

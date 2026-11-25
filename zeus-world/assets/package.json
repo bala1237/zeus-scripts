@@ -5,9 +5,12 @@
   "description": "Asset pipeline: normalise and compress generated models, and the review scene.",
   "scripts": {
     "review": "vite review --port 4180",
-    "build": "vite build review"
+    "build": "vite build review",
+    "test": "node --test test/*.test.mjs"
   },
-  "dependencies": { "three": "^0.187.0" },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
   "devDependencies": {
     "@gltf-transform/cli": "^4.1.0",
     "@gltf-transform/core": "^4.5.1",

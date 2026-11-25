@@ -47,7 +47,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Rejected by the owner; replaced by ZW-034 | 24 Nov 2026, owner |
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
-| ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 2 (one-projector prototype) built; waiting for the owner to pass it | 25 Nov 2026, owner |
+| ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 3 (seven-projector rig, Lighting Director, six themes, camera moves) shipped 25 Nov; waiting for the owner to pass it | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -382,3 +382,6 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Owner's answers, 25 Nov 2026:** music plays in a browser tab; overlay with his camera first; sources are combined in TikTok LIVE Studio; a wide mix of music; an M3 Pro.
 - **Phase 2 built 25 Nov 2026:** a one-projector overlay prototype at `/laser.html` with a new way of drawing beams and scanned sheets in haze. Detail in `STAGE-PLAN.md`, "Phase 2".
 - **Waiting on the owner (the quality gate):** does the light now look like real laser light; how does it combine with his camera in LIVE Studio (Add or Screen blending, or a transparent source); what frame rate does the page report on his Mac.
+- **Phase 2 passed 25 Nov 2026.** The owner: "I love it. If it's more like 3D it will be extraordinary. All having different themes will up the ante, and cinematic camera movements." Phase 3 adds a rig of projectors in depth, a Lighting Director with patterns, themes and camera moves.
+- **Phase 3 shipped 25 Nov 2026** on `/laser.html`: seven projectors in depth, a Lighting Director with ten patterns and rules (no repeats, darkness before big moments, at most five projectors lit), six themes, a gliding camera, Next look and Blackout. Detail in `STAGE-PLAN.md`, "Phase 3". Checked by tests and stills only.
+- **Waiting on the owner:** does it feel 3D; are the themes different enough; camera moves on or off over his camera; and the two questions still open from phase 2 (how it combines in LIVE Studio, frame rate on the Mac).

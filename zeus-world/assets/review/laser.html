@@ -25,12 +25,18 @@
 <body>
 <div id="mock"></div>
 <div id="ui">
-  <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a3040;flex:none"></span><span>Zeus Lasers · prototype · <span id="status"></span></span></div>
+  <div style="display:flex;align-items:center;gap:9px"><span id="lamp" style="width:16px;height:16px;border-radius:50%;background:#2a3040;flex:none"></span><span>Zeus Lasers · <span id="status"></span></span></div>
   <div class="row">
     <button id="listen" title="Share the browser tab that is playing the music, with its audio ticked">Listen to the music</button>
     <button id="tap" title="Tap in time, three times or more (or press the space bar)">Tap the beat</button>
     <button id="demo" title="Run without music, at 124 beats a minute, to look at the light">Demo</button>
     <button id="stop">Stop</button>
+  </div>
+  <div class="row">
+    <label>Theme <select id="theme" style="font:inherit;padding:5px;border-radius:6px"></select></label>
+    <button id="next" title="Move to another pattern now (or press N)">Next look</button>
+    <button id="cam" class="on" title="Let the camera glide between angles">Camera: moving</button>
+    <button id="blackout" title="All light off, until pressed again (or press B)">Blackout</button>
   </div>
   <div class="row">
     <label>Brightness <input id="gain" type="range" min="0.2" max="2" step="0.05" value="1"></label>

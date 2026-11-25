@@ -1,8 +1,9 @@
-// Zeus Lasers, phase 2 prototype (ZW-036): ONE projector, to settle whether the light itself looks real before anything else is built.
-// It is an overlay: the page shows only light, to be laid over a camera picture in the streaming software.
-//   ?bg=black (default; set the source to Add or Screen blending)   ?bg=clear (transparent page, for a transparent source)   ?bg=mock (a stand-in camera picture)
-//   ?demo (run without music at 124 beats a minute)   ?shot (one still; ?t=seconds how far in)   ?gain= ?haze= ?glow=
-// The light is drawn by beams.js; the beat comes from beat.js. Movement goes through speed limits: nothing jumps.
+// Zeus Lasers (ZW-036): a rig of seven laser projectors placed in depth, run by the Lighting Director, shown as an overlay.
+// The page shows only light, to be laid over a camera picture in the streaming software.
+//   ?bg=black (default; set the source to Add or Screen blending)   ?bg=clear (transparent page)   ?bg=mock (a stand-in camera picture)
+//   ?demo (run without music at 124 beats a minute)   ?theme=0..5 (hold one theme)   ?camera=0 (keep the camera still)
+//   ?shot (one still; ?beats=N how far in, ?pattern=name, ?cam=N which angle)   ?gain= ?haze= ?glow=
+// director.js decides what the rig does; beams.js draws the light; beat.js supplies the beat. Movement goes through speed limits.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -11,66 +12,87 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeamRenderer } from './beams.js';
 import { createBeat } from './beat.js';
+import { createDirector, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: SHOT, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1; document.body.append(renderer.domElement);
-const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 200); camera.position.set(0, 1.45, 5.2); camera.lookAt(0, 1.75, 0);
-const rig = createBeamRenderer({ maxBeams: 32, maxSheets: 4 }); scene.add(rig.group);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; document.body.append(renderer.domElement);
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 200);
+const rig = createBeamRenderer({ maxBeams: 64, maxSheets: 8 }); scene.add(rig.group);
 
-// ---------- the projector: high and behind the performer, facing the camera. A small housing with a glowing aperture.
-const P = { pos: new THREE.Vector3(0, 3.55, -3.4), yaw: 0, length: 26 };
-const housing = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.2, 0.3), new THREE.MeshBasicMaterial({ color: 0x050608 })); housing.position.copy(P.pos).add(new THREE.Vector3(0, 0, -0.16)); scene.add(housing);
+// ---------- the rig. Three across the back and high, one each side at shoulder height firing inward, two on the floor firing up.
+// yaw and pitch are which way a projector faces; n is how many beams it can throw.
+const RIG = [
+  { group: 'back', side: 0, pos: [0, 3.6, -3.6], yaw: 0, pitch: 0, n: 9 }, { group: 'back', side: -1, pos: [-3.3, 3.35, -3.2], yaw: 0.16, pitch: 0, n: 9 }, { group: 'back', side: 1, pos: [3.3, 3.35, -3.2], yaw: -0.16, pitch: 0, n: 9 },
+  { group: 'side', side: -1, pos: [-5.4, 2.1, -0.6], yaw: 1.25, pitch: 0, n: 7 }, { group: 'side', side: 1, pos: [5.4, 2.1, -0.6], yaw: -1.25, pitch: 0, n: 7 },
+  { group: 'floor', side: -1, pos: [-2.5, 0.2, -2.6], yaw: 0.1, pitch: 1.0, n: 5 }, { group: 'floor', side: 1, pos: [2.5, 0.2, -2.6], yaw: -0.1, pitch: 1.0, n: 5 },
+];
 const soft = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.2, 'rgba(255,255,255,0.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
-const aperture = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false })); aperture.position.copy(P.pos); scene.add(aperture);
+// every value a projector has eases to its target under a speed limit, as a mirror with mass would
+const eased = (v) => ({ v, vel: 0, to: v }), step = (e, dt, time, max = 2.6) => { const w = 2 / time, x = w * dt, k = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x), ch = Math.max(-max * time, Math.min(max * time, e.v - e.to)), tgt = e.v - ch, tmp = (e.vel + w * ch) * dt; e.vel = (e.vel - w * tmp) * k; e.v = tgt + (ch + tmp) * k; };
+const KEYS = ['pan', 'tilt', 'spread', 'roll', 'level', 'sheet', 'sheetSpread', 'cone'];
+for (const p of RIG) { p.P = new THREE.Vector3(...p.pos); p.e = Object.fromEntries(KEYS.map((k) => [k, eased(k === 'tilt' ? -0.25 : k === 'sheetSpread' ? 0.9 : k === 'spread' ? 0.1 : 0)])); p.spin = 0; p.mix = eased(0); p.t = {};
+  p.glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false })); p.glow.position.copy(p.P); scene.add(p.glow); }
 
 // ---------- output: glow only from what is brighter than white (the beams), tone mapping, then an alpha so the page can be laid over a camera
 const composer = new EffectComposer(renderer), bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), Number(q.get('glow') ?? 0.45), 0.32, 1.2);
 composer.addPass(new RenderPass(scene, camera)); composer.addPass(bloom); composer.addPass(new OutputPass());
+// light has no edge: how see-through a pixel is follows how bright it is
 composer.addPass(new ShaderPass({ uniforms: { tDiffuse: { value: null } }, vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: 'uniform sampler2D tDiffuse; varying vec2 vUv; void main() { vec3 c = texture2D(tDiffuse, vUv).rgb; gl_FragColor = vec4(c, clamp(max(c.r, max(c.g, c.b)) * 1.15, 0.0, 1.0)); }' }));   // light has no edge: how see-through a pixel is follows how bright it is
+  fragmentShader: 'uniform sampler2D tDiffuse; varying vec2 vUv; void main() { vec3 c = texture2D(tDiffuse, vUv).rgb; gl_FragColor = vec4(c, clamp(max(c.r, max(c.g, c.b)) * 1.15, 0.0, 1.0)); }' }));
 
-// ---------- movement: every value eases to its target under a speed limit, as a mirror with mass would
-const eased = (v) => ({ v, vel: 0, to: v }), step = (e, dt, time = 0.45, max = 3) => { const w = 2 / time, x = w * dt, k = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x); let ch = Math.max(-max * time, Math.min(max * time, e.v - e.to)); const tgt = e.v - ch, tmp = (e.vel + w * ch) * dt; e.vel = (e.vel - w * tmp) * k; e.v = tgt + (ch + tmp) * k; };
-const M = { spread: eased(0.05), tilt: eased(-0.2), pan: eased(0), fan: eased(0), sheet: eased(0), sheetTilt: eased(-0.05), sheetSpread: eased(0.9) };
-// one colour at a time, from a short list a lighting designer would use; it changes rarely and fades across
-const COLOURS = [0x10ff60, 0x18c8ff, 0x2a54ff, 0xff2bd0, 0xff2a1e, 0xdfe8ff].map((h) => new THREE.Color(h)), col = COLOURS[0].clone();
-const st = { t: 0, gain: Number(q.get('gain') ?? 1), demo: q.has('demo') };
-const beat = createBeat({ bpm: 124 }), D = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3(), E = new THREE.Euler(), BEAMS = 9;
-const aim = (out, ax, tilt, pan) => out.set(Math.sin(ax), 0, Math.cos(ax)).applyEuler(E.set(-tilt, pan, 0, 'YXZ'));
-function update(dt) { const b = beat.state; beat.update(dt); st.t += dt; const beats = b.beats, act = b.act;
-  // the cue sheet for the prototype: sixteen beats each. A fan that opens, a fan that sweeps, a sheet alone, then both.
-  const cue = Math.floor(beats / 16) % 4, u = (beats % 16) / 16, ease = (x) => x * x * (3 - 2 * x);
-  if (cue === 0) { M.fan.to = 1; M.sheet.to = 0; M.spread.to = 0.06 + 0.88 * ease(Math.min(1, u * 2)); M.tilt.to = -0.34 + 0.2 * u; M.pan.to = 0; }
-  else if (cue === 1) { M.fan.to = 1; M.sheet.to = 0; M.spread.to = 0.22; M.tilt.to = -0.22; M.pan.to = 0.62 * Math.sin(u * Math.PI * 2); }
-  else if (cue === 2) { M.fan.to = 0; M.sheet.to = 1; M.sheetSpread.to = 1.0; M.sheetTilt.to = 0.06 - 0.42 * ease(u); }
-  else { M.fan.to = 1; M.sheet.to = 1; M.spread.to = 0.8; M.tilt.to = -0.4; M.pan.to = 0; M.sheetSpread.to = 1.0; M.sheetTilt.to = -0.03; }
-  for (const k in M) step(M[k], dt, k === 'fan' || k === 'sheet' ? 0.7 : 0.4, 2.2);
-  const next = COLOURS[Math.floor(beats / 64) % COLOURS.length]; col.lerp(next, Math.min(1, dt * 0.6));
-  const kick = 0.72 + 0.28 * b.pulse, I = act * st.gain * kick;
-  const together = 0.3 + 0.7 * Math.min(1, M.spread.v / 0.45);   // a closed fan is nine beams on top of each other, so each is dimmed to keep the total steady
+// ---------- the camera: a few composed angles. It glides from one to the next at the start of some cues and drifts a little while it holds.
+const CAMS = [{ p: [0, 1.45, 5.2], t: [0, 1.9, -1], f: 52 }, { p: [-2.6, 1.0, 4.6], t: [0.5, 2.1, -1.5], f: 50 }, { p: [2.6, 1.0, 4.6], t: [-0.5, 2.1, -1.5], f: 50 }, { p: [0, 0.75, 4.2], t: [0, 2.5, -2], f: 58 }, { p: [0, 2.9, 6.4], t: [0, 1.6, -1.5], f: 44 }, { p: [-1.6, 1.6, 3.4], t: [1.2, 2.0, -3], f: 56 }];
+const cam = { i: Number(q.get('cam') || 0), x: eased(0), y: eased(1.45), z: eased(5.2), tx: eased(0), ty: eased(1.9), tz: eased(-1), f: eased(52), moving: q.get('camera') !== '0', lastCue: -1 };
+const setCam = (i, snap = false) => { cam.i = i % CAMS.length; const c = CAMS[cam.i]; for (const [k, v] of [['x', c.p[0]], ['y', c.p[1]], ['z', c.p[2]], ['tx', c.t[0]], ['ty', c.t[1]], ['tz', c.t[2]], ['f', c.f]]) { cam[k].to = v; if (snap) { cam[k].v = v; cam[k].vel = 0; } } }; setCam(cam.i, true);
+
+// ---------- the show
+const st = { t: 0, gain: Number(q.get('gain') ?? 1) }, beat = createBeat({ bpm: 124 }), dir = createDirector({ seed: 11 });
+if (q.get('theme') !== null) { dir.setTheme(Number(q.get('theme'))); dir.state.auto = false; }
+const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.Color(THEMES[dir.state.theme].accent), C = new THREE.Color(), D = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3(), E = new THREE.Euler();
+// a direction in the projector's own frame, turned to where the projector is pointing. ax is the angle across the fan; roll tips the fan's plane.
+const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Math.cos(e.roll.v), cy = Math.sin(ax) * Math.sin(e.roll.v), k = e.cone.v;
+  out.set(cx * (1 - k) + Math.sin(coneA) * Math.cos(phi) * k, cy * (1 - k) + Math.sin(coneA) * Math.sin(phi) * k, Math.cos(ax) * (1 - k) + Math.cos(coneA) * k).normalize().applyEuler(E.set(-(p.pitch + e.tilt.v), p.yaw + e.pan.v, 0, 'YXZ')); return out; };
+function update(dt) { const b = beat.state; beat.update(dt); st.t += dt; const d = dir.update(b.beats), theme = THEMES[d.theme], act = b.act, kick = 0.74 + 0.26 * b.pulse;
+  main.lerp(C.set(theme.main), Math.min(1, dt * 1.2)); accent.lerp(C.set(theme.accent), Math.min(1, dt * 1.2));
+  if (SHOT && q.get('pattern')) d.pattern = q.get('pattern');
+  // an intensity budget: the more beams are lit, the less each gets, so a full rig does not flood the picture and a single beam is strong
+  let load = 0; for (const p of RIG) load += Math.max(0, p.e.level.v) * (p.e.spread.v < 0.1 && p.e.cone.v < 0.5 ? 3 : p.n) + 5 * Math.max(0, p.e.sheet.v); const budget = Math.min(1.25, Math.pow(13 / Math.max(load, 1), 0.55));
   rig.begin();
-  for (let i = 0; i < BEAMS; i++) { const f = i / (BEAMS - 1) - 0.5; aim(D, f * 2 * M.spread.v, M.tilt.v, M.pan.v); rig.beam(P.pos, D, P.length, col, I * M.fan.v * 1.7 * together); }
-  aim(A, -M.sheetSpread.v, M.sheetTilt.v, 0); aim(B, M.sheetSpread.v, M.sheetTilt.v, 0); rig.sheet(P.pos, A, B, P.length, col, I * M.sheet.v * 3.2);
-  rig.uniforms.uGain.value = 1; rig.end(st.t, camera, renderer.domElement.height);
-  const on = act * Math.max(M.fan.v, M.sheet.v); aperture.material.color.copy(col).multiplyScalar(1.6 * on * kick); aperture.scale.setScalar(0.3 + 0.12 * on); }
+  for (const p of RIG) { const t = dir.target(p, p.t), e = p.e; for (const k of KEYS) { e[k].to = t[k]; step(e[k], dt, k === 'level' || k === 'sheet' ? Math.min(t.time, 0.3) : t.time); } p.mix.to = t.accent ? 1 : 0; step(p.mix, dt, 0.5); p.spin += t.spin * dt * act * 1.4;
+    const col = C.copy(main).lerp(accent, p.mix.v), lvl = Math.max(0, e.level.v), sh = Math.max(0, e.sheet.v), I = act * st.gain * kick * budget;
+    // beams lying on top of each other add up, so a closed fan is dimmed to match an open one
+    const narrow = e.spread.v < 0.1 && e.cone.v < 0.5, together = e.cone.v > 0.5 ? 1 : narrow ? 0.75 : 0.3 + 0.7 * Math.min(1, e.spread.v / 0.45), n = narrow ? (e.spread.v < 0.004 ? 1 : 3) : p.n;   // a tight bundle is three beams, and a closed one is one
+    if (lvl > 0.01) for (let i = 0; i < n; i++) { const f = n > 1 ? i / (n - 1) - 0.5 : 0; aim(D, p, f * 2 * e.spread.v, e.spread.v, i / n * Math.PI * 2 + p.spin); rig.beam(p.P, D, 26, col, I * lvl * 1.7 * together); }
+    if (sh > 0.01) { const keep = e.cone.v; e.cone.v = 0; aim(A, p, -e.sheetSpread.v, 0, 0); aim(B, p, e.sheetSpread.v, 0, 0); e.cone.v = keep; rig.sheet(p.P, A, B, 26, col, I * sh * 5.5); }
+    const on = act * Math.max(lvl, sh); p.glow.material.color.copy(col).multiplyScalar(1.5 * Math.min(1.2, on) * kick); p.glow.scale.setScalar(0.26 + 0.1 * on); p.glow.visible = on > 0.01; }
+  rig.end(st.t, camera, renderer.domElement.height);
+  // the camera moves on every second cue, or every cue in a lively theme; never in a still one
+  if (cam.moving && d.cue !== cam.lastCue) { if (cam.lastCue !== -1 && theme.camera !== 'still' && (theme.camera === 'lively' || d.cue % 2 === 0)) setCam(cam.i + 1 + (d.cue % 3 === 0 ? 1 : 0)); cam.lastCue = d.cue; }
+  for (const k of ['x', 'y', 'z', 'tx', 'ty', 'tz', 'f']) step(cam[k], dt, 2.4, 3); const sway = cam.moving ? 1 : 0;
+  camera.position.set(cam.x.v + Math.sin(st.t * 0.21) * 0.14 * sway, cam.y.v + Math.sin(st.t * 0.17 + 1) * 0.06 * sway, cam.z.v + Math.sin(st.t * 0.13 + 2) * 0.12 * sway); camera.lookAt(cam.tx.v, cam.ty.v, cam.tz.v);
+  if (Math.abs(camera.fov - cam.f.v) > 0.01) { camera.fov = cam.f.v; camera.updateProjectionMatrix(); } }
 const draw = () => composer.render();
 
 // ---------- controls
-let bgMode = q.get('bg') || 'black'; const setBg = () => { document.body.classList.toggle('clear', bgMode === 'clear'); document.body.classList.toggle('mock', bgMode === 'mock'); $('bg').textContent = `Background: ${bgMode === 'mock' ? 'stand-in camera' : bgMode}`; }; setBg();
+let bgMode = q.get('bg') || 'black', failed = ''; const setBg = () => { document.body.classList.toggle('clear', bgMode === 'clear'); document.body.classList.toggle('mock', bgMode === 'mock'); $('bg').textContent = `Background: ${bgMode === 'mock' ? 'stand-in camera' : bgMode}`; }; setBg();
 $('bg').addEventListener('click', () => { bgMode = { black: 'clear', clear: 'mock', mock: 'black' }[bgMode]; setBg(); });
-$('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); }); let failed = '';
+$('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); });
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = 124; beat.tap(); });
+$('theme').innerHTML = '<option value="auto">Automatic</option>' + THEMES.map((t, i) => `<option value="${i}">${t.name}</option>`).join(''); if (!dir.state.auto) $('theme').value = String(dir.state.theme);
+$('theme').addEventListener('change', (e) => { if (e.target.value === 'auto') dir.state.auto = true; else { dir.state.auto = false; dir.setTheme(Number(e.target.value)); } });
+const blackout = () => { dir.state.blackout = !dir.state.blackout; $('blackout').classList.toggle('on', dir.state.blackout); }, camToggle = () => { cam.moving = !cam.moving; $('cam').classList.toggle('on', cam.moving); $('cam').textContent = `Camera: ${cam.moving ? 'moving' : 'still'}`; if (!cam.moving) setCam(0); };
+$('next').addEventListener('click', () => dir.nextLook()); $('blackout').addEventListener('click', blackout); $('cam').addEventListener('click', camToggle); if (!cam.moving) { cam.moving = true; camToggle(); }
 for (const [id, f] of [['gain', (v) => { st.gain = v; }], ['haze', (v) => { rig.uniforms.uHaze.value = v; }], ['glow', (v) => { bloom.strength = v; }]]) { if (q.get(id)) $(id).value = q.get(id); $(id).addEventListener('input', (e) => f(Number(e.target.value))); f(Number($(id).value)); }
 let idle = null, hidden = false; const wake = () => { $('ui').classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { $('ui').classList.add('idle'); document.body.classList.add('idle'); }, 3500); };
 addEventListener('pointermove', () => { if (!hidden) wake(); }); wake();
-addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (e.key === 'h' || e.key === 'H') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
+addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT') return; const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'b') blackout(); else if (k === 'h') { hidden = !hidden; if (hidden) { clearTimeout(idle); $('ui').classList.add('idle'); document.body.classList.add('idle'); } else wake(); } });
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
-window.__laser = { st, beat, update, draw, M, rig };
-if (SHOT) { $('ui').style.display = 'none'; beat.tap(); const n = Number(q.get('t') || 6); for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
-else { if (st.demo) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
+window.__laser = { st, beat, dir, update, draw, RIG, rig, cam, camera };
+if (SHOT) { $('ui').style.display = 'none'; cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
+else { if (q.has('demo')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
   renderer.setAnimationLoop(() => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
-    const b = beat.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
-    $('status').textContent = failed || (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : `listening: ${b.bpm} beats a minute`);
+    const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
+    $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : `listening: ${b.bpm} beats a minute`);
     if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } });
   window.ready = true; }

@@ -2,7 +2,7 @@
 
 Where the project stands and what happens next. Keep this short and current; detail belongs in the backlog and the knowledge files.
 
-Last updated: 22 Nov 2026.
+Last updated: 25 Nov 2026.
 
 **Live preview:** https://zeus-world-preview-bala-0416.vercel.app/city.html (public link; see `knowledge/hosting.md`).
 
@@ -13,6 +13,7 @@ Last updated: 22 Nov 2026.
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
 | Building labels showing during the battle | ZW-029 | Fix shipped 24 Nov. Waiting for the owner to confirm |
+| Professional laser and lighting system | ZW-036 | Phase 3 shipped 25 Nov on `/laser.html`: seven projectors in depth, a Lighting Director, six themes, camera moves. Waiting for the owner to pass it. Next: phase 4, music intelligence |
 | The Zeus Stage for music | ZW-034, ZW-035 | Look approved by the owner 24 Nov. Follow-up shipped: still without music, visibly on the beat, neon glow. Waiting for the owner to try it with music |
 | After a battle is won | ZW-025 | Shipped 23 Nov: storm of gold, triumph, house tour. Waiting for the owner to watch it |
 | Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
@@ -44,7 +45,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-036, the laser prototype (the quality gate).** Open `/laser.html`, press Demo or Listen, and add it over your camera in LIVE Studio. Does the light look like real laser light; does it combine by Add or Screen blending or as a transparent source; what frame rate does the panel report.
+1. **ZW-036, phase 3 of the lasers (the gate).** Open `/laser.html`, press Demo or Listen, try the theme list, Next look, Blackout and the Camera button, and put it over your camera in LIVE Studio. Does it feel 3D; are the themes different enough; camera moves on or off; any pattern to change. Still open from phase 2: does it combine by Add or Screen blending or as a transparent source; what frame rate does the panel report.
 2. **ZW-035, the stage.** With music playing, press Listen to the music and share its tab or screen with audio. Does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the neon glow right.
 3. **ZW-030, the stream as a journey.** Answer the five questions at the end of that section in `BRAINSTORM-GAME.md`.
 4. **ZW-029.** Confirm the building labels and name plates no longer show during a battle.
