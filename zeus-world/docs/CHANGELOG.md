@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 25 Nov 2026
 
+- **Laser prototype (ZW-036, phase 2).** One projector as an overlay at `/laser.html`: beams and scanned sheets drawn as light in drifting haze, with white-hot cores, a glow that only the beams trigger, and movement under speed limits. The existing stage is unchanged. `assets/review/beams.js`, `laser.js`.
 - **Brief received and audit written for a professional laser and lighting system (ZW-036).** `STAGE-PLAN.md` holds the owner's brief, an assessment of the current stage, the causes of its artificial look, a phased plan and five questions. Nothing built.
 
 ## 24 Nov 2026

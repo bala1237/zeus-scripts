@@ -44,7 +44,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-1. **ZW-036, the professional laser system.** Answer the five questions at the end of `STAGE-PLAN.md` (the screen, how music is played on the Mac, which mode first, what music, which Mac). Then the one-projector prototype is built for review.
+1. **ZW-036, the laser prototype (the quality gate).** Open `/laser.html`, press Demo or Listen, and add it over your camera in LIVE Studio. Does the light look like real laser light; does it combine by Add or Screen blending or as a transparent source; what frame rate does the panel report.
 2. **ZW-035, the stage.** With music playing, press Listen to the music and share its tab or screen with audio. Does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the neon glow right.
 3. **ZW-030, the stream as a journey.** Answer the five questions at the end of that section in `BRAINSTORM-GAME.md`.
 4. **ZW-029.** Confirm the building labels and name plates no longer show during a battle.

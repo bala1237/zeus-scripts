@@ -47,7 +47,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-033 | Enhancement | Concert mode: lighting on the beat and citizens dancing to the music | High | Rejected by the owner; replaced by ZW-034 | 24 Nov 2026, owner |
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
-| ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 1 (audit) done; waiting for the owner's answers before the prototype | 25 Nov 2026, owner |
+| ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 2 (one-projector prototype) built; waiting for the owner to pass it | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -379,4 +379,6 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Phase 1, the audit, done 25 Nov 2026.** Conclusion: the engine stays; the way a beam is drawn and the way the rig is driven must be replaced. Nine specific causes of the artificial look are listed.
 - **Next:** five questions to the owner, then phase 2, a prototype of one projector on its own page. Nothing else is built until the owner passes it.
 - New fact from the brief: the owner streams from **macOS**.
-
+- **Owner's answers, 25 Nov 2026:** music plays in a browser tab; overlay with his camera first; sources are combined in TikTok LIVE Studio; a wide mix of music; an M3 Pro.
+- **Phase 2 built 25 Nov 2026:** a one-projector overlay prototype at `/laser.html` with a new way of drawing beams and scanned sheets in haze. Detail in `STAGE-PLAN.md`, "Phase 2".
+- **Waiting on the owner (the quality gate):** does the light now look like real laser light; how does it combine with his camera in LIVE Studio (Add or Screen blending, or a transparent source); what frame rate does the page report on his Mac.
