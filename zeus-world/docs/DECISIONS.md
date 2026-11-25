@@ -38,6 +38,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Stage direction (25 Nov 2026) | The stage is to become a professional virtual laser and lighting system: 70% premium underground nightclub, 20% minimalist industrial techno, 10% festival spectacle; dark, restrained, physically coherent. Built in phases, each passed by the owner. The owner streams from macOS |
 | Stage direction, revised (25 Nov 2026) | The owner sent the Transmission Prague 2016 laser show as "something i loved": many projectors, fans of twenty or more beams each, green with magenta shafts, a temple stage. The lasers get a festival look in that manner alongside the club themes. This relaxes the "dark, restrained" rule of the first brief for that look |
 | Largest gifts (25 Nov 2026) | A gift of 5,000 coins or more is shown as a realistic, pre-made animated clip for its family, played inside the stage. The owner chose realistic over stylised and accepted that a clip plays the same each time. Clips are generated on fal; he approved a small spend for the first |
+| Gift clips are original work (25 Nov 2026) | The owner: "These are our creatives and we are not mimicking or copying anyone." The clips are made from our own written prompts, show no real person, brand or existing character, and do not imitate TikTok's gift artwork. Keep it so: prompts must never name an artist, a film, a brand or a real person, or ask for something "in the style of" one |
 
 ## Open questions
 
