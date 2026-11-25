@@ -53,7 +53,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
 | ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
 | ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | Second version shipped 25 Nov after watching the video: stage rebuilt, warm light, the oracle cue. Waiting for the owner |
-| ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | First version shipped 25 Nov at `/andie.html`. Waiting for the owner | 25 Nov 2026, owner |
+| ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Shipped 25 Nov at `/andie.html`; "looks good for now" (owner). Waiting for her actual image to fix the rest | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -450,3 +450,4 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Owner's requirements, 25 Nov 2026:** "1. tiktok live studio. she can attach browser source. 2. the backdrop will be like background and she will be on cam with cutout. 3. match her color style and also provide an option to reduce brightness. 4. an option to just use her background as lights as one option." Point 4 is read as: a mode where the room's own lights are the whole show, with no lasers.
 - **First version shipped 25 Nov 2026** at `/andie.html`: her room rebuilt in code; two modes (room only, room + lasers); five room cues; brightness; an editable sign; every setting also available in the address for a browser source. Detail in `knowledge/andie.md`.
 - **Waiting on the owner:** does it look like her room; is point 4 read correctly; does it work in TikTok LIVE Studio (window capture to hear the music, or browser source at a fixed tempo); does she have her logo as an image file.
+- **Owner, 25 Nov 2026:** "looks good for now. once i get the actual image, i will share and we can fix rest. i want you to have the things placed in 16:9 and controls can be below. in that shape." Done the same day: the picture sits in a fixed 16:9 frame and the controls are a bar beneath it. The remaining fixes (furniture, plants, her real logo) wait for the image.

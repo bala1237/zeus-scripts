@@ -46,7 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-0. **ZW-042, Andie's Place.** `/andie.html`. Does it look like her room; is "her background as lights" read correctly (a room-only mode); does it work in TikTok LIVE Studio; does she have her logo as an image file.
+0. **ZW-042, Andie's Place.** "Looks good for now" (owner, 25 Nov). He will share her actual image; then the furniture, plants and logo are fixed. Still to confirm: that it works in TikTok LIVE Studio.
 0. **ZW-041, the building cues, second version (after watching the video).** In Olympus: the oracle cue (the video's opening), chase, corners, colonnade, strobe, on a stage rebuilt as a temple with three pillars each side. Is this what he loved; how often should they come; which other moments of the video next (white-outs, white beams, red wash, temple as a screen).
 0. **ZW-039, the festival look (Olympus).** It opens the show on `/laser.html`. Is it the look he loved in the Transmission video; what frame rate does the panel show with this many beams; Stage set on or off over his camera; what in the video's movement should be added.
 0. **ZW-038, the new beat tracker.** On `/laser.html` press Listen with music playing. Does the status say "on the beat at ..." with the right tempo; do the lights land on the beat (slide Beat timing if they are early or late); does it go quiet in a breakdown and hit on the drop; which tracks still fool it. And **ZW-037**: press Show (or L) for the new Flow mode. Is this the "infinite move" he meant; ribbons or more smoke; and should the lasers move towards the dense, many-coloured look of his two concert references.
