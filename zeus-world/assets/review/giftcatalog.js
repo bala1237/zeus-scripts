@@ -19,9 +19,13 @@ export const FAMILIES = {
   revel: ['Fiesta', 'Flamenco dancers', 'Corgi\'s Drone Show', 'Red Devil Corgi', 'Festival Flags', 'LIVE Fest Grand Finale', 'Celebration Time', 'Happy Party', 'Birthday Party', 'Saxofone', '1st Anniversary', '2nd Anniversary', '3rd Anniversary'],
 };
 const BY_NAME = new Map(); for (const [family, names] of Object.entries(FAMILIES)) for (const n of names) BY_NAME.set(n.toLowerCase(), family);
+// Figures that are a film clip: a realistic animated clip made for the family, played as the sky behind the temple.
+// roar: the clip's big moment, in seconds; the stage's ring, sparks and lasers land on it. seconds: the clip's length.
+// The lion clip was generated on fal with Wan 3.0 Prime (text to video, 10 s, 1080p), 25 Nov 2026; the prompt is in docs/STAGE-PLAN.md.
+export const FILMS = { lion: { src: 'films/lion.webm', roar: 6.2, seconds: 10 } };
 // which figures are drawn so far (constellations.js)
 export const DRAWN = new Set(['lion']);
 // what a gift becomes on the stage: its size, and for the largest the figure to draw (null: not drawn yet, play the big moment)
 export function stageGift(giftName, coins) { const size = SIZES.find(([min]) => coins >= min)[1]; if (size !== 'legend') return { size, figure: null };
   const family = BY_NAME.get(String(giftName).toLowerCase()) || null, tier = coins >= 30000 ? 3 : coins >= 15000 ? 2 : 1;   // the bigger the gift, the bigger the show
-  return family && DRAWN.has(family) ? { size, figure: family, tier, label: String(giftName) } : { size: 'big', figure: null, family }; }
+  return family && (DRAWN.has(family) || FILMS[family]) ? { size, figure: family, tier, label: String(giftName), film: FILMS[family] || null } : { size: 'big', figure: null, family }; }

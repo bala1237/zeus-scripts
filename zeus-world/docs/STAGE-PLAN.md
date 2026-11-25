@@ -432,3 +432,33 @@ The owner on the Lion proof: "People love watching the animation. We need to do 
 - While a gift plays, the stage's ordinary camera moves are held off; they were cutting into the choreography.
 
 **Checked:** ten tests for gifts in all, including that each size runs longer and asks for more (bolts 3, 7, 13; rings 0, 0, 2; webs 0, 0, 3); the three buttons by real clicks and each show stepped through to its end (11.6 s, 17.4 s, 25.2 s; views in the planned order; bars and the right title; everything back to normal after); stills of six acts of the largest (`assets/sheets/laser_gift_lion.jpg`); the build. **Not checked:** motion, pacing and frame rate, which is where a film is judged. The aurora is soft and blocky in stills and may want sharpening once seen moving.
+
+## The largest gifts as realistic film clips (ZW-046), first clip 25 Nov 2026
+
+The owner on the constellation show: "I wanted it like a show. A 3d animation like." Asked what he pictured, he answered: realistic; a pre-made clip is fine; a small spend is approved. So the figure for a 5,000-and-over gift is now a **realistic animated clip**, made once per family and played inside our stage. This is how TikTok's own gift animations work. The constellation remains as the fallback for a family that has a drawing but no clip.
+
+**How a film gift plays (26 beats on the clock, 13 seconds).** Black and the storm; the bolt on the temple's peak seen from its foot (beat 2); a cut to the whole picture as **the clip begins behind the temple, filling the sky** (2.5); a slow push in towards it; on the clip's big moment (the lion's roar, 6.2 s into the clip) the stage answers with a ring, sparks and a jolt, kept gentle so the roar itself is seen; the sender's name is forged across the temple; gold rains; the clip fades as it ends and the lasers come back. Film bars and the title throughout. Bigger gifts add meteors, the web of lightning and more pillars struck inside the same thirteen seconds; **a longer show for a bigger gift needs a longer clip**, which is a later choice.
+
+**The lion clip.** A storm of dark cloud and lightning; a photoreal lion walks out of it towards the camera; a full roar with lightning either side and sparks; he closes his mouth and stares. 10 s, 1920 × 1080, no sound.
+
+- Made on fal with **Wan 3.0 Prime, text to video** (`alibaba/wan-3.0-prime/text-to-video`), 10 s, 1080p, 16:9, audio off, prompt expansion on, seed 402660878. Listed rate $0.05 a second, so **about $0.50** (an estimate from the listed rate; the account's bill is the record). One attempt; the first result was used.
+- Prompt: "Photorealistic cinematic visual effects shot on a pure black background. Out of complete darkness, dark storm clouds roll in at the edges of the frame and flicker with lightning. A colossal, majestic male lion with a huge golden mane emerges from the clouds in the centre of the frame, seen from the front, head and shoulders, walking slowly toward the camera. He lifts his head and lets out a tremendous roar, mouth wide, mane blowing in the wind, while forked lightning strikes behind him and lights the edges of his mane in gold and white. Then he closes his mouth and stares straight into the camera with glowing amber eyes as embers of gold drift upward. Dramatic low-key lighting, strong golden rim light, volumetric mist, extremely detailed fur, film grain, anamorphic lens, slow push-in. The background stays pure black everywhere outside the lion and the clouds, with no ground, no scenery, no text, no logos."
+- The model ignored "pure black background" and filled the frame with cloud. That turned out better: the clip is used as the whole sky, not laid over the stage.
+- Stored as `assets/review/public/films/lion.webm` (VP9, 1600 × 900, 6.4 MB; converted with `ffmpeg -c:v libvpx-vp9 -crf 34 -vf scale=1600:900`). WebM so that the test browser, which has no H.264, can play it too. The 46 MB original is not kept in the repository.
+- **Open question: the licence.** Whether fal's and the model's terms allow a generated clip on a commercial stream has not been checked. It is one of the open questions in `DECISIONS.md` and should be settled before real use.
+
+**How it is built**
+
+- `giftcatalog.js`: `FILMS` gives each family's clip, its length and the second of its big moment. `stageGift()` passes it on.
+- `gifts.js`: a gift with a film runs on the clock (two beats a second) so the stage stays in step with the clip at any tempo; `legendWake()` and `giftBeats()` take their timing from the film.
+- `giftfx.js`: the clip is a video texture on a quad that fills the picture and is drawn first of all, so the temple, the lightning and the name stand in front of it. It sits a little high and large so the middle of the clip is above the temple, and fades to dark towards the ground. `seekFilm()` lets a still show a chosen second.
+- The lasers are off while a clip plays; they washed it out.
+
+**Traps met**
+
+- A clip placed as a screen in the 3D scene looked like a television floating in the dark. Filling the picture is what makes it the sky.
+- At full brightness the clip went white through the glow pass; it is shown at 0.86.
+- The roar in the clip is at about 6.2 s, not where the open mouth first appears (5.2 s).
+- **A comment put in the middle of a line swallowed `gift.dim += ...`**, so from the cinematic version onwards the lasers never stepped back for any gift, and a check that only looked at the end state ("lasers back to 1") passed. Found because the lasers were blazing over the film. This is the trap that has been met several times before; comments go on their own line.
+
+**Checked:** eleven tests for gifts (the film's start, waking beat and length among them); the 22,000 button by a real click with the show played in real time in a browser (clip fades in at beat 4, the view pushes in for the roar, the clip fades at beat 22, lasers and stage back to normal after); stills of the strike, the lion walking out, the roar and the name (`assets/sheets/laser_gift_lion.jpg`); the build, with the clip copied into it. **Not checked:** the clip in motion on the stage at full frame rate; playback inside TikTok LIVE Studio.
