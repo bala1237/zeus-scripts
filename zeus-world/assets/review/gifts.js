@@ -51,6 +51,12 @@ export function createGifts(n = 12) { const st = { active: null, queue: [], serv
         if (at(W)) { st.fx.push({ type: 'bolt', pillar: -1, power: 4 }, { type: 'wake' }); st.quiet = 90; }
         for (let k = 0; k < n; k++) { const pl = k % 2 ? Math.ceil(mid) + (k >> 1) : Math.floor(mid) - (k >> 1); if (at(W + 0.75 + k * 0.25)) { st.fx.push({ type: 'bolt', pillar: pl, power: 1.2 }); st.flames[pl] = 75; } }
         if (at(W + 1) || at(W + 2)) st.fx.push({ type: 'ring' }); if (at(W + 4.5)) st.fx.push({ type: 'forge' }); if (at(W + 6)) st.fx.push({ type: 'meteors', beats: 10 }); if (at(len - 4)) st.fx.push({ type: 'ascend' }); }
+      // Pegasus (ZW-046). No lightning anywhere: this one is light and air. He gallops in from far off across the clouds (the clip, from
+      // beat 1) and the pillars answer with hoofbeats of light running in from both ends (see lights). When he rears and spreads his
+      // wings (W) the stage does the same: its lasers open into two great wings of white light ('wings'), feathers begin to fall, and
+      // three flames are lit. Then the name; then he flies up and out and the view follows him.
+      else if (a.size === 'legend' && a.film && a.film.staging === 'pegasus') { const W = legendWake(a), len = giftBeats(a); if (at(filmStart(a))) st.fx.push({ type: 'film', figure: a.figure });
+        if (at(W)) { st.fx.push({ type: 'wake' }, { type: 'wings' }); for (const i of a.keep) st.flames[i] = FLAME_SECONDS; } if (at(W + 2)) st.fx.push({ type: 'forge' }); if (at(len - 4)) st.fx.push({ type: 'ascend' }); }
       else if (a.size === 'legend') { const T = a.tier, W = legendWake(a), len = giftBeats(a); if (at(2)) st.fx.push({ type: 'bolt', pillar: -1, power: 2.5 + 0.5 * T }); if (at(filmStart(a))) st.fx.push(a.film ? { type: 'film', figure: a.figure } : { type: 'draw', figure: a.figure, tier: T });
         if (at(W)) st.fx.push({ type: 'wake' }); if (T >= 2 && at(W + 0.5)) st.fx.push({ type: 'meteors', beats: T === 3 ? 14 : 8 }); if (T === 3) { if (at(W + 1) || at(W + 2)) st.fx.push({ type: 'ring' }); if (at(W + 0.25) || at(W + 12) || at(len - 14)) st.fx.push({ type: 'web' }); }
         if (at(W + 1.5)) st.fx.push({ type: 'forge' });
@@ -69,6 +75,11 @@ export function createGifts(n = 12) { const st = { active: null, queue: [], serv
     else if (a.size === 'medium') { const first = a.dir > 0 ? 0 : n - 1;
       if (t >= 4.5) { for (let i = 0; i < n; i++) out[i] = (fr < 0.5 ? 1 : 0.6) * fade; out[n] = 0.7 * fade; }
       else if (t >= 0.5) { const head = Math.min(n - 1, Math.floor((t - 0.5) * 3)); for (let k = 0; k <= head; k++) out[first + a.dir * k] = k === head ? 1 : 0.55; } }
+    // Pegasus: hoofbeats. Two quick flashes to the half beat, on a pair of pillars that steps in from the ends towards the middle as he
+    // comes nearer, each pair left faintly lit behind. When the wings open every pillar is lit and stays lit.
+    else if (a.film && a.film.staging === 'pegasus') { const W = legendWake(a), s0 = filmStart(a);
+      if (t >= W) { for (let i = 0; i < n; i++) out[i] = 0.9 * fade; out[n] = 0.8 * fade; out[n + 1] = 0.5 * fade; }
+      else if (t >= s0 + 1) { const k = Math.min(n / 2 - 1, Math.floor((t - s0 - 1) / (W - s0 - 1) * (n / 2))), ph = (t * 2) % 1, hoof = ph < 0.16 || (ph > 0.28 && ph < 0.44) ? 1 : 0; for (let j = 0; j < k; j++) out[j] = out[n - 1 - j] = 0.22; out[k] = out[n - 1 - k] = Math.max(0.22, hoof); } }
     else if (a.film && a.film.staging === 'zeus') { const W = legendWake(a), mid = (n - 1) / 2; for (let i = 0; i < n; i++) if (t >= W + 0.75 + Math.abs(i - mid) * 0.5) out[i] = (fr < 0.5 ? 1 : 0.8) * fade; if (t >= W + 0.2) out[n] = fade; if (t >= W + 0.5) out[n + 1] = (fr < 0.5 ? 1 : 0.4) * fade; }
     else if (t >= 2.25) { const mid = (n - 1) / 2; for (let i = 0; i < n; i++) if (t >= 2.25 + Math.abs(i - mid) / mid) out[i] = (fr < 0.5 ? 1 : 0.75) * fade;   // the bolt is sent at beat 2 and lands a quarter of a beat later; then the pillars catch from the middle outwards, over one beat
       if (t >= 2.5) out[n] = fade; if (t >= 2.75) out[n + 1] = (fr < 0.5 ? 1 : 0.4) * fade; }

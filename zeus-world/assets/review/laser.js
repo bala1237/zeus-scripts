@@ -52,7 +52,7 @@ const NAME_W = 9.6, nameMat = makeNameMaterial(new THREE.CanvasTexture(nameCanva
 function drawSign(c, tex, text) { const g = c.getContext('2d'), spaced = text.toUpperCase().split('').join('\u2009'); g.clearRect(0, 0, c.width, c.height); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
   let px = Math.round(c.height * 0.78); do { g.font = `600 ${px}px Georgia, "Times New Roman", serif`; px -= 6; } while (g.measureText(spaced).width > c.width * 0.94 && px > 20); g.fillText(spaced, c.width / 2, c.height * 0.54); tex.needsUpdate = true; }
 // The layout follows the Transmission stage: a temple of six pillars in the middle, and three free-standing pillars either side.
-const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new THREE.Color(0xff2f52), new THREE.Color(0xffe23c), new THREE.Color(0xffb436)], lampCol = new THREE.Color(0xffa84a);
+const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new THREE.Color(0xff2f52), new THREE.Color(0xffe23c), new THREE.Color(0xffb436), new THREE.Color(0xdfe8ff)], lampCol = new THREE.Color(0xffa84a);
 { const add = (g, x, y, z, m = templeMat) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); temple.add(o); return o; };
   // each pillar has its own light, so the building cues can pick them out one at a time. The picture on it gives the fluting and
   // the fall-off of a lamp at its foot: bright low down, fading towards the top, brightest on the side that faces the audience.
@@ -101,8 +101,8 @@ const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.C
 const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Math.cos(e.roll.v), cy = Math.sin(ax) * Math.sin(e.roll.v), k = e.cone.v;
   out.set(cx * (1 - k) + Math.sin(coneA) * Math.cos(phi) * k, cy * (1 - k) + Math.sin(coneA) * Math.sin(phi) * k, Math.cos(ax) * (1 - k) + Math.cos(coneA) * k).normalize().applyEuler(E.set(-(p.pitch + e.tilt.v), p.yaw + e.pan.v, 0, 'YXZ')); return out; };
 // ---------- gift moments (ZW-045). Fired by the test buttons today; window.zeusGift(size, name) is the door for TikFinity later.
-const gifts = createGifts(pillars.length), gift = { dim: 1, last: 0, sign: BOOTH_NAME, booth: '', hit: null, who: null, gold: 0, edge: new THREE.Vector3() };
-const fx = createGiftFx({ scene, pillars, peak: new THREE.Vector3(0, 7.2, -6.1), soft }), GOLD = new THREE.Color(0xffb436), PALE = new THREE.Color(0xfff0c8);
+const gifts = createGifts(pillars.length), gift = { wings: 0, tint: null, dim: 1, last: 0, sign: BOOTH_NAME, booth: '', hit: null, who: null, gold: 0, edge: new THREE.Vector3() };
+const fx = createGiftFx({ scene, pillars, peak: new THREE.Vector3(0, 7.2, -6.1), soft }), GOLD = new THREE.Color(0xffb436), PALE = new THREE.Color(0xfff0c8), SILVER = new THREE.Color(0xdfe8ff);
 window.zeusGift = (size, name, figure) => gifts.add({ size, name, figure });
 // for TikFinity later: a real gift by its name and coins. The catalogue decides its size and, for the largest, its figure.
 window.zeusGiftFromTikTok = (giftName, coins, sender) => gifts.add({ ...stageGift(giftName, coins), name: sender });
@@ -114,14 +114,14 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // gifts keep their own time, so one can be played with no music: the beat when there is one, otherwise two beats a second
   { const playing = b.act > 0.3, onClock = !playing || !!(gifts.state.active && gifts.state.active.film), dB = onClock ? dt * 2 : Math.max(0, Math.min(1, b.beats - gift.last)), onBeat = playing ? Math.floor(b.beats) !== Math.floor(gift.last) : true; gift.last = b.beats;
     gA = gifts.update(dB, dt, onBeat, playing ? onBeat && Math.floor(b.beats) % 4 === 0 : onBeat);
-    if (gA !== gift.who) { gift.who = gA; gift.booth = ''; if (gA && (gA.size === 'big' || gA.size === 'legend') && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
+    if (gA !== gift.who) { gift.who = gA; gift.booth = ''; gift.wings = 0; gift.tint = gA && gA.film && gA.film.staging === 'pegasus' ? SILVER : GOLD; if (gA && (gA.size === 'big' || gA.size === 'legend') && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
     // the script's requests, each acted on once: lightning, the leap between pillars, the name arriving on the booth
-    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (e.type === 'draw') fx.figure(e.figure, e.tier); else if (e.type === 'film') fx.playFilm(e.figure, FILMS[e.figure].src, FILMS[e.figure].staging === 'zeus'); else if (e.type === 'wake') { if (gA && gA.film) fx.roar(); else { fx.wake(); if (playing) dir.hit(); } } else if (e.type === 'ring') fx.ring(0.8); else if (e.type === 'web') fx.web(); else if (e.type === 'meteors') fx.shower(e.beats * (playing ? 60 / b.tempo : 0.5)); else if (e.type === 'ascend') fx.ascend(); else if (gA && gA.name) gift.booth = gA.name; }
+    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (e.type === 'draw') fx.figure(e.figure, e.tier); else if (e.type === 'film') fx.playFilm(e.figure, FILMS[e.figure].src, !!FILMS[e.figure].staging); else if (e.type === 'wake') { if (gA && gA.film) fx.roar(); else { fx.wake(); if (playing) dir.hit(); } } else if (e.type === 'ring') fx.ring(0.8); else if (e.type === 'web') fx.web(); else if (e.type === 'meteors') fx.shower(e.beats * (playing ? 60 / b.tempo : 0.5)); else if (e.type === 'ascend') fx.ascend(); else if (e.type === 'wings') gift.wings = 1; else if (gA && gA.name) gift.booth = gA.name; }
     const legend = gA && gA.size === 'legend', grand = gA && (gA.size === 'big' || legend), W = legend ? legendWake(gA) : 0, gEnd = gA ? giftBeats(gA) : 0;
     if (gA && gA.size === 'big' && gA.t >= 2.25 && gift.hit !== gA) { gift.hit = gA; if (playing) dir.hit(); }
     // while a small or medium gift plays the lasers step back; a big one is black while the storm gathers, then lets everything loose in gold
     // for the largest gifts the lasers also wait while the figure is drawn, and stay off while a film plays
-    const want = !gA ? 1 : legend ? (gA.t < 2.25 ? 0 : gA.film ? (gA.t < 2.25 || gA.t < gEnd - 5 ? 0 : 0.6) : gA.t < W ? 0.08 : 0.34 + 0.1 * gA.tier) : grand ? (gA.t < 2.25 ? 0 : 1) : 0.18;
+    const want = !gA ? 1 : legend ? (gA.t < 2.25 ? 0 : gA.film ? (gift.wings ? 0.36 : gA.t < 2.25 || gA.t < gEnd - 5 ? 0 : 0.6) : gA.t < W ? 0.08 : 0.34 + 0.1 * gA.tier) : grand ? (gA.t < 2.25 ? 0 : 1) : 0.18;
     gift.dim += (want - gift.dim) * Math.min(1, dt * (want < gift.dim ? 12 : 4));
     gift.gold += ((grand && gA.t >= 1 && gA.t < gEnd - 1 ? 1 : 0) - gift.gold) * Math.min(1, dt * 5);
     const text = gift.booth || BOOTH_NAME; if (text !== gift.sign) { gift.sign = text; drawSign(signCanvas, signMat.map, text); } }
@@ -129,8 +129,10 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // the flow keeps the theme's two colours and adds a third from across the colour wheel. It drifts faster with the energy of the music, calms in a breakdown, and stops with the music.
   { const hsl = {}; main.getHSL(hsl); look.third.setHSL((hsl.h + 0.42) % 1, 1, 0.55);
     flow.update(dt * b.act, { level: look.flow * b.act * (d.blackout ? 0 : 1) * st.gain * (look.mode === 'both' ? 0.55 : 1), speed: (b.section === 'breakdown' ? 0.6 : 0.8 + 1.4 * b.energy), pulse: b.pulse, a: main, b: accent, c: look.third, aspect: camera.aspect }); }
-  main.lerp(C.set(theme.main).lerp(GOLD, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2))); accent.lerp(C.set(theme.accent).lerp(PALE, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2)));
+  main.lerp(C.set(theme.main).lerp(gift.tint || GOLD, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2))); accent.lerp(C.set(theme.accent).lerp(PALE, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2)));
   if (SHOT && q.get('pattern')) d.pattern = q.get('pattern');
+  // Pegasus: while his wings are open the lasers hold the shape of wings, whatever the director had planned
+  if (gift.wings && gA) { d.pattern = 'wings'; d.dark = false; }
   // an intensity budget: the more beams are lit, the less each gets, so a full rig does not flood the picture and a single beam is strong
   let load = 0; for (const p of RIG) load += Math.max(0, p.e.level.v) * (p.e.spread.v < 0.1 && p.e.cone.v < 0.5 ? 3 : p.n) + 5 * Math.max(0, p.e.sheet.v); const budget = Math.min(1.25, Math.pow((theme.budget || 13) / Math.max(load, 1), 0.55));
   rig.begin();
@@ -151,7 +153,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // A lamp comes on at once and dies away quickly, as a real one does.
   const cueShow = BUILDING.has(d.pattern) && theme.festival, N = pillars.length; if (cueShow && !fest.set && !gA && !SHOT) dir.nextLook();
   const gDark = !!gA && (gA.size === 'legend' ? gA.t < legendWake(gA) : gA.size !== 'big' || gA.t < 2.25), show = cueShow || gDark;
-  building(cueShow && !gA && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); if (gA) { gifts.lights(lit); lit[N + 2] = 3; }
+  building(cueShow && !gA && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); if (gA) { gifts.lights(lit); lit[N + 2] = gA.film && gA.film.staging === 'pegasus' ? 4 : 3; }
   const fall = Math.exp(-dt * 16); if (show || gA) lampCol.lerp(WARM[lit[N + 2]], Math.min(1, dt * 14));
   temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.1 : 1);
     hall.v = Math.max(lit[N], hall.v * fall); templeMat.color.copy(main).multiplyScalar(amb).add(C.copy(lampCol).multiplyScalar(0.10 * hall.v * fv * st.gain));
@@ -168,7 +170,7 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
     const sky = legend && !gA.film && t >= 2.5 ? { progress: Math.min(1, (t - 2.5) / (W - 2.6)), glow: t > end - 3 ? Math.max(0, (end - t) / 3) : 1, falling: t > end - 4 ? 1 : 0 } : null;
     // the cinema bars and the title: who gave, and what
     if (frameEl.classList.contains('cine') !== !!legend) { frameEl.classList.toggle('cine', !!legend); if (legend) $('title').textContent = [gA.name, gA.label].filter(Boolean).join('  ·  ').toUpperCase(); } frameEl.classList.toggle('titled', !!legend && t >= W + 1 && t < end - 3);
-    fx.update(dt, { cloud: !gA ? 0 : legend && gA.film && t > filmStart(gA) + 0.5 ? 0.15 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= t0 + 0.2 && t < end - 1.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null, sky, aurora: legend && !gA.film && gA.tier >= 2 && t >= W && t < end - 4 ? 1 : 0 });
+    fx.update(dt, { cloud: !gA ? 0 : legend && gA.film && t > filmStart(gA) + 0.5 ? 0.15 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= t0 + 0.2 && t < end - 1.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null, sky, aurora: legend && !gA.film && gA.tier >= 2 && t >= W && t < end - 4 ? 1 : 0, feathers: gift.wings && gA && t < end - 3 ? 1 : 0 });
     if (!gA) fx.stopFilm();
     fx.draw(rig, st.gain); }
   rig.end(st.t, camera, renderer.domElement.height);
@@ -183,7 +185,9 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
       // whole picture as it wakes; then slow passes from side to side for as long as the show runs; and back, far, for the farewell
       // Zeus: from far back; then a cut to the foot of the temple, looking straight up it into the dark as the eyes open; a cut to the
       // whole picture in time to see the thunderbolt thrown and land; then closer, and back out for the end
-      if (gA.film && gA.film.staging === 'zeus') { if (t < 0.6) { view = 9; snap = true; } else if (t < Wk - 3) { view = 15; snap = true; } else if (t < Wk + 3.5) { view = 19; snap = t < Wk - 2.5; } else if (t < end - 5) view = 20; else view = 19; }
+      // Pegasus: from far back; the whole picture to watch him come; closer as the wings open; then the view lifts to follow him up
+      if (gA.film && gA.film.staging === 'pegasus') { if (t < 0.6) { view = 9; snap = true; } else if (t < Wk - 2) { view = 19; snap = t < 1.1; } else if (t < Wk + 5) view = 20; else if (t < end - 4) view = 14; else view = 19; }
+      else if (gA.film && gA.film.staging === 'zeus') { if (t < 0.6) { view = 9; snap = true; } else if (t < Wk - 3) { view = 15; snap = true; } else if (t < Wk + 3.5) { view = 19; snap = t < Wk - 2.5; } else if (t < end - 5) view = 20; else view = 19; }
       else if (t < 0.15) { view = 9; snap = true; } else if (t < 1.9) view = 6; else if (t < 2.7) { view = 15; snap = true; }
       // with a film for a sky: a cut to the whole picture as the clip begins, a slow push up towards it for its big moment, and back
       else if (gA.film) { if (t < Wk - 3) { view = 19; snap = t < 3.2; } else if (t < Wk + 6) view = 20; else view = 19; }
@@ -226,7 +230,7 @@ grip.addEventListener('pointerdown', (e) => { grip.setPointerCapture(e.pointerId
   const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); }; grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); });
 grip.addEventListener('dblclick', () => setSize(view.size > 0.99 ? 0.6 : 1));
 let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area); addEventListener('resize', fit);
-const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, g, coins] of [['g5', 'Wolf', 5500], ['g6', 'Black Tiger', 22000], ['g7', 'Leon and Lion', 34000], ['g8', 'Zeus', 34000]]) $(id).addEventListener('click', () => gifts.add({ ...stageGift(g, coins), name: $('gname').value })); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
+const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, g, coins] of [['g5', 'Wolf', 5500], ['g6', 'Black Tiger', 22000], ['g7', 'Leon and Lion', 34000], ['g8', 'Zeus', 34000], ['g9', 'Pegasus', 42999]]) $(id).addEventListener('click', () => gifts.add({ ...stageGift(g, coins), name: $('gname').value })); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
 addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' && e.target.type === 'text') return; if (['1', '2', '3'].includes(e.key)) { sendGift(['small', 'medium', 'big'][Number(e.key) - 1]); return; } const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h' && !PLAIN) { hidden = !hidden; showUi(); } });
 window.__laser = { gifts, gift, fx, view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
 if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); if (q.get('gift')) gifts.add({ size: q.get('gift'), name: q.get('gname') || '', figure: q.get('figure'), tier: Number(q.get('tier') || 1), label: q.get('label') || '', film: q.has('film') ? FILMS[q.get('figure')] : null }); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60);

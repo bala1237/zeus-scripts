@@ -40,6 +40,8 @@ export const PATTERNS = {
   single: (p, u, v) => p.group === 'back' && p.side === 0 ? { level: 1.3, spread: 0.0, tilt: 0.02 + 0.2 * ease(u), pan: (v > 0.5 ? 1 : -1) * (0.5 - 0.35 * ease(u)), time: 0.9 } : off,   // it passes over the camera's shoulder, never straight into the lens
   // ---- the building as the show (ZW-041): every laser off, and the temple's pillars lit one by one. What is lit comes from building() below.
   oracle: () => off, chase: () => off, corners: () => off, strobe: () => off, colonnade: () => off,
+  // wings (ZW-046, Pegasus): the wall's fans leaning out and up to either side like two spread wings. Only ever asked for by name.
+  wings: (p, u, v) => p.group === 'wall' ? { level: 1, spread: 0.30 + 0.04 * p.k, tilt: 0.92 - 0.07 * p.k, lean: p.side * (0.30 + 0.17 * p.k), time: 0.6 } : off,
   // ---- the festival rig
   // the picture from the reference: every wall projector throws a tall fan leaning outwards, and magenta shafts rise through the middle and from the sides
   // lean tips a fan sideways in its own plane. With the projector tilted well up and roll 0, the fan stands open towards the audience like a hand fan.

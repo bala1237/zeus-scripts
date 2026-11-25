@@ -57,7 +57,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
-| ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family and for Zeus (his own staging), played as the sky behind the temple. Waiting for the owner | 25 Nov 2026, owner |
+| ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -518,3 +518,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Waiting on the owner:** is Zeus's staging what he meant by creative; does the thrown bolt meet the stage's bolt to the eye; which family next, and whether each should get a staging of its own.
 - **Terms read 25 Nov 2026, at the owner's request.** fal's terms, API terms, use policy and the model's page: the model is tagged "Commercial use"; fal claims no rights over the clips; use must be lawful and non-infringing; no attribution or AI-label condition from fal; no warranty, and the risk is the customer's. The model maker's own terms were not found. TikTok's rules on labelling AI-generated content are not yet checked. Written up in `STAGE-PLAN.md`, "Terms for using the generated clips".
 - **Owner on the terms, 25 Nov 2026:** "These are our creatives and we are not mimicking or copying anyone." Recorded as a decision, with the rule that follows for future prompts (`DECISIONS.md`).
+- **Owner, 25 Nov 2026:** "Let's do Pegasus next with its own creative staging."
+- **Pegasus shipped 25 Nov 2026**, with a staging of his own and no lightning: he gallops in from far off across the clouds while hoofbeats of silver light run along the pillars; when he spreads his wings the stage's lasers open into two wings of white light and feathers fall; he flies up and the view follows. 15 seconds. One clip, about $0.60. Test button "Pegasus". Detail in `STAGE-PLAN.md`, "Pegasus, with a staging of his own".
+- **Spend so far on clips:** about $1.80 for three.
+- **Waiting on the owner:** how Zeus and Pegasus look in motion; which next (Fire Phoenix, Thunder Falcon and TikTok Universe are the remaining top gifts).

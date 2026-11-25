@@ -8,7 +8,8 @@
 export const LEGEND_COINS = 5000, SIZES = [[LEGEND_COINS, 'legend'], [1000, 'big'], [100, 'medium'], [0, 'small']];
 export const FAMILIES = {
   lion: ['Lion', 'Leon and Lion', 'King Leonardo', 'Black Tiger', 'Cyber Roar', 'Lili the Leopard', 'Leon and Lili', 'Wolf'],
-  wings: ['Thunder Falcon', 'Fire Phoenix', 'Phoenix', 'Pegasus', 'Griffin', 'Hawk', 'peacock', 'Bird Whisperer', 'Fantasy Unicorn'],
+  pegasus: ['Pegasus', 'Fantasy Unicorn'],
+  wings: ['Thunder Falcon', 'Fire Phoenix', 'Phoenix', 'Griffin', 'Hawk', 'peacock', 'Bird Whisperer'],
   dragon: ['Dragon Flame', 'Dragon Gate', 'T-rex', 'Big Dino'],
   cosmos: ['TikTok Universe', 'TikTok Universe+', 'TikTok Stars', 'Interstellar', 'Rosa Nebula', 'Look! Meteor Shower', 'TikTok Shuttle', 'Premium Shuttle', 'Starry Night Tourism', 'Spark', 'DJ Alien'],
   sea: ['Seal and Whale', 'Sam the Whale', 'Undersea Kingdom', 'Octopus', 'Yacht', 'Pirate\'s Ship', 'Level Ship'],
@@ -26,7 +27,9 @@ const BY_NAME = new Map(); for (const [family, names] of Object.entries(FAMILIES
 export const FILMS = { lion: { src: 'films/lion.webm', roar: 6.2, seconds: 10 },
   // Zeus has a staging of his own (gifts.js): the clip opens a beat in, on his eyes in the dark; "roar" is the second his thunderbolt
   // lands at the foot of the picture, where the temple stands; the show runs five beats past the clip for the lasers to return.
-  zeus: { src: 'films/zeus.webm', roar: 8.0, seconds: 14, start: 1, after: 5, staging: 'zeus' } };
+  zeus: { src: 'films/zeus.webm', roar: 8.0, seconds: 14, start: 1, after: 5, staging: 'zeus' },
+  // Pegasus: "roar" is the second his wings are fully open, when the stage's lasers open into wings too
+  pegasus: { src: 'films/pegasus.webm', roar: 5.6, seconds: 12, start: 1, after: 5, staging: 'pegasus' } };
 // which figures are drawn so far (constellations.js)
 export const DRAWN = new Set(['lion']);
 // what a gift becomes on the stage: its size, and for the largest the figure to draw (null: not drawn yet, play the big moment)

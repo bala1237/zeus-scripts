@@ -509,3 +509,32 @@ The owner asked for the terms to be checked. Read: fal's Terms of Service (`fal.
 **Not checked: TikTok's own rules.** TikTok has rules on labelling realistic AI-generated content. Whether a stage effect of a lion or of Zeus needs the label, and how it applies to a LIVE, was not read. That is the next thing to settle before using the clips on a real stream.
 
 **If certainty is wanted:** ask fal support in writing whether Wan 3.0 Prime output may be used in a monetised livestream and which provider terms apply.
+
+## Pegasus, with a staging of his own (ZW-046), 25 Nov 2026
+
+The owner: "Let's do Pegasus next with its own creative staging." TikTok's Pegasus is 42,999 coins.
+
+**The idea: no lightning; the stage takes wing.** The lion's show and Zeus's are storm and thunderbolt. Pegasus is light and air. Nothing strikes. The stage answers him in two ways it has not been used before: the pillars carry his **hoofbeats**, and the lasers become **wings**.
+
+**What plays (30 beats on the clock, 15 seconds)**
+
+1. *Black*, from far back, one beat.
+2. *The approach.* The clip fades up on a sea of night cloud with a point of light far off. It is a white horse galloping towards us across the cloud tops. The temple stands dark in front. As he comes, **hoofbeats of silver light** run along the pillars: two quick flashes to the half beat, on a pair of pillars that steps in from the two ends towards the middle as he nears, each pair left faintly lit behind.
+3. *The wings* (5.6 s into the clip, beat 12.2). He rears over the temple and spreads his wings across the whole sky. At that moment **the stage's lasers open into two great wings of white light**, leaning out and up on either side of the temple under his own, every pillar lights silver, a soft ring spreads, and **feathers begin to fall**: large, white, slow.
+4. *The name*, forged across the temple. The clip's sky breaks into gold dawn.
+5. *The flight.* He beats his wings and goes up and out of the top of the picture, and the view lifts to follow him.
+6. *The end.* Feathers and dawn; the clip fades; three flames stay lit.
+
+Silver-white where the others are gold: the pillars, the lasers and the feathers.
+
+**The clip.** Wan 3.0 Prime on fal, text to video, 12 s, 1080p, 16:9, audio off, prompt expansion on, seed 1600737326; **about $0.60** at the listed rate. One attempt, used as it came. `assets/review/public/films/pegasus.webm` (VP9, 1600 × 900, 4.6 MB).
+
+Prompt: "Photorealistic cinematic visual effects shot, low camera angle looking up across a vast sea of dark night clouds lit by moonlight. The shot begins almost dark, with one small bright point of light far away in the clouds at the centre of the frame. The light grows: it is a magnificent pure white winged horse galloping straight toward the camera across the tops of the clouds, hooves kicking up bursts of glowing mist, long white mane and tail streaming, powerful muscles, large white feathered wings folded along its sides. It comes closer and closer until it is huge in the upper two thirds of the frame, then it rears up on its hind legs facing the camera and spreads its enormous white feathered wings wide open, filling the whole width of the frame, every feather edged with silver and gold light, as the clouds behind it break open with warm golden dawn light. It holds this pose for a moment, then beats its wings powerfully, lifts off and flies straight up and out of the top of the frame, leaving behind a rising trail of golden light and a few white feathers drifting slowly down through the glowing clouds. The bottom third of the frame stays cloud only, with no ground, no buildings, no people, no rider, no horn, no text, no logos. Majestic and graceful, dramatic backlight, strong silver rim light, volumetric cloud and mist, extremely detailed feathers and horsehair, epic scale, film grain, anamorphic lens."
+
+**How it is built.** `staging: 'pegasus'` in `FILMS`. In `gifts.js`: its script (film, wake, wings, forge, ascend; no bolt) and the hoofbeat lights. In `director.js`: a `wings` pattern for the wall of projectors, used only when asked for by name. In `laser.js`: while the wings are open the director's pattern is overridden with `wings`, the lasers are held at about a third so the horse stays the picture, and their colour and the pillars' go to silver. In `giftfx.js`: feathers, which are the same points as the sparks with almost no gravity and a long life.
+
+**Checked:** a test of Pegasus's script (no lightning; hoofbeats only ever on a matching pair, stepping from the ends to the middle; the wings on the clip's moment; all pillars lit after; three flames); the Pegasus button by a real click, played in real time in a browser (views 19, 20, 14, 19; lasers off until the wings open, then held at 0.36; back to normal after); six stills (`assets/sheets/laser_gift_pegasus.jpg`); the build with all three clips. **Not checked:** motion; whether the hoofbeats read as hoofbeats; whether the laser wings open with his.
+
+**Spend on clips so far:** about $1.80 (lion $0.50, Zeus $0.70, Pegasus $0.60, at the listed rate).
+
+**The pattern for the next one.** Each gift gets one idea that only it has: the lion, the stage strikes and he answers; Zeus, his bolt lands on the stage; Pegasus, hoofbeats and wings. Write the clip as a sequence in time with one clear moment the stage can meet, say where in the frame that moment happens, keep the foot of the frame empty for the temple, and decide what the stage does that it has not done before.

@@ -46,7 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-0. **ZW-046, the largest gifts as realistic film clips.** On `/laser.html`, Gift test row: press **Zeus** (his own staging: eyes in the dark, the thrown thunderbolt landing on the temple and lighting all twelve flames) and 22,000 (the lion). Is Zeus's staging what he meant; does the bolt in the clip meet the stage's bolt; which family next; the licence question.
+0. **ZW-046, the largest gifts as realistic film clips.** On `/laser.html`, Gift test row: **Pegasus** (hoofbeats of light on the pillars, then the lasers open into wings and feathers fall), **Zeus** (his thunderbolt lands on the temple and lights all twelve flames) and 22,000 (the lion). How do they look in motion; do the stage's moments meet the clips'; which gift next.
 0. **ZW-045, gift moments, redesigned.** On `/laser.html`: Small, Medium and Big gift, and "Light all 12". Does it make him say wow; lengths; is the flame-and-awakening idea right. TikFinity to be connected later.
 0. **ZW-044.** `/laser.html` now has the picture in a resizable 16:9 box with the controls below. Confirm it is as wanted.
 0. **ZW-043, Andie's Place in TikTok LIVE Studio.** Use the "Copy link for LIVE Studio" button and paste the link as a browser source. Does it move now. If not, add `&debug=1` and report the line across the top of the picture, or that there is none.
