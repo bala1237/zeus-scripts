@@ -46,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-047, two new hero films.** The Last Banner and The Well are written (`docs/hero-films/`). Approve or change the words, and approve the spend: about $1.05 a film in pictures and video, plus narration and one Suno request and download each.
 0. **ZW-048, the pages in OBS.** Lasers listening inside OBS work on his Mac (OBS started with the switch). To try: the hero film's remote (OBS: Tools, WebSocket Server Settings, on; then `/hero.html` in Chrome, Connect to OBS, Play in OBS); the RODECaster as the input (`input=rode`); `city.html?ui=0`; whether the input still goes silent now that the page reconnects.
 0. **ZW-047, the hero film.** Second cut of The Fire-Bringer at `/hero.html`, after his review. Watch with sound: does the new opening hide what the film is about and pay off; is the "Zeus-authorative" narrator right; is the music at the right level under the voice; does the name's reveal land; which of the four letterings (A to D on the sheet). Then: team version, more scripts.
 0. **ZW-046, the largest gifts as realistic film clips.** On `/laser.html`, Gift test row: **Pegasus** (hoofbeats of light on the pillars, then the lasers open into wings and feathers fall), **Zeus** (his thunderbolt lands on the temple and lights all twelve flames) and 22,000 (the lion). How do they look in motion; do the stage's moments meet the clips'; which gift next.
