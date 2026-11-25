@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-049.**
+- **Next number: ZW-050.**
 
 ## Open
 
@@ -60,6 +60,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | Three films on `/hero.html`: The Fire-Bringer (approved, "looks good"), The Last Banner and The Well (new; waiting for the owner to watch them) | 25 Nov 2026, owner |
 | ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. Built: sound input for the lasers (works in OBS on his Mac), controls-off for Zeus World, tempo in the address, a remote for the hero film. Waiting for the owner to try the remote and the RODECaster | 25 Nov 2026, owner |
+| ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open, under discussion. Nothing to be built yet | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -564,3 +565,9 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Follow-up:** "how would i know its on the beat in obs, because i can't see that controls in obs." **Built:** `debug=1` in the address shows a status line and a beat lamp on the picture.
 - **Owner's test in OBS, 25 Nov 2026:** started with the switch, OBS let the page listen; with `input=macbook` it heard the MacBook microphone and found the beat. Then it went silent ("no music", level 0) and he had to restart OBS. **Built:** the page reconnects to the sound input when the feed dies or the devices change. He also asked whether the Terminal command is needed at every start: yes; an Automator launcher was described.
 - **"Let's build others now", 25 Nov 2026. Built:** (1) `city.html?ui=0` shows Zeus World with nothing over the picture; (2) `laser.html?…&bpm=128` sets the tempo when not listening; (3) a remote for the hero film: the hero page in Chrome gains "Play in OBS" and "Stop in OBS", connected to OBS through OBS's own remote control, so the name is typed and the film played without touching the source. Verified against a stand-in for OBS only; waiting for the owner to try it in OBS.
+
+### ZW-049: The whole world
+
+- **Reported:** 25 Nov 2026, by the owner: "Let's focus back on the Zeus world where I mentioned that it should be like a game and cinematic camera movements which shows the whole Zeus world. What's missing is the setup of whole landscape. When we show a world, there are trees mountains, Forrest, waterfalls, rivers, people in different locations doing different things, the civilization itself from huts to city and so on. Can we discuss".
+- **Where things stand:** the scene is a walled city on flat ground with a river and a harbour; beyond the walls there is nothing. The roadmap's phase 6 ("a world to explore") and ZW-017 (make it feel like a game) are the nearest existing plans.
+- **A brainstorm, not a build.** Options and questions were put to him the same day; see the conversation and, once he chooses, `ROADMAP.md`.
