@@ -400,3 +400,35 @@ The owner: "Check the gifts from TT and we need to animate some like that gift. 
 - `window.zeusGiftFromTikTok(giftName, coins, sender)` is the entry for real gifts.
 
 **Checked:** nine tests in all for gifts (the catalogue's sizes and families, the figure's segments, the order of the legend's script); the Lion button by a real click and the sequence stepped through (about 12 seconds, four views, everything back to normal after); three stills (`assets/sheets/laser_gift_lion.jpg`); the build. **Not checked:** motion. Whether a face made of twelve strokes reads as a lion at stream size is for the owner to say.
+
+## The largest gifts as a cinematic show that grows with the gift (ZW-046), 25 Nov 2026
+
+The owner on the Lion proof: "People love watching the animation. We need to do it like a cinematic show. The bigger the massive show." The constellation stays; it becomes a short film in acts, in three sizes.
+
+| | Coins | Length | Test button |
+| --- | --- | --- | --- |
+| First size | 5,000 and up | 24 beats, about 12 s | 5,500 (Wolf) |
+| Second size | 15,000 and up | 36 beats, about 18 s | 22,000 (Black Tiger) |
+| Largest | 30,000 and up | 52 beats, about 26 s | 34,000 (Leon and Lion) |
+
+**What makes it cinema**
+
+- **Bars and a title.** Black bars slide in at the top and bottom of the picture, as in a film. When the figure wakes, the title fades up in the lower bar: the sender and the gift ("ATHENA · LEON AND LION").
+- **Acts, each with its own camera.**
+  1. *The omen.* Black. Seen from far back, pushing in, while the storm gathers and flickers.
+  2. *The strike.* A cut to the foot of the temple, looking straight up it, as the bolt lands on the peak.
+  3. *The drawing.* The view rises into the sky. A shaft of light stands from the peak; a point of lightning draws the figure, a star at every corner.
+  4. *The awakening.* A cut to the whole picture, temple and sky. The figure flares, its eyes light, a ring spreads, and from then on it breathes: a slow ripple runs out through it.
+  5. *The glory.* The name is forged across the temple; gold rains; the lasers return in gold, kept under the figure. The view passes slowly from one side to the other.
+  6. *The farewell.* The figure rises, its stars fall, the name burns away, the bars open.
+- **What the bigger sizes add.** Second: a larger figure, an aurora across the top of the sky, a shower of meteors, and lightning walking in along six pillars from both ends. Largest: larger again, two more rings after the first, a web of lightning from one side of the sky to the other (three times), all twelve pillars struck one after another, and more passes of the camera.
+
+**How**
+
+- `gifts.js`: `LEGEND` holds each size's length and waking beat; the script asks for `ring`, `web`, `meteors` and `ascend` as well as `bolt`, `draw`, `wake`, `forge`.
+- `giftcatalog.js`: `stageGift()` now returns the tier (by coins) and the gift's name for the title.
+- `giftfx.js`: the aurora is part of the sky shader; meteors and the web are drawn with the lasers' beams; the eyes are two sprites placed from `EYES` in `constellations.js`; breathing is a ripple applied where the figure's points are placed.
+- The bars and the title are ordinary page elements inside the picture's frame, so they are in a capture of it.
+- While a gift plays, the stage's ordinary camera moves are held off; they were cutting into the choreography.
+
+**Checked:** ten tests for gifts in all, including that each size runs longer and asks for more (bolts 3, 7, 13; rings 0, 0, 2; webs 0, 0, 3); the three buttons by real clicks and each show stepped through to its end (11.6 s, 17.4 s, 25.2 s; views in the planned order; bars and the right title; everything back to normal after); stills of six acts of the largest (`assets/sheets/laser_gift_lion.jpg`); the build. **Not checked:** motion, pacing and frame rate, which is where a film is judged. The aurora is soft and blocky in stills and may want sharpening once seen moving.
