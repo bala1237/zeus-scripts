@@ -153,3 +153,46 @@ The prototype supports all three (`?bg=black`, `?bg=clear`, and black is also wh
 
 **The gate.** The owner looks at it over his own camera and says whether the light itself now looks like real laser light. Phase 3 does not start until it passes.
 
+## Phase 2 passed, 25 Nov 2026
+
+The owner on the prototype: "I love it. If it's more like 3D it will be extraordinary. All having different themes will up the ante, and cinematic camera movements."
+
+So phase 3 carries three requests on top of the brief's choreography: a stronger sense of depth, themes, and camera movement. Still unanswered from the gate: how the overlay combines in TikTok LIVE Studio, and the frame rate on his Mac.
+
+
+## Phase 3: rig, Lighting Director, themes and camera, built 25 Nov 2026
+
+On `/laser.html`, replacing the one-projector prototype. The existing stage (`stage.html`) is still unchanged.
+
+**What it adds**
+
+- **A rig of seven projectors placed in depth**, which is what gives the 3D feeling: three across the back and high up, one on each side wall, two on the floor. Beams from different distances cross each other, and cones of beams can be looked down into.
+- **A Lighting Director** (`review/director.js`) that runs the show instead of every light moving all the time. It plays one pattern for a set number of beats (a cue), then chooses the next. Ten patterns: fan, ceiling ("liquid sky"), opposing, tunnel, cage, sweep, single beam, explosion, architecture, finale.
+- **Its rules.** No pattern returns within three cues. At most five of the seven projectors are lit except in the two big patterns (explosion, finale). A big pattern is always entered from one beat of darkness. Left and right mirror each other. The same seed gives the same show.
+- **Six themes**, each with its own colours, its own choice of patterns, its own cue length and camera style: Emerald, Ice, Inferno, Ultraviolet, Monochrome, Solar. A theme holds for eight cues and then the next one comes in. One can be chosen by hand, which stops the automatic change.
+- **Cinematic camera.** Six camera positions; the view glides from one to another on cue changes (never a cut), with a slow drift in between. Calm, lively or still depending on the theme. It can be switched off with the Camera button, which matters for the overlay: over a real camera picture a moving view may look wrong, and that is the owner's call.
+- **Controls:** theme list, Next look (key N), Blackout (key B), Camera on or off, plus the phase 2 controls.
+- **An intensity budget.** The more beams are lit, the dimmer each one is, so the full rig does not flood the frame. Fans pointing at the lens are dimmed further.
+- A little dust in the beams: sparse bright specks that drift.
+
+**How it was worked out (for the next session)**
+
+- Projectors take targets from the director (pan, tilt, spread, roll, level, sheet, cone) and ease towards them with a speed limit; the director never moves a beam directly. That is why nothing snaps.
+- The director plans the next pattern at the start of each cue. Without that, it cannot know to go dark before a big one.
+- Three fans in the same flat plane, seen edge-on, add up to a wall of colour. They are set at different heights and dimmed (fan level 0.42).
+- A single beam must not point into the lens: it turns into a blob. It crosses over the camera's shoulder.
+- Tests: `npm test` in `assets/` runs `test/director.test.mjs` (eight rules of the director).
+
+**Checked:** eight director tests pass; fifteen minutes of show stepped through in a headless browser with no errors, all six themes and all ten patterns seen, at most 51 beams lit (limit 64), fastest projector turn 126 degrees a second, fastest camera move 1.6 metres a second, nothing drawn at rest, in blackout and after Stop; a still of each pattern (`assets/sheets/laser_phase3.jpg`); the build.
+
+**Not checked:** motion, the glide of the camera, frame rate on a real graphics card, real music, and how it sits over a real camera in LIVE Studio. Those are the owner's to judge.
+
+**Known flaws**
+
+- The fan still glows more than the other patterns when seen head-on.
+- In some camera positions the single beam ends near the performer's head.
+- A faint seam in scanned sheets; a slight wobble on beams aimed near the lens.
+- Light cannot pass behind the performer in overlay.
+- The show follows the beat only (tap or listen). It does not yet know a build from a drop; that is phase 4.
+
+**The gate.** Does it now feel 3D; do the themes feel different enough; are the camera moves right, and should they be on or off over the camera picture; any pattern to drop or change.

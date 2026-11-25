@@ -4,7 +4,7 @@ Backlog: ZW-034. A show for the owner's music, separate from the city. Built 24 
 
 Source: `assets/review/stage.html`, `stage.js` and `beat.js`. Hosted with the other pages at `/stage.html`. The city's controls have a **♪ Stage** link that opens it in a new tab.
 
-**From 25 Nov 2026 the stage is being rebuilt as a professional laser and lighting system.** The brief, the audit of what is described below, the plan and the phase 2 prototype (`laser.html`, `beams.js`) are in `../STAGE-PLAN.md`. The page described here still works and is unchanged.
+**From 25 Nov 2026 the stage is being rebuilt as a professional laser and lighting system.** The brief, the audit of what is described below, the plan, the phase 2 prototype and the phase 3 show (`laser.html`, `laser.js`, `beams.js`, `director.js`; seven projectors, a Lighting Director, themes, camera) are in `../STAGE-PLAN.md`, with how each was worked out. The director's rules are tested: `npm test` in `assets/`. The page described here still works and is unchanged.
 
 ## Why it is separate
 

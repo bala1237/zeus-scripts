@@ -48,3 +48,7 @@ Scripted models are built at real size, facing the front, so the normaliser only
 ## Street test
 
 `review/street.html` is the look test: six plots on a road, from catalogue models only. `PAGE=street.html node shot.mjs renders/x.png "view=wide&light=day"` (views: wide, street, villas, ochre, gold, site, garden). `review/main.js` also takes `m=asm:models/<walls>.glb` to show a wall body with a roof and porch.
+
+## Lasers
+
+`review/laser.html` is the laser show (ZW-036). Stills: `PAGE=laser.html node shot.mjs renders/x.png "shot&pattern=tunnel&theme=3&cam=1&beats=6&bg=mock" 800 450` (patterns and themes are listed in `review/director.js`; `bg` is black, clear or mock). `npm test` runs the Lighting Director's rule tests in `test/`.
