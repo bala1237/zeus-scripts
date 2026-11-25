@@ -13,7 +13,7 @@ Last updated: 25 Nov 2026.
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
 | Building labels showing during the battle | ZW-029 | Fix shipped 24 Nov. Waiting for the owner to confirm |
-| Professional laser and lighting system | ZW-036 | Phase 3 shipped 25 Nov on `/laser.html`: seven projectors in depth, a Lighting Director, six themes, camera moves. Waiting for the owner to pass it. Next: phase 4, music intelligence |
+| Professional laser and lighting system | ZW-036 to ZW-039 | On `/laser.html`: the club rig with a Lighting Director and six themes (phase 3), a new beat tracker (ZW-038), a Flow mode (ZW-037) and the festival look, Olympus (ZW-039), all shipped 25 Nov. Waiting for the owner on each |
 | The Zeus Stage for music | ZW-034, ZW-035 | Look approved by the owner 24 Nov. Follow-up shipped: still without music, visibly on the beat, neon glow. Waiting for the owner to try it with music |
 | After a battle is won | ZW-025 | Shipped 23 Nov: storm of gold, triumph, house tour. Waiting for the owner to watch it |
 | Cinematic city tour | ZW-024 | Shipped 23 Nov. Waiting for the owner to watch it |
@@ -45,6 +45,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-039, the festival look (Olympus).** It opens the show on `/laser.html`. Is it the look he loved in the Transmission video; what frame rate does the panel show with this many beams; Stage set on or off over his camera; what in the video's movement should be added.
 0. **ZW-038, the new beat tracker.** On `/laser.html` press Listen with music playing. Does the status say "on the beat at ..." with the right tempo; do the lights land on the beat (slide Beat timing if they are early or late); does it go quiet in a breakdown and hit on the drop; which tracks still fool it. And **ZW-037**: press Show (or L) for the new Flow mode. Is this the "infinite move" he meant; ribbons or more smoke; and should the lasers move towards the dense, many-coloured look of his two concert references.
 1. **ZW-036, phase 3 of the lasers (the gate).** Open `/laser.html`, press Demo or Listen, try the theme list, Next look, Blackout and the Camera button, and put it over your camera in LIVE Studio. Does it feel 3D; are the themes different enough; camera moves on or off; any pattern to change. Still open from phase 2: does it combine by Add or Screen blending or as a transparent source; what frame rate does the panel report.
 2. **ZW-035, the stage.** With music playing, press Listen to the music and share its tab or screen with audio. Does the lamp flash with the beat and do the lights hit with it; does it stand still when the music stops; is the neon glow right.

@@ -5,8 +5,12 @@
 //   const dir = createDirector({ seed });   dir.update(beats)  ->  { theme, pattern, cue, u, dark, accent }
 //   dir.target(projector, state)  ->  { pan, tilt, spread, roll, level, sheet, cone, spin, accent, time }
 // A projector is { group: 'back' | 'side' | 'floor', side: -1 | 0 | 1 }. Angles are radians relative to the projector's own facing.
+// The festival rig adds { group: 'wall', side, k: 0..4 from the middle outwards } and { group: 'wash', side, k: 0 centre, 1 and 2 outer }.
+// Positive tilt is up. For left and right to mirror, pan and roll must change sign with side (an upright fan is roll 1.5708 either way).
 
 export const THEMES = [
+  // the festival look, after the Transmission Prague show the owner loves: a wall of projectors throwing wide fans, with magenta shafts through them
+  { name: 'Olympus', main: 0x12ff48, accent: 0xff2bd0, cue: 16, patterns: ['cathedral', 'crown', 'wavewall', 'spears', 'sunburst'], camera: 'calm', festival: true, budget: 110 },
   { name: 'Emerald', main: 0x10ff60, accent: 0xdfffe8, cue: 16, patterns: ['fan', 'ceiling', 'sweep', 'single', 'opposing', 'explosion'], camera: 'calm' },
   { name: 'Ice', main: 0x18c8ff, accent: 0xffffff, cue: 16, patterns: ['tunnel', 'ceiling', 'cage', 'single', 'architecture', 'fan'], camera: 'calm' },
   { name: 'Inferno', main: 0xff2a1e, accent: 0xffa01e, cue: 8, patterns: ['opposing', 'explosion', 'sweep', 'fan', 'cage', 'finale'], camera: 'lively' },
@@ -32,17 +36,33 @@ export const PATTERNS = {
   sweep: (p, u, v) => p.group === 'back' ? { level: 1, spread: 0.07, tilt: -0.12 + 0.1 * p.side * p.side, pan: (0.5 + 0.2 * v) * wave(u, v > 0.5 ? 1 : 0.5) } : off,
   // almost everything off: one beam, moving slowly
   single: (p, u, v) => p.group === 'back' && p.side === 0 ? { level: 1.3, spread: 0.0, tilt: 0.02 + 0.2 * ease(u), pan: (v > 0.5 ? 1 : -1) * (0.5 - 0.35 * ease(u)), time: 0.9 } : off,   // it passes over the camera's shoulder, never straight into the lens
+  // ---- the festival rig
+  // the picture from the reference: every wall projector throws a tall fan leaning outwards, and magenta shafts rise through the middle and from the sides
+  // lean tips a fan sideways in its own plane. With the projector tilted well up and roll 0, the fan stands open towards the audience like a hand fan.
+  cathedral: (p, u, v) => p.group === 'wall' ? { level: 1, spread: 0.36 + 0.05 * wave(u + p.k * 0.13), tilt: 1.02 - 0.05 * p.k + 0.04 * wave(u, 0.5), lean: p.side * (p.k === 0 ? -0.12 : 0.16 + 0.15 * p.k), time: 0.7 }
+    : p.group === 'wash' ? (p.k === 0 ? { sheet: 1, sheetSpread: 0.075, tilt: 1.12, lean: p.side * (0.06 + 0.04 * wave(u)), accent: true, time: 0.8 } : { sheet: 0.8, sheetSpread: 0.05, tilt: 0.75, lean: -p.side * (0.95 - 0.3 * (p.k - 1) + 0.08 * wave(u, 0.5)), accent: true, time: 0.8 }) : off,
+  // level fans in tiers, one above another, opening and closing slowly like breathing
+  crown: (p, u, v) => p.group === 'wall' ? { level: 1, spread: 0.5 + 0.22 * wave(u, 0.5 + Math.round(v)), tilt: 0.14 + 0.12 * p.k, pan: p.side * 0.16, roll: p.side * 0.12 * p.k, time: 0.8 } : off,
+  // upright fans swinging from side to side one after another, a wave running along the wall
+  wavewall: (p, u, v) => p.group === 'wall' ? { level: 1, spread: 0.2, tilt: 1.0, lean: p.side * (0.1 + 0.5 * Math.sin(u * Math.PI * 4 - p.k * 0.9) * (v > 0.5 ? 1 : -1)), time: 0.35 }
+    : p.group === 'wash' && p.k > 0 ? { sheet: 0.6, sheetSpread: 0.045, tilt: 0.75, lean: -p.side * 0.8, accent: true, time: 0.8 } : off,
+  // each projector a tight spear of light, spread like the rays of a rising sun, slowly fanning wider
+  spears: (p, u, v) => p.group === 'wall' ? { level: 1.2, spread: 0.02 + 0.05 * ease(u), tilt: 1.0 - 0.06 * p.k, lean: p.side * (0.1 + 0.24 * p.k) * (0.55 + 0.45 * ease(u)), time: 0.9 }
+    : p.group === 'wash' && p.k === 0 ? { sheet: 0.9, sheetSpread: 0.06, tilt: 1.12, lean: p.side * 0.05, accent: true, time: 0.8 } : off,
+  // the whole wall at full width, every fan turning about its own axis, with all the shafts
+  sunburst: (p, u, v) => p.group === 'wall' ? { level: 1, spread: u < 0.03 ? 0.05 : 0.6, tilt: 0.98 - 0.05 * p.k, lean: p.side * (0.12 + 0.14 * p.k), roll: p.side * 1.2 * u, accent: p.k === 4, time: 0.18 }
+    : p.group === 'wash' ? { sheet: 1, sheetSpread: p.k === 0 ? 0.09 : 0.06, tilt: p.k === 0 ? 1.1 : 0.75, lean: p.k === 0 ? p.side * 0.08 : -p.side * 0.85, accent: true, time: 0.18 } : off,
   // everything opens at once, fast
-  explosion: (p, u, v) => p.group === 'floor' ? { level: 1, spread: 0.5, tilt: 0.25, roll: 0.3 * p.side, time: 0.16 } : { level: 1, spread: u < 0.04 ? 0.05 : 0.85, tilt: -0.34, pan: -p.side * 0.1, accent: p.side !== 0, time: 0.16 },
+  explosion: (p, u, v) => p.group === 'wall' || p.group === 'wash' ? off : p.group === 'floor' ? { level: 1, spread: 0.5, tilt: 0.25, roll: 0.3 * p.side, time: 0.16 } : { level: 1, spread: u < 0.04 ? 0.05 : 0.85, tilt: -0.34, pan: -p.side * 0.1, accent: p.side !== 0, time: 0.16 },
   // upright fans that turn slowly about their own axis, like a structure rotating
   architecture: (p, u, v) => p.group === 'back' ? { level: 1, spread: 0.36, tilt: -0.28, roll: 1.5708 * (u * (v > 0.5 ? 1 : -1) + p.side * 0.33), time: 0.6 } : off,
   // the full rig: fans below a ceiling of light, with the accent colour on the outer projectors
-  finale: (p, u, v) => p.group === 'back' ? { level: 1, sheet: p.side === 0 ? 0.8 : 0, sheetSpread: 0.95, spread: 0.7, tilt: -0.4 + 0.1 * wave(u), accent: p.side !== 0 } : p.group === 'side' ? { level: 0.8, spread: 0.3, tilt: 0.12, roll: 0.5 } : { level: 0.7, roll: 1.5708, spread: 0.3 },
+  finale: (p, u, v) => p.group === 'wall' || p.group === 'wash' ? off : p.group === 'back' ? { level: 1, sheet: p.side === 0 ? 0.8 : 0, sheetSpread: 0.95, spread: 0.7, tilt: -0.4 + 0.1 * wave(u), accent: p.side !== 0 } : p.group === 'side' ? { level: 0.8, spread: 0.3, tilt: 0.12, roll: 0.5 } : { level: 0.7, roll: 1.5708, spread: 0.3 },
 };
-const DEFAULTS = { pan: 0, tilt: -0.25, spread: 0.1, roll: 0, level: 0, sheet: 0, sheetSpread: 0.9, cone: 0, spin: 0, accent: false, time: 0.42 };
-const BIG = new Set(['explosion', 'finale']);
+const DEFAULTS = { lean: 0, pan: 0, tilt: -0.25, spread: 0.1, roll: 0, level: 0, sheet: 0, sheetSpread: 0.9, cone: 0, spin: 0, accent: false, time: 0.42 };
+const BIG = new Set(['explosion', 'finale', 'sunburst']);
 
-const QUIET = new Set(['ceiling', 'single', 'sweep', 'architecture']);
+const QUIET = new Set(['ceiling', 'single', 'sweep', 'architecture', 'spears', 'crown']);
 export function createDirector({ seed = 7 } = {}) {
   let a = seed; const rnd = () => { a = (a * 16807) % 2147483647; return a / 2147483647; };
   const st = { theme: 0, auto: true, pattern: 'fan', cue: -1, cueStart: 0, u: 0, v: 0.5, dark: false, blackout: false, history: [], themeCues: 0, coming: null, calm: false, force: null };
