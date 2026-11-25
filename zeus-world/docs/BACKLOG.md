@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-048.**
+- **Next number: ZW-049.**
 
 ## Open
 
@@ -59,6 +59,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Redesigned 25 Nov after "I need professional creativity": storm, lightning, the name forged in gold, flames that stay. Fired by test buttons. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-046 | Enhancement | Gifts of 5,000 coins and above: an animation of that gift itself | High (proposed) | Shipped 25 Nov: realistic film clips for the lion family, Zeus and Pegasus, the last two each with a staging of their own. Waiting for the owner | 25 Nov 2026, owner |
 | ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | Second cut of The Fire-Bringer on `/hero.html` (new hook, new narrator, score, new lettering). Waiting for the owner to watch it | 25 Nov 2026, owner |
+| ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. The laser page can now listen to a sound input (RODECaster, microphone); waiting for the owner to try it. Other gaps listed | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -544,3 +545,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Second cut, 25 Nov 2026, answering the review.** (1) New opening: the film now starts on faces looking up at something not shown ("Ask anyone who was there that night what they saw. They will not speak of the storm."), adds a low point ("the flame was almost gone. Almost."), and pays the opening off after the climax ("That is what they saw."). No new footage was generated; the six shots were recut. (2) Narration recorded again in his "Zeus-authorative" voice. (3) The name rebuilt as a film title: bevelled gold letters that come out of a streak of light from the middle outward, the honour beneath, a glint, embers; four letterings offered. (4) The score fetched (one download credit) and mixed under the voice, with the climax on the music's lift.
 - **Verified here:** stills of the opening, the reveal at nine moments, the end card; a real-time run (picture and sound within 0.1 s, the named recording used); build and tests. **Not verifiable here:** how the voice and the mix sound, and how the reveal moves.
 - **Still to do:** the team version; more scripts; starting it after a battle; the profile picture on the end card. How it all works: `docs/knowledge/hero-films.md`.
+
+### ZW-048: The pages as OBS browser sources
+
+- **Reported:** 25 Nov 2026, by the owner, after approving the hero film's second cut ("looks good"): "now i will be using obs to have this added as source. and also for laser show and zeus world. how do we address it by adding as url rather than window capture".
+- **What works today, by address:** the hero film (`hero.html?name=…&ui=0&autoplay`: plays each time the scene is shown if OBS is set to refresh the source); the laser show (`laser.html?ui=0`: starts itself, but at a fixed 124 beats a minute, because a browser source cannot be given the music); Zeus World (`city.html`: runs, but its Controls button shows in the corner).
+- **Gaps found:** (1) the laser show cannot follow the music inside a browser source; today that needs the page open in Chrome and a window capture. (2) `city.html` has no controls-off option. (3) The hero's name is part of the address, so changing it means editing the source; there is no way yet to send a name and "play" from outside. (4) `laser.html` has no tempo option in the address.
+- **Not verified:** nothing here has been tried in OBS itself; it cannot be run on the build machine.
+- **Follow-up, same day:** "instead of browser listen is there a way to make it hear music. because i play music in my laptop while tetsing and use rodcaster duo soundcard while streaming". **Built:** the laser page can listen to a sound input directly (button, list of inputs, and `listen=input` / `input=rode` in the address). Verified with a stand-in input only. Waiting for the owner to try it with the RODECaster in Chrome, and then inside OBS (which needs OBS started with a switch; see `docs/knowledge/stage.md`).

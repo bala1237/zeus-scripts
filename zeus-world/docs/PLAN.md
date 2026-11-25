@@ -46,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-048, the pages in OBS.** On `/laser.html`: press "Listen to a sound input" with the RODECaster connected and choose it; does it follow the music. Then as an OBS browser source with `?ui=0&listen=input&input=rode` (OBS may need starting with a switch). Still open: controls-off for Zeus World, a remote for the hero film.
 0. **ZW-047, the hero film.** Second cut of The Fire-Bringer at `/hero.html`, after his review. Watch with sound: does the new opening hide what the film is about and pay off; is the "Zeus-authorative" narrator right; is the music at the right level under the voice; does the name's reveal land; which of the four letterings (A to D on the sheet). Then: team version, more scripts.
 0. **ZW-046, the largest gifts as realistic film clips.** On `/laser.html`, Gift test row: **Pegasus** (hoofbeats of light on the pillars, then the lasers open into wings and feathers fall), **Zeus** (his thunderbolt lands on the temple and lights all twelve flames) and 22,000 (the lion). How do they look in motion; do the stage's moments meet the clips'; which gift next.
 0. **ZW-045, gift moments, redesigned.** On `/laser.html`: Small, Medium and Big gift, and "Light all 12". Does it make him say wow; lengths; is the flame-and-awakening idea right. TikFinity to be connected later.
