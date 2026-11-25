@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-045.**
+- **Next number: ZW-046.**
 
 ## Open
 
@@ -56,6 +56,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Shipped 25 Nov at `/andie.html`; "looks good for now" (owner). Waiting for her actual image to fix the rest | 25 Nov 2026, owner |
 | ZW-043 | Bug | Andie's Place: the animation does not show in TikTok LIVE Studio | High | Fix shipped 25 Nov for the three likely causes. Waiting for the owner to try it in LIVE Studio | 25 Nov 2026, owner |
 | ZW-044 | Enhancement | Laser page: the picture in a resizable 16:9 box with the controls below, as on Andie's page | Medium (proposed) | Shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
+| ZW-045 | Enhancement | Animations when people send gifts (brainstorm) | Medium (proposed) | Open, under discussion. Nothing to be built yet | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -473,3 +474,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Understood as:** the same layout as Andie's page (ZW-042): the picture a 16:9 box in the middle with space round it, resizable by a slider and by dragging its corner, and the controls in a bar below, never over the picture.
 - **Shipped 25 Nov 2026:** `/laser.html` now opens with the picture as a 16:9 box at 60% in the middle; a Size slider and a draggable blue corner resize it; the size is remembered; the controls are a bar below and no longer hide by themselves (H hides them). Also brought over from Andie's page: `ui=0` in the address for a browser source (no controls, the picture fills the window, the show starts by itself; `calm=1` keeps it still), and the timer that keeps the show running when the window is covered.
 - **Checked:** resizing with a real pointer (out, in, slider, reload), all eight buttons by real clicks, a still, the stepped run, tests, the build.
+
+### ZW-045: Animations when people send gifts
+
+- **Reported:** 25 Nov 2026, by the owner: "I want to pick your brain on showing some animation when people send gifts."
+- **A brainstorm, not a build.** Ideas put to him the same day: gift moments in three sizes on the laser stage (a pillar flash with the sender's name on the booth; a chase in a new colour; a full sunburst with the name in lights), a lightning bolt from Zeus as the signature, a shared storm meter that gifts charge, and the same idea in Andie's room.
+- **The open technical question:** how a page learns that a gift was sent. TikTok gives pages no official feed of gifts. Routes: buttons or hotkeys pressed by the host (works today, no risk); TikTok LIVE Studio's own alert widgets (cannot drive our pages); third-party tools that read the stream's events unofficially (they work, but are outside TikTok's rules and can break).
+- **Constitution:** amounts are never shown, and nobody is ranked by spend on screen. Gift moments must honour the person without showing what they paid.
