@@ -26,3 +26,8 @@ test('a big pattern is always entered from darkness', () => { let prevDark = fal
 test('blackout switches everything off', () => { const d = createDirector(), t = {}; d.update(5); d.state.blackout = true; d.update(5.1); for (const p of RIG) { d.target(p, t); assert.equal(t.level, 0); assert.equal(t.sheet, 0); } });
 
 test('the same seed gives the same show; a different seed gives another', () => { const seq = (seed) => { const out = []; let last = -1; run(800, (s) => { if (s.cue !== last) { last = s.cue; out.push(s.pattern); } }, { seed }); return out.join(','); }; assert.equal(seq(3), seq(3)); assert.notEqual(seq(3), seq(4)); });
+
+test('a breakdown brings a quiet pattern at once and keeps to quiet ones; the drop brings a big one at once', () => { const d = createDirector({ seed: 3 }); let b = 0; for (; b < 40; b += 0.25) d.update(b);
+  d.setCalm(true); d.update(b); const quiet = ['ceiling', 'single', 'sweep', 'architecture']; assert.ok(quiet.includes(d.state.pattern), d.state.pattern);
+  for (let i = 0; i < 400; i++) { b += 0.25; d.update(b); assert.ok(!['explosion', 'finale'].includes(d.state.pattern)); }
+  d.hit(); d.update(b); assert.ok(['explosion', 'finale'].includes(d.state.pattern), d.state.pattern); assert.equal(d.state.calm, false); });

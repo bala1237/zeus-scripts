@@ -53,7 +53,11 @@ const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.C
 // a direction in the projector's own frame, turned to where the projector is pointing. ax is the angle across the fan; roll tips the fan's plane.
 const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Math.cos(e.roll.v), cy = Math.sin(ax) * Math.sin(e.roll.v), k = e.cone.v;
   out.set(cx * (1 - k) + Math.sin(coneA) * Math.cos(phi) * k, cy * (1 - k) + Math.sin(coneA) * Math.sin(phi) * k, Math.cos(ax) * (1 - k) + Math.cos(coneA) * k).normalize().applyEuler(E.set(-(p.pitch + e.tilt.v), p.yaw + e.pan.v, 0, 'YXZ')); return out; };
-function update(dt) { const b = beat.state; beat.update(dt); st.t += dt; const d = dir.update(b.beats), theme = THEMES[d.theme], act = b.act, kick = 0.74 + 0.26 * b.pulse;
+let drops = 0;
+function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
+  // the music's shape: quiet patterns while the bass is out, the biggest one the moment it comes back
+  if (b.mode === 'listen') { dir.setCalm(b.section === 'breakdown'); if (b.drops !== drops) { drops = b.drops; dir.hit(); } } else dir.setCalm(false);
+  const d = dir.update(b.beats), theme = THEMES[d.theme], act = b.act, kick = 0.74 + 0.26 * b.pulse;
   main.lerp(C.set(theme.main), Math.min(1, dt * 1.2)); accent.lerp(C.set(theme.accent), Math.min(1, dt * 1.2));
   if (SHOT && q.get('pattern')) d.pattern = q.get('pattern');
   // an intensity budget: the more beams are lit, the less each gets, so a full rig does not flood the picture and a single beam is strong
@@ -79,6 +83,8 @@ let bgMode = q.get('bg') || 'black', failed = ''; const setBg = () => { document
 $('bg').addEventListener('click', () => { bgMode = { black: 'clear', clear: 'mock', mock: 'black' }[bgMode]; setBg(); });
 $('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); });
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = 124; beat.tap(); });
+$('sync').value = String(Math.round(beat.state.offset * 1000)); const showSync = () => { const v = Number($('sync').value); $('syncv').textContent = v === 0 ? 'as heard' : `${Math.abs(v)} ms ${v > 0 ? 'later' : 'earlier'}`; }; showSync();
+$('sync').addEventListener('input', () => { beat.setOffset(Number($('sync').value) / 1000); showSync(); });
 $('theme').innerHTML = '<option value="auto">Automatic</option>' + THEMES.map((t, i) => `<option value="${i}">${t.name}</option>`).join(''); if (!dir.state.auto) $('theme').value = String(dir.state.theme);
 $('theme').addEventListener('change', (e) => { if (e.target.value === 'auto') dir.state.auto = true; else { dir.state.auto = false; dir.setTheme(Number(e.target.value)); } });
 const blackout = () => { dir.state.blackout = !dir.state.blackout; $('blackout').classList.toggle('on', dir.state.blackout); }, camToggle = () => { cam.moving = !cam.moving; $('cam').classList.toggle('on', cam.moving); $('cam').textContent = `Camera: ${cam.moving ? 'moving' : 'still'}`; if (!cam.moving) setCam(0); };
@@ -93,6 +99,6 @@ if (SHOT) { $('ui').style.display = 'none'; cam.moving = false; setCam(Number(q.
 else { if (q.has('demo')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
   renderer.setAnimationLoop(() => { const now = performance.now(), ms = now - last; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
     const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
-    $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : `listening: ${b.bpm} beats a minute`);
+    $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
     if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } });
   window.ready = true; }

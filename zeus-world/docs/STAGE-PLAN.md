@@ -196,3 +196,45 @@ On `/laser.html`, replacing the one-projector prototype. The existing stage (`st
 - The show follows the beat only (tap or listen). It does not yet know a build from a drop; that is phase 4.
 
 **The gate.** Does it now feel 3D; do the themes feel different enough; are the camera moves right, and should they be on or off over the camera picture; any pattern to drop or change.
+
+## Phase 4, first part: the beat tracker (ZW-038), built 25 Nov 2026
+
+The owner on phase 3: "the beat capture is not perfect." The old listener watched the bass for jumps once per drawn frame and guessed the tempo from the gaps between them. It is replaced.
+
+**How it works now** (`review/tracker.js`, used by `review/beat.js`, so both `/laser.html` and `/stage.html` get it)
+
+- The loudness of the bass, the mids and the highs is measured on the audio thread 200 times a second, each reading stamped with its own time. What is heard no longer depends on the frame rate.
+- Each band is turned into "how much did it just jump". The bass counts most, then the mids (snare), then the highs (hats).
+- **Tempo:** the repeat distance at which the last six seconds of those jumps best match themselves, leaning towards ordinary dance tempos to choose between half and double. Range 70 to 180; outside that it reads half or double.
+- **Where the beat falls:** the offset at which evenly spaced ticks collect the most jump.
+- Both are held and corrected gently. A different tempo has to win clearly for a second before it is taken. A part with no drums changes nothing: the beat carries on at the tempo it had, which is what keeps it right when the kick returns.
+- The lights are driven by the *predicted* beat, not by hearing a hit, so they land on the beat and not after it.
+- **Beat timing slider** on the laser page: moves the lights up to a quarter of a second earlier or later, for the delay between sound and picture. Remembered between visits.
+- **The music's shape, first step:** when the bass drops out for a second and a half it is a breakdown, and the director moves to its quiet patterns (liquid sky, single beam, sweep, architecture). When the bass comes back it is a drop, and the theme's biggest pattern fires at once.
+
+**Worked out the hard way (for the next session)**
+
+- Each band is judged against the loudest it has been lately, so quiet streams work. But a band with almost nothing in it must count as empty (floors of 3%, 1% and 0.2% of the whole music's loudness for bass, mids, highs); otherwise the faint spill of a held note into the bass is read at full scale and the tracker locks onto nothing.
+- Held chords beat against each other 50 or more times a second in the mids. Mids and highs are therefore compared as 20 ms averages, not reading by reading.
+- The low band goes through its filter twice (130 Hz), to keep bass notes and pads out of it.
+- The preference for ordinary tempos must only choose between candidates. If it also shapes the exact reading it pulls every tempo towards 122.
+- A first lock asks for more certainty than keeping one, or a pad alone gets "locked".
+- One enormous click deafens the tracker for several seconds (its sense of "loud" decays over twelve seconds). Seen through a fault in the test's own music maker; real music is level-limited, so left as it is.
+- The audio-thread code is made from the text of `makeBands`, so that function must not use anything outside itself.
+- An audio-thread node only runs if it leads to the speakers; it goes through a silent gain.
+
+**Checked:** fifteen tests on made-up music with a known answer (`npm test`): tempo within half a percent and beat within 20 ms at 90 to 150; 174 read as itself or half; a broken beat; a stream at a twenty-fifth of the volume; the beat carried across sixteen beats with no drums; a breakdown and one drop noticed; a change of song followed within eight seconds; silence and a pad alone give no lock; music stopping noticed. In a real browser (`node beattest.mjs`), a test kick at 128 was locked at 128.01. The old stage page still renders.
+
+**Not checked:** real music. Made-up drums are far cleaner than a real track. Music with no drums at all, live bands that drift, and very syncopated tracks are the likely weak spots, and only the owner's ear can judge the timing.
+
+**Still to come in phase 4:** the fuller state engine from the brief (intro, build, high energy, transition), bars and phrases (where "one" is), and a measured delay in place of the slider.
+
+## The owner's references, 25 Nov 2026
+
+Three videos sent after phase 3, with "i want like some infinite move version as well":
+
+1. "Vibrant OLED Screensaver, Liquid Art" (the Chill Gallery): ribbons and smoke of saturated colour flowing endlessly on pure black. This is the "infinite move".
+2. Gareth Emery, LSR/CITY at the Kia Forum, 2025: hundreds of laser beams at once, in every colour together, over a crowd, with a great screen.
+3. Armin van Buuren, Vini Vici and Hilight Tribe at Transmission Prague 2016: dense green fans with magenta accents, moving-head white beams, built stage architecture.
+
+What they say about direction: far denser and more colourful than the brief's "70% club, restrained". Many more beams, several colours on stage at once, and a screen-style flowing visual as well as beams. Recorded under ZW-037; to be confirmed with the owner since it changes the visual direction he set.

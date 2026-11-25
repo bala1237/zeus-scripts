@@ -42,17 +42,20 @@ export const PATTERNS = {
 const DEFAULTS = { pan: 0, tilt: -0.25, spread: 0.1, roll: 0, level: 0, sheet: 0, sheetSpread: 0.9, cone: 0, spin: 0, accent: false, time: 0.42 };
 const BIG = new Set(['explosion', 'finale']);
 
+const QUIET = new Set(['ceiling', 'single', 'sweep', 'architecture']);
 export function createDirector({ seed = 7 } = {}) {
   let a = seed; const rnd = () => { a = (a * 16807) % 2147483647; return a / 2147483647; };
-  const st = { theme: 0, auto: true, pattern: 'fan', cue: -1, cueStart: 0, u: 0, v: 0.5, dark: false, blackout: false, history: [], themeCues: 0, coming: null };
-  function choose(calm = false) { const t = THEMES[st.theme], recent = st.history.slice(-3); let from = t.patterns.filter((n) => !recent.includes(n) && !(calm && BIG.has(n))); if (!from.length) from = t.patterns.filter((n) => !(calm && BIG.has(n))); return from[Math.floor(rnd() * from.length)]; }
+  const st = { theme: 0, auto: true, pattern: 'fan', cue: -1, cueStart: 0, u: 0, v: 0.5, dark: false, blackout: false, history: [], themeCues: 0, coming: null, calm: false, force: null };
+  function choose(calm = false) { const t = THEMES[st.theme], recent = st.history.slice(-3); calm = calm || st.calm;
+    if (st.calm) { const quiet = t.patterns.filter((n) => QUIET.has(n) && n !== st.pattern); if (quiet.length) return quiet[Math.floor(rnd() * quiet.length)]; }   // in a breakdown: the still, spare patterns
+    let from = t.patterns.filter((n) => !recent.includes(n) && !(calm && BIG.has(n))); if (!from.length) from = t.patterns.filter((n) => !(calm && BIG.has(n))); return from[Math.floor(rnd() * from.length)]; }
   // beats: the running count from the beat clock. Returns the state for this frame.
   // The pattern after this one is chosen as each cue starts, so the director knows in time whether to go dark before it.
   function update(beats) { const cue = Math.floor(beats / THEMES[st.theme].cue);
     if (cue !== st.cue) { let fresh = st.cue < 0 || st.coming === null; st.themeCues++;
       if (st.auto && st.themeCues > 8) { st.theme = (st.theme + 1) % THEMES.length; st.themeCues = 1; st.history = []; fresh = true; }   // a theme holds for eight cues, then the next one takes over
       const len = THEMES[st.theme].cue; st.cue = Math.floor(beats / len); st.cueStart = st.cue * len;
-      st.pattern = fresh ? choose(true) : st.coming;   // a theme never opens on its biggest moment
+      st.pattern = st.force || (fresh ? choose(true) : st.coming); st.force = null;   // a theme never opens on its biggest moment
       st.history.push(st.pattern); if (st.history.length > 8) st.history.shift(); st.v = rnd(); st.coming = choose(); }
     const len = THEMES[st.theme].cue; st.u = Math.min(1, Math.max(0, (beats - st.cueStart) / len));
     // the last beat before a big pattern goes dark, so that it lands
@@ -61,5 +64,9 @@ export function createDirector({ seed = 7 } = {}) {
   function target(p, out = {}) { Object.assign(out, DEFAULTS, PATTERNS[st.pattern](p, st.u, st.v)); if (st.dark) { out.level = 0; out.sheet = 0; out.time = 0.12; } return out; }
   const setTheme = (i) => { st.theme = ((i % THEMES.length) + THEMES.length) % THEMES.length; st.themeCues = 0; st.history = []; st.cue = -1; st.coming = null; };
   // move on to another pattern now
-  return { state: st, update, target, setTheme, nextLook: () => { st.cue = -2; }, themes: THEMES };
+  // the drop: the theme's biggest pattern, now
+  const hit = () => { const t = THEMES[st.theme]; st.calm = false; st.force = t.patterns.find((n) => n === 'explosion') || t.patterns.find((n) => BIG.has(n)) || 'explosion'; st.cue = -2; };
+  // a breakdown: move to a quiet pattern now and stay with quiet ones until the drop
+  const setCalm = (on) => { if (on === st.calm) return; st.calm = on; if (on) { st.coming = null; st.cue = -2; } };
+  return { state: st, update, target, setTheme, nextLook: () => { st.cue = -2; }, hit, setCalm, themes: THEMES };
 }

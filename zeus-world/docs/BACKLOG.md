@@ -48,8 +48,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-034 | Enhancement | A separate stage module for music: laser lights and transitioning backgrounds | High | Approved in look by the owner; follow-ups in ZW-035 | 24 Nov 2026, owner |
 | ZW-035 | Bug | Stage: cannot tell it follows the beat; it moves with no music; lights lack a neon glow | High | Fix shipped | 24 Nov 2026, owner |
 | ZW-036 | Enhancement | Stage: professional virtual laser and lighting system | High | Phase 3 (seven-projector rig, Lighting Director, six themes, camera moves) shipped 25 Nov; waiting for the owner to pass it | 25 Nov 2026, owner |
-| ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | Open, to be discussed with the owner before anything is built | 25 Nov 2026, owner |
-| ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Open | 25 Nov 2026, owner |
+| ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | Open. The owner sent three reference videos; reading of them put to him | 25 Nov 2026, owner |
+| ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -393,6 +393,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Reported:** 25 Nov 2026, by the owner, after trying phase 3: "i want like some infinite move version as well. lets discuss first."
 - **Known:** it is wanted as well as the present show, not in place of it. He wants to talk before anything is built.
 - **Not known:** what "infinite move" means to him. Guesses, put to him as options: the view travelling forward for ever through gates of light (an endless tunnel); a show that never stops or repeats; one pattern that loops seamlessly.
+- **References from the owner, 25 Nov 2026:** three videos. A liquid-art screensaver (ribbons and smoke of colour flowing endlessly on black), Gareth Emery's LSR/CITY laser show (hundreds of beams, every colour at once) and Transmission Prague 2016 (dense green fans, magenta accents, white moving-head beams). Described in `STAGE-PLAN.md`, "The owner's references". So "infinite move" most likely means the endlessly flowing liquid visual, and the laser shows he likes are much denser and more colourful than the first brief.
 - Nothing built.
 
 ### ZW-038: The beat capture is not perfect
@@ -401,3 +402,5 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Not known:** how it fails for him (late, early, drifting, wrong tempo, lost in quiet parts) and on which music.
 - **Likely causes, from reading `assets/review/beat.js` (guesses until tested on real music):** it listens for jumps in overall loudness of the low end, checked once per drawn frame, so timing is only as fine as the frame rate; the tempo is the middle value of the last twelve gaps between hits, so it jumps on music without a steady kick; it has no memory of where the beat falls, so it cannot carry through a breakdown; half and double tempo are folded by a fixed rule; no correction for the delay between the sound and the picture.
 - **Planned fix:** this is phase 4 of ZW-036 (music intelligence): analysis on the audio thread, separate low, mid and high bands, a tempo and beat-position tracker that holds through quiet parts, and a delay setting.
+- **Fix shipped 25 Nov 2026:** a new beat tracker (`assets/review/tracker.js`). It finds the tempo and where the beat falls, holds both through parts with no drums, and drives the lights from the predicted beat. A Beat timing slider on the laser page corrects any delay. The show also goes quiet in a breakdown and fires its biggest pattern on the drop. Detail in `STAGE-PLAN.md`, "Phase 4, first part". Checked on made-up music only (15 tests); real music is for the owner to judge.
+- **Waiting on the owner:** with real music, does the status line say "on the beat at ..." with the right tempo; do the lights land on the beat (use the Beat timing slider if they are early or late); which tracks still fool it.
