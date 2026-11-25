@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-042.**
+- **Next number: ZW-043.**
 
 ## Open
 
@@ -53,6 +53,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
 | ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fixed; confirmed by the owner 25 Nov ("perfect") | 25 Nov 2026, owner |
 | ZW-041 | Enhancement | Olympus: blackouts where the building itself is lit, pillar by pillar | High (proposed) | Second version shipped 25 Nov after watching the video: stage rebuilt, warm light, the oracle cue. Waiting for the owner |
+| ZW-042 | Enhancement | A new page for "Andie's Place" (a stream backdrop) | Medium (proposed) | Open, under discussion with the owner before any coding | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -438,3 +439,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **The video was watched, 25 Nov 2026.** The owner uploaded the file; it was read frame by frame. What it shows is written up in `STAGE-PLAN.md`, "The reference video, watched". The first version above was wrong in three ways: the stage is a temple of six pillars with three free-standing pillars each side, not eight in a row; the building is lit in warm amber, red and gold, not green; and the heart of it is short flashes with black between, jumping from one part of the stage to another.
 - **Second version shipped 25 Nov 2026:** the stage rebuilt to that layout with rows of warm bulbs; a new cue, oracle, that reproduces the opening; the other cues over twelve pillars in warm light; the view cutting between wide and close during building cues.
 - **Waiting on the owner:** is this now what he loved; how often building cues should come; which of the video's other moments he wants next (white-outs, white moving-head beams, the red wash, the temple front as a screen).
+
+### ZW-042: A new page for "Andie's Place"
+
+- **Reported:** 25 Nov 2026, by the owner, with a screenshot: "I want a new html for Andie's place. Let's discuss before coding."
+- **The screenshot:** a TikTok LIVE host view (host name shown as Andie Howard) of a wide studio backdrop in black, gold and purple neon. A gold script sign "Andie's PLACE" with "GROW · LEARN · CONNECT · WIN" under it; a framed purple neon panel "WELCOME AI MOGULS" with a crown; neon word signs either side ("FOCUS PURPOSE ABUNDANCE IMPACT", "YOU CAN DO HARD THINGS", "CREATE LEARN ELEVATE MONETIZE", "WINNING Season"); gold shelves with framed mottoes, a play-button plaque, a gold panther, plants, two dark armchairs with gold and plum cushions, roses, purple light under the seats.
+- **Not known yet:** what the page is for (a moving backdrop, an overlay, something interactive), who will run it and where, whether it should react to music, which words must be editable, and whether it belongs in this repository beside Zeus World. Questions put to the owner.
+- Nothing built.
