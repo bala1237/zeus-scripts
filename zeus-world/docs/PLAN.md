@@ -46,7 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-0. **ZW-045, gift moments (test version).** On `/laser.html`, type a name and press Small, Medium or Big gift (or 1, 2, 3), with music and without. Are the three moments right in size and length; is the lightning right; should the big one be bigger.
+0. **ZW-045, gift moments, redesigned.** On `/laser.html`: Small, Medium and Big gift, and "Light all 12". Does it make him say wow; lengths; is the flame-and-awakening idea right. TikFinity to be connected later.
 0. **ZW-044.** `/laser.html` now has the picture in a resizable 16:9 box with the controls below. Confirm it is as wanted.
 0. **ZW-043, Andie's Place in TikTok LIVE Studio.** Use the "Copy link for LIVE Studio" button and paste the link as a browser source. Does it move now. If not, add `&debug=1` and report the line across the top of the picture, or that there is none.
 0. **ZW-042, Andie's Place.** "Looks good for now" (owner, 25 Nov). He will share her actual image; then the furniture, plants and logo are fixed. Still to confirm: that it works in TikTok LIVE Studio.

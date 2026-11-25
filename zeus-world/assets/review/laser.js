@@ -14,6 +14,7 @@ import { createBeamRenderer } from './beams.js';
 import { createBeat } from './beat.js';
 import { createFlow } from './flow.js';
 import { createGifts } from './gifts.js';
+import { createGiftFx, makeNameMaterial } from './giftfx.js';
 import { createDirector, BUILDING, building, THEMES } from './director.js';
 
 const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
@@ -46,11 +47,11 @@ for (const p of RIG) { p.P = new THREE.Vector3(...p.pos); p.e = Object.fromEntri
 const fest = { v: 0, set: q.get('set') !== '0' }, temple = new THREE.Group(), templeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }), signMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, toneMapped: false }), pillars = [], lit = [], hall = { v: 0 };
 // the words on the booth, and the big name: white letters on a see-through canvas, fitted to its width
 const BOOTH_NAME = (q.get('name') || 'ZEUS').toUpperCase(), signCanvas = Object.assign(document.createElement('canvas'), { width: 1024, height: 192 }), nameCanvas = Object.assign(document.createElement('canvas'), { width: 2048, height: 384 });
-const nameMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false });
+const NAME_W = 9.6, nameMat = makeNameMaterial(new THREE.CanvasTexture(nameCanvas));
 function drawSign(c, tex, text) { const g = c.getContext('2d'), spaced = text.toUpperCase().split('').join('\u2009'); g.clearRect(0, 0, c.width, c.height); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
   let px = Math.round(c.height * 0.78); do { g.font = `600 ${px}px Georgia, "Times New Roman", serif`; px -= 6; } while (g.measureText(spaced).width > c.width * 0.94 && px > 20); g.fillText(spaced, c.width / 2, c.height * 0.54); tex.needsUpdate = true; }
 // The layout follows the Transmission stage: a temple of six pillars in the middle, and three free-standing pillars either side.
-const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new THREE.Color(0xff2f52), new THREE.Color(0xffe23c)], lampCol = new THREE.Color(0xffa84a);
+const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new THREE.Color(0xff2f52), new THREE.Color(0xffe23c), new THREE.Color(0xffb436)], lampCol = new THREE.Color(0xffa84a);
 { const add = (g, x, y, z, m = templeMat) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); temple.add(o); return o; };
   // each pillar has its own light, so the building cues can pick them out one at a time. The picture on it gives the fluting and
   // the fall-off of a lamp at its foot: bright low down, fading towards the top, brightest on the side that faces the audience.
@@ -69,7 +70,7 @@ const bulbs = [], bulbGlow = { v: 0 }, WARM = [new THREE.Color(0xffa84a), new TH
   for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.12 + 0.76 * i / 12); bulb(Math.cos(a) * 4.3, 5.6 + Math.sin(a) * 2.9); } for (const s of [-1, 1]) for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) bulb(s * (4.0 + i * 1.0), 5.2 + r * 0.7);
   signMat.map = new THREE.CanvasTexture(signCanvas); add(new THREE.PlaneGeometry(3.4, 0.64), 0, 0.58, -2.79, signMat); drawSign(signCanvas, signMat.map, BOOTH_NAME);
   // a sender's name in lights across the temple front, for a big gift
-  nameMat.map = new THREE.CanvasTexture(nameCanvas); add(new THREE.PlaneGeometry(9.6, 1.8), 0, 3.7, -4.9, nameMat); temple.visible = false; scene.add(temple); }
+  add(new THREE.PlaneGeometry(NAME_W, 1.8), 0, 3.7, -4.9, nameMat).renderOrder = 30; temple.visible = false; scene.add(temple); }
 
 // ---------- output: glow only from what is brighter than white (the beams), tone mapping, then an alpha so the page can be laid over a camera
 const composer = new EffectComposer(renderer), bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), Number(q.get('glow') ?? 0.45), 0.32, 1.2);
@@ -95,30 +96,30 @@ const main = new THREE.Color(THEMES[dir.state.theme].main), accent = new THREE.C
 const aim = (out, p, ax, coneA, phi) => { const e = p.e, cx = Math.sin(ax) * Math.cos(e.roll.v), cy = Math.sin(ax) * Math.sin(e.roll.v), k = e.cone.v;
   out.set(cx * (1 - k) + Math.sin(coneA) * Math.cos(phi) * k, cy * (1 - k) + Math.sin(coneA) * Math.sin(phi) * k, Math.cos(ax) * (1 - k) + Math.cos(coneA) * k).normalize().applyEuler(E.set(-(p.pitch + e.tilt.v), p.yaw + e.pan.v, 0, 'YXZ')); return out; };
 // ---------- gift moments (ZW-045). Fired by the test buttons today; window.zeusGift(size, name) is the door for TikFinity later.
-const gifts = createGifts(), gift = { dim: 1, clock: 0, last: 0, strikes: 0, sign: BOOTH_NAME, name: 0, bolts: [], lit: [], hit: null };
+const gifts = createGifts(pillars.length), gift = { dim: 1, last: 0, sign: BOOTH_NAME, booth: '', hit: null, who: null, gold: 0, edge: new THREE.Vector3() };
+const fx = createGiftFx({ scene, pillars, peak: new THREE.Vector3(0, 7.2, -6.1), soft }), GOLD = new THREE.Color(0xffb436), PALE = new THREE.Color(0xfff0c8);
 window.zeusGift = (size, name) => gifts.add({ size, name });
-// a lightning bolt: a jagged line from above the picture down to the top of a pillar, with one or two short forks
-function strike(i) { const p = pillars[i % pillars.length], pts = [], n = 9, x0 = p.x * 0.55 + (Math.random() - 0.5) * 3, top = 11; for (let k = 0; k <= n; k++) { const u = k / n, j = k === 0 || k === n ? 0 : 1; pts.push(new THREE.Vector3(x0 + (p.x - x0) * u + (Math.random() - 0.5) * 0.9 * j, top + (p.top - top) * u, p.z + 0.3 + (Math.random() - 0.5) * 0.4 * j)); }
-  const forks = []; for (const k of [3, 6]) if (Math.random() < 0.8) { const a = pts[k], dirn = Math.random() < 0.5 ? -1 : 1; forks.push([a, new THREE.Vector3(a.x + dirn * (0.7 + Math.random()), a.y - 0.9 - Math.random(), a.z), new THREE.Vector3(a.x + dirn * (1.3 + Math.random()), a.y - 2.2 - Math.random(), a.z)]); }
-  gift.bolts.push({ pts, forks, age: 0 }); }
 let drops = 0, gA = null;
 function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // the music's shape: quiet patterns while the bass is out, the biggest one the moment it comes back
   if (b.mode === 'listen') { dir.setCalm(b.section === 'breakdown'); if (b.drops !== drops) { drops = b.drops; dir.hit(); } } else dir.setCalm(false);
   const d = dir.update(b.beats), theme = THEMES[d.theme], kick = 0.74 + 0.26 * b.pulse;
   // gifts keep their own time, so one can be played with no music: the beat when there is one, otherwise two beats a second
-  { const playing = b.act > 0.3, dB = playing ? Math.max(0, Math.min(1, b.beats - gift.last)) : dt * 2, onBeat = playing ? Math.floor(b.beats) !== Math.floor(gift.last) : true; gift.last = b.beats; gift.clock += dB;
-    gA = gifts.update(dB, onBeat, playing ? onBeat && Math.floor(b.beats) % 4 === 0 : onBeat);
-    if (gifts.state.strikes !== gift.strikes) { gift.strikes = gifts.state.strikes; if (gA) { if (gA.size === 'big') for (const i of [1 + Math.floor(Math.random() * 2), 5 + Math.floor(Math.random() * 2), 9 + Math.floor(Math.random() * 2)]) strike(i); else strike(gA.pillar); } }
-    if (gA && gA.size === 'big' && gA.t >= 1 && gift.hit !== gA) { gift.hit = gA; if (playing) dir.hit(); }
-    // while a small or medium gift plays the lasers step back; a big one goes black for a beat and then lets everything loose
-    const want = !gA ? 1 : gA.size === 'big' ? (gA.t < 1 ? 0 : 1) : 0.22; gift.dim += (want - gift.dim) * Math.min(1, dt * (want < gift.dim ? 12 : 4));
-    const text = gA && gA.name ? gA.name : BOOTH_NAME; if (text !== gift.sign) { gift.sign = text; drawSign(signCanvas, signMat.map, text); if (gA && gA.size === 'big' && gA.name) drawSign(nameCanvas, nameMat.map, gA.name); } }
+  { const playing = b.act > 0.3, dB = playing ? Math.max(0, Math.min(1, b.beats - gift.last)) : dt * 2, onBeat = playing ? Math.floor(b.beats) !== Math.floor(gift.last) : true; gift.last = b.beats;
+    gA = gifts.update(dB, dt, onBeat, playing ? onBeat && Math.floor(b.beats) % 4 === 0 : onBeat);
+    if (gA !== gift.who) { gift.who = gA; gift.booth = ''; if (gA && gA.size === 'big' && gA.name) drawSign(nameCanvas, nameMat.uniforms.map.value, gA.name); }
+    // the script's requests, each acted on once: lightning, the leap between pillars, the name arriving on the booth
+    for (const e of gifts.state.fx.splice(0)) { if (e.type === 'bolt') fx.bolt(e.pillar, e.power); else if (e.type === 'arc') fx.arc(e.from, e.to); else if (gA && gA.name) gift.booth = gA.name; }
+    if (gA && gA.size === 'big' && gA.t >= 2.25 && gift.hit !== gA) { gift.hit = gA; if (playing) dir.hit(); }
+    // while a small or medium gift plays the lasers step back; a big one is black while the storm gathers, then lets everything loose in gold
+    const want = !gA ? 1 : gA.size === 'big' ? (gA.t < 2.25 ? 0 : 1) : 0.18; gift.dim += (want - gift.dim) * Math.min(1, dt * (want < gift.dim ? 12 : 4));
+    gift.gold += ((gA && gA.size === 'big' && gA.t >= 1 && gA.t < 15 ? 1 : 0) - gift.gold) * Math.min(1, dt * 5);
+    const text = gift.booth || BOOTH_NAME; if (text !== gift.sign) { gift.sign = text; drawSign(signCanvas, signMat.map, text); } }
   look.beams += ((look.mode === 'flow' ? 0 : 1) - look.beams) * Math.min(1, dt * 2.5); look.flow += ((look.mode === 'lasers' ? 0 : 1) - look.flow) * Math.min(1, dt * 1.2); const act = b.act * look.beams * gift.dim;
   // the flow keeps the theme's two colours and adds a third from across the colour wheel. It drifts faster with the energy of the music, calms in a breakdown, and stops with the music.
   { const hsl = {}; main.getHSL(hsl); look.third.setHSL((hsl.h + 0.42) % 1, 1, 0.55);
     flow.update(dt * b.act, { level: look.flow * b.act * (d.blackout ? 0 : 1) * st.gain * (look.mode === 'both' ? 0.55 : 1), speed: (b.section === 'breakdown' ? 0.6 : 0.8 + 1.4 * b.energy), pulse: b.pulse, a: main, b: accent, c: look.third, aspect: camera.aspect }); }
-  main.lerp(C.set(theme.main), Math.min(1, dt * 1.2)); accent.lerp(C.set(theme.accent), Math.min(1, dt * 1.2));
+  main.lerp(C.set(theme.main).lerp(GOLD, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2))); accent.lerp(C.set(theme.accent).lerp(PALE, gift.gold), Math.min(1, dt * (gift.gold > 0.5 ? 8 : 1.2)));
   if (SHOT && q.get('pattern')) d.pattern = q.get('pattern');
   // an intensity budget: the more beams are lit, the less each gets, so a full rig does not flood the picture and a single beam is strong
   let load = 0; for (const p of RIG) load += Math.max(0, p.e.level.v) * (p.e.spread.v < 0.1 && p.e.cone.v < 0.5 ? 3 : p.n) + 5 * Math.max(0, p.e.sheet.v); const budget = Math.min(1.25, Math.pow((theme.budget || 13) / Math.max(load, 1), 0.55));
@@ -139,29 +140,32 @@ function update(dt) { const b = beat.state; beat.update(dt); st.t += dt;
   // The building cues (ZW-041): the lasers are dark and the building is lit, in warm light as in the video, pillar by pillar.
   // A lamp comes on at once and dies away quickly, as a real one does.
   const cueShow = BUILDING.has(d.pattern) && theme.festival, N = pillars.length; if (cueShow && !fest.set && !gA && !SHOT) dir.nextLook();
-  const gDark = !!gA && (gA.size !== 'big' || gA.t < 1), show = cueShow || gDark;
-  building(cueShow && !gA && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); if (gA) { gifts.lights(N, lit); lit[N + 2] = 2; }
+  const gDark = !!gA && (gA.size !== 'big' || gA.t < 2.25), show = cueShow || gDark;
+  building(cueShow && !gA && !d.dark && b.act > 0.3 ? d.pattern : '', b.beats, N, lit); if (gA) { gifts.lights(lit); lit[N + 2] = 3; }
   const fall = Math.exp(-dt * 16); if (show || gA) lampCol.lerp(WARM[lit[N + 2]], Math.min(1, dt * 14));
   temple.visible = fv > 0.01; if (temple.visible) { const amb = 0.02 * fv * (0.25 + 0.75 * b.act) * (d.dark ? 0.3 : 1) * (show ? 0.1 : 1);
     hall.v = Math.max(lit[N], hall.v * fall); templeMat.color.copy(main).multiplyScalar(amb).add(C.copy(lampCol).multiplyScalar(0.10 * hall.v * fv * st.gain));
     pillars.forEach((p, i) => { p.v = Math.max(lit[i], p.v * fall); const k = fv * st.gain * p.v; p.m.color.copy(main).multiplyScalar(amb * 6).add(C.copy(lampCol).lerp(E2.set(0xffffff), 0.25).multiplyScalar(2.6 * k)); p.flat.color.copy(main).multiplyScalar(amb).add(C.copy(lampCol).multiplyScalar(0.3 * k)); p.lamp.material.color.copy(lampCol).lerp(E2.set(0xffffff), 0.4).multiplyScalar(1.2 * k); });
     bulbGlow.v = Math.max(lit[N + 1], bulbGlow.v * Math.exp(-dt * 7)); for (const sp of bulbs) { sp.material.color.copy(WARM[0]).lerp(E2.set(0xffffff), 0.3).multiplyScalar(2.2 * bulbGlow.v * fv * st.gain); sp.scale.setScalar(0.2 + 0.3 * bulbGlow.v); }
-    signMat.color.setScalar(fv * (gA && gA.name ? 2.2 : (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.06 : 1)));
-    gift.name += ((gA && gA.size === 'big' && gA.name && gA.t >= 1 ? 1 : 0) - gift.name) * Math.min(1, dt * 6); nameMat.color.copy(WARM[2]).lerp(E2.set(0xffffff), 0.55).multiplyScalar(2.4 * gift.name * fv * (0.8 + 0.2 * b.pulse)); }
-  // lightning: bright for a tenth of a second, then a flicker, gone in a third
-  for (const bolt of gift.bolts) { bolt.age += dt; const k = bolt.age < 0.09 ? 1 : bolt.age < 0.34 ? (Math.sin(bolt.age * 90) > 0 ? 0.55 : 0.12) : 0; if (k <= 0) continue; const I = 7 * k * st.gain, colB = C.set(0xfff2c8);
-    const seg = (a, c2, w) => { D.copy(c2).sub(a); const len = D.length(); if (len > 0.01) rig.beam(a, D.multiplyScalar(1 / len), len, colB, I, w, 0); };
-    for (let i = 0; i < bolt.pts.length - 1; i++) seg(bolt.pts[i], bolt.pts[i + 1], 0.03); for (const f of bolt.forks) for (let i = 0; i < f.length - 1; i++) seg(f[i], f[i + 1], 0.016); }
-  gift.bolts = gift.bolts.filter((x) => x.age < 0.4);
+    signMat.color.setScalar(fv * (gift.booth ? 2.2 : (0.5 + 1.3 * b.act) * (d.blackout ? 0 : 1) * (show ? 0.06 : 1)));
+    }
+  // the storm, the lightning, the sparks and rain, the flames, and the name being forged and burned away
+  { const big = gA && gA.size === 'big', t = gA ? gA.t : 0, reveal = big && gA.name ? Math.min(1, Math.max(0, (t - 3) / 1.6)) : 0, writing = reveal > 0.001 && reveal < 0.999;
+    const u = nameMat.uniforms; u.uReveal.value = reveal; u.uBurn.value = big ? Math.min(1, Math.max(0, (t - 14.3) / 1.6)) : 0; u.uTime.value = st.t; u.uLevel.value = big ? fv * st.gain : 0;
+    if (writing) gift.edge.set(-NAME_W / 2 + (reveal * 1.08 - 0.04) * NAME_W, 3.7, -4.85);
+    fx.update(dt, { cloud: !gA ? 0 : big ? 1 : gA.size === 'medium' ? 0.6 : 0.35, rain: big && t >= 3.2 && t < 14.5 ? 1 : 0, flames: gifts.state.flames, level: fv * st.gain, camera, anticipation: big && t < 2 ? 0.3 + 0.35 * t : 0, edge: writing ? gift.edge : null });
+    fx.draw(rig, st.gain); }
   rig.end(st.t, camera, renderer.domElement.height);
   // the camera moves on every second cue, or every cue in a lively theme; never in a still one
   const views = theme.festival ? FEST_CAMS : CLUB_CAMS; if (!SHOT && !views.includes(cam.i) && cam.cut === -1) setCam(views[0]);   // each rig has its own views
   if (cam.moving && d.cue !== cam.lastCue) { if (cam.lastCue !== -1 && theme.camera !== 'still' && (theme.camera === 'lively' || d.cue % 2 === 0)) setCam(views[(views.indexOf(cam.i) + 1 + (d.cue % 3 === 0 ? 1 : 0)) % views.length]); cam.lastCue = d.cue; }
   // in a building cue the view cuts, as the video does: a new angle every four beats, close on the pillars as often as wide
-  if (cam.moving && gA && !SHOT) { if (cam.cut !== -7) { cam.cut = -7; setCam(gA.size === 'small' ? 13 : 6, true); } }   // a gift is always seen square on
+  // a gift is seen square on. For a big one the view starts far back, pushes in while the storm gathers, and draws back at the end.
+  if (cam.moving && gA && !SHOT) { const stage = gA.size !== 'big' ? 1 : gA.t < 0.15 ? 0 : gA.t < 12.5 ? 1 : 2; if (cam.cut !== -7 - stage) { cam.cut = -7 - stage; if (gA.size === 'big') setCam(stage === 1 ? 6 : 9, stage === 0); else setCam(gA.size === 'small' ? 13 : 6, true); } }
   else if (cam.moving && cueShow && !SHOT) { const n = Math.floor(b.beats / 4); if (n !== cam.cut) { cam.cut = n; setCam(CUT_CAMS[n % CUT_CAMS.length], true); } } else if (cam.cut !== -1 && !cueShow && !gA) { cam.cut = -1; if (!SHOT) setCam(views[0], true); }
   for (const k of ['x', 'y', 'z', 'tx', 'ty', 'tz', 'f']) step(cam[k], dt, 2.4, 3); const sway = cam.moving ? 1 : 0;
-  camera.position.set(cam.x.v + Math.sin(st.t * 0.21) * 0.14 * sway, cam.y.v + Math.sin(st.t * 0.17 + 1) * 0.06 * sway, cam.z.v + Math.sin(st.t * 0.13 + 2) * 0.12 * sway); camera.lookAt(cam.tx.v, cam.ty.v, cam.tz.v);
+  camera.position.set(cam.x.v + Math.sin(st.t * 0.21) * 0.14 * sway, cam.y.v + Math.sin(st.t * 0.17 + 1) * 0.06 * sway, cam.z.v + Math.sin(st.t * 0.13 + 2) * 0.12 * sway); if (fx.shake > 0.001) { camera.position.x += (Math.random() - 0.5) * fx.shake; camera.position.y += (Math.random() - 0.5) * fx.shake; }   // the ground jumps when lightning lands
+  camera.lookAt(cam.tx.v, cam.ty.v, cam.tz.v);
   if (Math.abs(camera.fov - cam.f.v) > 0.01) { camera.fov = cam.f.v; camera.updateProjectionMatrix(); } }
 const draw = () => composer.render();
 
@@ -194,15 +198,16 @@ grip.addEventListener('pointerdown', (e) => { grip.setPointerCapture(e.pointerId
   const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); }; grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); });
 grip.addEventListener('dblclick', () => setSize(view.size > 0.99 ? 0.6 : 1));
 let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); setSize(view.size, false); new ResizeObserver(fit).observe(area); addEventListener('resize', fit);
-const sendGift = (size) => gifts.add({ size, name: $('gname').value }); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
+const sendGift = (size) => gifts.add({ size, name: $('gname').value }); $('g4').addEventListener('click', () => gifts.state.flames.fill(150)); for (const [id, size] of [['g1', 'small'], ['g2', 'medium'], ['g3', 'big']]) $(id).addEventListener('click', () => sendGift(size));
 addEventListener('keydown', (e) => { if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' && e.target.type === 'text') return; if (['1', '2', '3'].includes(e.key)) { sendGift(['small', 'medium', 'big'][Number(e.key) - 1]); return; } const k = e.key.toLowerCase(); if (e.code === 'Space') { e.preventDefault(); beat.tap(); } else if (k === 'n') dir.nextLook(); else if (k === 'l') $('look').click(); else if (k === 'b') blackout(); else if (k === 'h' && !PLAIN) { hidden = !hidden; showUi(); } });
-window.__laser = { gifts, gift, view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
+window.__laser = { gifts, gift, fx, view, st, beat, dir, update, draw, RIG, rig, cam, camera, look, flow };
 if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.tap(); if (q.get('gift')) gifts.add({ size: q.get('gift'), name: q.get('gname') || '' }); const n = Number(q.get('beats') || 12) * 60 / 124; for (let t = 0; t < n; t += 1 / 60) update(1 / 60); draw(); window.ready = true; }
 else {
   // a page with its controls off (a browser source) has nobody to press Demo, so it starts by itself, unless the address says calm=1
   if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
   const frame = (viaTimer) => { const now = performance.now(), ms = now - last; if (viaTimer === true && ms < 90) return; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
     const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
+    const lit12 = gifts.state.flames.filter((f) => f > 0).length; $('flames').textContent = `Flames ${lit12} of 12`;
     $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
     if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } };
   renderer.setAnimationLoop(() => frame());
