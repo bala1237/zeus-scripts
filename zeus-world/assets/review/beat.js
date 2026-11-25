@@ -25,15 +25,23 @@ export function createBeat({ bpm = 120, onChange = () => {} } = {}) {
     if (st.mode === 'off') st.mode = 'tap'; st.beats = Math.ceil(st.beats); st.pulse = 1; onChange(st); }
   // Listening: Chrome is asked to share a tab or the screen "with audio"; if that is refused it falls back to the default sound input.
   // source 'test' feeds a made-up kick drum at state.testBpm, to check the listening without any music.
-  async function listen(source = 'share') { const ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' }); let stream = null;
+  // the sound inputs this computer has. Their names are only given once the page has been allowed to listen.
+  const inputs = async () => (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput' && d.deviceId !== 'communications');
+  async function listen(source = 'share', input = '') { const ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' }); let stream = null;
     const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' })); try { await ctx.audioWorklet.addModule(url); } finally { URL.revokeObjectURL(url); }
     const node = new AudioWorkletNode(ctx, 'zeus-bands', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] }), mute = ctx.createGain(); mute.gain.value = 0; node.connect(mute); mute.connect(ctx.destination);   // it has to lead somewhere to be run; the mute keeps it silent
     const tracker = createTracker({ rate: ctx.sampleRate / Math.round(ctx.sampleRate / 200) }), a = { ctx, node, tracker, stream: null, last: performance.now() };
     node.port.onmessage = (e) => { const v = e.data; for (let i = 0; i < v.length; i += 5) tracker.push(v[i], v[i + 1], v[i + 2], v[i + 3], v[i + 4]); a.last = performance.now(); };
     if (source === 'test') { const osc = ctx.createOscillator(), g = ctx.createGain(); osc.frequency.value = 62; g.gain.value = 0; osc.connect(g); g.connect(node); osc.start(); const gap = 60 / st.testBpm, t0 = ctx.currentTime + 0.3; for (let i = 0; i < 400; i++) { g.gain.setValueAtTime(st.testGain, t0 + i * gap); g.gain.exponentialRampToValueAtTime(0.001, t0 + i * gap + 0.16); } }
     else { const plain = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
-      try { stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: plain }); if (!stream.getAudioTracks().length) { stream.getTracks().forEach((t) => t.stop()); stream = null; } else stream.getVideoTracks().forEach((t) => t.stop()); } catch { stream = null; }
-      if (!stream) stream = await navigator.mediaDevices.getUserMedia({ audio: plain });
+      // source 'input' goes straight to a sound input (a sound card, a mixer, a microphone) and never asks to share a tab.
+      // input is the device's id, or part of its name ("rode"); left out, the computer's default input is used.
+      if (source === 'input') { stream = await navigator.mediaDevices.getUserMedia({ audio: plain });
+        if (input) { const want = String(input).toLowerCase(), dev = (await inputs()).find((d) => d.deviceId === input || d.label.toLowerCase().includes(want));
+          if (dev && dev.deviceId !== stream.getAudioTracks()[0]?.getSettings().deviceId) { stream.getTracks().forEach((t) => t.stop()); stream = await navigator.mediaDevices.getUserMedia({ audio: { ...plain, deviceId: { exact: dev.deviceId } } }); } }
+        st.input = stream.getAudioTracks()[0]?.label || 'sound input'; }
+      else { try { stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: plain }); if (!stream.getAudioTracks().length) { stream.getTracks().forEach((t) => t.stop()); stream = null; } else stream.getVideoTracks().forEach((t) => t.stop()); } catch { stream = null; }
+        if (!stream) stream = await navigator.mediaDevices.getUserMedia({ audio: plain }); st.input = ''; }
       ctx.createMediaStreamSource(stream).connect(node); a.stream = stream; }
     if (ctx.state === 'suspended') await ctx.resume(); audio = a; st.mode = 'listen'; st.locked = false; wasLocked = false; onChange(st); }
   function unlisten() { if (audio) { audio.stream?.getTracks().forEach((t) => t.stop()); audio.ctx.close(); audio = null; } st.mode = 'off'; st.locked = false; onChange(st); }
@@ -56,5 +64,5 @@ export function createBeat({ bpm = 120, onChange = () => {} } = {}) {
     if (!playing) return false; st.beats += adv; const b = Math.floor(st.beats); if (b !== lastBeat) { lastBeat = b; st.pulse = 1; st.heard = 0; return true; } return false; }
   const nudge = (d) => { st.bpm = Math.min(200, Math.max(50, st.bpm + d)); st.tempo = st.bpm; onChange(st); };
   const setOffset = (sec) => { st.offset = Math.max(-0.3, Math.min(0.3, sec)); try { localStorage.setItem('zeus-beat-offset', String(st.offset)); } catch { /* private window */ } };
-  return { state: st, tap, listen, unlisten, stop, update, nudge, setOffset };
+  return { state: st, tap, listen, unlisten, stop, update, nudge, setOffset, inputs };
 }

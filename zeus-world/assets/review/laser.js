@@ -205,6 +205,12 @@ const draw = () => composer.render();
 let bgMode = q.get('bg') || 'black', failed = ''; const setBg = () => { document.body.classList.toggle('clear', bgMode === 'clear'); document.body.classList.toggle('mock', bgMode === 'mock'); $('bg').textContent = `Background: ${bgMode === 'mock' ? 'stand-in camera' : bgMode}`; }; setBg();
 $('bg').addEventListener('click', () => { bgMode = { black: 'clear', clear: 'mock', mock: 'black' }[bgMode]; setBg(); });
 $('listen').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else beat.listen().catch((e) => { failed = 'could not listen: ' + e.message; }); });
+// Listening to a sound input (ZW-048): a sound card or mixer, or the microphone. Nothing has to be shared, so it also works where
+// sharing a tab is not possible. ?listen=input starts it with the page; ?input=rode picks the input whose name contains that.
+const fillInputs = async () => { const sel = $('inputs'), list = await beat.inputs(); sel.textContent = ''; for (const d of list) { const o = document.createElement('option'); o.value = d.deviceId; o.textContent = d.label || 'sound input'; o.selected = d.label === beat.state.input; sel.append(o); } sel.style.display = list.length > 1 ? '' : 'none'; };
+const listenInput = (which) => { failed = ''; return beat.listen('input', which).then(() => { store.set('input', beat.state.input); return fillInputs(); }).catch((e) => { failed = 'could not listen to a sound input: ' + e.message; throw e; }); };
+$('listenIn').addEventListener('click', () => { if (beat.state.mode === 'listen') beat.unlisten(); else listenInput(q.get('input') || store.get('input') || '').catch(() => {}); });
+$('inputs').addEventListener('change', () => { beat.unlisten(); listenInput($('inputs').value).catch(() => {}); });
 $('tap').addEventListener('pointerdown', () => beat.tap()); $('stop').addEventListener('click', () => beat.stop()); $('demo').addEventListener('click', () => { beat.state.bpm = 124; beat.tap(); });
 $('sync').value = String(Math.round(beat.state.offset * 1000)); const showSync = () => { const v = Number($('sync').value); $('syncv').textContent = v === 0 ? 'as heard' : `${Math.abs(v)} ms ${v > 0 ? 'later' : 'earlier'}`; }; showSync();
 $('sync').addEventListener('input', () => { beat.setOffset(Number($('sync').value) / 1000); showSync(); });
@@ -238,11 +244,11 @@ if (SHOT) { cam.moving = false; setCam(Number(q.get('cam') || 0), true); beat.ta
   const act = gifts.state.active; (act && act.film && act.t > filmStart(act) ? fx.seekFilm((act.t - filmStart(act)) / 2) : Promise.resolve()).then(() => { update(0.0001); draw(); requestAnimationFrame(() => { draw(); window.ready = true; }); }); }
 else {
   // a page with its controls off (a browser source) has nobody to press Demo, so it starts by itself, unless the address says calm=1
-  if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
+  if (q.get('listen') === 'input') listenInput(q.get('input') || '').catch(() => { if (q.get('ui') === '0') beat.tap(); }); else if (q.has('demo') || (q.get('ui') === '0' && q.get('calm') !== '1')) beat.tap(); let last = performance.now(), frames = 0, acc = 0, worst = 0;
   const frame = (viaTimer) => { const now = performance.now(), ms = now - last; if (viaTimer === true && ms < 90) return; last = now; update(Math.min(0.1, ms / 1000)); draw(); frames++; acc += ms; worst = Math.max(worst, ms);
-    const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music';
+    const b = beat.state, d = dir.state; $('lamp').style.background = b.pulse > 0.5 && b.act > 0.2 ? '#ffd23f' : '#2a3040'; $('listen').classList.toggle('on', b.mode === 'listen'); $('listen').textContent = b.mode === 'listen' ? 'Stop listening' : 'Listen to the music'; $('listenIn').style.display = b.mode === 'listen' ? 'none' : '';
     const lit12 = gifts.state.flames.filter((f) => f > 0).length; $('flames').textContent = `Flames ${lit12} of 12`;
-    $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? 'listening: no music' : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
+    $('status').textContent = failed || `${THEMES[d.theme].name} · ${d.pattern} · ` + (b.mode === 'off' ? 'still' : b.mode === 'tap' ? `running at ${b.bpm}` : b.act < 0.3 ? `listening${b.input ? ' to ' + b.input : ''}: no music` : !b.locked ? 'listening: finding the beat' : `on the beat at ${b.tempo.toFixed(1)}${b.section === 'breakdown' ? ' · breakdown' : ''}`);
     if (acc > 1000) { const mem = performance.memory ? ` · ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB` : ''; $('stats').textContent = `${Math.round(frames * 1000 / acc)} frames a second · slowest frame ${Math.round(worst)} ms${mem}`; frames = 0; acc = 0; worst = 0; } };
   renderer.setAnimationLoop(() => frame());
   // a browser stops its drawing loop for a window it thinks nobody can see, and a window capture freezes; a worker's timer keeps the show stepping then (ZW-043)
