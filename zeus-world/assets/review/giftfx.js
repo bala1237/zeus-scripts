@@ -80,13 +80,27 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
   const mkStar = () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: soft, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, color: 0x000000 })); sp.visible = false; scene.add(sp); return sp; };
   const starPool = Array.from({ length: 90 }, mkStar), eyePool = [mkStar(), mkStar()], gold = new THREE.Color(0xffd27a), A3 = new THREE.Vector3(), B3 = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
   function figure(name, tier = 1) { fig.f = prepare(name); fig.progress = 0; fig.glow = 0; fig.flare = 0; fig.scale = [1, 1.16, 1.34][tier - 1] || 1; fig.awake = 0; fig.rise = 0; fig.rising = false; }
-  function ring(power = 1) { state.center = sky3([0, -0.1], new THREE.Vector3()); U.uRing.value = 0.01; U.uRingI.value = 1.2 * power; U.uFlash.value = Math.max(U.uFlash.value, 0.5 * power); state.shake = Math.max(state.shake, 0.07 * power); U.uFlick.value = 1; U.uFlickX.value = 0.5; fig.flare = Math.max(fig.flare, power); }
+  function ring(power = 1, at = null) { state.center = at || sky3([0, -0.1], new THREE.Vector3()); U.uRing.value = 0.01; U.uRingI.value = 1.2 * power; U.uFlash.value = Math.max(U.uFlash.value, 0.5 * power); state.shake = Math.max(state.shake, 0.07 * power); U.uFlick.value = 1; U.uFlickX.value = 0.5; fig.flare = Math.max(fig.flare, power); }
   function wake() { if (!fig.f) return; fig.awake = 0.001; ring(1.2); for (const st of fig.f.stars) if (R() < 0.6) burst(sky3([st.x, st.y], A3), 5, 2.2); burst(sky3([0, -0.4], A3), 90, 4.5); }
   const ascend = () => { fig.rising = true; };
   // meteors for the larger shows: streaks falling across the sky behind the figure
   const meteors = []; let meteorUntil = 0, meteorNext = 0; const shower = (seconds) => { meteorUntil = time + seconds; };
   // a web of lightning from one side of the sky to the other, for the largest
   function web() { for (let k = 0; k < 4; k++) { const y1 = 8.5 + R() * 9, y2 = 8.5 + R() * 9, flip = R() < 0.5 ? -1 : 1; addBolt(new THREE.Vector3(-15 * flip, y1, -9.5), new THREE.Vector3(15 * flip, y2, -9.5), 1.4, { leader: 0.04 + k * 0.05 }); } U.uFlick.value = 1; U.uFlash.value = Math.max(U.uFlash.value, 0.35); state.shake = Math.max(state.shake, 0.04); }
+  // ---------- a film clip as the sky (ZW-046): a realistic animated clip played on a great screen far behind the temple, its edges
+  // fading into the dark, so the temple stands in front of it. Loaded when first asked for.
+  const FILM = { w: 54, y: 21.5, z: -24 }, films = {}, film = { cur: null, level: 0, want: 0 };
+  function loadFilm(name, src) { if (films[name]) return films[name]; const v = document.createElement('video'); v.src = src; v.muted = true; v.playsInline = true; v.preload = 'auto'; v.crossOrigin = 'anonymous';
+    const tex = new THREE.VideoTexture(v); tex.colorSpace = THREE.SRGBColorSpace;
+    // It fills the picture as the sky, drawn first of all so the temple and the light stand in front of it. It is set a little high and
+    // a little large, so the middle of the clip sits above the temple, and it fades into the dark towards the ground.
+    const mat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false, toneMapped: false, uniforms: { map: { value: tex }, uLevel: { value: 0 } },
+      vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy * 1.16 + vec2(0.0, 0.2), 0.0, 1.0); }',
+      fragmentShader: 'uniform sampler2D map; uniform float uLevel; varying vec2 vUv; void main() { vec3 c = texture2D(map, vUv).rgb; float e = smoothstep(0.0, 0.3, vUv.y) * smoothstep(0.0, 0.05, vUv.x) * smoothstep(1.0, 0.95, vUv.x); gl_FragColor = vec4(c * 0.86 * uLevel * e, 1.0); }' });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat); mesh.frustumCulled = false; mesh.renderOrder = -50; mesh.visible = false; scene.add(mesh); return (films[name] = { v, mat, mesh }); }
+  function playFilm(name, src) { const f = loadFilm(name, src); film.cur = f; film.want = 1; try { f.v.currentTime = 0; const p = f.v.play(); p?.catch?.(() => {}); } catch { /* it will show its first frame */ } state.filmAt = time; }
+  // for a still: put the clip at a given second and wait until that frame is there
+  const seekFilm = (seconds) => new Promise((done) => { const f = film.cur; if (!f) return done(); const go = () => { f.v.pause(); f.v.addEventListener('seeked', () => setTimeout(done, 120), { once: true }); f.v.currentTime = Math.min(seconds, (f.v.duration || 10) - 0.05); }; if (f.v.readyState >= 1) go(); else f.v.addEventListener('loadedmetadata', go, { once: true }); setTimeout(done, 15000); });
   let rainAcc = 0, flickAt = 0, time = 0;
   function update(dt, { cloud = 0, rain = 0, flames: burning = [], level = 1, camera, anticipation = 0, edge = null, sky: skyState = null, aurora = 0 }) { time += dt; U.uT.value += dt; U.uAspect.value = camera.aspect;
     U.uCloud.value += (cloud * level - U.uCloud.value) * Math.min(1, dt * 2.2); U.uFlick.value *= Math.exp(-dt * 9); U.uFlash.value *= Math.exp(-dt * 7); state.shake *= Math.exp(-dt * 7);
@@ -97,6 +111,7 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
     for (const b of bolts) { b.age += dt; if (!b.struck && b.age >= b.leader) { b.struck = true; const s = b.main[0].clone().project(camera); U.uFlickX.value = s.x * 0.5 + 0.5; b.onStrike?.(); } }
     for (let i = bolts.length - 1; i >= 0; i--) if (bolts[i].age > bolts[i].life) bolts.splice(i, 1);
     // the figure in the sky: the pen throws sparks as it draws; the stars come out as it passes; at the end the stars fall as rain
+    if (film.cur) { const f = film.cur, left = (f.v.duration || 10) - f.v.currentTime; if (film.want && (f.v.ended || left < 0.9) && time - state.filmAt > 2) film.want = 0; film.level += (film.want - film.level) * Math.min(1, dt * (film.want ? 2.2 : 1.3)); f.mat.uniforms.uLevel.value = film.level * level; f.mesh.visible = film.level > 0.005; if (!film.want && film.level < 0.005) { f.v.pause(); film.cur = null; } }
     U.uAurora.value += (aurora * level - U.uAurora.value) * Math.min(1, dt * 0.9); if (fig.awake > 0) fig.awake += dt; if (fig.rising) fig.rise += dt * (0.4 + fig.rise * 0.9);
     if (time < meteorUntil && time > meteorNext) { meteorNext = time + 0.07 + R() * 0.16; const v = new THREE.Vector3(-7 - R() * 5, -5 - R() * 4, 0); meteors.push({ p: new THREE.Vector3(-4 + R() * 30, 17 + R() * 6, -10 - R() * 3), v, life: 1.5, span: 1.5 }); }
     for (let i = meteors.length - 1; i >= 0; i--) { const m = meteors[i]; m.life -= dt; m.p.addScaledVector(m.v, dt); if (m.life <= 0) meteors.splice(i, 1); }
@@ -131,5 +146,9 @@ export function createGiftFx({ scene, pillars, peak, soft }) {
       const seg = (p, q, k, width) => { tmp.copy(q).sub(p); const len = tmp.length(); if (len < 0.01) return; tmp.multiplyScalar(1 / len); rig.beam(p, tmp, len, white, I * k, width, 0); };
       for (let i = 0; i < shown - 1; i++) { seg(b.main[i], b.main[i + 1], 1, w); if (a >= b.leader) seg(b.main[i], b.main[i + 1], 0.16, w * 5); }
       for (const f of b.forks) if (f.at < shown) for (let i = 0; i < f.pts.length - 1; i++) seg(f.pts[i], f.pts[i + 1], 0.55, w * 0.6); } }
-  return { bolt, arc, figure, wake, ring, web, ascend, shower, update, draw, burst, sky: SKY, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
+  const stopFilm = () => { film.want = 0; };
+  // the clip's big moment (the roar): the ring and the flash spread from the middle of the screen, and sparks fly from in front of it
+  // kept gentle: the clip's own roar is the picture, and a strong flash would hide it
+  function roar() { state.center = new THREE.Vector3(0, 13, -9); U.uRing.value = 0.06; U.uRingI.value = 0.55; U.uFlash.value = Math.max(U.uFlash.value, 0.12); state.shake = Math.max(state.shake, 0.12); burst(new THREE.Vector3(0, 8.6, -6.5), 140, 6); }
+  return { bolt, arc, figure, wake, ring, web, ascend, shower, playFilm, stopFilm, seekFilm, roar, get filmLevel() { return film.level; }, update, draw, burst, sky: SKY, uniforms: U, get shake() { return state.shake; }, counts: () => ({ bolts: bolts.length }) };
 }

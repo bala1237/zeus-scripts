@@ -37,11 +37,12 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Music (24 Nov 2026) | Music gets its own stage, separate from the city. Concert mode inside the city was tried and rejected by the owner |
 | Stage direction (25 Nov 2026) | The stage is to become a professional virtual laser and lighting system: 70% premium underground nightclub, 20% minimalist industrial techno, 10% festival spectacle; dark, restrained, physically coherent. Built in phases, each passed by the owner. The owner streams from macOS |
 | Stage direction, revised (25 Nov 2026) | The owner sent the Transmission Prague 2016 laser show as "something i loved": many projectors, fans of twenty or more beams each, green with magenta shafts, a temple stage. The lasers get a festival look in that manner alongside the club themes. This relaxes the "dark, restrained" rule of the first brief for that look |
+| Largest gifts (25 Nov 2026) | A gift of 5,000 coins or more is shown as a realistic, pre-made animated clip for its family, played inside the stage. The owner chose realistic over stylised and accepted that a clip plays the same each time. Clips are generated on fal; he approved a small spend for the first |
 
 ## Open questions
 
 - A cost ceiling per batch on fal.
-- Licence terms of each fal generator for commercial on-stream use.
+- Licence terms of each fal generator for commercial on-stream use. Now pressing: a generated video clip (Wan 3.0 Prime) is on the laser stage for the largest gifts.
 - What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
 - That the "First 100 become Founders" promise is honoured at launch.
 - Whether every citizen gets the same plot size.

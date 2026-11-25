@@ -46,7 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
-0. **ZW-046, the largest gifts as a cinematic show.** On `/laser.html` press 5,500, 22,000 and 34,000 in the Gift test row. Is it now a show; are the lengths right (12, 18, 26 seconds); which family next (Zeus, wings, cosmos, ...); the coin lines between sizes.
+0. **ZW-046, the largest gifts as realistic film clips.** On `/laser.html` press 22,000 (or 5,500 or 34,000) in the Gift test row: a realistic lion walks out of a storm behind the temple and roars. Is this the show he wanted; approval and order for more families (about $0.50 a clip); the licence question.
 0. **ZW-045, gift moments, redesigned.** On `/laser.html`: Small, Medium and Big gift, and "Light all 12". Does it make him say wow; lengths; is the flame-and-awakening idea right. TikFinity to be connected later.
 0. **ZW-044.** `/laser.html` now has the picture in a resizable 16:9 box with the controls below. Confirm it is as wanted.
 0. **ZW-043, Andie's Place in TikTok LIVE Studio.** Use the "Copy link for LIVE Studio" button and paste the link as a browser source. Does it move now. If not, add `&debug=1` and report the line across the top of the picture, or that there is none.
