@@ -16,20 +16,35 @@
   #shade { inset: 0; background: #000; opacity: 1; pointer-events: none; }
   /* the hook: one ember crossing the dark */
   #ember { left: 0; top: 0; width: 2.2cqh; height: 2.2cqh; border-radius: 50%; opacity: 0; background: radial-gradient(circle, #fff6d8 0 18%, #ffb347 40%, rgba(255, 110, 20, .5) 62%, transparent 75%); box-shadow: 0 0 3cqh 1cqh rgba(255, 140, 40, .55), 0 0 9cqh 3cqh rgba(255, 90, 10, .25); }
-  /* the name, forged: written on from the left behind a white-hot edge, then left as molten gold */
-  #forge { left: 0; right: 0; top: 33cqh; padding: 5cqh 0; background: radial-gradient(ellipse 46% 50% at 50% 50%, rgba(0, 0, 0, .62), rgba(0, 0, 0, .3) 50%, transparent 92%); text-align: center; font-weight: 700; font-size: 11cqh; letter-spacing: .12em; white-space: nowrap; opacity: 0; }
-  #forge span { display: inline-block; padding: 0 .12em; background: linear-gradient(180deg, #fff7dc 0%, #ffd77a 38%, #ff9a1f 72%, #b85a0a 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 0 1.2cqh rgba(255, 170, 60, .9)) drop-shadow(0 0 5cqh rgba(255, 120, 20, .55)); -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--w, 0) * 1%), transparent calc(var(--w, 0) * 1% + 4%)); mask-image: linear-gradient(90deg, #000 calc(var(--w, 0) * 1%), transparent calc(var(--w, 0) * 1% + 4%)); }
+  /* The name as a film title: each letter is a piece of polished gold with a dark, deep edge. The page moves every letter by itself (see forged() in hero.js). */
+  .name { white-space: nowrap; font-family: var(--title, 'Cinzel'), 'Cinzel', serif; font-weight: var(--tw, 800); isolation: isolate; }
+  .name .l { display: inline-block; position: relative; opacity: 0; color: #2b1602; will-change: transform, filter, opacity;
+    text-shadow: 0 .012em 0 #7a4709, 0 .024em 0 #5f340a, 0 .037em 0 #482606, 0 .05em 0 #2e1702, 0 .075em .05em rgba(0, 0, 0, .9), 0 0 .3em rgba(255, 150, 40, .5), 0 0 1em rgba(255, 110, 20, .32); }
+  /* the gold face, with a hard horizon in the middle as polished metal has, and a streak of light that is slid across it */
+  .name .l::after { content: attr(data-c); position: absolute; left: 0; top: 0; color: transparent; text-shadow: none;
+    background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .95) 50%, transparent 62%) var(--gx, 140%) 0 / 400% 100% no-repeat,
+      linear-gradient(180deg, #fffbe6 0%, #ffe9a6 22%, #f3bf48 45%, #a8690f 50.5%, #f8d67a 55%, #e0a436 76%, #8c500b 100%);
+    -webkit-background-clip: text; background-clip: text; }
+  .name .sp { display: inline-block; width: .38em; }
+  /* the heroic moment: a streak of white light, the name forged out of it, and the honour beneath between two drawn lines */
+  #forge { left: 0; right: 0; top: 30cqh; padding: 6cqh 0 5cqh; background: radial-gradient(ellipse 48% 50% at 50% 48%, rgba(0, 0, 0, .66), rgba(0, 0, 0, .3) 52%, transparent 92%); text-align: center; font-size: 11cqh; opacity: 0; }
+  #forge .flare { position: absolute; left: 50%; top: 46%; width: 96cqw; height: .7cqh; margin: -.35cqh 0 0 -48cqw; opacity: 0; filter: blur(.2cqh); background: radial-gradient(ellipse at center, #fff 0%, rgba(255, 228, 160, .95) 14%, rgba(255, 150, 40, .5) 42%, transparent 70%); }
+  #forge .flare::after { content: ''; position: absolute; left: 50%; top: 50%; width: 30cqh; height: 30cqh; margin: -15cqh; border-radius: 50%; background: radial-gradient(circle, rgba(255, 244, 210, .9) 0%, rgba(255, 170, 60, .35) 28%, transparent 62%); }
+  .under { display: flex; align-items: center; justify-content: center; gap: 2.2cqh; margin-top: 1.6cqh; font: 600 3cqh 'Cinzel', serif; letter-spacing: .46em; color: #fff3d6; text-shadow: 0 .2cqh .3cqh #000, 0 0 1cqh #000, 0 0 2cqh #000; white-space: nowrap; }
+  .under i { height: .22cqh; width: calc(var(--r, 0) * 15cqh); background: linear-gradient(90deg, transparent, #e9c275); }
+  .under i:last-child { background: linear-gradient(270deg, transparent, #e9c275); }
+  .under span { margin-right: -.46em; opacity: var(--r, 0); }
+  #sparks { inset: 0; width: 100%; height: 100%; pointer-events: none; mix-blend-mode: screen; }
   /* the name, cut in stone, low in the picture */
   #stone { left: 0; right: 0; bottom: 9cqh; text-align: center; opacity: 0; }
   #stone .n { font-weight: 600; font-size: 5.2cqh; letter-spacing: .34em; margin-left: .34em; color: #f4e3bd; text-shadow: 0 .2cqh 0 rgba(0, 0, 0, .7), 0 0 2.4cqh rgba(255, 200, 110, .55); white-space: nowrap; }
   #stone .rule { width: 34cqh; height: .18cqh; margin: 1.2cqh auto; background: linear-gradient(90deg, transparent, #e9c275, transparent); }
   /* the end card */
   #card { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; background: radial-gradient(ellipse at 50% 45%, rgba(60, 34, 6, .55), #000 70%); }
-  #card svg { width: 24cqh; height: 24cqh; }
-  #card .n { font-weight: 700; font-size: 8.4cqh; letter-spacing: .14em; margin-top: 2cqh; white-space: nowrap; background: linear-gradient(180deg, #fff7dc, #ffd77a 45%, #d98a1c); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 2.5cqh rgba(255, 170, 60, .6)); }
+  #card svg { flex: none; width: 26cqh; height: 26cqh; }
+  #card .n { font-size: 8.4cqh; margin-top: 2cqh; }
   #card .t { font-weight: 400; font-size: 3cqh; letter-spacing: .42em; margin: 4cqh 0 6cqh .42em; color: #e9c98a; white-space: nowrap; }
-  #caption { left: 0; right: 0; bottom: 3.2cqh; text-align: center; font: 500 2.6cqh Georgia, serif; color: #fff; text-shadow: 0 0 1cqh #000, 0 0 .4cqh #000; opacity: 0; transition: opacity .3s; padding: 0 8cqh; }
+  #caption { left: 0; right: 0; bottom: 3.2cqh; text-align: center; font: italic 500 3.1cqh 'Cormorant Garamond', Georgia, serif; letter-spacing: .02em; color: #fff; text-shadow: 0 0 1cqh #000, 0 0 .4cqh #000; opacity: 0; transition: opacity .3s; padding: 0 8cqh; }
   body.captions #caption.on { opacity: .95; }
   #ui { flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui, sans-serif; background: #100c06; border-top: 1px solid rgba(233, 194, 117, .45); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: center; }
   #ui.gone { display: none; }
@@ -44,12 +59,13 @@
   <video id="film" playsinline preload="auto"></video>
   <div id="shade"></div>
   <div id="ember"></div>
-  <div id="forge"><span id="forgeName"></span></div>
+  <div id="forge"><div class="flare"></div><div class="name" id="forgeName"></div><div class="under"><i></i><span id="forgeTitle"></span><i></i></div></div>
   <div id="stone"><div class="rule"></div><div class="n" id="stoneName"></div><div class="rule"></div></div>
   <div id="card">
     <svg viewBox="0 0 200 200" fill="none" stroke="#e9c275" stroke-width="2.2" stroke-linecap="round" id="laurel"></svg>
-    <div class="n" id="cardName"></div><div class="t" id="cardTitle"></div>
+    <div class="n name" id="cardName"></div><div class="t" id="cardTitle"></div>
   </div>
+  <canvas id="sparks"></canvas>
   <div id="caption"></div>
 </div></div>
 <div id="ui">

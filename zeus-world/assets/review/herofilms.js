@@ -8,11 +8,11 @@
 export const FILMS = {
   'fire-bringer': { title: 'The Fire-Bringer', honour: 'Fire-Bringer of Olympus', length: 63,
     video: 'hero/fire-bringer.webm', sound: 'hero/fire-bringer.mp3',
-    nameLine: { at: 34.6, generic: 'hero/fire-bringer-line5.mp3', named: 'hero/names/' },
-    ember: [0.6, 5.6], fadeIn: [5.6, 7.2], forge: [33.3, 34.8, 40.6, 41.8], stone: [53.2, 54.4, 57.2, 58.0], card: [58.2, 59.6],
-    captions: [[0.8, 4.6, 'Every city has one night it almost fell.'], [6.6, 12.4, 'The great fire was dying. And in the dark, the city held its breath.'], [15.0, 18.4, 'One of us did not wait to be asked.'],
-      [22.6, 31.6, 'Through the storm. Past the fear. Carrying a flame no bigger than a heartbeat, and never once letting it go.'], [34.6, 38.2, '[NAME] brought the fire home.'],
-      [43.2, 47.6, 'And every light you see tonight was lit from theirs.'], [52.6, 57.0, 'Olympus stands. Because one heart gave.']] },
+    nameLine: { at: 34.9, generic: 'hero/fire-bringer-line5.mp3', named: 'hero/names/' },
+    ember: [4.8, 8.9], forge: [33.35, 35.0, 38.2, 39.1], stone: [53.6, 54.8, 57.4, 58.2], card: [58.4, 59.8],
+    captions: [[0.8, 3.6, 'Ask anyone who was there that night what they saw.'], [5.4, 7.7, 'They will not speak of the storm.'], [9.2, 14.7, 'The great fire of Olympus was dying. And when it went out, the city would go with it.'],
+      [15.4, 20.0, 'No one was sent. One of us simply stood, and began to climb.'], [21.4, 26.6, 'The storm took everything it could. Halfway up, the flame was almost gone.'], [27.4, 28.9, 'Almost.'],
+      [34.9, 37.6, '[NAME] brought the fire home.'], [42.6, 45.6, 'And every light you see tonight was lit from theirs.'], [47.4, 49.3, 'That is what they saw.'], [52.6, 55.9, 'Olympus stands. Because one heart gave.']] },
 };
 // a name as it is shown: trimmed, without an @, at most 24 letters. And as a file name, for a recording of the narrator saying it.
 export const showName = (s) => String(s || '').replace(/^@+/, '').replace(/\s+/g, ' ').trim().slice(0, 24);
