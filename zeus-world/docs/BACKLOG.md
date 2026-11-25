@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-040.**
+- **Next number: ZW-041.**
 
 ## Open
 
@@ -51,6 +51,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-037 | Enhancement | Lasers: an "infinite move" version | Medium (proposed) | First version shipped 25 Nov: a Flow mode (ribbons of colour that never stop). Waiting for the owner: is this what he meant | 25 Nov 2026, owner |
 | ZW-038 | Bug | Lasers: the beat capture is not perfect | High (proposed) | Fix shipped 25 Nov: a new beat tracker. Waiting for the owner to try it with music | 25 Nov 2026, owner |
 | ZW-039 | Enhancement | Lasers: a festival look after the Transmission Prague show the owner loves | High (proposed) | First version shipped 25 Nov as the Olympus theme. Waiting for the owner |
+| ZW-040 | Bug | Lasers: the buttons cannot be clicked | High | Fix shipped 25 Nov. Waiting for the owner to confirm | 25 Nov 2026, owner |
 
 ## Closed
 
@@ -415,3 +416,11 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Not known:** how the show moves, since only still frames could be seen.
 - **First version shipped 25 Nov 2026:** the Olympus theme on `/laser.html`, which now opens the show: a wall of ten projectors with twenty beams each, magenta shafts, five patterns, a temple stage with ZEUS on the booth and a laser lattice, four views of its own, and a Stage set button to leave only the light. Detail in `STAGE-PLAN.md`, "The festival look". Checked in stills and by tests.
 - **Waiting on the owner:** is this the look he loved; frame rate with this many beams on his Mac; stage set on or off over his camera; what in the video's movement he wants that the stills could not show.
+
+### ZW-040: The buttons on the laser page cannot be clicked
+
+- **Reported:** 25 Nov 2026, by the owner, after the Olympus look shipped: "buttons are not clickable now".
+- **Cause, confirmed:** the picture (the canvas) is added to the page after the control panel, and both are fixed in place with no stacking order given, so the picture lay on top of the panel and took every click. Confirmed by asking the browser which element is under a button: the canvas.
+- **Not explained:** why it showed only now. Nothing in the page's layout changed in today's work, so it should have been so before. The earlier checks pressed buttons from script, which reaches a covered button; that is why they passed.
+- **Fix:** the panel is given a place above the picture, and the picture no longer takes clicks at all.
+- **Checked:** every button clicked with a real pointer in a browser (`assets/clicktest.mjs`, new, kept for this). **Waiting on the owner** to confirm on the preview.

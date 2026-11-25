@@ -12,8 +12,9 @@
   #mock::before { content: ''; position: absolute; left: 50%; bottom: -6%; width: 34vh; height: 62vh; transform: translateX(-50%); border-radius: 46% 46% 12% 12% / 38% 38% 6% 6%; background: linear-gradient(#3a3440, #1c1a22); box-shadow: 0 0 60px rgba(0,0,0,.6); }
   #mock::after { content: ''; position: absolute; left: 50%; bottom: 52vh; width: 17vh; height: 21vh; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 45% 40%, #8a6f62, #4a3a36); }
   body.mock #mock { display: block; }
-  canvas { position: fixed; inset: 0; }
-  #ui { position: fixed; left: 16px; bottom: 14px; color: #fff; font: 600 13px system-ui; background: rgba(10,12,22,.8); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 32px); }
+  /* the picture never takes clicks, and the panel sits above it: the picture is added to the page after the panel, so without this it covers the buttons */
+  canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #ui { z-index: 10; position: fixed; left: 16px; bottom: 14px; color: #fff; font: 600 13px system-ui; background: rgba(10,12,22,.8); padding: 10px 12px; border-radius: 12px; transition: opacity .5s; max-width: calc(100vw - 32px); }
   #ui.idle { opacity: 0; pointer-events: none; }
   #ui .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; align-items: center; }
   #ui button { background: #2f6fb0; color: #fff; padding: 7px 11px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
