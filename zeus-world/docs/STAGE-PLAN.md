@@ -376,3 +376,27 @@ The owner on the first test version: "I need professional creativity please. It 
 **Checked:** seven tests of the script (queue, start on the beat and bar, one bolt and one flame for a small gift, eleven leaps in order for a medium one, two beats of black then the cascade for a big one, twelve small gifts waking the temple, a flame burning out); the buttons by real clicks; a stepped run with and without music; stills of the storm, the strike, the name being written, the full moment, the burn-away and a flame (`assets/sheets/laser_gifts.jpg`); the build. **Not checked:** how it plays in motion, which is everything for a piece like this; frame rate while it runs.
 
 **Ideas not built yet:** the sender's profile picture inside the pediment; a streak making the bolt strike again and again, each time bigger; thunder (sound); the same language in Andie's room (her neon and crown in place of lightning).
+
+## The largest gifts as figures in the sky (ZW-046), first one built 25 Nov 2026
+
+The owner: "Check the gifts from TT and we need to animate some like that gift. For gifts 5k and above."
+
+**What TikTok has.** 93 gifts cost 5,000 coins or more, as listed on coinvertify.com/tiktok-gifts (prices "checked September 29, 2026") and livecade.io/tiktok-gifts/most-expensive, read 25 Nov 2026. The two agree on every price they share but not on which gifts exist; TikTok's catalogue differs by country and changes. The top: TikTok Universe 44,999; Julius the Champion and Valerian's Oath 43,999; King Leonardo, Legend Marcellus, Pegasus and Yuki's Vigilance 42,999; Fire Phoenix 41,999; Thunder Falcon and TikTok Stars 39,999; TikTok Universe+ 34,999; Seal and Whale 34,500; Leon and Lion and **Zeus** 34,000; Gorilla, Sam the Whale 30,000; Lion and Golden sports car 29,999; Dragon Flame 26,999; a long row at 25,999 (Phoenix, Adam's Dream, Griffin, T-rex, Light Castle, Vulcan and others). The whole list, grouped, is in `assets/review/giftcatalog.js`.
+
+**The decision that had to be made.** Ninety-three separate animations is not buildable, and TikTok's own artwork is theirs: it is not copied. So:
+
+- The gifts are grouped into **ten families** that share a figure: lion (the big cats), wings (falcon, phoenix, Pegasus, griffin), dragon, cosmos (Universe, Stars, Interstellar), sea (whales, ships), citadel (castles and landmarks), chariot (the cars), heart, hero (Zeus and the champions), revel (the parties).
+- The figure is **our own drawing, as a constellation**. The Greeks put their heroes and beasts among the stars; on Zeus's stage a great gift becomes one. It suits the stage, it is recognisably "that gift", and it is not TikTok's picture.
+
+**What a 5,000-and-over gift does (24 beats, about 12 seconds).** The storm and the bolt on the temple's peak, as for a big gift. Then the view tilts up and **a point of lightning draws the figure in the sky above the temple**, line by line, a star coming out at every corner, sparks falling from the pen. When it is complete it **wakes**: a flare, a ring spreading from it, sparks, the lasers back in gold (held lower than usual so the figure stays the hero). The sender's name is forged across the temple beneath it. Gold rains. At the end the figure's stars fall and the name burns away.
+
+**Built so far:** the lion family (Lion, Leon and Lion, King Leonardo, Black Tiger, Cyber Roar, Lili the Leopard, Leon and Lili, Wolf), as a lion's face in a mane. A gift in a family not yet drawn plays the big moment. Test button: "Lion (29,999)".
+
+**How**
+
+- `giftcatalog.js`: the families, and `stageGift(giftName, coins)`, which returns the size (small under 100 coins, medium under 1,000, big under 5,000, legend from 5,000; **these thresholds are a first guess for the owner to set**) and the figure.
+- `constellations.js`: a figure is a list of strokes in a square from -1 to 1. `prepare()` turns it into segments with their place along the whole drawing, and its stars. Adding a figure is adding a list of points here and its name to `DRAWN` in the catalogue.
+- `giftfx.js` draws it with the lasers' beams (a core and a wide faint sleeve), a sprite for each star, and sparks from the pen.
+- `window.zeusGiftFromTikTok(giftName, coins, sender)` is the entry for real gifts.
+
+**Checked:** nine tests in all for gifts (the catalogue's sizes and families, the figure's segments, the order of the legend's script); the Lion button by a real click and the sequence stepped through (about 12 seconds, four views, everything back to normal after); three stills (`assets/sheets/laser_gift_lion.jpg`); the build. **Not checked:** motion. Whether a face made of twelve strokes reads as a lion at stream size is for the owner to say.
