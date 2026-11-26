@@ -1,16 +1,16 @@
 // The open world (ZW-049): the page. The land is worldland.js; where the ground is and what grows there is worldgen.js;
 // the built places are worldplaces.js; the camera's moves, the story and the flights are cinecam.js.
-//   ?ui=0 no controls (a browser source)   ?debug=1 figures on screen   ?light=day|dusk   ?place=falls start at a place
+//   ?ui=0 no controls (a browser source)   ?debug=1 figures on screen   ?light=day|dusk|night|dawn|storm   ?place=falls start at a place
 //   ?sharp=2 draw at the screen's full sharpness (heavier; the default is 1.25)
 //   ?shot&beat=4&u=0.5   one still of a story shot, part way through      ?shot&place=falls&at=3   one still of a place, 3 s in
 //   ?shot&cam=x,y,z,tx,ty,tz&fov=40   one still from a chosen camera
 // From outside (a remote, later TikFinity): window.worldGo('falls'), window.worldStory()
 import * as THREE from 'three';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createLand } from './worldland.js';
 import { createTrees } from './worldtrees.js';
 import { createPlaces } from './worldplaces.js';
 import { createCine } from './cinecam.js';
+import { createAir, AIR } from './worldair.js';
 import { createPeople } from './worldpeople.js';
 import { connectObs } from './obsremote.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
@@ -21,20 +21,14 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadow
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.5, 40000), tickers = [];
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
 
-// ---------- light and air, the same recipe as the city's stream grade, with haze that deepens with distance
-const LD = { day: { sun: 0xffe9c4, sunI: 3.4, dir: [-0.55, 0.62, 0.5], hemi: 0.5, env: 0.62, exp: 0.9, fog: 0xa9c8e6, rot: 2.2 }, dusk: { sun: 0xff8a45, sunI: 1.7, dir: [-0.86, 0.2, 0.43], hemi: 0.16, env: 0.48, exp: 0.82, fog: 0xd99a78, rot: 3.9 } }, light = q.get('light') === 'dusk' ? 'dusk' : 'day', L = LD[light];
-renderer.toneMappingExposure = L.exp; scene.fog = new THREE.FogExp2(L.fog, 0.00013);
-const hemi = new THREE.HemisphereLight(0xfff4e0, 0x7a6a48, L.hemi), sun = new THREE.DirectionalLight(L.sun, L.sunI), sunDir = new THREE.Vector3(...L.dir).normalize(); scene.add(hemi, sun, sun.target);
-sun.castShadow = true; sun.shadow.autoUpdate = false; sun.shadow.mapSize.set(4096, 4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.25; Object.assign(sun.shadow.camera, { left: -170, right: 170, top: 170, bottom: -170, near: 1, far: 900 }); sun.shadow.camera.updateProjectionMatrix();
-// the shadows cover the ground round whatever the camera is looking at; they are moved in whole steps so that they do not crawl
-const focus = new THREE.Vector3(); function aimSun() { const s = 340 / 4096 * 8; sun.target.position.set(Math.round(focus.x / s) * s, focus.y, Math.round(focus.z / s) * s); sun.position.copy(sun.target.position).addScaledVector(sunDir, 420); sun.target.updateMatrixWorld(); }
-const tex = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); tex.colorSpace = THREE.SRGBColorSpace;
-const dome = new THREE.Mesh(new THREE.SphereGeometry(30000, 48, 24), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false })); dome.scale.z = -1; dome.rotation.y = L.rot; dome.renderOrder = -2; dome.frustumCulled = false; scene.add(dome);
-const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping; scene.environment = env; scene.environmentIntensity = L.env; scene.environmentRotation = new THREE.Euler(0, L.rot, 0);
+// ---------- light, sky and weather are worldair.js; it is made once the places are known, since the lamps belong to them
+const focus = new THREE.Vector3(), light = AIR[q.get('light')] ? q.get('light') : 'day';
 
 const trees = await createTrees({ renderer, scene, tickers }), land = createLand({ scene, tickers, trees }); await land.ready;
-const built = await createPlaces({ scene, heightAt, places, onProgress: (a, b) => { $('load').textContent = `THE WORLD IS WAKING  ${Math.round(100 * a / b)}%`; } });
-const roadPath = pathThrough(ROAD_PTS, 4), cine = createCine({ heightAt, road: roadPath, riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
+const roadPath = pathThrough(ROAD_PTS, 4), camps = [0.2, 0.6, 0.86].map((f) => { const a = roadPath[Math.floor(roadPath.length * f)], b = roadPath[Math.floor(roadPath.length * f) + 1], dx = b[0] - a[0], dz = b[b.length - 1] - a[a.length - 1], n = Math.hypot(dx, dz) || 1; return [a[0] - dz / n * 11, a[a.length - 1] + dx / n * 11]; });
+const built = await createPlaces({ scene, heightAt, places, camps, onProgress: (a, b) => { $('load').textContent = `THE WORLD IS WAKING  ${Math.round(100 * a / b)}%`; } });
+const cine = createCine({ heightAt, road: roadPath, riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
+const rv = river(), air = await createAir({ scene, renderer, tickers, lamps: built.lamps, mistAt: rv.filter((p, i) => i % Math.max(1, Math.floor(rv.length / 70)) === 0).map((p) => [p[0], p[3], p[1]]), start: light }), sun = air.sun, dome = air.dome, aimSun = () => air.follow(camera.position, focus);
 const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
 
 // ---------- the director: the story by itself, a place held for as long as wanted, and the flight between
@@ -47,13 +41,17 @@ function backToStory() { if (dir.mode === 'story') return; const b = cine.beats[
 function mark() { if (document.body.classList.contains('plain')) return; $('story').classList.toggle('on', !dir.key); for (const b of $('places').children) b.classList.toggle('on', b.dataset.k === dir.key); }
 for (const [k, p] of Object.entries(cine.places)) { const b = document.createElement('button'); b.textContent = p.name[0]; b.dataset.k = k; b.style.marginRight = '6px'; b.title = p.name[1] || p.name[0]; b.addEventListener('click', () => { go(k); tell({ cmd: 'go', key: k }); }); $('places').append(b); }
 $('story').addEventListener('click', () => { backToStory(); tell({ cmd: 'story' }); }); addEventListener('keydown', (e) => { const keys = Object.keys(cine.places), n = Number(e.key); if (e.key === '0' || e.key.toLowerCase() === 's') backToStory(); else if (n >= 1 && n <= keys.length) go(keys[n - 1]); else if (e.key.toLowerCase() === 'h' && q.get('ui') !== '0') document.body.classList.toggle('plain'); });
-window.worldGo = go; window.worldStory = backToStory;
+// the light and the weather: day, dusk, night, dawn, storm
+function setAir(k) { if (!AIR[k]) return; air.set(k).then(() => { if (document.body.classList.contains('plain')) return; for (const b of $('airs').children) b.classList.toggle('on', b.dataset.k === k); }); }
+for (const [k, a] of Object.entries(AIR)) { const b = document.createElement('button'); b.textContent = a.name; b.dataset.k = k; b.style.marginRight = '6px'; b.classList.toggle('on', k === light); b.addEventListener('click', () => { setAir(k); tell({ cmd: 'air', key: k }); }); $('airs').append(b); }
+$('bolt').addEventListener('click', () => { air.strike(); tell({ cmd: 'bolt' }); });
+window.worldGo = go; window.worldStory = backToStory; window.worldLight = setAir;
 // ---------- the remote (phase 4). A page without controls (a browser source in OBS) does what it is told: by OBS itself (an event OBS
 // hands to every browser source) or by another tab of the same browser. The page with controls is the remote: once connected to OBS on
 // this computer, Story and the place buttons steer the world in OBS as well as here.
-const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); };
+const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); else if (m.cmd === 'air') setAir(m.key); else if (m.cmd === 'bolt') air.strike(); };
 addEventListener('zeusWorld', (e) => obey(e.detail)); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data);
-let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); if (obs) obs.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
+let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); if (obs) obs.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : m.cmd === 'air' ? `OBS: ${AIR[m.key].name.toLowerCase()}` : m.cmd === 'bolt' ? 'OBS: lightning' : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
 if (!document.body.classList.contains('plain')) { const keep = { get: () => { try { return localStorage.getItem('world-obspass'); } catch { return null; } }, set: (v) => { try { localStorage.setItem('world-obspass', v); } catch { /* private window */ } } }; $('obsPass').value = keep.get() || '';
   const connect = async () => { $('obsStatus').textContent = 'connecting'; try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: () => { obs = null; $('obsStatus').textContent = 'connection to OBS closed'; } }); keep.set($('obsPass').value); const src = await obs.findBrowserSource('world.html').catch(() => null); $('obsStatus').textContent = src ? `connected · source "${src.name}": the buttons steer OBS too` : 'connected, but OBS has no browser source with world.html in its address'; } catch (e) { obs = null; $('obsStatus').textContent = e.message; } };
   $('obsConnect').addEventListener('click', connect); if (keep.get() != null && q.get('obs') !== '0') connect(); }
@@ -76,21 +74,21 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
   apply(dir.pose, t); people?.subject(dir.mode === 'story' ? dir.pose.subject || null : null); people?.update(t, dt, camera.position); }
 let frameNo = 0;
-function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); frameNo++; aimSun(); sun.shadow.needsUpdate = true; const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
+function frame(t) { for (const f of tickers) f(t); frameNo++; aimSun(); sun.shadow.needsUpdate = true; const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
   if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
-window.__world = { renderer, scene, camera, land, built, cine, dir, people, tickers, heightAt, places, city, go, backToStory };
+window.__world = { air, renderer, scene, camera, land, built, cine, dir, people, tickers, heightAt, places, city, go, backToStory };
 
 if (SHOT) { // one still: a story shot, a place, or a chosen camera
   let pose; if (q.get('cam')) { const c = q.get('cam').split(',').map(Number); pose = { p: c.slice(0, 3), t: c.slice(3, 6), fov: Number(q.get('fov')) || 40, roll: 0, shake: 0 }; }
   else if (q.get('place')) pose = cine.place(q.get('place'), Number(q.get('at') || 3)); else { const b = cine.beats[Number(q.get('beat') || 0)]; pose = cine.story(b.t0 + b.sec * Number(q.get('u') ?? 0.5)); }
   pose.fade = 0; if (!q.has('title')) pose.title = null; apply(pose, 3); people?.subject(pose.subject || null); people?.update(3, 0.016, camera.position); land.update(camera.position, true); const t0 = performance.now(); await new Promise((ok) => { const w = () => (land.settled() || performance.now() - t0 > 240000 ? ok() : setTimeout(w, 200)); w(); });
-  for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; trees.update(camera.position); renderer.render(scene, camera); sun.shadow.needsUpdate = true; renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
+  for (const f of tickers) f(6); aimSun(); sun.shadow.needsUpdate = true; trees.update(camera.position); renderer.render(scene, camera); sun.shadow.needsUpdate = true; renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
   window.__stats = { ...land.stats(), built: built.triangles, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, seconds: (performance.now() - t0) / 1000 }; window.ready = true; }
 else { // the land under the first shot is made ready before the story starts, so that it opens on a finished picture
   dir.pose = cine.story(0); if (q.get('place') && cine.places[q.get('place')]) { dir.key = q.get('place'); dir.mode = 'place'; dir.pose = cine.place(dir.key, 0); } apply(dir.pose, 0); mark();
   const clock = new THREE.Clock(); let warm = 0, started = false, frames = 0, acc = 0, prev = 0;
   renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); frames++; acc += t - prev; prev = t; if (acc > 0.5) { fps = frames / acc; frames = 0; acc = 0; }
-    if (!started) { for (const f of tickers) f(t); land.integrate(1e9); land.update(camera.position); if (warm === 1) { trees.warm(camera.position); warm = 2; } else trees.update(camera.position); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; renderer.render(scene, camera); if (warm === 0 && (land.settled() || t > 25)) { warm = 1; return; } if (warm === 2) { warm = 3; return; } if (warm === 3) { started = true; lastT = t; $('load').classList.add('gone'); renderer.compileAsync(scene, camera).catch(() => {}); } return; }
+    if (!started) { for (const f of tickers) f(t); land.integrate(1e9); land.update(camera.position); if (warm === 1) { trees.warm(camera.position); warm = 2; } else trees.update(camera.position); aimSun(); sun.shadow.needsUpdate = true; renderer.render(scene, camera); if (warm === 0 && (land.settled() || t > 25)) { warm = 1; return; } if (warm === 2) { warm = 3; return; } if (warm === 3) { started = true; lastT = t; $('load').classList.add('gone'); renderer.compileAsync(scene, camera).catch(() => {}); } return; }
     step(t); frame(t); if (!document.body.classList.contains('plain')) $('status').textContent = dir.mode === 'flight' ? 'flying…' : dir.mode === 'place' ? cine.places[dir.key].name[0] : 'the story'; });
   window.ready = true; }

@@ -96,15 +96,15 @@ export function createLand({ scene, tickers, trees, workers = Math.max(2, Math.m
   const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(rp, 3)); rg.setAttribute('uv', new THREE.Float32BufferAttribute(ruv, 2)); rg.setIndex(ri); rg.computeVertexNormals();
   const rivMat = water(0x2f86a8, 0.09, 0.16, 0.5, [0, -1]); rivMat.side = THREE.DoubleSide; const riv = new THREE.Mesh(rg, rivMat); riv.receiveShadow = true; riv.renderOrder = 1; scene.add(riv);
   // white water: a sheet of falling streaks over every steep stretch, strongest at the cliff
-  const fallMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, uniforms: { uT: wind, uFog: { value: new THREE.Color(0xa9c8e6) }, uDen: { value: 0.00013 } },
+  const fallMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, uniforms: { uT: wind, uFog: { value: new THREE.Color(0xa9c8e6) }, uDen: { value: 0.00013 }, uDim: { value: 1 } },
     vertexShader: '#include <common>\n#include <logdepthbuf_pars_vertex>\nvarying vec2 vUv; varying float vK; varying float vD; attribute float k; void main() { vUv = uv; vK = k; vec4 mv = modelViewMatrix * vec4( position, 1.0 ); vD = -mv.z; gl_Position = projectionMatrix * mv;\n#include <logdepthbuf_vertex>\n}',
     fragmentShader: `#include <logdepthbuf_pars_fragment>
-varying vec2 vUv; varying float vK; varying float vD; uniform float uT; uniform vec3 uFog; uniform float uDen;
+varying vec2 vUv; varying float vK; varying float vD; uniform float uT; uniform vec3 uFog; uniform float uDen; uniform float uDim;
       float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); } float n(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
       void main() {
 #include <logdepthbuf_fragment>
  float s = n(vec2(vUv.x * 22.0, vUv.y * 3.0 - uT * 2.6)) * 0.6 + n(vec2(vUv.x * 61.0, vUv.y * 7.0 - uT * 4.1)) * 0.4; float edge = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
-        float a = clamp(vK * (0.55 + 0.9 * s) * edge, 0.0, 0.97); vec3 c = mix(vec3(0.72, 0.86, 0.93), vec3(1.0), s); float f = 1.0 - exp(-uDen * uDen * vD * vD); gl_FragColor = vec4(mix(c, uFog, f), a); }` });
+        float a = clamp(vK * (0.55 + 0.9 * s) * edge, 0.0, 0.97); vec3 c = mix(vec3(0.72, 0.86, 0.93), vec3(1.0), s); float f = 1.0 - exp(-uDen * uDen * vD * vD); gl_FragColor = vec4(mix(c * uDim, uFog, f), a); }` });
   const wk = []; for (let i = 0; i < R.length; i++) { const p = R[i], a = R[Math.max(0, i - 1)], b = R[Math.min(R.length - 1, i + 1)], dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz) || 1, nx = -dz / l, nz = dx / l, w = p[2] + 1.5, s = THREE.MathUtils.smoothstep(Math.max(steep(i), steep(Math.max(0, i - 1)), steep(Math.min(R.length - 1, i + 1))), 0.05, 0.5);
     const fx = dx / l * 1.6 * s, fz = dz / l * 1.6 * s; wp.push(p[0] + nx * w + fx, p[3] + 0.35, p[1] + nz * w + fz, p[0] - nx * w + fx, p[3] + 0.35, p[1] - nz * w + fz); wuv.push(0, p[4] / 9 + p[3] / 5, 1, p[4] / 9 + p[3] / 5); wk.push(s, s); if (i) { const k = (i - 1) * 2; wi.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } }
   const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wp, 3)); wg.setAttribute('uv', new THREE.Float32BufferAttribute(wuv, 2)); wg.setAttribute('k', new THREE.Float32BufferAttribute(wk, 1)); wg.setIndex(wi);

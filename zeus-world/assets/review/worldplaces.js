@@ -6,12 +6,15 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
-export async function createPlaces({ scene, heightAt, places, onProgress = () => {} }) {
+export async function createPlaces({ scene, heightAt, places, camps = [], onProgress = () => {} }) {
+  const lamps = []; // where light comes from after dark: lanterns, braziers and altars, a lamp by each door, the travellers' fires (worldair.js draws them)
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const cache = {}, M = (n) => `./models/${n}.glb`;
   const get = (n) => (cache[n] ||= loader.loadAsync(M(n)).then((g) => { g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); return g.scene; }).catch((e) => { console.warn('model missing', n, e.message); return null; }));
   const root = new THREE.Group(); scene.add(root); const jobs = []; let done = 0;
   // set a model down: x, z in the world, turned by ry, standing on the ground there (or at a given height)
-  const put = (n, x, z, ry = 0, s = 1, y = null) => jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const o = m.clone(true); o.position.set(x, y ?? heightAt(x, z), z); o.rotation.y = ry; o.scale.setScalar(s); o.updateMatrixWorld(true); o.traverse((c) => { c.matrixAutoUpdate = false; }); root.add(o); }));
+  const put = (n, x, z, ry = 0, s = 1, y = null) => jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const o = m.clone(true); o.position.set(x, y ?? heightAt(x, z), z); o.rotation.y = ry; o.scale.setScalar(s); o.updateMatrixWorld(true); o.traverse((c) => { c.matrixAutoUpdate = false; }); root.add(o);
+    const k = /lantern/.test(n) ? 'lamp' : /brazier|altar/.test(n) ? 'fire' : /^home_villa-walls|^biz_(?!stall)|^civic_(?!aqueduct)|decor_shrine/.test(n) ? 'door' : null; if (!k) return; const b = new THREE.Box3().setFromObject(o), g = o.position.y;
+    if (k === 'door') { const d = (b.max.z - b.min.z + b.max.x - b.min.x) / 4 + 0.8; lamps.push({ x: x + Math.sin(ry) * d, y: g + 2.1, z: z + Math.cos(ry) * d, ground: g, kind: k }); } else lamps.push({ x, y: k === 'lamp' ? b.max.y - 0.35 : b.max.y + 0.1, z, ground: g, kind: k }); }));
   const face = (x, z, cx, cz) => Math.atan2(cx - x, cz - z);
 
   // A Zeus World home, built the way the city builds them: walls, an upper floor if it has one, a roof, and a columned porch.
@@ -53,7 +56,9 @@ export async function createPlaces({ scene, heightAt, places, onProgress = () =>
     put('biz_bakery_t1', -92, -30, 0.3); put('biz_pottery_t1', -108, 34, 2.9); put('biz_cafe_t1', -128, -32, 0.2); put('biz_stall_t1_fruit', -76, 9, 1.6); put('biz_stall_t1_pottery', -82, -9, -1.5); put('water_well', -150, 30); put('decor_shrine', -200, -22, 0.4);
     for (let i = 0; i < 9; i++) c('civic_aqueduct', -60 - i * 8, -62, 0);
     c('civic_lighthouse', 70, 44); put('landmark_colossus', 72, -44, Math.PI / 2, 1, 2.6); put('landmark_trireme', 104, 6, 0.3, 1, 0.1); }
+  // travellers' camps beside the road: two logs and a fire
+  for (const [x, z] of camps) { const g = heightAt(x, z); put('nature_log_fallen', x + 1.5, z + 0.4, 0.5, 0.42); put('nature_log_fallen', x - 1.3, z - 0.9, 2.3, 0.42); lamps.push({ x, y: g + 0.45, z, ground: g, kind: 'fire', size: 1.25 }); }
   await Promise.all(jobs);
   let tris = 0; root.traverse((o) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
-  return { root, models: Object.keys(cache).length, placed: jobs.length, triangles: Math.round(tris) };
+  return { root, lamps, models: Object.keys(cache).length, placed: jobs.length, triangles: Math.round(tris) };
 }
