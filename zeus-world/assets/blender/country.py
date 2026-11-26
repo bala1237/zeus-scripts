@@ -134,18 +134,8 @@ def mill():
     P.window(lo['F'], 1.2, 1.2, w=0.6, h=0.8, wood='wood_dark')
     P.window(f['F'], 0, 3.3, w=0.8, h=1.0, wood='azure_wood'); P.window(f['L'], 0, 3.3, w=0.8, h=1.0, wood='azure_wood')
     zw.box('step', (1.9, 0.9, 0.16), (-0.6, -D / 2 - 0.45, 0.08), mat('paving'), bevel=0.03, uv=1.2)
-    # the wheel: 3.8 m across, on an oak axle through the wall, in a timber frame, fed by a trough from behind
-    R, X, Z = 1.9, W / 2 + 0.95, 1.95
-    zw.cylinder('axle', 0.16, 0.16, 2.6, (W / 2 + 0.7, 0, Z), mat('wood_dark'), axis='X', segs=10, uv=0.6)
-    for s in (-1, 1):
-        x = X + s * 0.36
-        for r in (R, R - 0.34): zw.torus('felloe', r, 0.11, (x, 0, Z), mat('wood'), axis='X', seg=28, tube=6)
-        for i in range(8): a = i * math.pi / 4; zw.beam('spoke', (x, 0, Z), (x, (R - 0.05) * math.cos(a), Z + (R - 0.05) * math.sin(a)), 0.1, 0.07, mat('wood_dark'), uv=0.6)
-        zw.cylinder('hub', 0.3, 0.3, 0.16, (x, 0, Z), mat('bronze'), axis='X', segs=12)
-    for i in range(20):
-        a = i * math.pi / 10; c, s_ = math.cos(a), math.sin(a)
-        o = zw.box('paddle', (0.86, 0.05, 0.42), (0, 0, 0), mat('plank'), bevel=0.006, uv=0.7)
-        o.data.transform(Matrix.Translation((X, (R - 0.12) * c, Z + (R - 0.12) * s_)) @ Matrix.Rotation(a + math.pi / 2, 4, 'X'))
+    R, X, Z = 1.9, W / 2 + 0.95, 1.95                      # where the wheel hangs; the wheel itself is its own model (mill_wheel), so that the world can turn it
+    zw.cylinder('axle', 0.12, 0.12, 1.2, (W / 2 + 0.5, 0, Z), mat('wood_dark'), axis='X', segs=10, uv=0.6)
     for y in (-2.25, 2.25):
         P.post(X + 0.75, y, 0, 3.3, 0.2, 'wood_dark')
         zw.beam('brace', (X + 0.75, y, 0.3), (X + 0.75, y * 0.35, 1.9), 0.12, 0.12, mat('wood_dark'), uv=0.6)
@@ -162,6 +152,21 @@ def mill():
         h = zw.cylinder('eye', 0.11, 0.11, 0.22, (0, 0, 0), mat('dark'), axis='Y', segs=10)
         for q in (o, h): q.data.transform(Matrix.Translation((x, -D / 2 - 0.3 - i * 0.22, 0.56)) @ Matrix.Rotation(-tilt, 4, 'X'))
     for i, (x, y) in enumerate(((-1.9, -2.95), (-1.55, -3.2))): sack((x, y, 0), 0.85, i + 5)
+
+
+def mill_wheel():
+    """The mill's wheel alone, 3.8 m across, turning about X: felloes, spokes, hubs, twenty paddles and its axle."""
+    R, X, Z = 1.9, 0.0, 2.0
+    zw.cylinder('axle', 0.16, 0.16, 1.5, (X, 0, Z), mat('wood_dark'), axis='X', segs=10, uv=0.6)
+    for s in (-1, 1):
+        x = X + s * 0.36
+        for r in (R, R - 0.34): zw.torus('felloe', r, 0.11, (x, 0, Z), mat('wood'), axis='X', seg=28, tube=6)
+        for i in range(8): a = i * math.pi / 4; zw.beam('spoke', (x, 0, Z), (x, (R - 0.05) * math.cos(a), Z + (R - 0.05) * math.sin(a)), 0.1, 0.07, mat('wood_dark'), uv=0.6)
+        zw.cylinder('hub', 0.3, 0.3, 0.16, (x, 0, Z), mat('bronze'), axis='X', segs=12)
+    for i in range(20):
+        a = i * math.pi / 10; c, s_ = math.cos(a), math.sin(a)
+        o = zw.box('paddle', (0.86, 0.05, 0.42), (0, 0, 0), mat('plank'), bevel=0.006, uv=0.7)
+        o.data.transform(Matrix.Translation((X, (R - 0.12) * c, Z + (R - 0.12) * s_)) @ Matrix.Rotation(a + math.pi / 2, 4, 'X'))
 
 
 # ---------------------------------------------------------------- 4. the timber bridge (28 x 4 m; deck ends 0.9 m up on stone ramps; piers go 4 m below the ground)
@@ -405,6 +410,6 @@ def ruin():
     for i, (x, y, z, r) in enumerate(((-3.6, -2.3, Z + 0.5, 0.5), (-3.9, 2.2, Z + 0.3, 0.55), (4.9, -3.4, 0.2, 0.7), (-5.2, -3.3, 0.2, 0.8), (3.7, 2.4, Z + 1.3, 0.4), (-1.3, -2.3, Z + 2.2, 0.38), (0.9, 3.5, 0.3, 0.7))): P.shrub(x, y, z, r, 'leaf', 50 + i, 6)
 
 
-BUILD = {'ruin': ruin, 'hut': hut, 'barn': barn, 'mill': mill, 'bridge': bridge, 'boat': boat, 'jetty': jetty, 'cart': cart, 'haystack': haystack, 'fence': fence, 'beehives': beehives, 'threshing': threshing, 'shrine': shrine}
+BUILD = {'ruin': ruin, 'mill_wheel': mill_wheel, 'hut': hut, 'barn': barn, 'mill': mill, 'bridge': bridge, 'boat': boat, 'jetty': jetty, 'cart': cart, 'haystack': haystack, 'fence': fence, 'beehives': beehives, 'threshing': threshing, 'shrine': shrine}
 BUILD[ITEM]()
 P.finish(OUT, dist=0.6 if ITEM in ('barn', 'mill', 'bridge', 'shrine', 'hut', 'ruin') else 0.4, keep=('deck', 'thatch', 'hay', 'floor'))

@@ -194,3 +194,13 @@ The owner measured 35 frames a second at the low end of the story and 32 to 35 a
 - **Trap:** a far-view file holds many small pieces. Each must be joined into one geometry (`join` in `worldplaces.js`) or the far version costs more draws than the model it replaces: the first try had 1,496 far pieces on screen.
 - The picture is capped at 60 frames a second (`?fps=`; 0 removes the cap).
 - These are counts, not speeds. The frame rate itself can only be read on the owner's Mac (`?debug=1`).
+
+## What moves (`worldlife.js`, ZW-054 item 1)
+
+- **Cloth** is the city's trick (materials named `cloth_*` ripple in the vertex shader, in world space) with one change: the buildings are drawn in batches, so the shader must use `modelMatrix * instanceMatrix`.
+- **Boats** are still one batch per square; `built.batchesOf(name)` gives a model's batches with their list of placements, and the boats' matrices are rewritten every frame with a small rise, roll and pitch. Thirteen boats.
+- **The mill wheel** is its own model (`country_mill-wheel`, `mill_wheel` in `country.py`); the mill is built without it. A model's origin is the centre of its bounding box, not the house's centre, so the wheel's place relative to the mill was read from the raw file's bounds: 2.59 m to the right, 1.99 m up, 0.4 m back.
+- **The mill's shelf.** The river's bank by the village is a 3.4 m step, so a mill on the bank had its wheel in the air. A place with `flat` can now carry its own level (`y`): `millshelf` in `worldgen.js` cuts a shelf 0.1 m above the water. `bank()` in `worldplaces.js` then finds the shelf's edge, and the mill is set 0.15 m under the water's level so the paddles dip.
+- **Smoke** is one `Points` for every hearth (huts and camp fires); each puff's place comes from its hearth and its age in the shader. Its fog colours are set by `air.set`, which is why `world.js` calls `air.set` once more after `createLife`.
+- **Gulls** are one instanced draw of a three-triangle bird; the wing tips flap in the shader.
+- Not checked here: any of the motion itself.

@@ -111,6 +111,8 @@ const PLACES = {
   // clearings for the countryside (phase 3 of the world plan): three shepherds' huts and the mill bank by the village
   hut1: { x: 130, z: -700, kind: 'hut', clear: 46 }, hut2: { x: -330, z: -860, kind: 'hut', clear: 46 }, hut3: { x: -160, z: -480, kind: 'hut', clear: 46 },
   mill: { x: -335, z: -1590, kind: 'mill', clear: 150 },
+  // a shelf cut into the river's bank at the water's level, for the mill to stand on with its wheel in the stream (the bank is a 3.4 m step otherwise)
+  millshelf: { x: -318.5, z: -1580.5, kind: 'shelf', flat: 11, y: 22.9 },
   // new places (phase 7). flat: the ground is levelled this far out, as the village's is
   harbour: { x: 700, z: -95, name: 'Thalassa', kind: 'harbour', clear: 170, flat: 78 },
   sanctuary: { x: 515, z: -3480, name: 'The High Sanctuary', kind: 'sanctuary', clear: 85, flat: 46 },

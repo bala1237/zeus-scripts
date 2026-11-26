@@ -80,9 +80,9 @@ export async function createPlaces({ scene, heightAt, places, camps = [], river 
   for (const k of ['hut1', 'hut2', 'hut3']) { const h = places[k]; put('country_hut_shepherd', h.x, h.z, 2.2); put('country_fence', h.x + 9, h.z - 2, 0.3); put('country_fence', h.x + 11.8, h.z - 2.9, 0.3); put('country_haystack', h.x - 8, h.z - 4, 1, 0.7); spots.huts.push({ x: h.x, z: h.z }); }
   for (const [x, z, ry] of roadside) put('country_shrine_roadside', x, z, ry);
   // the river by the village: the mill with its wheel over the water, a jetty with a boat, and a timber bridge to the far bank
-  if (river.length) { const near = (X) => river.reduce((b, p) => (Math.abs(p[0] - X) < Math.abs(b[0] - X) ? p : b)), bank = (p, side) => { let d = 2; while (d < 60 && heightAt(p[0], p[1] + side * d) < p[3] + 0.25) d += 0.5; return d; };
-    const m = near(places.village.x - 20), dm = bank(m, 1); put('country_watermill', m[0], m[1] + dm + 2.3, Math.PI / 2, 1, Math.max(m[3] + 0.3, heightAt(m[0], m[1] + dm + 2.3)));
-    const j = near(places.village.x - 75), dj = bank(j, 1); put('country_jetty', j[0], j[1] + dj - 2.6, 0, 1, j[3] + 0.3 - 3.0); put('country_boat_fishing', j[0] - 4.6, j[1] + dj - 5.2, 0.12, 1, j[3] - 0.38); put('country_boat_fishing', j[0] + 70, j[1] - 1, -0.2, 1, j[3] - 0.38);
+  if (river.length) { const near = (X) => river.reduce((b, p) => (Math.abs(p[0] - X) < Math.abs(b[0] - X) ? p : b)), bank = (p, side) => { let d = 2; while (d < 60 && heightAt(p[0], p[1] + side * d) < p[3] + 0.08) d += 0.5; return d; };
+    const m = near(places.village.x - 20), dm = bank(m, 1), my = m[3] - 0.15; put('country_watermill', m[0], m[1] + dm + 1.7, Math.PI / 2, 1, my); spots.mill = { x: m[0], y: my, z: m[1] + dm + 1.7, ry: Math.PI / 2 };
+    const j = near(places.village.x - 75), dj = bank(j, 1); put('country_jetty', j[0], j[1] + dj - 2.6, 0, 1, j[3] + 0.3 - 3.0); spots.jetty = { x: j[0], y: j[3] + 0.85, z: j[1] + dj - 2.6 }; put('country_boat_fishing', j[0] - 4.6, j[1] + dj - 5.2, 0.12, 1, j[3] - 0.38); put('country_boat_fishing', j[0] + 70, j[1] - 1, -0.2, 1, j[3] - 0.38);
     const b = near(places.village.x + 110), hb = Math.max(heightAt(b[0], b[1] + 15), heightAt(b[0], b[1] - 15), b[3] + 0.4); put('country_bridge_timber', b[0], b[1], Math.PI / 2, 1, hb - 4.0); }
   put('country_boat_fishing', 116, -24, 0.9, 1, -0.38); put('country_boat_fishing', 122, 30, -0.5, 1, -0.38); put('country_boat_fishing', 131, 4, 2.4, 1, -0.38);
   // ---------- new places (phase 7)
@@ -114,9 +114,11 @@ export async function createPlaces({ scene, heightAt, places, camps = [], river 
   for (const c of cells.values()) { const flat = /^infra_tile/.test(c.n), mk = (list, mat, shadow) => list.map((q) => { const im = new THREE.InstancedMesh(q.geo, mat || q.mat, c.list.length); c.list.forEach(([x, y, z, ry, s], i) => im.setMatrixAt(i, M4.compose(V.set(x, y, z), Q.setFromAxisAngle(UP, ry), S.setScalar(s)))); im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere(); im.castShadow = shadow; im.receiveShadow = true; im.matrixAutoUpdate = false; root.add(im); return im; });
     const full = mk(c.m.full, null, !flat), far = c.m.far ? mk(c.m.far, farMat, false) : null, ball = new THREE.Sphere(); full.forEach((im, i) => (i ? ball.union(im.boundingSphere) : ball.copy(im.boundingSphere)));
     for (const q of c.m.full) tris += c.list.length * (q.geo.index ? q.geo.index.count : q.geo.attributes.position.count) / 3;
-    if (far) for (const im of far) im.visible = false; groups.push({ full, far, ball, flat, near: true }); }
+    if (far) for (const im of far) im.visible = false; groups.push({ n: c.n, list: c.list, full, far, ball, flat, near: true }); }
   // called every frame: which squares are drawn from the models themselves, which from the far-view versions, and which cast shadows
   function update(cam, focus) { for (const g of groups) { const d = Math.max(0, g.ball.center.distanceTo(cam) - g.ball.radius), near = !g.far || d < (g.near ? FAR * 1.08 : FAR); if (near !== g.near) { g.near = near; for (const im of g.full) im.visible = near; for (const im of g.far) im.visible = !near; }
       if (near && !g.flat) { const sh = Math.max(0, g.ball.center.distanceTo(focus) - g.ball.radius) < SHADOW; if (g.full[0].castShadow !== sh) for (const im of g.full) im.castShadow = sh; } } }
-  return { root, lamps, spots, update, models: Object.keys(cache).length, placed, batches: groups.length, triangles: Math.round(tris) };
+  // the batches of one model, for anything that wants to move them (worldlife.js rocks the boats): each has its list of [x, y, z, ry, s] and its instanced meshes
+  const batchesOf = (n) => groups.filter((g) => g.n === n);
+  return { root, lamps, spots, update, batchesOf, models: Object.keys(cache).length, placed, batches: groups.length, triangles: Math.round(tris) };
 }

@@ -12,6 +12,7 @@ import { createPlaces } from './worldplaces.js';
 import { createCine } from './cinecam.js';
 import { createAir, AIR } from './worldair.js';
 import { createAnimals } from './worldanimals.js';
+import { createLife } from './worldlife.js';
 import { createPeople } from './worldpeople.js';
 import { connectObs } from './obsremote.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
@@ -32,7 +33,9 @@ const built = await createPlaces({ scene, heightAt, places, camps, roadside, riv
 const cine = createCine({ heightAt, road: roadPath, riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
 const rv = river(), air = await createAir({ scene, renderer, tickers, lamps: built.lamps, mistAt: rv.filter((p, i) => i % Math.max(1, Math.floor(rv.length / 70)) === 0).map((p) => [p[0], p[3], p[1]]), start: light }), sun = air.sun, dome = air.dome, aimSun = () => air.follow(camera.position, focus);
 const animals = q.get('animals') === '0' ? null : await createAnimals({ scene, heightAt, spots: built.spots, tickers });
-const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
+const life = q.get('life') === '0' ? null : await createLife({ scene, built, places, heightAt, tickers });
+await air.set(light); // again, so that what was made after the light (smoke) takes its colours
+const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, spots: built.spots, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
 
 // ---------- the director: the story by itself, a place held for as long as wanted, and the flight between
 // mode: 'story' | 'flight' | 'place'. The story's clock stops while the director is elsewhere and picks up at the start of the shot it left.
