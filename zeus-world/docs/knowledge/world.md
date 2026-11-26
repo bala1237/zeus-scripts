@@ -90,11 +90,22 @@ The owner, on the published forest: "when camera moves, its jittery since its re
 - **Depth.** The page drew depth on a logarithmic scale, which makes every hidden pixel cost as much as a visible one: ruinous in a forest of overlapping leaves and cards. It now uses a reversed depth buffer (`reversedDepthBuffer`), which gives the same range for nothing. If a browser lacks it, three.js falls back to ordinary depth and distant water may flicker.
 - **Sharpness.** The picture was drawn at twice the screen's pixels on a Retina display. Now 1.25 times; `?sharp=2` restores full sharpness.
 - **Squares arriving.** Each finished square was put into the picture the moment its worker returned it, several in one frame. They now queue and go in within about 3.5 ms a frame (`integrate` in `worldland.js`).
-- **Shadows** are redrawn on every other frame, and the ground no longer casts them (trees, rocks and buildings do).
+- **Shadows:** the ground no longer casts them (trees, rocks and buildings do). Redrawing them on alternate frames was tried and undone: it makes one frame heavy and the next light.
 - **Programs** are compiled once the first view is ready, not when each kind of thing first appears.
 - **Less in view:** 28 full trees (was 40) and 220 close ones (was 260); rocks only on the finest squares; fewer fallen logs.
 - **Load after this:** forest road 9.0 million triangles and 2,470 draw calls (was 10.9 and 2,600); village from the air 6.4 million and 3,540; the road to the gate 4.0 million and 2,300. The figures include the shadow pass.
 - **If it is still not smooth, next:** draw calls (about ten separate drawings per square; the trees' cards could be one), the city and village models as fewer, merged pieces, a lower setting for shadows, and `sharp=1`.
+
+## Jitter on the fast low flights (26 Nov 2026)
+
+After the smoothness fixes the owner said: "still jittery, mostly on the fast low flights". That pointed at the camera, not the drawing.
+
+- **Cause.** The road and the river were rows of points joined by straight pieces (4 m apart on the road, about 35 m on the river). The fast flights follow them and lean into bends, and the lean was worked out from the direction of the piece the camera was on, so it jumped at every joint: by 4 degrees between two frames on the road and 12 to 18 over the river. Heading jumped too.
+- **Fix** (`measured` in `cinecam.js`). Each line is first made into a true curve in 2 m steps. A point on it is the average of a stretch (6 m for walking shots, 16 to 20 m for the fast ones), its direction is taken across 24 m, and the bend that sets the lean across 48 m. The lean now changes by under 0.3 degrees a frame.
+- **Three other shots had jumps of their own** and are fixed: the walking shot beside the ford dropped into the river's bed (it now starts clear of the water and evens out the ground); the long-lens shot in the mountains rode over the ground beneath it as it drifted (it now keeps one height); the flight up the river to the falls was forced up the cliff at the end (it stops short).
+- **How to measure it:** `node renders/camjerk.mjs` prints, for every shot, the largest change between two frames in heading, lean and speed. A test (`no shot turns, leans or changes speed in steps`) holds every shot to 0.3 degrees, 0.4 degrees and 1.5 m/s.
+- **Lesson.** Jitter that is worst when the camera is fastest is the camera's path before it is the frame rate. Measure the path first: it needs no picture.
+- Also done: each kind of tree is drawn once out of sight while the page opens (`warm` in `worldtrees.js`), so its shape and pictures are on the graphics card before the camera reaches one; shadows are redrawn on every frame again, since alternate frames made frame times uneven; land is put in at full speed while the page is opening.
 
 ## Not yet built
 

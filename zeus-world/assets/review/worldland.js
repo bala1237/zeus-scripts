@@ -96,5 +96,5 @@ varying vec2 vUv; varying float vK; varying float vD; uniform float uT; uniform 
   const puff = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,0.9)'); g.addColorStop(0.5, 'rgba(255,255,255,0.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
   const mist = []; for (let i = 0; i < 22; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: puff, transparent: true, depthWrite: false, opacity: 0, color: 0xeaf4fa })); s.renderOrder = 3; scene.add(s); mist.push({ s, ph: i / 22, a: i * 2.399, r: 6 + (i * 37 % 17) }); }
   tickers.push((t) => { for (const m of mist) { const u = (t * 0.11 + m.ph) % 1; m.s.position.set(F.x + Math.cos(m.a) * m.r * (0.4 + u), F.foot + 2 + u * 34, F.z + Math.sin(m.a) * m.r * (0.4 + u)); const sc = 14 + 46 * u; m.s.scale.set(sc, sc, 1); m.s.material.opacity = 0.5 * Math.sin(Math.PI * u) ** 1.2; } });
-  return { update, settled, stats, groundMat, fallMat, sea, river: riv, tiles };
+  return { update, settled, stats, integrate, groundMat, fallMat, sea, river: riv, tiles };
 }
