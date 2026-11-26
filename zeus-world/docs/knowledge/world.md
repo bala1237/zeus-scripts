@@ -209,3 +209,9 @@ The owner measured 35 frames a second at the low end of the story and 32 to 35 a
 
 - The page with controls reaches OBS at `ws://127.0.0.1:4455` from an https page. Chrome allows that only if the site has "Local network access"; it asks once, and a refused or ignored question blocks the link silently. Safari does not allow it at all.
 - Close code 1006 ("went away") from a link that never joined means it never opened: OBS not running, its WebSocket server off, another port, or the browser blocking. `obsremote.js` keeps `done` (the promise is settled) apart from `joined` (OBS accepted us) so a failed attempt is not also reported as a closed link.
+
+## Water (ZW-054 item 2)
+
+- **The patchwork on the water was the ripple picture, not the mesh.** The ripple normal map is built from a handful of cosine waves. With fractional numbers of waves across the picture it does not tile, so each repeat ends in a straight seam, and three layers at three scales and angles made a lattice of them. Proof: with the normal map's strength at zero the water was smooth. The waves now have whole numbers across (`W` in `ripple`, `worldland.js`). Tangents and coordinate precision were both tried first and were not the cause.
+- **The river ribbon** is resampled to a point every 9 m on a curve through the river's points, three points across, with normals straight up and given tangents. Its material takes `banks = true`: an attribute `across` (0 at a bank, 1 in midstream) makes the shallows pale and half clear and puts drifting flecks of foam there.
+- **The sea shore** is done in the ground's shader, since the sea is one flat sheet that knows nothing of the shore: ground within about 0.6 m above sea level is darkened as wet sand, and a band of white follows a height that rises and falls with time and place (`lap`). Bright sand hides foam drawn on it; the wet band under it is what makes it show. A steep shore makes the band very thin.

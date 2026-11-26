@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 26 Nov 2026
 
+- **Open world: the water (ZW-054, item 2).** The river and the sea no longer show a patchwork of straight seams: the ripple pattern did not tile, and every repeat left a line. The river is laid on a finer, curved line and lit as flat water, so it reflects the sky smoothly; it is pale and clear in the shallows by each bank, with flecks of foam there. On the sea shore the sand is dark where it is wet and a line of foam runs up it and back.
 - **World remote keeps its link to OBS (ZW-055).** The owner connected and then saw "connection to OBS closed". The page now says why OBS closed the link and joins again by itself.
 - **Open world: things move (ZW-054, item 1).** The mill wheel turns, and the mill now stands on a shelf at the water's edge with its wheel in the stream. Boats rise and roll on the water. Banners, awnings and sails stir in the wind. Smoke rises from the shepherds' huts and the travellers' fires. Gulls circle over Thalassa, the city's shore and the village jetty. People stand at the new spots: a farmer by each pen and barn, a shepherd by each hut, the miller, someone on the jetty, a traveller at the ruins.
 - **The man walks properly (ZW-053).** The owner saw citizens walking as if a leg and an arm were broken, in the world and in the city. It was the man's body, tied too coarsely to his bones. His binding is rebuilt; the soldier, the same man, is rebuilt with it and loses his ragged hem.
