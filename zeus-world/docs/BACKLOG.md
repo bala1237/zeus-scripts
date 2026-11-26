@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-053.**
+- **Next number: ZW-054.**
 
 ## Open
 
@@ -64,6 +64,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
 | ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground), 3 (countryside), 4 (the remote), 5 (light and weather) and 6 (animals, standing) and 7 (new places) published; next 8 (the living city), 9 (the game) | 26 Nov 2026, owner |
 | ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Open | 26 Nov 2026, owner |
+| ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Open | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -620,3 +621,22 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Read as:** the story swings between 35 and 120 frames a second; Thalassa never gets above 32 to 35. The target is a steady 60.
 - **Known:** every model set down by `worldplaces.js` is its own object, so each paving tile, wall, roof and lantern is a separate draw, and is drawn a second time for shadows. Thalassa added about 300 paving tiles and 13 homes of three or four parts each.
 - **Not known yet:** how the cost splits between the number of draws, the number of triangles and the shadows. To be measured before changing anything.
+- **Target agreed 26 Nov 2026:** a steady 60, capped. OBS output settings not known yet (the owner has not tested OBS with it).
+
+### ZW-053: The walk looks broken
+
+- **Reported:** 26 Nov 2026, by the owner: "the walking of the characters looks like one leg and arm broken. it bends that akward way". Asked where: "its closeup and clearly visible"; and in the city page: "same issue. i guess its a shared resource".
+- **Known:** it shows close up, so it is not the far-view body. It shows in both pages, so it is in what they share: the three citizen models and their walk, not the open world's own code.
+- **Not known yet:** which limb, and whether the fault is in the walk recorded in the model or in how the pages play it. Motion cannot be watched on this machine; to be found by stills of single moments of the walk.
+- **Found 26 Nov 2026, by frame sheets of the walk** (`assets/sheets/walk_check.jpg`): the walk itself is sound; the fault is how the man's body is tied to his bones. Both thighs follow one leg bone and the upper arms follow the hips (already noted in `knowledge/characters.md`), so the trailing leg folds at the knee with the thigh left behind, and the arms stay stiff and bent out. The woman (binding rebuilt in ZW-012) and the elder walk acceptably; the elder's stride is long. The man is one citizen in three, and the newcomer.
+- **Ways to fix, not yet chosen:** rebuild the man's binding the way the soldier's was (`reskin.mjs`; free; the soldier's tunic hem came out ragged, so the hem needs care), or have the man rigged again by the paid service.
+
+(ZW-052, measured 26 Nov 2026 with `assets/wstat.mjs`, software rendering, counts not speeds.) Separate draws and triangles for one frame:
+
+| View | Everything | Without shadows | And without buildings | Land alone |
+| --- | --- | --- | --- | --- |
+| Thalassa | 1,900 draws, 3.8 M | 1,061, 2.6 M | 334, 1.6 M | 81, 0.4 M |
+| Story, in the village | 4,635 draws, 8.9 M | 3,732, 6.9 M | 423, 1.9 M | 87, 0.5 M |
+| Story, at the city gate | 2,797 draws, 4.7 M | 1,118, 2.3 M | 143, 0.8 M | 72, 0.3 M |
+
+The buildings are the cost: about 3,300 of the village shot's draws and 5 million of its triangles, and the shadows draw most of them a second time. The land, trees, grass, people and animals together are under 450 draws.
