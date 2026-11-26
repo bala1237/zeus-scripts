@@ -178,3 +178,19 @@ One part owns the sun, the sky dome, the fog and everything that changes with th
 - The harbour finds its own shoreline (walk east from the centre until the ground is under 0.9 m) and hangs the quay, jetties and boats on that line. `worldpeople.js` does the same sum to stand people on the quay.
 - A camera orbit needs the clearing wider than the orbit: the ruins' first orbit (34 m) sat inside the trees of a 34 m clearing. Clearing 62 m, orbit 25 m.
 - Olive grove trees are whole catalogue models set down one by one (about sixty); fine for one place, not a way to plant a forest.
+
+## What a frame costs, and how the buildings are drawn (ZW-052)
+
+The owner measured 35 frames a second at the low end of the story and 32 to 35 at Thalassa. `assets/wstat.mjs "<query>" ...` counts the draws and triangles of one frame for any still view, then again without shadows, without buildings and with the land alone. It showed the buildings were the cost: every model set down was its own object, so the village shot made 4,635 draws.
+
+`worldplaces.js` now only lists what is set down, and at the end turns the lists into batches: one instanced draw per material of a model, for all of that model standing in the same 128 m square. Each square has two versions, the models themselves and their far-view versions (`models/far/`, made by `assets/places_far.sh`, no textures), and shows the far one beyond 210 m. Only squares within 150 m of where the camera looks cast shadows; paving never does. `built.update(camera, focus)` does the switching every frame.
+
+| View | Draws before | Draws after | Triangles before | After |
+| --- | --- | --- | --- | --- |
+| Thalassa | 1,900 | 685 | 3.8 M | 3.8 M |
+| Story, in the village | 4,635 | 1,271 | 8.9 M | 5.3 M |
+| Story, at the city gate | 2,797 | 919 | 4.7 M | 3.1 M |
+
+- **Trap:** a far-view file holds many small pieces. Each must be joined into one geometry (`join` in `worldplaces.js`) or the far version costs more draws than the model it replaces: the first try had 1,496 far pieces on screen.
+- The picture is capped at 60 frames a second (`?fps=`; 0 removes the cap).
+- These are counts, not speeds. The frame rate itself can only be read on the owner's Mac (`?debug=1`).

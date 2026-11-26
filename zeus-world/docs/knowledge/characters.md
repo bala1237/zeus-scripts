@@ -6,7 +6,7 @@ The citizens: where they come from, how their rigs work, and how to check and re
 
 | Model | File | Skeleton | State |
 | --- | --- | --- | --- |
-| Man | `assets/models/char_citizen_man.glb`, normalised to 20,000 triangles from `style-test/public/models/citizen.glb` (59,000) on 22 Nov 2026 | 22 bones | Works. Coarse binding: torso rigid on the hips, head on the head bone |
+| Man | `assets/models/char_citizen_man.glb`, normalised to 20,000 triangles from `style-test/public/models/citizen.glb` (59,000) on 22 Nov 2026 | 22 bones | Binding rebuilt 26 Nov 2026 (ZW-053) with `reskin.mjs --legs 1`: as supplied, both thighs followed one leg bone and the upper arms followed the hips, so his walk looked broken |
 | Woman | `assets/models/char_citizen_woman.glb` | 22 bones, same as the man | Binding rebuilt 22 Nov 2026 (ZW-012) |
 | Elder | `assets/models/char_citizen_elder.glb` | 24 bones, different order | Works. Cloak follows the arms |
 | Soldier | `assets/models/char_soldier.glb`: the man with his binding rebuilt by `reskin.mjs`, so his arms move on their own bones | 22 bones | Used only in the battle, with gear and stances from `review/soldier.js` (see `battle.md`). His tunic hem is ragged where hidden faces were removed |
@@ -83,3 +83,11 @@ Tune it with the options of `standClip`: `seconds`, `steps`, `arm`.
 2. Normalise with `--rescale` (assets README).
 3. Make frame sheets of every clip before accepting it. If the binding is wrong and the skeleton is the 22-bone one, run `reskin.mjs`.
 4. Add it to the list `C` in `review/city.js`, and to `far.sh` and `FAR_PEOPLE` in `city.js` for a far-view body.
+
+## The short-tunic scheme: `reskin.mjs --legs 1` (ZW-053, 26 Nov 2026)
+
+The man's walk looked as if a leg and an arm were broken. Frame sheets showed the walk itself was sound and the binding was at fault. The first scheme (made for the woman's long dress) does not suit a tunic that ends at the knee: it cuts the mesh at the hem, and on the man that left a ragged hem (the old soldier) or, with the hem set lower, split knees.
+
+With `--legs 1` nothing is cut below the waist. Below the knee everything follows the nearest of shin, foot and toe. Between knee and hip, whatever lies within a limb's thickness of a thigh or shin bone follows that bone, and the rest is cloth: on the hips, swayed up to 60% by the thigh on its side. The arms are handled as before. The man and the soldier are both built this way now (`teaser.sh`); their far-view bodies were remade with `lod.mjs`.
+
+Checked by frame sheets of Walk, Cheer, Clap and Stand. Left as it is: with both arms raised high the sleeves stretch a little.

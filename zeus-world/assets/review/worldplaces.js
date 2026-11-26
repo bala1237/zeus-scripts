@@ -5,16 +5,28 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 export async function createPlaces({ scene, heightAt, places, camps = [], river = [], roadside = [], onProgress = () => {} }) {
   const lamps = []; // where light comes from after dark: lanterns, braziers and altars, a lamp by each door, the travellers' fires (worldair.js draws them)
-  const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const cache = {}, M = (n) => `./models/${n}.glb`;
-  const get = (n) => (cache[n] ||= loader.loadAsync(M(n)).then((g) => { g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); return g.scene; }).catch((e) => { console.warn('model missing', n, e.message); return null; }));
-  const root = new THREE.Group(); scene.add(root); const jobs = []; let done = 0;
+  // Every model is loaded once and drawn in batches (ZW-052). What is set down is only written in a list; when all the lists are
+  // complete, the things of one kind that stand in the same square of land (CELL metres) become one instanced draw per part of the
+  // model, in two versions: the model itself, and its far-view version (models/far/, a few hundred triangles, no textures), which
+  // is what a square further than FAR metres from the camera is drawn from. Only near squares cast shadows; flat paving casts none.
+  const CELL = 128, FAR = 210, SHADOW = 150;
+  const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const cache = {};
+  const parts = (url) => loader.loadAsync(url).then((g) => { g.scene.updateMatrixWorld(true); const out = []; g.scene.traverse((o) => { if (o.isMesh) { const geo = o.geometry.clone(); geo.applyMatrix4(o.matrixWorld); geo.computeBoundingBox(); out.push({ geo, mat: o.material }); } }); return out; });
+  // the parts of one model that wear the same material are joined, so a model costs one draw per material, and its far version one draw in all
+  const join = (list, one) => { const by = new Map(); for (const q of list) { const k = one ? 0 : q.mat.uuid; if (!by.has(k)) by.set(k, { mat: q.mat, geos: [] }); by.get(k).geos.push(q.geo); } const out = [];
+    for (const g of by.values()) { if (g.geos.length === 1) { out.push({ geo: g.geos[0], mat: g.mat }); continue; } const names = Object.keys(g.geos[0].attributes).filter((n) => g.geos.every((x) => x.attributes[n] && x.attributes[n].itemSize === g.geos[0].attributes[n].itemSize && x.attributes[n].normalized === g.geos[0].attributes[n].normalized && x.attributes[n].array.constructor === g.geos[0].attributes[n].array.constructor));
+      const clean = g.geos.map((x) => { const c = x.index ? x.toNonIndexed() : x.clone(); for (const n of Object.keys(c.attributes)) if (!names.includes(n)) c.deleteAttribute(n); c.morphAttributes = {}; return c; }), m = mergeGeometries(clean, false); if (m) { m.computeBoundingBox(); out.push({ geo: m, mat: g.mat }); } else for (const x of g.geos) out.push({ geo: x, mat: g.mat }); } return out; };
+  const farMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 });
+  const get = (n) => (cache[n] ||= Promise.all([parts(`./models/${n}.glb`), parts(`./models/far/${n}.glb`).catch(() => null)]).then(([full, far]) => { full = join(full, false); if (far) far = join(far, true); const box = new THREE.Box3(); for (const q of full) box.union(q.geo.boundingBox); return { full, far, box }; }).catch((e) => { console.warn('model missing', n, e.message); return null; }));
+  const root = new THREE.Group(); scene.add(root); const jobs = [], cells = new Map(); let done = 0, placed = 0;
   // set a model down: x, z in the world, turned by ry, standing on the ground there (or at a given height)
-  const put = (n, x, z, ry = 0, s = 1, y = null) => jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const o = m.clone(true); o.position.set(x, y ?? heightAt(x, z), z); o.rotation.y = ry; o.scale.setScalar(s); o.updateMatrixWorld(true); o.traverse((c) => { c.matrixAutoUpdate = false; }); root.add(o);
-    const k = /lantern/.test(n) ? 'lamp' : /brazier|altar|shrine_roadside/.test(n) ? 'fire' : /^home_villa-walls|^biz_(?!stall)|^civic_(?!aqueduct)|decor_shrine|country_(barn|watermill|hut)/.test(n) ? 'door' : null; if (!k) return; const b = new THREE.Box3().setFromObject(o), g = o.position.y;
-    if (k === 'door') { const d = (b.max.z - b.min.z + b.max.x - b.min.x) / 4 + 0.8; lamps.push({ x: x + Math.sin(ry) * d, y: g + 2.1, z: z + Math.cos(ry) * d, ground: g, kind: k }); } else lamps.push({ x, y: k === 'lamp' ? b.max.y - 0.35 : b.max.y + 0.1, z, ground: g, kind: k }); }));
+  const put = (n, x, z, ry = 0, s = 1, y = null) => { placed++; jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const g = y ?? heightAt(x, z), key = `${n}|${Math.floor(x / CELL)}|${Math.floor(z / CELL)}`; let c = cells.get(key); if (!c) cells.set(key, c = { n, m, list: [] }); c.list.push([x, g, z, ry, s]);
+    const k = /lantern/.test(n) ? 'lamp' : /brazier|altar|shrine_roadside/.test(n) ? 'fire' : /^home_villa-walls|^biz_(?!stall)|^civic_(?!aqueduct)|decor_shrine|country_(barn|watermill|hut)/.test(n) ? 'door' : null; if (!k) return; const b = m.box;
+    if (k === 'door') { const d = (b.max.z - b.min.z + b.max.x - b.min.x) * s / 4 + 0.8; lamps.push({ x: x + Math.sin(ry) * d, y: g + 2.1, z: z + Math.cos(ry) * d, ground: g, kind: k }); } else lamps.push({ x, y: g + b.max.y * s - (k === 'lamp' ? 0.35 : -0.1), z, ground: g, kind: k }); })); };
   const face = (x, z, cx, cz) => Math.atan2(cx - x, cz - z);
 
   // A Zeus World home, built the way the city builds them: walls, an upper floor if it has one, a roof, and a columned porch.
@@ -97,6 +109,14 @@ export async function createPlaces({ scene, heightAt, places, camps = [], river 
   // travellers' camps beside the road: two logs and a fire
   for (const [x, z] of camps) { const g = heightAt(x, z); put('nature_log_fallen', x + 1.5, z + 0.4, 0.5, 0.42); put('nature_log_fallen', x - 1.3, z - 0.9, 2.3, 0.42); lamps.push({ x, y: g + 0.45, z, ground: g, kind: 'fire', size: 1.25 }); }
   await Promise.all(jobs);
-  let tris = 0; root.traverse((o) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
-  return { root, lamps, spots, models: Object.keys(cache).length, placed: jobs.length, triangles: Math.round(tris) };
+  // ---------- the lists become batches
+  const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0), groups = []; let tris = 0;
+  for (const c of cells.values()) { const flat = /^infra_tile/.test(c.n), mk = (list, mat, shadow) => list.map((q) => { const im = new THREE.InstancedMesh(q.geo, mat || q.mat, c.list.length); c.list.forEach(([x, y, z, ry, s], i) => im.setMatrixAt(i, M4.compose(V.set(x, y, z), Q.setFromAxisAngle(UP, ry), S.setScalar(s)))); im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere(); im.castShadow = shadow; im.receiveShadow = true; im.matrixAutoUpdate = false; root.add(im); return im; });
+    const full = mk(c.m.full, null, !flat), far = c.m.far ? mk(c.m.far, farMat, false) : null, ball = new THREE.Sphere(); full.forEach((im, i) => (i ? ball.union(im.boundingSphere) : ball.copy(im.boundingSphere)));
+    for (const q of c.m.full) tris += c.list.length * (q.geo.index ? q.geo.index.count : q.geo.attributes.position.count) / 3;
+    if (far) for (const im of far) im.visible = false; groups.push({ full, far, ball, flat, near: true }); }
+  // called every frame: which squares are drawn from the models themselves, which from the far-view versions, and which cast shadows
+  function update(cam, focus) { for (const g of groups) { const d = Math.max(0, g.ball.center.distanceTo(cam) - g.ball.radius), near = !g.far || d < (g.near ? FAR * 1.08 : FAR); if (near !== g.near) { g.near = near; for (const im of g.full) im.visible = near; for (const im of g.far) im.visible = !near; }
+      if (near && !g.flat) { const sh = Math.max(0, g.ball.center.distanceTo(focus) - g.ball.radius) < SHADOW; if (g.full[0].castShadow !== sh) for (const im of g.full) im.castShadow = sh; } } }
+  return { root, lamps, spots, update, models: Object.keys(cache).length, placed, batches: groups.length, triangles: Math.round(tris) };
 }
