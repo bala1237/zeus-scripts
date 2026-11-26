@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 26 Nov 2026
 
+- **World remote keeps its link to OBS (ZW-055).** The owner connected and then saw "connection to OBS closed". The page now says why OBS closed the link and joins again by itself.
 - **Open world: things move (ZW-054, item 1).** The mill wheel turns, and the mill now stands on a shelf at the water's edge with its wheel in the stream. Boats rise and roll on the water. Banners, awnings and sails stir in the wind. Smoke rises from the shepherds' huts and the travellers' fires. Gulls circle over Thalassa, the city's shore and the village jetty. People stand at the new spots: a farmer by each pen and barn, a shepherd by each hut, the miller, someone on the jetty, a traveller at the ruins.
 - **The man walks properly (ZW-053).** The owner saw citizens walking as if a leg and an arm were broken, in the world and in the city. It was the man's body, tied too coarsely to his bones. His binding is rebuilt; the soldier, the same man, is rebuilt with it and loses his ragged hem.
 - **Open world drawn in batches (ZW-052).** The owner measured 35 frames a second or less. Buildings were being drawn one piece at a time. They are now drawn in batches, far buildings from light versions, shadows only near the camera, and the picture capped at 60. About two thirds fewer draws in every view measured. Two new places to fly to: the Shepherds' Hill and a farm, where the animals are.

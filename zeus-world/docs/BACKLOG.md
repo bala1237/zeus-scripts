@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-055.**
+- **Next number: ZW-056.**
 
 ## Open
 
@@ -66,6 +66,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Fix published 26 Nov 2026 (batches, far versions, near shadows, 60 cap). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Item 1 (motion) published 26 Nov 2026, waiting for the owner; item 2 (water) next | 26 Nov 2026, owner |
+| ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Fix published 26 Nov 2026 (says why, joins again by itself); cause not confirmed, waiting for the owner | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -650,3 +651,11 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **The order agreed:** 1. things that should move but do not (mill wheel, boats, banners, smoke, people at the new spots); 2. water (ripples, a soft shoreline, foam); 3. trees close up (leaves read as sharp triangles); 4. the story visits the new places; 5. sky and weather (storm cloud, a real night sky); 6. sound; 7. animals that walk and graze, and working people (the only paid item, not priced).
 - **How:** one item at a time, each shown on the preview before the next. New building (phases 8 and 9 of the world plan) stays parked.
 - **Item 1, motion, published 26 Nov 2026** (`worldlife.js`; sheet `assets/sheets/world_motion.jpg`). Checked by stills only: where things are, not how they move. The speed of the wheel, the size of the boats' roll, the cloth and the gulls' wing beat all wait for the owner's eye.
+
+### ZW-055: The world's remote loses OBS
+
+- **Reported:** 26 Nov 2026, by the owner, with a picture of the remote row reading "connection to OBS closed": "i tried to connect to obs. but it says connection closed".
+- **Known from the code:** that wording is only shown after a connection was made and the password accepted, and OBS then closed it. A wrong password or OBS not running give other messages. The page did not say why it closed and did not try again.
+- **Likely cause (a guess):** OBS restarts its WebSocket server, dropping everyone, whenever its WebSocket settings window is applied or closed with OK; that window is where the password is copied from.
+- **Changed:** the page now shows the reason OBS gave (its close code) and joins again by itself every three seconds. The Connect button always starts a fresh connection.
+- **Not known:** the real cause, until he tries again and reads the new message.
