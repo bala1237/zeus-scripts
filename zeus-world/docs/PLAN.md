@@ -46,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-051, the open world in phases** (`WORLD-PLAN.md`). Phase 1 (people and the newcomer) is published: do the people look right in motion, does the newcomer's walk keep company with the camera. Phase 2 (the ground) is next and free. **Phases 3 and 6 need his approval of spend** (concept pictures for the Blender-built countryside; animals and working people).
 0. **ZW-049, the open world.** Look accepted. Jitter on the fast low flights traced to the camera's path and fixed (measured); published. His check on `/world.html?debug=1`: are the fast flights smooth now; frame rate. Known gaps after that: the ground's surface, cliffs and mountains, a fuller village, people.
 0. **ZW-050, the hero film by link.** On `/hero.html` choose the film, type the name, press **Copy link for OBS**, and paste it as the URL of a browser source (1920 × 1080, "Control audio via OBS" ticked). Does it fill the source and play when the scene is shown. For a window capture instead: is the gold line round the picture enough to crop by.
 0. **ZW-047, two new hero films.** The Last Banner and The Well are made and on `/hero.html` (Film list). Watch both with sound: do the hooks hide the story; do the moving stills pass as film; is the music at the right level; does the name land. Next ideas: The Lighthouse, The Bell; the narrator saying any name; the team version.

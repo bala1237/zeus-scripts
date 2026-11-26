@@ -67,23 +67,24 @@ export function createCine({ heightAt, road, riverPath, places }) {
   const P = places, T = R.total, F = P.falls, fallsA = { p: [F.x + 150, 0, F.z + 150], d: [-0.7, 0, -0.7], s: 0 }, vill = anchor(P.village.x, P.village.z), cityA = { p: [P.city.x, 0, P.city.z], d: [1, 0, 0], s: T };
   const STORY = [
     { title: ['Riverbend', 'where the road begins'], shot: 'drone', a: vill, sec: 10, o: { back0: 300, back1: 90, h0: 170, h1: 46, ahead: 60 }, fade: true },
-    { shot: 'hand', a: onRoad(14), sec: 6, o: { at: [P.village.x, 0, P.village.z], th: 3, fov: 40 } },
-    { shot: 'track', a: onRoad(60), sec: 7, o: { dist: 14, side: -2.4 } },
+    { shot: 'hand', a: onRoad(14), sec: 6, o: { at: [P.village.x, 0, P.village.z], th: 3, fov: 40 }, who: { stand: -6 } },
+    { shot: 'track', a: onRoad(60), sec: 7, o: { dist: 9.5, side: -2.4 }, who: { ahead: 7 } },
     { shot: 'fpv', a: onRoad(90), sec: 8, o: { dist: 330, h0: 12, h1: 6 } },
     { title: ['The Old Ford', 'the river comes down from the Falls of Zeus'], shot: 'top', a: anchor(P.ford.x, P.ford.z), sec: 8, o: { h0: 210, h1: 130 }, fade: true },
     { shot: 'skim', a: anchor(P.ford.x, P.ford.z), sec: 8, o: { from: -420, dist: 400 } },
     { shot: 'long', a: fallsA, sec: 7, o: { from: [P.ford.x - 320, 0, P.ford.z + 120], h: 30, th: 60, fov0: 11, fov1: 9.5 } },
-    { shot: 'track', a: onRoad(R.nearest(P.ford.x, P.ford.z) + 120), sec: 7, o: { dist: 15, side: 2.6, ahead: 40 } },
-    { title: ['First Sight Hill', ''], shot: 'crane', a: onRoad(R.nearest(P.crest.x, P.crest.z) - 6), sec: 11, o: { h0: 1.3, h1: 34, near: 30, far: 560, th: 16 }, fade: true },
+    { shot: 'track', a: onRoad(R.nearest(P.ford.x, P.ford.z) + 120), sec: 7, o: { dist: 9.5, side: 2.6, ahead: 40 }, who: { ahead: 7 } },
+    { title: ['First Sight Hill', ''], shot: 'crane', a: onRoad(R.nearest(P.crest.x, P.crest.z) - 6), sec: 11, o: { h0: 1.3, h1: 34, near: 30, far: 560, th: 16 }, fade: true, who: { stand: 3 } },
     { shot: 'long', a: cityA, sec: 7, o: { from: [P.crest.x, 0, P.crest.z], h: 8, th: 14, fov0: 13, fov1: 10 } },
     { shot: 'fpv', a: onRoad(R.nearest(P.crest.x, P.crest.z) + 30), sec: 9, o: { dist: 470, h0: 16, h1: 5 } },
-    { title: ['Olympus', 'the city by the sea'], shot: 'track', a: onRoad(T - 60), sec: 7, o: { dist: 18, side: -2.8, ahead: 60, th: 6 }, fade: true },
+    { title: ['Olympus', 'the city by the sea'], shot: 'track', a: onRoad(T - 60), sec: 7, o: { dist: 9.5, side: -2.8, ahead: 60, th: 6 }, fade: true, who: { ahead: 8 } },
     { shot: 'orbit', a: cityA, sec: 11, o: { r: 260, h0: 60, h1: 110, from: 2.6, sweep: 1.1, th: 12 } },
     { shot: 'rise', a: cityA, sec: 10, o: { r0: 200, r1: 430, h0: 90, h1: 380, from: 3.6, sweep: 0.8, th: 0 } },
   ];
   let total = 0; for (const b of STORY) { b.t0 = total; total += b.sec; }
   // the pose of the story at a given second. cut is true on the first frame of a shot; fade is 0 to 1, the black between chapters.
   function story(seconds) { const t = ((seconds % total) + total) % total; let i = STORY.findIndex((b) => t < b.t0 + b.sec); if (i < 0) i = 0; const b = STORY[i], u = (t - b.t0) / b.sec, pose = shoot(b, u), n = STORY[(i + 1) % STORY.length];
+    if (b.who) { const walking = b.who.ahead !== undefined, at = walking ? b.a.s + (b.o.from ?? -10) + (b.o.dist ?? 22) * u + b.who.ahead : b.a.s + b.who.stand, w = R.at(at, 3); pose.subject = { x: w.p[0], z: w.p[2], yaw: Math.atan2(w.d[0], w.d[2]), walking, speed: (b.o.dist ?? 22) / b.sec }; }
     pose.beat = i; pose.u = u; pose.title = b.title && t - b.t0 > 1 && t - b.t0 < 6.5 ? b.title : null; pose.fade = Math.max(b.fade ? 1 - clamp((t - b.t0) / 0.7) : 0, n.fade ? clamp((t - b.t0 - b.sec + 0.6) / 0.6) : 0); return pose; }
 
   // ---------- the places the director can go to. Each has a few shots that play round and round until told otherwise.
