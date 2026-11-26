@@ -62,7 +62,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. Built: sound input for the lasers (works in OBS on his Mac), controls-off for Zeus World, tempo in the address, a remote for the hero film. Waiting for the owner to try the remote and the RODECaster | 25 Nov 2026, owner |
 | ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open. First proof on `/world.html`; waiting for the owner: does it feel vast, the camera, the frame rate | 25 Nov 2026, owner |
 | ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
-| ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phase 1 (life) published; phase 2 (the ground) in progress | 26 Nov 2026, owner |
+| ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground) and 4 (the remote) published; phases 3 and 6 wait for approval of spend | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -606,3 +606,5 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Limit kept:** his standing rule that paid generation is approved per batch. Free phases go ahead; paid batches are listed with cost and wait for his word.
 - **The plan:** `docs/WORLD-PLAN.md`, nine phases.
 - **Phase 1, life, published 26 Nov 2026:** about 75 people in the village, the farmsteads, on the road and round the city gate, from the city's three citizens; the newcomer walks the road in the story's shots (the man, since the woman reads as young in close-up). Verified by stills; motion waits for the owner.
+- **Phase 2, the ground, published 26 Nov 2026:** four scanned surfaces (meadow grass, forest floor, bare earth, rock) laid over the land and blended by what the ground is made of; rock laid from the side on cliffs. Free.
+- **Phase 4, the remote, published 26 Nov 2026:** the world page with controls connects to OBS; Story and the place buttons then steer the world in the OBS source. Tested against a stand-in for OBS only.

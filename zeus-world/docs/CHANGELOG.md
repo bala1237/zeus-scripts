@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 26 Nov 2026
 
+- **Open world, phases 2 and 4 (ZW-051).** The ground now has a real surface: scanned meadow grass, forest floor, bare earth on the road and real rock on the cliffs. And the world can be steered in OBS from a remote: open the page in Chrome, connect to OBS, and Story and the place buttons move the camera in the OBS source.
 - **Open world, phase 1: life (ZW-051).** About 75 people now live in the world: sellers and buyers at the village stalls, people at the well and the shrine, farmers at the farmsteads, travellers on the road, townsfolk at the city gate. The story follows a newcomer who walks the road, stops on the hill for the first sight of the city, and arrives at the gate. A plan in nine phases is written (`docs/WORLD-PLAN.md`).
 - **Hero film restarts when its source is shown again (ZW-050).** The owner found that hiding and showing the source in OBS did not start the film again. A film opened by the OBS link now stops and rewinds when hidden and plays from the start when shown.
 - **Hero film: a link for OBS, and a line to crop by (ZW-050).** The hero page has a new button, Copy link for OBS: it copies an address holding the chosen film and name, with the controls off and the film starting by itself, to paste into a browser source. For a window capture instead, a thin gold line now marks the 16:9 picture while the controls are showing.

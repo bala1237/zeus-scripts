@@ -12,6 +12,7 @@ import { createTrees } from './worldtrees.js';
 import { createPlaces } from './worldplaces.js';
 import { createCine } from './cinecam.js';
 import { createPeople } from './worldpeople.js';
+import { connectObs } from './obsremote.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
 
 const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'); if (q.get('ui') === '0' || SHOT) document.body.classList.add('plain');
@@ -31,7 +32,7 @@ const tex = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); tex
 const dome = new THREE.Mesh(new THREE.SphereGeometry(30000, 48, 24), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false })); dome.scale.z = -1; dome.rotation.y = L.rot; dome.renderOrder = -2; dome.frustumCulled = false; scene.add(dome);
 const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping; scene.environment = env; scene.environmentIntensity = L.env; scene.environmentRotation = new THREE.Euler(0, L.rot, 0);
 
-const trees = await createTrees({ renderer, scene, tickers }), land = createLand({ scene, tickers, trees });
+const trees = await createTrees({ renderer, scene, tickers }), land = createLand({ scene, tickers, trees }); await land.ready;
 const built = await createPlaces({ scene, heightAt, places, onProgress: (a, b) => { $('load').textContent = `THE WORLD IS WAKING  ${Math.round(100 * a / b)}%`; } });
 const roadPath = pathThrough(ROAD_PTS, 4), cine = createCine({ heightAt, road: roadPath, riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
 const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
@@ -44,9 +45,18 @@ function fly(to, then) { dir.from = dir.pose || to; dir.to = to; dir.sec = cine.
 function go(key) { if (!cine.places[key]) return; dir.key = key; fly(cine.place(key, 0), () => { dir.mode = 'place'; dir.clock = 0; }); mark(); }
 function backToStory() { if (dir.mode === 'story') return; const b = cine.beats[cine.story(dir.storyAt).beat]; dir.storyAt = b.t0; dir.key = null; fly(cine.story(dir.storyAt), () => { dir.mode = 'story'; }); mark(); }
 function mark() { if (document.body.classList.contains('plain')) return; $('story').classList.toggle('on', !dir.key); for (const b of $('places').children) b.classList.toggle('on', b.dataset.k === dir.key); }
-for (const [k, p] of Object.entries(cine.places)) { const b = document.createElement('button'); b.textContent = p.name[0]; b.dataset.k = k; b.style.marginRight = '6px'; b.title = p.name[1] || p.name[0]; b.addEventListener('click', () => go(k)); $('places').append(b); }
-$('story').addEventListener('click', backToStory); addEventListener('keydown', (e) => { const keys = Object.keys(cine.places), n = Number(e.key); if (e.key === '0' || e.key.toLowerCase() === 's') backToStory(); else if (n >= 1 && n <= keys.length) go(keys[n - 1]); else if (e.key.toLowerCase() === 'h' && q.get('ui') !== '0') document.body.classList.toggle('plain'); });
+for (const [k, p] of Object.entries(cine.places)) { const b = document.createElement('button'); b.textContent = p.name[0]; b.dataset.k = k; b.style.marginRight = '6px'; b.title = p.name[1] || p.name[0]; b.addEventListener('click', () => { go(k); tell({ cmd: 'go', key: k }); }); $('places').append(b); }
+$('story').addEventListener('click', () => { backToStory(); tell({ cmd: 'story' }); }); addEventListener('keydown', (e) => { const keys = Object.keys(cine.places), n = Number(e.key); if (e.key === '0' || e.key.toLowerCase() === 's') backToStory(); else if (n >= 1 && n <= keys.length) go(keys[n - 1]); else if (e.key.toLowerCase() === 'h' && q.get('ui') !== '0') document.body.classList.toggle('plain'); });
 window.worldGo = go; window.worldStory = backToStory;
+// ---------- the remote (phase 4). A page without controls (a browser source in OBS) does what it is told: by OBS itself (an event OBS
+// hands to every browser source) or by another tab of the same browser. The page with controls is the remote: once connected to OBS on
+// this computer, Story and the place buttons steer the world in OBS as well as here.
+const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); };
+addEventListener('zeusWorld', (e) => obey(e.detail)); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data);
+let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); if (obs) obs.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
+if (!document.body.classList.contains('plain')) { const keep = { get: () => { try { return localStorage.getItem('world-obspass'); } catch { return null; } }, set: (v) => { try { localStorage.setItem('world-obspass', v); } catch { /* private window */ } } }; $('obsPass').value = keep.get() || '';
+  const connect = async () => { $('obsStatus').textContent = 'connecting'; try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: () => { obs = null; $('obsStatus').textContent = 'connection to OBS closed'; } }); keep.set($('obsPass').value); const src = await obs.findBrowserSource('world.html').catch(() => null); $('obsStatus').textContent = src ? `connected · source "${src.name}": the buttons steer OBS too` : 'connected, but OBS has no browser source with world.html in its address'; } catch (e) { obs = null; $('obsStatus').textContent = e.message; } };
+  $('obsConnect').addEventListener('click', connect); if (keep.get() != null && q.get('obs') !== '0') connect(); }
 // what comes after the present shot, so that the land there can be made ready before the cut
 function upcoming() { if (dir.mode === 'flight') return dir.to; if (dir.mode === 'story') { const p = cine.story(dir.storyAt), b = cine.beats[p.beat]; return dir.storyAt - b.t0 > b.sec - 5 ? cine.story(b.t0 + b.sec + 0.01) : null; } return null; }
 

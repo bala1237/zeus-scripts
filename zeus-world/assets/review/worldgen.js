@@ -121,6 +121,9 @@ export function roadNear(x, z) { if (x < QB.x0 || x > QB.x1 || z < QB.z0 || z > 
 export const forestAt = (x, z, h) => forest(z, x, h) * smooth(3, 9, roadNear(x, z));
 export const groundAt = (x, z, h, n, f) => { const c = ground(z, x, h, [n[2], n[1], n[0]], f), k = smooth(3.2, 1.2, roadNear(x, z)) * 0.85; return k ? [mix(c[0], 0.56, k), mix(c[1], 0.46, k), mix(c[2], 0.31, k)] : c; };
 export const normalAt = (x, z, e) => { const n = normal(z, x, e); return [n[2], n[1], n[0]]; };
+// What the ground is made of at a point, as three shares from 0 to 1: forest floor, bare earth (road, river mud, sand), rock.
+// What is left over is grass. The land's drawing lays a real scanned surface for each and blends them by these shares.
+export const surfaceAt = (x, z, h, n, f) => { const r = riverAt(z, x), road = smooth(3.4, 1.2, roadNear(x, z)), mud = smooth(r.w + 9, r.w + 1, r.d), sand = smooth(2.8, 0.7, h), rock = Math.max(smooth(0.84, 0.6, n[1]), smooth(380, 620, h)); return [f * 0.92 * (1 - rock), Math.max(road, mud * 0.85, sand) * (1 - rock), rock]; };
 // the river as the world sees it: [x, z, half width, water level, distance from the source]
 export function river() { const L = levels(); return RIVER.map((p, i) => [p[1], p[0], p[2], L[i][1], L[i][0]]); }
 export function falls() { levels(); return { ...FALLS, x: FALLS.z, z: FALLS.x }; }
