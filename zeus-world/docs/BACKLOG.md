@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-051.**
+- **Next number: ZW-052.**
 
 ## Open
 
@@ -62,6 +62,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. Built: sound input for the lasers (works in OBS on his Mac), controls-off for Zeus World, tempo in the address, a remote for the hero film. Waiting for the owner to try the remote and the RODECaster | 25 Nov 2026, owner |
 | ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open. First proof on `/world.html`; waiting for the owner: does it feel vast, the camera, the frame rate | 25 Nov 2026, owner |
 | ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
+| ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phase 1 (life) in progress | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -595,3 +596,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Recommended to him:** the link, not the crop. Sharper (the source is drawn at its own size), no crop to keep right, and its sound comes through OBS.
 - **Limits:** the hero's picture cannot travel in a link (use "Play in OBS" for that, or `&pic=` with the address of a picture). A new name means a new link, or the remote.
 - **Verified here:** the copied link opens the right film with the right name, fills a 1920 × 1080 window with no line, and starts; the line shows with the controls. **Not verified:** OBS itself.
+
+### ZW-051: The open world, built out in phases
+
+- **Reported:** 26 Nov 2026, by the owner, after asking what could be enhanced or added: "Come up with and plan and start building I phases. The quality and close to reality is what dictates our success. Ensure you pick the right picture and then build on blender. Top notch quality. Go ahead and finish all."
+- **Read as:** a plan in phases; quality and closeness to reality above everything; each new model from a chosen reference picture, then built in Blender; go ahead without waiting for a discussion.
+- **Limit kept:** his standing rule that paid generation is approved per batch. Free phases go ahead; paid batches are listed with cost and wait for his word.
+- **The plan:** `docs/WORLD-PLAN.md`, nine phases.
