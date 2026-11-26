@@ -584,6 +584,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Published 26 Nov 2026:** "publish it to the preview so i can check". The forest kit and the rebuilt village are on `/world.html`. Waiting for his view on motion, the change-over of trees as the camera moves, and the frame rate.
 - **Owner on the published forest and village, 26 Nov 2026:** "looks good. but when camera moves, its jittery since its rendering and lot of jerks". The look is accepted; the motion is not smooth: low or uneven frame rate and jerks as the camera travels.
 - **Smoothness fixes shipped 26 Nov 2026:** a cheaper way of handling depth, the picture drawn at 1.25 times the screen instead of twice, new land put in a little per frame, shadows on alternate frames, programs compiled up front, and less heavy detail in view. Causes were found by reading the code; whether it is now smooth waits for the owner.
+- **Owner after the smoothness fixes, 26 Nov 2026:** "still jittery, mostly on the fast low flights".
+- **Jitter traced to the camera's path and fixed, 26 Nov 2026:** on the fast low flights the camera's lean jumped by 4 to 18 degrees between frames, because the road and river were rows of straight pieces. They are now true curves and the lean changes by under 0.3 degrees a frame; three other shots with jumps were fixed; a test now holds every shot to smooth limits. Also: tree models pre-loaded, shadows on every frame again. Measured by numbers; waiting for the owner to confirm by eye.
 
 ### ZW-050: The hero film as a source: a link with film and name, or a rectangle to crop
 

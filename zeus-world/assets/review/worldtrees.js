@@ -78,5 +78,6 @@ export async function createTrees({ renderer, scene, tickers }) {
       if (ring >= 0) { const at = fill[ring][e.k]++; used[ring]++; for (const im of pools[ring][e.k]) { im.setMatrixAt(at, e.m); im.setColorAt(at, e.c); } } }
     pools.forEach((ring, r) => ring.forEach((ims, k) => { for (const im of ims) { im.count = fill[r][k]; im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; } })); stat.full = used[0]; stat.far = used[1]; }
   const stat = { full: 0, far: 0 };
-  return { addTile, removeTile, update, stats: () => ({ trees: count, treeTriangles: Math.round(tris), inFull: stat.full, inFar: stat.far }), SPECIES, ground };
+  function warm(cam) { const m = new THREE.Matrix4().compose(new THREE.Vector3(cam.x, cam.y - 400, cam.z), new THREE.Quaternion(), new THREE.Vector3(0.001, 0.001, 0.001)); for (const ring of pools) for (const ims of ring) for (const im of ims) { im.setMatrixAt(0, m); im.count = 1; im.instanceMatrix.needsUpdate = true; } for (const s2 of SPECIES) for (const p of s2.full) for (const k of ['map', 'normalMap', 'emissiveMap', 'aoMap']) if (p.mat[k]) renderer.initTexture(p.mat[k]); dirty = true; last = null; }
+  return { addTile, removeTile, update, warm, stats: () => ({ trees: count, treeTriangles: Math.round(tris), inFull: stat.full, inFar: stat.far }), SPECIES, ground };
 }

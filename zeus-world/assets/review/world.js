@@ -64,7 +64,7 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
   apply(dir.pose, t); }
 let frameNo = 0;
-function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); if (frameNo++ % 2 === 0) { aimSun(); sun.shadow.needsUpdate = true; } const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
+function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); frameNo++; aimSun(); sun.shadow.needsUpdate = true; const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
   if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
 window.__world = { renderer, scene, camera, land, built, cine, dir, tickers, heightAt, places, city, go, backToStory };
@@ -77,8 +77,8 @@ if (SHOT) { // one still: a story shot, a place, or a chosen camera
   window.__stats = { ...land.stats(), built: built.triangles, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, seconds: (performance.now() - t0) / 1000 }; window.ready = true; }
 else { // the land under the first shot is made ready before the story starts, so that it opens on a finished picture
   dir.pose = cine.story(0); if (q.get('place') && cine.places[q.get('place')]) { dir.key = q.get('place'); dir.mode = 'place'; dir.pose = cine.place(dir.key, 0); } apply(dir.pose, 0); mark();
-  const clock = new THREE.Clock(); let started = false, frames = 0, acc = 0, prev = 0;
+  const clock = new THREE.Clock(); let warm = 0, started = false, frames = 0, acc = 0, prev = 0;
   renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); frames++; acc += t - prev; prev = t; if (acc > 0.5) { fps = frames / acc; frames = 0; acc = 0; }
-    if (!started) { for (const f of tickers) f(t); land.update(camera.position); trees.update(camera.position); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; renderer.render(scene, camera); if (land.settled() || t > 25) { started = true; lastT = t; $('load').classList.add('gone'); renderer.compileAsync(scene, camera).catch(() => {}); } return; }
+    if (!started) { for (const f of tickers) f(t); land.integrate(1e9); land.update(camera.position); if (warm === 1) { trees.warm(camera.position); warm = 2; } else trees.update(camera.position); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; renderer.render(scene, camera); if (warm === 0 && (land.settled() || t > 25)) { warm = 1; return; } if (warm === 2) { warm = 3; return; } if (warm === 3) { started = true; lastT = t; $('load').classList.add('gone'); renderer.compileAsync(scene, camera).catch(() => {}); } return; }
     step(t); frame(t); if (!document.body.classList.contains('plain')) $('status').textContent = dir.mode === 'flight' ? 'flying…' : dir.mode === 'place' ? cine.places[dir.key].name[0] : 'the story'; });
   window.ready = true; }
