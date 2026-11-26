@@ -15,8 +15,9 @@ import '@fontsource/montserrat/600.css';
 import '@fontsource/montserrat/700.css';
 import { createBeat } from './beat.js';
 import { roomCue, createRoomShow, PIECES } from './roomcues.js';
+import { pageQuery } from './source.js';
 
-const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id), stage = $('stage');
+const q = pageQuery(), SHOT = q.has('shot'), $ = (id) => document.getElementById(id), stage = $('stage');
 const store = { get: (k) => { try { return localStorage.getItem('andie-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('andie-' + k, v); } catch { /* private window */ } } };
 
 // ---------- the picture is a 16:9 box in the middle of the space above the controls. size is its share of the largest box that would fit.

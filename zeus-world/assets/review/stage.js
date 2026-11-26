@@ -10,8 +10,9 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeat } from './beat.js';
+import { pageQuery } from './source.js';
 
-const q = new URLSearchParams(location.search), SHOT = q.has('shot');
+const q = pageQuery(), SHOT = q.has('shot'); if (q.get('ui') === '0') document.body.classList.add('plain');   // a browser source: no controls (ZW-056)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight); document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0x020308);
 const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 400);
@@ -152,4 +153,5 @@ addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
 window.__stage = { st, beat, change, update, draw };
 if (SHOT) { $('ui').style.display = 'none'; st.cuts = false; if (!q.has('still')) beat.tap(); const n = Number(q.get('beats') || 6) * 60 / beat.state.bpm; if (q.has('mix')) { change(); } for (let t = 0; t < n; t += 1 / 60) update(1 / 60); if (q.has('mix')) { st.mixAt = beat.state.beats - 4 * Number(q.get('mix')); update(0.001); } draw(); window.ready = true; }
-else { const clock = new THREE.Clock(); renderer.setAnimationLoop(() => { update(Math.min(0.1, clock.getDelta())); draw(); }); window.ready = true; }
+else { if (q.get('ui') === '0' && q.get('calm') !== '1') beat.tap();   // a source has nobody to tap it in: it starts by itself
+  const clock = new THREE.Clock(); renderer.setAnimationLoop(() => { update(Math.min(0.1, clock.getDelta())); draw(); }); window.ready = true; }

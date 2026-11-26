@@ -12,8 +12,9 @@ import '@fontsource/marcellus-sc/400.css';
 import '@fontsource/cormorant-garamond/500-italic.css';
 import { FILMS, showName, slug, span } from './herofilms.js';
 import { connectObs } from './obsremote.js';
+import { pageQuery, host, onceOnly, sceneReady } from './source.js';
 
-const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'), PLAIN = q.get('ui') === '0' || SHOT;
+const q = pageQuery(), $ = (id) => document.getElementById(id), SHOT = q.has('shot'), PLAIN = q.get('ui') === '0' || SHOT;
 let filmId = FILMS[q.get('film')] ? q.get('film') : 'fire-bringer', film = FILMS[filmId]; const video = $('film'), base = new Audio(), line = new Audio(); base.preload = line.preload = 'auto';
 const store = { get: (k) => { try { return localStorage.getItem('hero-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('hero-' + k, v); } catch { /* private window */ } } };
 let name = showName(q.get('name') ?? store.get('name') ?? ''), playing = false, lineStarted = false, failed = '';
@@ -100,19 +101,19 @@ if (q.get('ui') === '0' && q.has('autoplay')) { let shown = true; const seen = (
 // by OBS itself (an event that OBS hands to every browser source) or by another tab of the same browser.
 const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-hero') : null;
 const obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'play') { if (m.film && m.film !== filmId) setFilm(m.film); if ('pic' in m) setPic(m.pic); if (m.name != null) { setName(m.name); if (!PLAIN) $('name').value = name; } play(); } else if (m.cmd === 'stop') stop(); };
-addEventListener('zeusHero', (e) => obey(e.detail)); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data);
+const fresh = onceOnly(); addEventListener('zeusHero', (e) => { if (fresh(e.detail)) obey(e.detail); }); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data); sceneReady('hero');
 // The page with controls is the remote. It reaches OBS on this computer through OBS's own remote control, tells the source to play,
 // and if OBS cannot pass that on, points the source at an address with the name in it, which makes it load again and play.
 if (!PLAIN) { let obs = null, src = null; const say = (t) => { $('obsStatus').textContent = t; }; $('obsPass').value = store.get('obspass') || '';
   const connect = async () => { say('connecting'); try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: () => { obs = null; say('connection to OBS closed'); } }); store.set('obspass', $('obsPass').value);
       src = await obs.findBrowserSource('hero.html').catch(() => null); say(src ? `connected · source "${src.name}"` : 'connected, but OBS has no browser source with hero.html in its address'); } catch (e) { obs = null; say(e.message); } };
-  const send = async (m) => { chan?.postMessage(m); if (!obs) { say('not connected to OBS'); return; }
+  const send = async (m) => { chan?.postMessage(m); if (host) { try { await host.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); } catch (e) { say(e.message); } return; } if (!obs) { say('not connected to OBS'); return; }
     try { await obs.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); }
     catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('film', m.film || filmId); u.searchParams.delete('pic'); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
   // the address of this film with this name, for a browser source: controls off, starting by itself (ZW-050). The picture cannot travel in an address.
   const sourceLink = () => { const u = new URL(location.pathname, location.origin); u.searchParams.set('film', filmId); u.searchParams.set('name', name); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); if (document.body.classList.contains('captions')) u.searchParams.set('captions', '1'); return u.toString(); }; window.__hero_link = sourceLink;
   $('copyLink').addEventListener('click', async () => { const link = sourceLink(), b = $('copyLink'); try { await navigator.clipboard.writeText(link); b.textContent = 'Copied'; } catch { prompt('Copy this link into the browser source:', link); } setTimeout(() => { b.textContent = 'Copy link for OBS'; }, 1600); });
-  $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name, film: filmId, pic })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
+  $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name, film: filmId, pic })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (host) { $('obsPass').parentElement.style.display = $('obsConnect').style.display = $('copyLink').style.display = 'none'; say('OBS is connected from the bar at the top'); } else if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
 // the door for the stage or for TikFinity later: window.playHeroFilm('Andie Howard')
 window.playHeroFilm = (n) => { if (n != null) setName(n); play(); }; window.__hero = { get film() { return film; }, get pic() { return pic; }, video, base, line, draw, get name() { return name; }, get playing() { return playing; } };
 const fonts = document.fonts ? Promise.all([document.fonts.load('800 80px Cinzel'), document.fonts.load(`${Number(q.get('weight')) || 700} 80px '${(q.get('font') || 'Cinzel').replace(/[^\w ]/g, '')}'`), document.fonts.load("italic 500 20px 'Cormorant Garamond'"), document.fonts.load('500 20px Cinzel'), document.fonts.load('700 80px Cinzel'), document.fonts.load('600 40px Cinzel'), document.fonts.load('400 20px Cinzel')]).catch(() => {}) : Promise.resolve();

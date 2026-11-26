@@ -277,7 +277,7 @@ const owned = []; { const list = [[south[0], '@theo_builds'], [south[1], '@lina.
     [placed['home_grand-villa_t4'][0], '@queen_calli'], ...placed.home_cottage_t1.map((o, i) => [o, ['@sam_w', '@ivy.rose'][i]]), ...placed.home_cottage_t2.map((o, i) => [o, ['@dario', '@little_owl'][i]])];
   for (const [o, name] of list) { const ry = o.rotation.y; const parts = [].concat(o.userData.parts || o), box = new THREE.Box3(); for (const x of parts) { x.updateWorldMatrix(true, true); box.expandByObject(x); }
     owned.push({ name, home: { box, front: [Math.sin(ry), Math.cos(ry)] } }); if (q.get('names') !== '0') names.add(o.userData.parts || o, name); } }
-if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps);
+if (!q.has('shot')) { const fps = document.createElement('div'); fps.style.cssText = 'position:fixed;right:12px;top:12px;font:600 12px system-ui;color:#1d1a2e;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:6px'; document.body.append(fps); if (document.body.classList.contains('plain')) fps.style.display = 'none';   // a browser source shows the picture only (ZW-056)
   let n = 0, t0 = performance.now(); tickers.push(() => { n++; const now = performance.now(); if (now - t0 > 1000) { fps.textContent = `${Math.round(n * 1000 / (now - t0))} fps · ${life.shown()} of ${life.count()} citizens in view · ${renderer.info.render.calls} draws`; n = 0; t0 = now; } }); }
 
 // ---------- after a battle is won (ZW-025): the storm of gold, the triumph of the top three, a tour of the first one's home.

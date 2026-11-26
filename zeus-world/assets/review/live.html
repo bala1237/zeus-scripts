@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus Live · every scene, one page</title>
+<style>
+  /* One page for everything (ZW-057). In OBS it is the picture: whichever scene the control room chose, nothing over it.
+     In a browser it is the control room: a tab for each scene with that scene's own controls, and one connection to OBS. */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1016; font-family: system-ui, sans-serif; }
+  body.out { background: transparent; }
+  #bar { box-sizing: border-box; color: #fff; font: 600 13px system-ui, sans-serif; background: #0c1016; border-bottom: 1px solid rgba(233, 194, 117, .4); padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  body.out #bar { display: none; }
+  #bar .brand { font: 700 14px Georgia, serif; letter-spacing: .22em; color: #e9c275; margin-right: 6px; }
+  #bar button { background: #2c3a4c; color: #fff; padding: 7px 12px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; position: relative; }
+  #bar button.on { background: #e2b04a; color: #1d1305; }
+  #bar button.live::after { content: 'IN OBS'; position: absolute; right: -4px; top: -7px; font: 700 9px system-ui; letter-spacing: .06em; background: #d8322f; color: #fff; padding: 1px 5px; border-radius: 6px; }
+  #bar button.go { background: #b3261e; } #bar button.go:disabled { background: #3a2a2a; color: #a99; cursor: default; }
+  #bar span { font-weight: 500; opacity: .85; }
+  #bar input { font: inherit; font-weight: 500; padding: 6px 8px; border-radius: 6px; border: 1px solid #3a4660; background: #141a26; color: #fff; }
+  #bar .line { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  #wrap { position: fixed; left: 0; right: 0; bottom: 0; top: 0; }
+  #view { width: 100%; height: 100%; border: 0; display: block; background: transparent; }
+  #curtain { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; }
+  #curtain.on { opacity: 1; }
+  body:not(.out) #curtain { display: none; }
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="line">
+    <span class="brand">ZEUS LIVE</span>
+    <span id="tabs" style="display:contents"></span>
+    <span style="flex:1"></span>
+    <button id="show" class="go" title="Put the scene of this tab on the stream: the OBS source changes to it">Show this in OBS</button>
+    <span id="onAir">OBS has not been told a scene yet</span>
+  </div>
+  <div class="line">
+    <label title="OBS: Tools, WebSocket Server Settings, Show Connect Info" style="font-weight:500">OBS password <input id="obsPass" type="password" autocomplete="off" style="width:130px"></label>
+    <button id="obsConnect" title="Connect this page to OBS on this computer. One connection serves every scene.">Connect to OBS</button>
+    <span id="obsStatus">not connected</span>
+    <span style="flex:1"></span>
+    <label id="optsLabel" title="Extra settings for this scene when it is shown in OBS, as they would be written in its address" style="font-weight:500">Settings in OBS <input id="opts" type="text" spellcheck="false" style="width:190px"></label>
+    <button id="copy" title="The one address OBS needs, for a browser source of 1920 by 1080. Inside OBS this page shows the picture only, never these controls.">Copy the address for OBS</button>
+  </div>
+</div>
+<div id="wrap"><iframe id="view" title="scene" allow="microphone; camera; display-capture; autoplay; fullscreen; clipboard-write"></iframe></div>
+<div id="curtain"></div>
+<script type="module" src="./live.js"></script>
+</body>
+</html>

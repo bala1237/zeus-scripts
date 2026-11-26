@@ -4,6 +4,8 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 26 Nov 2026
 
+- **One page for every scene: Zeus Live (ZW-057).** `live.html` is the only address OBS needs. In OBS it shows the picture; opened in Chrome it is a control room with a tab for each scene (open world, city, lasers, music stage, hero film, Andie's Place), one connection to OBS, and a "Show this in OBS" button that changes what the stream sees. A hero film told to play comes on screen by itself. The old addresses still work.
+- **Controls never show inside OBS (ZW-056).** The owner added `world.html` to OBS and saw its controls. Every page now knows when it is inside OBS and shows the picture only, whatever the address.
 - **World remote keeps its link to OBS (ZW-055).** The owner connected and then saw "connection to OBS closed". The page now says why OBS closed the link and joins again by itself.
 - **Open world: things move (ZW-054, item 1).** The mill wheel turns, and the mill now stands on a shelf at the water's edge with its wheel in the stream. Boats rise and roll on the water. Banners, awnings and sails stir in the wind. Smoke rises from the shepherds' huts and the travellers' fires. Gulls circle over Thalassa, the city's shore and the village jetty. People stand at the new spots: a farmer by each pen and barn, a shepherd by each hut, the miller, someone on the jetty, a traveller at the ruins.
 - **The man walks properly (ZW-053).** The owner saw citizens walking as if a leg and an arm were broken, in the world and in the city. It was the man's body, tied too coarsely to his bones. His binding is rebuilt; the soldier, the same man, is rebuilt with it and loses his ragged hem.

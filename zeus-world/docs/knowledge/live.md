@@ -1,0 +1,45 @@
+# Zeus Live: one page for every scene
+
+Made 26 Nov 2026 (ZW-056, ZW-057). The owner streams through OBS and had one address per scene (`world.html`, `laser.html`, `city.html`, `hero.html`, …), each with its own controls and, for two of them, its own connection to OBS.
+
+## Controls never show inside OBS (ZW-056)
+
+- OBS gives every page it shows as a browser source an object, `window.obsstudio`. `source.js` reads it: inside OBS, a page behaves as if its address said `ui=0`, whatever the address says. `pageQuery()` returns the address's settings with that applied, and every page takes its settings from it (`city.html` does the same check inline).
+- `?ui=1` brings the controls back inside OBS, for OBS's "Interact" window.
+- Other streaming software gives no such sign. In TikTok LIVE Studio the address still needs `ui=0`.
+- `stage.html` had no controls-off option before; it has now, and as a source it starts moving by itself, as the lasers do. `city.html` also hides its frame-rate figure.
+
+## The one page: `live.html`
+
+The scenes are still the pages they were. `live.html` holds one of them at a time in a frame. Where it runs decides what it is.
+
+- **In OBS: the picture.** Nothing but the scene, filling the source. Add it once, as a browser source of 1920 by 1080, and never change the address again. It starts on the scene it showed last (the world the first time).
+- **In a browser: the control room.** A bar at the top: a tab for each scene (Open world, City, Lasers, Music stage, Hero film, Andie's Place), the one connection to OBS, **Show this in OBS**, and **Copy the address for OBS**. Under the bar, the scene of the tab with its own controls, as on its own page.
+- Looking at a tab changes nothing on the stream. **Show this in OBS** does; the tab then carries a red "IN OBS" mark.
+- "Settings in OBS" takes what would be written in that scene's address (`input=rode`, `bpm=128`, `light=dusk`), kept per scene, sent with Show.
+
+### How the messages travel
+
+- The control room is connected to OBS's own remote control (`obsremote.js`, as before) and sends events that OBS hands to its browser sources:
+  - `zeusLive` `{ cmd: 'show', scene, opts }`: change scene. The picture goes dark for a third of a second, loads the scene, and comes back. The scene before is thrown away, with its memory.
+  - `zeusWorld`, `zeusHero`: the orders the scenes already took. OBS delivers them to `live.html`, which passes them into the frame.
+- A scene shown inside the control room does not connect to OBS itself: it finds `parent.zeusLive` (see `host` in `source.js`) and sends through that. Its own password box is hidden. So one password, one connection.
+- An order for a scene that is not on screen is dropped, with one exception: a hero film told to play is put on screen first, and the order is kept until the film's page says it listens (`sceneReady`, a message to the page around it).
+- Every message from the control room carries a number (`_n`); a scene obeys a number once (`onceOnly`), in case OBS ever hands an event to the frame as well as to the page.
+- Without OBS, two tabs of one browser work: `live.html?ui=0` in one, `live.html` in the other (a BroadcastChannel carries Show; the scenes' own channels carry their orders).
+- From outside, later (TikFinity): `window.zeusShow('hero')` on the picture.
+
+### Why a frame and not one merged program
+
+Each scene is a heavy program with its own renderer, written as a page. Merging them into one program would mean rewriting all of them and keeping every scene's models in memory at once. A frame costs nothing: one scene is loaded at a time, the old pages keep working at their own addresses, and a new scene is one line in `SCENES` in `live.js`.
+
+### Known limits
+
+- The control room runs its own copy of the scene, so the computer draws the scene twice (once in Chrome, once in OBS). The world and the city are heavy; if the stream's frame rate suffers, look at a light tab (Hero film) after pressing Show, or ask for a "controls only" mode.
+- The lasers, the stage, the city and Andie's Place have no live orders yet: their controls in the control room change the control room's copy only. What reaches OBS for them is the scene and its "Settings in OBS". Orders for the lasers (theme, gifts) are the natural next step.
+- The control room cannot ask OBS what it is showing. "OBS was last told" is what this browser sent last.
+- After the hero film ends the picture stays on the film's last frame; going back to the scene before is by hand.
+
+### Checking
+
+`node livetest.mjs` in `assets/` (after `npm run build`) runs both faces against a stand-in for OBS: controls hidden on all six pages, Show, the settings, the world's buttons arriving once, the film coming on screen with its name, the scene kept across a reload. **Not checked in OBS itself**, which cannot run on the build machine.

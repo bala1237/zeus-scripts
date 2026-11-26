@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-056.**
+- **Next number: ZW-058.**
 
 ## Open
 
@@ -67,6 +67,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Item 1 (motion) published 26 Nov 2026, waiting for the owner; item 2 (water) next | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Fix published 26 Nov 2026 (says why, joins again by itself); cause not confirmed, waiting for the owner | 26 Nov 2026, owner |
+| ZW-056 | Bug | The controls show when a page is added to OBS by its address | High (proposed) | Fix shipped 26 Nov 2026; checked against a stand-in, waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-057 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -663,3 +665,19 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Real fault found:** "OBS went away" is the browser's code for a link that never opened. `obsremote.js` reported a failed attempt twice: first correctly ("could not reach OBS"), then, because one flag served two purposes, again as a link that had closed, and the second message replaced the first. So the page never reached OBS at all; the earlier guess (OBS restarting its server) was wrong.
 - **Changed:** a link that never joined is reported once, as not reached, with the three things to check: OBS open on the same computer; its WebSocket server enabled on port 4455; the browser allowed to reach this computer from a web page (Chrome asks for "Local network access" and blocks the link if that is refused or never answered).
 - **Not known:** which of the three it is on his Mac.
+
+### ZW-056: The controls show in OBS
+
+- **Reported:** 26 Nov 2026, by the owner: "for world.html, we have it streamed to obs via websocket. when we give the world.html url in obs, it also shows the controls. we should not have that." And: "the controls should be available only in the browser".
+- **Cause:** the controls were hidden only if the address ended in `ui=0`. The plain address shows them.
+- **Changed:** every page (world, city, lasers, stage, hero film, Andie's Place) now knows when it is inside OBS and hides its controls there by itself, whatever the address. `ui=1` brings them back. The stage, which had no controls-off option, has one.
+- **Checked:** all six pages against a stand-in for OBS (`assets/livetest.mjs`). **Not checked in OBS itself.**
+- **Limit:** TikTok LIVE Studio gives a page no sign; there the address still needs `ui=0`.
+
+### ZW-057: One page for every scene
+
+- **Asked:** 26 Nov 2026, by the owner: "we have different htmls like laser, city.html and hero and so on. we should consolidate all into one. since we have the web scokets connected, we should be able to show whichever tab we want. what do you think?"
+- **Built:** `live.html`. In OBS it is the picture: one browser source, one address, never changed. In a browser it is the control room: a tab per scene with that scene's controls, one connection to OBS, and "Show this in OBS". Detail in `knowledge/live.md`.
+- **Chosen, and why:** the scenes stay separate pages inside a frame, rather than being merged into one program. Nothing is rewritten, one scene is in memory at a time, and the old addresses keep working.
+- **Checked:** against a stand-in for OBS. **Not checked in OBS itself.**
+- **Not done yet:** live orders for the lasers, stage, city and Andie's Place (today only the scene and its settings reach OBS for them); returning to the scene before when a hero film ends; a "controls only" control room that does not draw the scene a second time.

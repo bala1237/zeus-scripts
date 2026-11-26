@@ -17,8 +17,9 @@ import { createGifts, LEGEND, giftBeats, legendWake, filmStart } from './gifts.j
 import { createGiftFx, makeNameMaterial } from './giftfx.js';
 import { stageGift, FILMS } from './giftcatalog.js';
 import { createDirector, BUILDING, building, THEMES } from './director.js';
+import { pageQuery } from './source.js';
 
-const q = new URLSearchParams(location.search), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
+const q = pageQuery(), SHOT = q.has('shot'), $ = (id) => document.getElementById(id);
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: SHOT, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0x000000, 0); renderer.toneMapping = THREE.ACESFilmicToneMapping; $('frame').append(renderer.domElement);
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 200);

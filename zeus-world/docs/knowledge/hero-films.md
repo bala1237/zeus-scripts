@@ -104,3 +104,7 @@ The owner, 25 Nov 2026: "We can't have kid in the video." The Well's first cut h
 - `node renders/herotest.mjs "Andie Howard" 40` presses Play with a real pointer and reports picture time, sound time and which name recording was used. On 25 Nov 2026: picture and sound within 0.1 s, the named recording used, on both cuts.
 - Stills: `PAGE=hero.html node shot.mjs renders/x.png "name=Andie%20Howard&t=36" 960 600`.
 - Not checkable here: how it sounds, and how the motion looks.
+
+## In the control room (ZW-057)
+
+Shown inside `live.html`, the hero page sends "Play in OBS" through the control room's connection, and the picture in OBS changes to the film by itself before it plays. See `live.md`.

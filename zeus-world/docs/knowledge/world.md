@@ -131,6 +131,8 @@ The ground was flat colour with a grain. It now wears four real surfaces, scanne
 
 ## The remote (phase 4, 26 Nov 2026)
 
+Since ZW-057 the usual way to steer the world in OBS is the control room, `live.html` (see `live.md`): the world's page, shown inside it, sends through the control room's connection. Inside OBS the controls are hidden without `ui=0` (ZW-056). What follows still holds for `world.html` used by itself.
+
 The page with controls is the remote for the same page running without them as a browser source in OBS (`world.html?ui=0`).
 
 - "Connect to OBS" (the password is from OBS: Tools, WebSocket Server Settings) uses `obsremote.js`, as the hero film does. Once connected, **Story** and the place buttons steer the world in OBS as well as in the remote's own window. The message is the event `zeusWorld` with `{ cmd: 'go', key }` or `{ cmd: 'story' }`.
