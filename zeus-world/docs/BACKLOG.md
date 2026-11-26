@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-052.**
+- **Next number: ZW-053.**
 
 ## Open
 
@@ -63,6 +63,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open. First proof on `/world.html`; waiting for the owner: does it feel vast, the camera, the frame rate | 25 Nov 2026, owner |
 | ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
 | ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground), 3 (countryside), 4 (the remote), 5 (light and weather) and 6 (animals, standing) and 7 (new places) published; next 8 (the living city), 9 (the game) | 26 Nov 2026, owner |
+| ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Open | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -612,3 +613,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Phases 3 and 6 built, published 26 Nov 2026:** the owner approved both sheets ("All looks good. Just ensure we don't deviate from the Greek theme. I will review once done"). Twelve countryside models by script (`blender/country.py`, sheets `countryside_review_1/2.jpg`), six animals by image-to-3D (`animals.sh`, `animal_review.jpg`), all placed (`world_countryside.jpg`). Verified by stills. Not done: animals that walk, working people (both need paid work not yet priced). Rule recorded in the world plan: Greek throughout.
 - **Phase 7, new places, published 26 Nov 2026:** harbour town, sanctuary, olive grove, forest ruins, each a place the director can fly to (`assets/sheets/world_new_places.jpg`). Verified by stills. Left out and why: quarry, vineyards, island (see the world plan).
 - **Phase 4, the remote, published 26 Nov 2026:** the world page with controls connects to OBS; Story and the place buttons then steer the world in the OBS source. Tested against a stand-in for OBS only.
+
+### ZW-052: Open world frame rate is too low
+
+- **Reported:** 26 Nov 2026, by the owner, on his Mac (M3 Pro, 36 GB), from `world.html?debug=1`: "in the story the fps goes from 35 to 120 at time. thalasa in a better range max like 35 or 32".
+- **Read as:** the story swings between 35 and 120 frames a second; Thalassa never gets above 32 to 35. The target is a steady 60.
+- **Known:** every model set down by `worldplaces.js` is its own object, so each paving tile, wall, roof and lantern is a separate draw, and is drawn a second time for shadows. Thalassa added about 300 paving tiles and 13 homes of three or four parts each.
+- **Not known yet:** how the cost splits between the number of draws, the number of triangles and the shadows. To be measured before changing anything.
