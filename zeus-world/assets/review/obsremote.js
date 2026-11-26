@@ -16,7 +16,7 @@ export function connectObs({ port = 4455, password = '', host = '127.0.0.1', onC
       async findBrowserSource(part) { const { inputs } = await request('GetInputList', { inputKind: 'browser_source' }); for (const i of inputs) { const { inputSettings } = await request('GetInputSettings', { inputName: i.inputName }); if ((inputSettings.url || '').includes(part)) return { name: i.inputName, url: inputSettings.url }; } return null; },
       setUrl: (inputName, url) => request('SetInputSettings', { inputName, inputSettings: { url }, overlay: true }) };
     ws.onerror = () => fail('could not reach OBS: is it open, and is its WebSocket server switched on?');
-    ws.onclose = (e) => { for (const w of waiting.values()) w.rej(new Error('OBS closed the connection')); waiting.clear(); if (!done) fail(e.code === 4009 ? 'OBS refused the password' : 'OBS closed the connection'); else onClose(); };
+    ws.onclose = (e) => { for (const w of waiting.values()) w.rej(new Error('OBS closed the connection')); waiting.clear(); if (!done) fail(e.code === 4009 ? 'OBS refused the password' : 'OBS closed the connection'); else onClose(e); };
     ws.onmessage = async (m) => { const { op, d } = JSON.parse(m.data);
       if (op === 0) { const id = { rpcVersion: 1, eventSubscriptions: 0 }; if (d.authentication) { if (!password) { fail('OBS wants a password'); return; } id.authentication = await sha(await sha(password + d.authentication.salt) + d.authentication.challenge); } ws.send(JSON.stringify({ op: 1, d: id })); }
       else if (op === 2) { done = true; resolve(api); }
