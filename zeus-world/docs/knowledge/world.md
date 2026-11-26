@@ -170,3 +170,11 @@ One part owns the sun, the sky dome, the fog and everything that changes with th
 - **Clearings:** a model in the forest needs an entry in `PLACES` in `worldgen.js` with `clear`, or trees grow through it. Those entries are in the land's inner directions (x and z swapped from the world's).
 - **Animals** (`worldanimals.js`): no bones, so they stand. Each kind is two sets of instanced meshes, the full model within 55 m of the camera and the far-view model beyond, re-sorted every 12 frames. About 110 animals. Eagles are whole models that fly a circle, banked.
 - **Lamps:** the barn, mill and huts have a door lamp; a roadside shrine has a flame.
+
+## New places (phase 7)
+
+- A place is three things: an entry in `PLACES` in `worldgen.js` (inner directions; `clear` keeps the forest off, `flat` levels the ground out to that radius, the same way the village is levelled), a block in `worldplaces.js` that sets the models down, and an entry in `PLACE` in `cinecam.js` with its shots, which also gives it a Go-to button and a remote command.
+- `flat` is generic now: `FLATS()` in `worldgen.js`. The level is the land's own height at the centre, found once.
+- The harbour finds its own shoreline (walk east from the centre until the ground is under 0.9 m) and hangs the quay, jetties and boats on that line. `worldpeople.js` does the same sum to stand people on the quay.
+- A camera orbit needs the clearing wider than the orbit: the ruins' first orbit (34 m) sat inside the trees of a 34 m clearing. Clearing 62 m, orbit 25 m.
+- Olive grove trees are whole catalogue models set down one by one (about sixty); fine for one place, not a way to plant a forest.
