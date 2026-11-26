@@ -95,3 +95,16 @@ run decor_statue-plinth_t1     town.py statue_plinth 5000  512
 run decor_cart_t1              town.py cart          5000  512
 run decor_barrels_t1           town.py barrels       5000  512
 run decor_brazier_t1           town.py brazier       5000  512
+# the countryside kit for the open world (ZW-051, phase 3)
+run country_hut_shepherd     country.py hut       26000 1024
+run country_barn             country.py barn      40000 1024
+run country_watermill        country.py mill      45000 1024
+run country_bridge_timber    country.py bridge    40000 1024
+run country_boat_fishing     country.py boat      22000 512
+run country_jetty            country.py jetty     16000 512
+run country_cart_hay         country.py cart      16000 512
+run country_haystack         country.py haystack  14000 512
+run country_fence            country.py fence     4000  512
+run country_beehives         country.py beehives  14000 512
+run country_threshing-floor  country.py threshing 22000 1024
+run country_shrine_roadside  country.py shrine    30000 512

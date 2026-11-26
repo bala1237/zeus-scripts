@@ -107,6 +107,9 @@ const PLACES = {
   ford: { x: -148, z: -1045, name: 'The Old Ford', kind: 'ford', clear: 50 },
   crest: { x: 40, z: -640, name: 'First Sight Hill', kind: 'view', clear: 70 },
   falls: { x: 455, z: -3360, name: 'The Falls of Zeus', kind: 'falls' },
+  // clearings for the countryside (phase 3 of the world plan): three shepherds' huts and the mill bank by the village
+  hut1: { x: 130, z: -700, kind: 'hut', clear: 46 }, hut2: { x: -330, z: -860, kind: 'hut', clear: 46 }, hut3: { x: -160, z: -480, kind: 'hut', clear: 46 },
+  mill: { x: -335, z: -1590, kind: 'mill', clear: 150 },
 };
 // ---------- the door: everything the world uses, in the world's own directions (sea to the east)
 const W = { CITY: { x: CITY.z, z: CITY.x, r: CITY.r, y: CITY.y }, PLACES: Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, { ...p, x: p.z, z: p.x }])) };

@@ -161,3 +161,12 @@ One part owns the sun, the sky dome, the fog and everything that changes with th
 - **Rain** is 7,000 streaks in a 90 m box that wraps round the camera in the vertex shader; **lightning** is a bolt drawn on a canvas for each stroke, shown on a sprite 3.5 to 7 km away, with the sky and the fill light flashing twice.
 - **Trap, stills only:** the things that travel with the camera take its position in `air.follow`, so the still path calls it before the tickers; otherwise rain is drawn round the world's origin.
 - Not checked here: motion of rain and flames, the flash, frame rate at night (five extra lights).
+
+## The countryside and the animals (phases 3 and 6)
+
+- **Models:** `assets/blender/country.py` builds twelve `country_*` models from the reference pictures in `assets/concepts/countryside/`. New materials there: thatch and hay (both from the Poly Haven `thatch_roof_angled` scan, tinted), dry stone (`stacked_stone_wall`), weathered planks, wicker, sacking. Hay needed strong contrast (2.0) and a deeper gold or it reads as a smooth yellow blob.
+- **Models that go below the ground** (bridge piers 4 m, jetty piles 3 m, the boat's hull 0.42 m): `normalize.mjs` lifts every model so its lowest point is the origin, so the world sets these down again by that depth (`worldplaces.js`, the river section).
+- **Placement** is in `worldplaces.js`: each farm gets a barn, haystacks and a pen of twelve fence lengths, and by kind a threshing floor, a hay cart or beehives; three huts stand in clearings; the mill, jetty, boats and bridge are found from the river's own points (`near`, `bank`: walk out from the middle of the river until the ground is above the water). The mill is turned so its wheel side faces the water.
+- **Clearings:** a model in the forest needs an entry in `PLACES` in `worldgen.js` with `clear`, or trees grow through it. Those entries are in the land's inner directions (x and z swapped from the world's).
+- **Animals** (`worldanimals.js`): no bones, so they stand. Each kind is two sets of instanced meshes, the full model within 55 m of the camera and the far-view model beyond, re-sorted every 12 frames. About 110 animals. Eagles are whole models that fly a circle, banked.
+- **Lamps:** the barn, mill and huts have a door lamp; a roadside shrine has a flame.

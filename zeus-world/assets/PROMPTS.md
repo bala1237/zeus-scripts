@@ -82,3 +82,5 @@ For the open world, phases 3 and 6 of `docs/WORLD-PLAN.md` (ZW-051). Nano Banana
 | `eagle` | a golden eagle, the sacred bird of Zeus, gliding with both wings spread wide and flat, dark brown plumage with golden-tawny feathers on the head and nape, each large flight feather clearly separated at the wing tips, a fanned tail, yellow hooked beak and yellow talons tucked back under the body, head looking forward | dark brown and golden feathers, yellow beak and talons |
 
 All eighteen came back usable on the first try. Weakest: the horse, which reads glossier and more toy-like than the other animals.
+
+Built 26 Nov 2026 after the owner approved both sheets. Countryside: by script, `blender/country.py`, twelve lines in `build.sh` (names `country_*`); no generation cost. Animals: Trellis 2 (resolution 1536, texture 2048, decimation 120000), one try each, sizes in `animals.sh` (names `animal_*`, far-view versions in `models/far/`). The goat came out facing sideways and is turned 90 degrees; the eagle keeps about 39,000 triangles because its feathers do not simplify within the error limit.
