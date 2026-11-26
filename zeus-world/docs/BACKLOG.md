@@ -659,3 +659,7 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Likely cause (a guess):** OBS restarts its WebSocket server, dropping everyone, whenever its WebSocket settings window is applied or closed with OK; that window is where the password is copied from.
 - **Changed:** the page now shows the reason OBS gave (its close code) and joins again by itself every three seconds. The Connect button always starts a fresh connection.
 - **Not known:** the real cause, until he tries again and reads the new message.
+- **Owner, 26 Nov 2026, after the first change:** "connection to OBS closed (OBS went away); trying again…".
+- **Real fault found:** "OBS went away" is the browser's code for a link that never opened. `obsremote.js` reported a failed attempt twice: first correctly ("could not reach OBS"), then, because one flag served two purposes, again as a link that had closed, and the second message replaced the first. So the page never reached OBS at all; the earlier guess (OBS restarting its server) was wrong.
+- **Changed:** a link that never joined is reported once, as not reached, with the three things to check: OBS open on the same computer; its WebSocket server enabled on port 4455; the browser allowed to reach this computer from a web page (Chrome asks for "Local network access" and blocks the link if that is refused or never answered).
+- **Not known:** which of the three it is on his Mac.
