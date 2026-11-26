@@ -107,9 +107,20 @@ After the smoothness fixes the owner said: "still jittery, mostly on the fast lo
 - **Lesson.** Jitter that is worst when the camera is fastest is the camera's path before it is the frame rate. Measure the path first: it needs no picture.
 - Also done: each kind of tree is drawn once out of sight while the page opens (`warm` in `worldtrees.js`), so its shape and pictures are on the graphics card before the camera reaches one; shadows are redrawn on every frame again, since alternate frames made frame times uneven; land is put in at full speed while the page is opening.
 
+## People (phase 1 of `WORLD-PLAN.md`, 26 Nov 2026)
+
+`worldpeople.js`. The world's people are the city's own three citizens (man, woman, elder) in the city's colours. All adults.
+
+- **Who is where:** in Riverbend, a seller behind each stall and buyers before it, people at the well, the shrine, the altar and the workshops, and six walking to and fro across the square; at each farmstead one under the pergola and one going between house and cart; seven travellers on stretches of the road; two resting on First Sight Hill; in the town outside the west gate and inside it, walkers on the street and people at the stalls and the gate. About 75 in all.
+- **The newcomer** is one more person whom the story's shots place: `who` on a shot in `cinecam.js` is `{ ahead: 7 }` (walking 7 m in front of a tracking camera, at its pace) or `{ stand: 3 }` (standing that far along the road from the shot's place, facing the way the road goes). The tracking shots now move at walking pace (9.5 m in 7 s) so that the camera can keep company.
+- **The newcomer is the man by default.** The woman citizen reads as young in close-up, and the owner has ruled out children; `&hero=woman` or `&hero=elder` chooses another. She is still among the villagers, as she is in the city.
+- **Cost kept down:** a person is the full body within about 55 m, the city's far-view body out to 420 m, hidden beyond; bodies further than 160 m are not animated. The far body is bound to the full body's bones (as in `life.js`).
+- **Not built:** people do not avoid each other or the stalls; nobody carries or works at anything; no one reacts to the newcomer. Working people (farmers, fishers, woodcutters) need new models: phase 6.
+- `&people=0` leaves them out.
+
 ## Not yet built
 
-- **No people.** The newcomer of the story, and people in each place doing different things, are the next batch.
+- **Working people and animals** (phase 6). The citizens are in; see "People".
 - **The city is a stand-in** made from catalogue models on the real ground plan, with a town outside the west gate. `city.js` is a page with no parts that can be imported; to stand the living city on this land it has to be turned into a part first.
 - The director's moments: building for the MVP, one person's place. A remote page (as for the hero film).
 - Dusk has only its light; no lamps.

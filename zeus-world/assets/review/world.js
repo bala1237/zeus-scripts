@@ -11,6 +11,7 @@ import { createLand } from './worldland.js';
 import { createTrees } from './worldtrees.js';
 import { createPlaces } from './worldplaces.js';
 import { createCine } from './cinecam.js';
+import { createPeople } from './worldpeople.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
 
 const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'); if (q.get('ui') === '0' || SHOT) document.body.classList.add('plain');
@@ -32,7 +33,8 @@ const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping 
 
 const trees = await createTrees({ renderer, scene, tickers }), land = createLand({ scene, tickers, trees });
 const built = await createPlaces({ scene, heightAt, places, onProgress: (a, b) => { $('load').textContent = `THE WORLD IS WAKING  ${Math.round(100 * a / b)}%`; } });
-const cine = createCine({ heightAt, road: pathThrough(ROAD_PTS, 4), riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
+const roadPath = pathThrough(ROAD_PTS, 4), cine = createCine({ heightAt, road: roadPath, riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
+const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
 
 // ---------- the director: the story by itself, a place held for as long as wanted, and the flight between
 // mode: 'story' | 'flight' | 'place'. The story's clock stops while the director is elsewhere and picks up at the start of the shot it left.
@@ -62,17 +64,17 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   if (dir.mode === 'story') { dir.storyAt += dt; dir.pose = cine.story(dir.storyAt); }
   else if (dir.mode === 'place') dir.pose = cine.place(dir.key, dir.clock);
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
-  apply(dir.pose, t); }
+  apply(dir.pose, t); people?.subject(dir.mode === 'story' ? dir.pose.subject || null : null); people?.update(t, dt, camera.position); }
 let frameNo = 0;
 function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); frameNo++; aimSun(); sun.shadow.needsUpdate = true; const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
   if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
-window.__world = { renderer, scene, camera, land, built, cine, dir, tickers, heightAt, places, city, go, backToStory };
+window.__world = { renderer, scene, camera, land, built, cine, dir, people, tickers, heightAt, places, city, go, backToStory };
 
 if (SHOT) { // one still: a story shot, a place, or a chosen camera
   let pose; if (q.get('cam')) { const c = q.get('cam').split(',').map(Number); pose = { p: c.slice(0, 3), t: c.slice(3, 6), fov: Number(q.get('fov')) || 40, roll: 0, shake: 0 }; }
   else if (q.get('place')) pose = cine.place(q.get('place'), Number(q.get('at') || 3)); else { const b = cine.beats[Number(q.get('beat') || 0)]; pose = cine.story(b.t0 + b.sec * Number(q.get('u') ?? 0.5)); }
-  pose.fade = 0; if (!q.has('title')) pose.title = null; apply(pose, 3); land.update(camera.position, true); const t0 = performance.now(); await new Promise((ok) => { const w = () => (land.settled() || performance.now() - t0 > 240000 ? ok() : setTimeout(w, 200)); w(); });
+  pose.fade = 0; if (!q.has('title')) pose.title = null; apply(pose, 3); people?.subject(pose.subject || null); people?.update(3, 0.016, camera.position); land.update(camera.position, true); const t0 = performance.now(); await new Promise((ok) => { const w = () => (land.settled() || performance.now() - t0 > 240000 ? ok() : setTimeout(w, 200)); w(); });
   for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; trees.update(camera.position); renderer.render(scene, camera); sun.shadow.needsUpdate = true; renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
   window.__stats = { ...land.stats(), built: built.triangles, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, seconds: (performance.now() - t0) / 1000 }; window.ready = true; }
 else { // the land under the first shot is made ready before the story starts, so that it opens on a finished picture
