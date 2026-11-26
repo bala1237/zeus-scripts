@@ -19,11 +19,11 @@ self.onmessage = (e) => { const { id, x, z, size, cells, trees } = e.data, n = c
   for (let e2 = 0; e2 < ring; e2++) { const s = edge[e2], k = n * n + e2; pos[k * 3] = pos[s * 3]; pos[k * 3 + 1] = pos[s * 3 + 1] - drop; pos[k * 3 + 2] = pos[s * 3 + 2]; for (let q = 0; q < 3; q++) { nor[k * 3 + q] = nor[s * 3 + q]; col[k * 3 + q] = col[s * 3 + q]; } }
   for (let e2 = 0; e2 < ring; e2++) { const a = edge[e2], b = edge[(e2 + 1) % ring], c = n * n + e2, d = n * n + (e2 + 1) % ring; idx[t++] = a; idx[t++] = b; idx[t++] = c; idx[t++] = b; idx[t++] = d; idx[t++] = c; }
   // trees: one chance per plot of ground, at a place fixed by the plot's own number, so the same trees always stand in the same places
-  const A = [], B = []; if (trees > 0) { const plot = trees >= 1 ? 6.5 : trees >= 0.3 ? 9.5 : 15, big = trees >= 1 ? 1 : trees >= 0.3 ? 1.35 : 2.0, i0 = Math.ceil(x / plot), j0 = Math.ceil(z / plot);
+  const A = [], B = []; if (trees > 0) { const plot = trees >= 1 ? 6.5 : trees >= 0.5 ? 8.5 : 14, big = trees >= 1 ? 1 : trees >= 0.5 ? 1.1 : 1.5, i0 = Math.ceil(x / plot), j0 = Math.ceil(z / plot);
     for (let j = j0; j * plot < z + size; j++) for (let i = i0; i * plot < x + size; i++) { const px = (i + hash(i, j, 1) * 0.9) * plot, pz = (j + hash(i, j, 2) * 0.9) * plot, h = heightAt(px, pz); if (h < 1.6) continue; const f = forestAt(px, pz, h);
       // a few lone trees stand in open country too, away from the water
       const lone = f < 0.05 && h > 5 && hash(i, j, 7) < 0.012 && riverNear(px, pz).d > 30; if (hash(i, j, 3) > f * 1.05 && !lone) continue;
-      const pine = hash(i, j, 4) < 0.18 + 0.6 * Math.min(1, Math.max(0, (h - 90) / 160)), s = (0.75 + 0.7 * hash(i, j, 5)) * big * (lone ? 1.2 : 1); (pine ? B : A).push(px, h - 0.15, pz, s, hash(i, j, 6) * 6.283, 0.78 + 0.44 * hash(i, j, 8)); } }
+      const pine = hash(i, j, 4) < 0.14 + 0.5 * Math.min(1, Math.max(0, (h - 110) / 180)) + (lone ? 0.3 : 0), s = (0.75 + 0.7 * hash(i, j, 5)) * big * (lone ? 1.2 : 1); (pine ? B : A).push(px, h - 0.15, pz, s, hash(i, j, 6) * 6.283, 0.78 + 0.44 * hash(i, j, 8)); } }
   // grass and flowers: only on the finest tiles, which are the ones under the camera. Thick in meadows, thin under trees, none on rock, sand or road.
   const G = [], K = []; if (e.data.grass) { const plot = 1.15, i0 = Math.ceil(x / plot), j0 = Math.ceil(z / plot);
     for (let j = j0; j * plot < z + size; j++) for (let i = i0; i * plot < x + size; i++) { const px = (i + hash(i, j, 11)) * plot, pz = (j + hash(i, j, 12)) * plot, fi = (px - x) / step, fj = (pz - z) / step, ii = Math.min(cells - 1, Math.floor(fi)), jj = Math.min(cells - 1, Math.floor(fj)), u = fi - ii, v = fj - jj, at = (a, b) => H[(b + 1) * (n + 2) + a + 1];

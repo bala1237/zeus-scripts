@@ -65,6 +65,16 @@ A land that is travelled through, not seen whole (ZW-049). First proof, 25 to 26
 
 Frame rate cannot be measured here. `debug=1` shows it on the owner's machine.
 
+## The forest, after the owner's review (26 Nov 2026)
+
+The owner: "The trees lies very elementary and it doesn't look like Forrest ... Every items in Zeus world should look top notch and professional and closer to real." The first proof's trees were shapes made in code. They are gone. **Rule: nothing in the open world may look more elementary than the city scene.**
+
+- **The system now** (`worldtrees.js`): every tree is a catalogue model shown four ways by distance. The nearest 40 within 40 m are the catalogue model itself; the next 260 within 95 m the city's far-view model; the rest of the finest squares a lighter model (`models/mid/`, made with `lod.mjs` at 600 to 1,500 triangles); everything further is a picture of the tree on three crossed cards, photographed from the model when the page loads. The nearest trees are chosen afresh as the camera moves. With cards the forest is thick to the horizon at almost no cost.
+- **What it showed:** the catalogue has no forest tree. Its trees are the cypress and the citizen's tree, which is a memorial oak with a red ribbon and a ring of stones. A forest of those is wrong. **New tree models are needed** (the city's route: concept picture, the owner approves the sheet, then Trellis 2, about $0.35 a model). Waiting for the owner's word.
+- **Trap: a card seen from behind goes black** if drawn double-sided, because its upward lighting is turned over. Each card is two faces, both lit from above.
+- **Trap:** the lighter `mid` models are rough close up (they are made by clustering); they must not be the nearest thing to the camera.
+- **Not published.** This state is on the work branch only; the preview still shows the first proof.
+
 ## Not yet built
 
 - **No people.** The newcomer of the story, and people in each place doing different things, are the next batch.
