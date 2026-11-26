@@ -6,14 +6,14 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
-export async function createPlaces({ scene, heightAt, places, camps = [], onProgress = () => {} }) {
+export async function createPlaces({ scene, heightAt, places, camps = [], river = [], roadside = [], onProgress = () => {} }) {
   const lamps = []; // where light comes from after dark: lanterns, braziers and altars, a lamp by each door, the travellers' fires (worldair.js draws them)
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const cache = {}, M = (n) => `./models/${n}.glb`;
   const get = (n) => (cache[n] ||= loader.loadAsync(M(n)).then((g) => { g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); return g.scene; }).catch((e) => { console.warn('model missing', n, e.message); return null; }));
   const root = new THREE.Group(); scene.add(root); const jobs = []; let done = 0;
   // set a model down: x, z in the world, turned by ry, standing on the ground there (or at a given height)
   const put = (n, x, z, ry = 0, s = 1, y = null) => jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const o = m.clone(true); o.position.set(x, y ?? heightAt(x, z), z); o.rotation.y = ry; o.scale.setScalar(s); o.updateMatrixWorld(true); o.traverse((c) => { c.matrixAutoUpdate = false; }); root.add(o);
-    const k = /lantern/.test(n) ? 'lamp' : /brazier|altar/.test(n) ? 'fire' : /^home_villa-walls|^biz_(?!stall)|^civic_(?!aqueduct)|decor_shrine/.test(n) ? 'door' : null; if (!k) return; const b = new THREE.Box3().setFromObject(o), g = o.position.y;
+    const k = /lantern/.test(n) ? 'lamp' : /brazier|altar|shrine_roadside/.test(n) ? 'fire' : /^home_villa-walls|^biz_(?!stall)|^civic_(?!aqueduct)|decor_shrine|country_(barn|watermill|hut)/.test(n) ? 'door' : null; if (!k) return; const b = new THREE.Box3().setFromObject(o), g = o.position.y;
     if (k === 'door') { const d = (b.max.z - b.min.z + b.max.x - b.min.x) / 4 + 0.8; lamps.push({ x: x + Math.sin(ry) * d, y: g + 2.1, z: z + Math.cos(ry) * d, ground: g, kind: k }); } else lamps.push({ x, y: k === 'lamp' ? b.max.y - 0.35 : b.max.y + 0.1, z, ground: g, kind: k }); }));
   const face = (x, z, cx, cz) => Math.atan2(cx - x, cz - z);
 
@@ -37,7 +37,8 @@ export async function createPlaces({ scene, heightAt, places, camps = [], onProg
     put('infra_signpost', ...at(84, 2), 1.2); put('decor_obelisk', ...at(92, -10)); for (let i = 0; i < 7; i++) { put('nature_cypress_t1', ...at(-26 + i * 9, -62), 0, 1.5); } for (const [dx, dz] of [[-62, -8], [-62, 34], [64, 34], [40, 44], [-24, 46]]) put('nature_cypress_t1', ...at(dx, dz), 0, 1.4); }
 
   // ---------- farmsteads in the fields between the forest and the walls: a stone villa, a pergola, a cart, a low wall
-  for (const [x, z, ry, k] of [[-330, -70, 0.6, 0], [-420, 90, 2.2, 1], [-250, 120, -1.2, 2], [-520, -40, 1.5, 0], [-210, -190, 0.2, 1], [-300, 250, 3.0, 2], [-160, 200, -0.6, 0], [-600, 160, 0.9, 1]]) { const c = Math.cos(ry), sn = Math.sin(ry);
+  const FARMS = [[-330, -70, 0.6, 0], [-420, 90, 2.2, 1], [-250, 120, -1.2, 2], [-520, -40, 1.5, 0], [-210, -190, 0.2, 1], [-300, 250, 3.0, 2], [-160, 200, -0.6, 0], [-600, 160, 0.9, 1]];
+  for (const [x, z, ry, k] of FARMS) { const c = Math.cos(ry), sn = Math.sin(ry);
     villa(x, z, ry, [{ walls: 't1_stone', roof: 't1_terracotta', porch: 't2_doric' }, { walls: 't2_ochre', roof: 't1_terracotta' }, { walls: 't1_stone', roof: 't2_slate' }][k]); put('decor_pergola_t1', x + c * 9, z - sn * 9, ry); put('decor_cart_t1', x - c * 8 + sn * 3, z + sn * 8 + c * 3, ry + 1); put('decor_amphorae_t1_cluster', x + sn * 5 + c * 4, z + c * 5 - sn * 4, ry);
     for (let i = -2; i <= 2; i++) put('decor_garden-wall_t1_plaster', x + sn * 9 + c * i * 2, z + c * 9 - sn * i * 2, ry); put('nature_cypress_t1', x - c * 7 - sn * 6, z + sn * 7 - c * 6, 0, 1.4); }
   put('decor_shrine', places.crest.x + 8, places.crest.z - 10, 1.9); put('infra_signpost', places.crest.x - 4, places.crest.z + 5, 0.4); put('decor_bench_t1_marble', places.crest.x + 3, places.crest.z + 8, 1.4);
@@ -56,9 +57,25 @@ export async function createPlaces({ scene, heightAt, places, camps = [], onProg
     put('biz_bakery_t1', -92, -30, 0.3); put('biz_pottery_t1', -108, 34, 2.9); put('biz_cafe_t1', -128, -32, 0.2); put('biz_stall_t1_fruit', -76, 9, 1.6); put('biz_stall_t1_pottery', -82, -9, -1.5); put('water_well', -150, 30); put('decor_shrine', -200, -22, 0.4);
     for (let i = 0; i < 9; i++) c('civic_aqueduct', -60 - i * 8, -62, 0);
     c('civic_lighthouse', 70, 44); put('landmark_colossus', 72, -44, Math.PI / 2, 1, 2.6); put('landmark_trireme', 104, 6, 0.3, 1, 0.1); }
+  // ---------- the countryside (phase 3): what the farms and the river have that the town does not. Models from blender/country.py.
+  const spots = { farms: [], huts: [], horses: [[-92, 16, 1.9], [-96, 20.5, 2.3]], eagles: [[places.crest.x, places.crest.z, 110, 75], [places.village.x + 60, places.village.z - 160, 150, 95], [places.falls.x + 120, places.falls.z, 130, 60], [-300, 60, 170, 110]] };
+  FARMS.forEach(([x, z, ry, k], i) => { const c = Math.cos(ry), sn = Math.sin(ry), L = (f, r) => [x + sn * f + c * r, z + c * f - sn * r]; // f metres to the front, r to the right
+    put('country_barn', ...L(-2, -19), ry); put('country_haystack', ...L(-15, -25), i); if (i % 2) put('country_haystack', ...L(-20, -17), i * 2);
+    const pen = L(-16, 2); for (let j = -2; j <= 1; j++) { put('country_fence', ...L(-11.5, 2 + j * 3 + 1.5), ry); put('country_fence', ...L(-20.5, 2 + j * 3 + 1.5), ry); } for (let j = 0; j < 3; j++) { put('country_fence', ...L(-13 - j * 3, -4), ry + Math.PI / 2); if (j) put('country_fence', ...L(-13 - j * 3, 8), ry + Math.PI / 2); }
+    const f = { x, z, ry, k, pen };
+    if (k === 0) { put('country_threshing-floor', ...L(4, 24), ry); f.ox = L(4, 31); } if (k === 1) { put('country_cart_hay', ...L(6, -16), ry + 0.5); f.horse = L(9.5, -14); } if (k === 2) put('country_beehives', ...L(-6, 15), ry - 0.4);
+    spots.farms.push(f); });
+  for (const k of ['hut1', 'hut2', 'hut3']) { const h = places[k]; put('country_hut_shepherd', h.x, h.z, 2.2); put('country_fence', h.x + 9, h.z - 2, 0.3); put('country_fence', h.x + 11.8, h.z - 2.9, 0.3); put('country_haystack', h.x - 8, h.z - 4, 1, 0.7); spots.huts.push({ x: h.x, z: h.z }); }
+  for (const [x, z, ry] of roadside) put('country_shrine_roadside', x, z, ry);
+  // the river by the village: the mill with its wheel over the water, a jetty with a boat, and a timber bridge to the far bank
+  if (river.length) { const near = (X) => river.reduce((b, p) => (Math.abs(p[0] - X) < Math.abs(b[0] - X) ? p : b)), bank = (p, side) => { let d = 2; while (d < 60 && heightAt(p[0], p[1] + side * d) < p[3] + 0.25) d += 0.5; return d; };
+    const m = near(places.village.x - 20), dm = bank(m, 1); put('country_watermill', m[0], m[1] + dm + 2.3, Math.PI / 2, 1, Math.max(m[3] + 0.3, heightAt(m[0], m[1] + dm + 2.3)));
+    const j = near(places.village.x - 75), dj = bank(j, 1); put('country_jetty', j[0], j[1] + dj - 2.6, 0, 1, j[3] + 0.3 - 3.0); put('country_boat_fishing', j[0] - 4.6, j[1] + dj - 5.2, 0.12, 1, j[3] - 0.38); put('country_boat_fishing', j[0] + 70, j[1] - 1, -0.2, 1, j[3] - 0.38);
+    const b = near(places.village.x + 110), hb = Math.max(heightAt(b[0], b[1] + 15), heightAt(b[0], b[1] - 15), b[3] + 0.4); put('country_bridge_timber', b[0], b[1], Math.PI / 2, 1, hb - 4.0); }
+  put('country_boat_fishing', 116, -24, 0.9, 1, -0.38); put('country_boat_fishing', 122, 30, -0.5, 1, -0.38); put('country_boat_fishing', 131, 4, 2.4, 1, -0.38);
   // travellers' camps beside the road: two logs and a fire
   for (const [x, z] of camps) { const g = heightAt(x, z); put('nature_log_fallen', x + 1.5, z + 0.4, 0.5, 0.42); put('nature_log_fallen', x - 1.3, z - 0.9, 2.3, 0.42); lamps.push({ x, y: g + 0.45, z, ground: g, kind: 'fire', size: 1.25 }); }
   await Promise.all(jobs);
   let tris = 0; root.traverse((o) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
-  return { root, lamps, models: Object.keys(cache).length, placed: jobs.length, triangles: Math.round(tris) };
+  return { root, lamps, spots, models: Object.keys(cache).length, placed: jobs.length, triangles: Math.round(tris) };
 }
