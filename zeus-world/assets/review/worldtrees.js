@@ -17,7 +17,7 @@ const SPECIES = [{ n: 'nature_tree_holm-oak', share: 54, sink: 0.055 }, { n: 'na
   { n: 'nature_tree_stone-pine', sink: 0.05 }, { n: 'nature_tree_fir', sink: 0.06, tint: [0.72, 0.98, 0.74] }];
 // undergrowth, on the ground nearest the camera: which version of the model is drawn (full, far or mid), and how deep its mound is set
 const UNDER = [{ n: 'nature_fern', kit: 'mid', sink: 0.1 }, { n: 'nature_shrub_broom', kit: 'far', sink: 0.08 }, { n: 'nature_log_fallen', kit: 'full', sink: 0.12 }];
-const RINGS = [{ kit: 'full', max: 40, r: 40 }, { kit: 'far', max: 260, r: 95 }];
+const RINGS = [{ kit: 'full', max: 28, r: 36 }, { kit: 'far', max: 220, r: 95 }];
 
 export async function createTrees({ renderer, scene, tickers }) {
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const wind = { value: 0 }; tickers.push((t) => { wind.value = t; });
@@ -64,7 +64,7 @@ export async function createTrees({ renderer, scene, tickers }) {
       const r = Math.hypot(t.s * 0.71, 40); for (const im of ims) { im.boundingSphere = new THREE.Sphere(new THREE.Vector3(t.x + t.s / 2, t.cy ?? 0, t.z + t.s / 2), r + (t.dy ?? 60)); t.group.add(im); t.treeIMs.push(im); tris += m * (im.geometry.index ? im.geometry.index.count : im.geometry.attributes.position.count) / 3; } n += m; });
     if (fine && d.under) UNDER.forEach((u, k) => { const idx = []; for (let i = 0; i < d.under.length; i += 6) if (d.under[i + 5] === k) idx.push(i); if (!idx.length) return;
       for (const p of u.parts) { const im = new THREE.InstancedMesh(p.geo, p.mat, idx.length); idx.forEach((i, j) => { const sc = d.under[i + 3]; p.geo.boundingBox || p.geo.computeBoundingBox(); P.set(d.under[i], d.under[i + 1] - u.sink * p.geo.boundingBox.max.y * sc, d.under[i + 2]); Q.setFromAxisAngle(Y, d.under[i + 4]); S.setScalar(sc); im.setMatrixAt(j, M.compose(P, Q, S)); });
-        im.castShadow = k > 0; im.receiveShadow = true; im.boundingSphere = new THREE.Sphere(new THREE.Vector3(t.x + t.s / 2, t.cy ?? 0, t.z + t.s / 2), Math.hypot(t.s * 0.71, 6) + (t.dy ?? 60)); t.group.add(im); t.treeIMs.push(im); tris += idx.length * (p.geo.index ? p.geo.index.count : p.geo.attributes.position.count) / 3; } });
+        im.castShadow = k === 2; im.receiveShadow = true; im.boundingSphere = new THREE.Sphere(new THREE.Vector3(t.x + t.s / 2, t.cy ?? 0, t.z + t.s / 2), Math.hypot(t.s * 0.71, 6) + (t.dy ?? 60)); t.group.add(im); t.treeIMs.push(im); tris += idx.length * (p.geo.index ? p.geo.index.count : p.geo.attributes.position.count) / 3; } });
     t.trees = n; count += n; if (fine) { near.add(t); dirty = true; } }
   function removeTile(t) { if (!t.treeIMs) return; for (const im of t.treeIMs) { tris -= im.count * (im.geometry.index ? im.geometry.index.count : im.geometry.attributes.position.count) / 3; im.dispose(); } count -= t.trees || 0; near.delete(t); t.treeList = null; dirty = true; }
   // choose the nearest trees and draw them in full; put back the ones the camera has left behind

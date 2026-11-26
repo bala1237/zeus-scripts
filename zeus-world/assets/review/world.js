@@ -1,6 +1,7 @@
 // The open world (ZW-049): the page. The land is worldland.js; where the ground is and what grows there is worldgen.js;
 // the built places are worldplaces.js; the camera's moves, the story and the flights are cinecam.js.
 //   ?ui=0 no controls (a browser source)   ?debug=1 figures on screen   ?light=day|dusk   ?place=falls start at a place
+//   ?sharp=2 draw at the screen's full sharpness (heavier; the default is 1.25)
 //   ?shot&beat=4&u=0.5   one still of a story shot, part way through      ?shot&place=falls&at=3   one still of a place, 3 s in
 //   ?shot&cam=x,y,z,tx,ty,tz&fov=40   one still from a chosen camera
 // From outside (a remote, later TikFinity): window.worldGo('falls'), window.worldStory()
@@ -13,16 +14,16 @@ import { createCine } from './cinecam.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
 
 const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id), SHOT = q.has('shot'); if (q.get('ui') === '0' || SHOT) document.body.classList.add('plain');
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: SHOT, logarithmicDepthBuffer: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: SHOT, reversedDepthBuffer: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, Number(q.get('sharp')) || 1.25)); renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; document.body.prepend(renderer.domElement); renderer.domElement.style.filter = 'saturate(1.16) contrast(1.08)';
-const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.4, 40000), tickers = [];
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.5, 40000), tickers = [];
 addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
 
 // ---------- light and air, the same recipe as the city's stream grade, with haze that deepens with distance
 const LD = { day: { sun: 0xffe9c4, sunI: 3.4, dir: [-0.55, 0.62, 0.5], hemi: 0.5, env: 0.62, exp: 0.9, fog: 0xa9c8e6, rot: 2.2 }, dusk: { sun: 0xff8a45, sunI: 1.7, dir: [-0.86, 0.2, 0.43], hemi: 0.16, env: 0.48, exp: 0.82, fog: 0xd99a78, rot: 3.9 } }, light = q.get('light') === 'dusk' ? 'dusk' : 'day', L = LD[light];
 renderer.toneMappingExposure = L.exp; scene.fog = new THREE.FogExp2(L.fog, 0.00013);
 const hemi = new THREE.HemisphereLight(0xfff4e0, 0x7a6a48, L.hemi), sun = new THREE.DirectionalLight(L.sun, L.sunI), sunDir = new THREE.Vector3(...L.dir).normalize(); scene.add(hemi, sun, sun.target);
-sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.25; Object.assign(sun.shadow.camera, { left: -170, right: 170, top: 170, bottom: -170, near: 1, far: 900 }); sun.shadow.camera.updateProjectionMatrix();
+sun.castShadow = true; sun.shadow.autoUpdate = false; sun.shadow.mapSize.set(4096, 4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.25; Object.assign(sun.shadow.camera, { left: -170, right: 170, top: 170, bottom: -170, near: 1, far: 900 }); sun.shadow.camera.updateProjectionMatrix();
 // the shadows cover the ground round whatever the camera is looking at; they are moved in whole steps so that they do not crawl
 const focus = new THREE.Vector3(); function aimSun() { const s = 340 / 4096 * 8; sun.target.position.set(Math.round(focus.x / s) * s, focus.y, Math.round(focus.z / s) * s); sun.position.copy(sun.target.position).addScaledVector(sunDir, 420); sun.target.updateMatrixWorld(); }
 const tex = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); tex.colorSpace = THREE.SRGBColorSpace;
@@ -62,7 +63,8 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   else if (dir.mode === 'place') dir.pose = cine.place(dir.key, dir.clock);
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
   apply(dir.pose, t); }
-function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); aimSun(); const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
+let frameNo = 0;
+function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); if (frameNo++ % 2 === 0) { aimSun(); sun.shadow.needsUpdate = true; } const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
   if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
 window.__world = { renderer, scene, camera, land, built, cine, dir, tickers, heightAt, places, city, go, backToStory };
@@ -71,12 +73,12 @@ if (SHOT) { // one still: a story shot, a place, or a chosen camera
   let pose; if (q.get('cam')) { const c = q.get('cam').split(',').map(Number); pose = { p: c.slice(0, 3), t: c.slice(3, 6), fov: Number(q.get('fov')) || 40, roll: 0, shake: 0 }; }
   else if (q.get('place')) pose = cine.place(q.get('place'), Number(q.get('at') || 3)); else { const b = cine.beats[Number(q.get('beat') || 0)]; pose = cine.story(b.t0 + b.sec * Number(q.get('u') ?? 0.5)); }
   pose.fade = 0; if (!q.has('title')) pose.title = null; apply(pose, 3); land.update(camera.position, true); const t0 = performance.now(); await new Promise((ok) => { const w = () => (land.settled() || performance.now() - t0 > 240000 ? ok() : setTimeout(w, 200)); w(); });
-  for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); trees.update(camera.position); renderer.render(scene, camera); renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
+  for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; trees.update(camera.position); renderer.render(scene, camera); sun.shadow.needsUpdate = true; renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
   window.__stats = { ...land.stats(), built: built.triangles, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, seconds: (performance.now() - t0) / 1000 }; window.ready = true; }
 else { // the land under the first shot is made ready before the story starts, so that it opens on a finished picture
   dir.pose = cine.story(0); if (q.get('place') && cine.places[q.get('place')]) { dir.key = q.get('place'); dir.mode = 'place'; dir.pose = cine.place(dir.key, 0); } apply(dir.pose, 0); mark();
   const clock = new THREE.Clock(); let started = false, frames = 0, acc = 0, prev = 0;
   renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); frames++; acc += t - prev; prev = t; if (acc > 0.5) { fps = frames / acc; frames = 0; acc = 0; }
-    if (!started) { for (const f of tickers) f(t); land.update(camera.position); trees.update(camera.position); dome.position.copy(camera.position); aimSun(); renderer.render(scene, camera); if (land.settled() || t > 25) { started = true; lastT = t; $('load').classList.add('gone'); } return; }
+    if (!started) { for (const f of tickers) f(t); land.update(camera.position); trees.update(camera.position); dome.position.copy(camera.position); aimSun(); sun.shadow.needsUpdate = true; renderer.render(scene, camera); if (land.settled() || t > 25) { started = true; lastT = t; $('load').classList.add('gone'); renderer.compileAsync(scene, camera).catch(() => {}); } return; }
     step(t); frame(t); if (!document.body.classList.contains('plain')) $('status').textContent = dir.mode === 'flight' ? 'flying…' : dir.mode === 'place' ? cine.places[dir.key].name[0] : 'the story'; });
   window.ready = true; }
