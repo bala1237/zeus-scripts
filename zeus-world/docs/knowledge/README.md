@@ -10,6 +10,7 @@ How each part works and how it was built. One file per topic. Update the file in
 | `battle.md` | The siege at the south gate: what it shows, how to see it, how it is driven and built |
 | `andie.md` | Andie's Place: a branded stream backdrop for another host, built on the same beat and laser code; how she uses it in TikTok LIVE Studio |
 | `hero-films.md` | Hero films: the page that plays them, how the name is put in and spoken, how the first film was cut, what was generated and what it cost |
+| `world.md` | The open world: a vast land travelled through (mountains, forest, river, falls, village, city), how it is generated and drawn, the camera's moves, the story and the director's places |
 | `stage.md` | The Zeus Stage: a separate show for music with lasers and changing backgrounds; the beat (tap and listen); why concert mode in the city was dropped |
 | `hosting.md` | The Vercel preview, how to deploy, branches and merging |
 | `environment.md` | Setting up a session: Blender, Node, rendering stills, connected services and their limits |

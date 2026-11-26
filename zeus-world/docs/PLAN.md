@@ -2,7 +2,7 @@
 
 Where the project stands and what happens next. Keep this short and current; detail belongs in the backlog and the knowledge files.
 
-Last updated: 25 Nov 2026.
+Last updated: 26 Nov 2026.
 
 **Live preview:** https://zeus-world-preview-bala-0416.vercel.app/city.html (public link; see `knowledge/hosting.md`).
 
@@ -46,6 +46,7 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **ZW-049, the open world, first proof.** `/world.html` (add `?debug=1` for the frame rate). Does it feel vast; do the camera moves and the flights between places feel like a film; does land visibly pop in after a cut; what frame rate on the M3 Pro. Next batch: the newcomer and people in each place, then the living city on this land, then the director's moments (the MVP's building, one person's place).
 0. **ZW-047, two new hero films.** The Last Banner and The Well are made and on `/hero.html` (Film list). Watch both with sound: do the hooks hide the story; do the moving stills pass as film; is the music at the right level; does the name land. Next ideas: The Lighthouse, The Bell; the narrator saying any name; the team version.
 0. **ZW-048, the pages in OBS.** Lasers listening inside OBS work on his Mac (OBS started with the switch). To try: the hero film's remote (OBS: Tools, WebSocket Server Settings, on; then `/hero.html` in Chrome, Connect to OBS, Play in OBS); the RODECaster as the input (`input=rode`); `city.html?ui=0`; whether the input still goes silent now that the page reconnects.
 0. **ZW-047, the hero film.** Second cut of The Fire-Bringer at `/hero.html`, after his review. Watch with sound: does the new opening hide what the film is about and pay off; is the "Zeus-authorative" narrator right; is the music at the right level under the voice; does the name's reveal land; which of the four letterings (A to D on the sheet). Then: team version, more scripts.

@@ -26,6 +26,7 @@ Then read whatever the task touches:
 | The bigger plan, in phases | `zeus-world/docs/ROADMAP.md` |
 | Ideas for making it a game (not decided) | `zeus-world/docs/BRAINSTORM-GAME.md` |
 | Research behind the game direction | `reports/Zeus World game design research.md`, notes in `research_notes/` |
+| The open world: a vast land travelled through, with a cinematic camera | `zeus-world/docs/knowledge/world.md` |
 | The music stage: the owner's brief, audit and phased plan | `zeus-world/docs/STAGE-PLAN.md` |
 | Hero films: story films that celebrate a battle's top givers; the rules and the scripts | `zeus-world/docs/hero-films/` |
 | Art style and model catalogue | `zeus-world/docs/ASSET-BIBLE.md` |

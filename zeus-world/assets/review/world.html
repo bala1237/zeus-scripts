@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zeus World · the open world</title>
+<style>
+  /* The open world (ZW-049): a land that is travelled through, not seen whole. Story mode follows a newcomer; the bar steers. */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1016; font-family: system-ui, sans-serif; }
+  canvas { display: block; }
+  #load { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #e9dcc0; font: 600 15px Georgia, serif; letter-spacing: .2em; background: #0b1016; transition: opacity .8s; pointer-events: none; }
+  #load.gone { opacity: 0; }
+  /* a place's name, lower left, as in a film */
+  #title { position: fixed; left: 5vw; bottom: 13vh; color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, .7); opacity: 0; transition: opacity 1.2s; pointer-events: none; }
+  #title.on { opacity: 1; }
+  #title .n { font: 600 clamp(22px, 3.4vw, 54px) Georgia, 'Times New Roman', serif; letter-spacing: .12em; }
+  #title .s { font: 400 clamp(11px, 1.15vw, 18px) Georgia, serif; letter-spacing: .34em; margin-top: .5em; opacity: .9; text-transform: uppercase; }
+  #curtain { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+  #ui { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; box-sizing: border-box; color: #fff; font: 600 13px system-ui, sans-serif; background: rgba(12, 16, 22, .86); border-top: 1px solid rgba(233, 194, 117, .4); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: center; }
+  body.plain #ui { display: none; }
+  #ui button { background: #2c3a4c; color: #fff; padding: 7px 12px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
+  #ui button.on { background: #e2b04a; color: #1d1305; }
+  #ui span { font-weight: 500; opacity: .85; }
+  #dbg { position: fixed; left: 8px; top: 8px; color: #fff; font: 12px ui-monospace, monospace; background: rgba(0, 0, 0, .55); padding: 4px 8px; border-radius: 6px; display: none; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="load">THE WORLD IS WAKING</div>
+<div id="title"><div class="n" id="titleN"></div><div class="s" id="titleS"></div></div>
+<div id="curtain"></div>
+<div id="dbg"></div>
+<div id="ui">
+  <span id="status"></span>
+  <button id="story" class="on" title="The newcomer's journey, by itself">Story</button>
+  <span>Go to:</span><span id="places"></span>
+</div>
+<script type="module" src="./world.js"></script>
+</body>
+</html>
