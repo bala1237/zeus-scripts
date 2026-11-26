@@ -204,3 +204,8 @@ The owner measured 35 frames a second at the low end of the story and 32 to 35 a
 - **Smoke** is one `Points` for every hearth (huts and camp fires); each puff's place comes from its hearth and its age in the shader. Its fog colours are set by `air.set`, which is why `world.js` calls `air.set` once more after `createLife`.
 - **Gulls** are one instanced draw of a three-triangle bird; the wing tips flap in the shader.
 - Not checked here: any of the motion itself.
+
+## The remote and OBS: what the messages mean (ZW-055)
+
+- The page with controls reaches OBS at `ws://127.0.0.1:4455` from an https page. Chrome allows that only if the site has "Local network access"; it asks once, and a refused or ignored question blocks the link silently. Safari does not allow it at all.
+- Close code 1006 ("went away") from a link that never joined means it never opened: OBS not running, its WebSocket server off, another port, or the browser blocking. `obsremote.js` keeps `done` (the promise is settled) apart from `joined` (OBS accepted us) so a failed attempt is not also reported as a closed link.
