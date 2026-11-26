@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createLand } from './worldland.js';
+import { createTrees } from './worldtrees.js';
 import { createPlaces } from './worldplaces.js';
 import { createCine } from './cinecam.js';
 import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
@@ -28,7 +29,7 @@ const tex = await new THREE.TextureLoader().loadAsync(`./sky/${light}.jpg`); tex
 const dome = new THREE.Mesh(new THREE.SphereGeometry(30000, 48, 24), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false })); dome.scale.z = -1; dome.rotation.y = L.rot; dome.renderOrder = -2; dome.frustumCulled = false; scene.add(dome);
 const env = await new RGBELoader().loadAsync(`./sky/${light}.hdr`); env.mapping = THREE.EquirectangularReflectionMapping; scene.environment = env; scene.environmentIntensity = L.env; scene.environmentRotation = new THREE.Euler(0, L.rot, 0);
 
-const land = createLand({ scene, tickers });
+const trees = await createTrees({ renderer, scene, tickers }), land = createLand({ scene, tickers, trees });
 const built = await createPlaces({ scene, heightAt, places, onProgress: (a, b) => { $('load').textContent = `THE WORLD IS WAKING  ${Math.round(100 * a / b)}%`; } });
 const cine = createCine({ heightAt, road: pathThrough(ROAD_PTS, 4), riverPath: river().map((p) => [p[0], p[3], p[1]]), places });
 
@@ -61,8 +62,8 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   else if (dir.mode === 'place') dir.pose = cine.place(dir.key, dir.clock);
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
   apply(dir.pose, t); }
-function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); aimSun(); const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); renderer.render(scene, camera);
-  if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees}  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
+function frame(t) { for (const f of tickers) f(t); dome.position.copy(camera.position); aimSun(); const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); renderer.render(scene, camera);
+  if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
 window.__world = { renderer, scene, camera, land, built, cine, dir, tickers, heightAt, places, city, go, backToStory };
 
@@ -70,12 +71,12 @@ if (SHOT) { // one still: a story shot, a place, or a chosen camera
   let pose; if (q.get('cam')) { const c = q.get('cam').split(',').map(Number); pose = { p: c.slice(0, 3), t: c.slice(3, 6), fov: Number(q.get('fov')) || 40, roll: 0, shake: 0 }; }
   else if (q.get('place')) pose = cine.place(q.get('place'), Number(q.get('at') || 3)); else { const b = cine.beats[Number(q.get('beat') || 0)]; pose = cine.story(b.t0 + b.sec * Number(q.get('u') ?? 0.5)); }
   pose.fade = 0; if (!q.has('title')) pose.title = null; apply(pose, 3); land.update(camera.position, true); const t0 = performance.now(); await new Promise((ok) => { const w = () => (land.settled() || performance.now() - t0 > 240000 ? ok() : setTimeout(w, 200)); w(); });
-  for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); renderer.render(scene, camera); renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
+  for (const f of tickers) f(6); dome.position.copy(camera.position); aimSun(); trees.update(camera.position); renderer.render(scene, camera); renderer.render(scene, camera); $('load').style.transition = 'none'; $('load').classList.add('gone');
   window.__stats = { ...land.stats(), built: built.triangles, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, seconds: (performance.now() - t0) / 1000 }; window.ready = true; }
 else { // the land under the first shot is made ready before the story starts, so that it opens on a finished picture
   dir.pose = cine.story(0); if (q.get('place') && cine.places[q.get('place')]) { dir.key = q.get('place'); dir.mode = 'place'; dir.pose = cine.place(dir.key, 0); } apply(dir.pose, 0); mark();
   const clock = new THREE.Clock(); let started = false, frames = 0, acc = 0, prev = 0;
   renderer.setAnimationLoop(() => { const t = clock.getElapsedTime(); frames++; acc += t - prev; prev = t; if (acc > 0.5) { fps = frames / acc; frames = 0; acc = 0; }
-    if (!started) { for (const f of tickers) f(t); land.update(camera.position); dome.position.copy(camera.position); aimSun(); renderer.render(scene, camera); if (land.settled() || t > 25) { started = true; lastT = t; $('load').classList.add('gone'); } return; }
+    if (!started) { for (const f of tickers) f(t); land.update(camera.position); trees.update(camera.position); dome.position.copy(camera.position); aimSun(); renderer.render(scene, camera); if (land.settled() || t > 25) { started = true; lastT = t; $('load').classList.add('gone'); } return; }
     step(t); frame(t); if (!document.body.classList.contains('plain')) $('status').textContent = dir.mode === 'flight' ? 'flying…' : dir.mode === 'place' ? cine.places[dir.key].name[0] : 'the story'; });
   window.ready = true; }
