@@ -39,22 +39,31 @@ for (const mesh of root.listMeshes()) for (const prim of mesh.listPrimitives()) 
   const arms = [], legs = [];
   for (const s of ['Left', 'Right']) { arms.push([`${s}Arm`, seg(P(`${s}Arm`), P(`${s}ForeArm`), 0.3), 0.055 * H], [`${s}ForeArm`, seg(P(`${s}ForeArm`), P(`${s}Hand`)), 0.045 * H], [`${s}Hand`, seg(P(`${s}Hand`), beyond(`${s}ForeArm`, `${s}Hand`, 0.07 * H)), 0.065 * H]);
     legs.push([`${s}Leg`, seg(P(`${s}Leg`), P(`${s}Foot`))], [`${s}Foot`, seg(P(`${s}Foot`), P(`${s}ToeBase`))], [`${s}ToeBase`, seg(P(`${s}ToeBase`), beyond(`${s}Foot`, `${s}ToeBase`, 0.04 * H))]); }
+  // --legs 1, for a short tunic (the man): the hem can then be set below the cloth's lowest fold (--hem), inside the bare leg. Skin close to a
+  // thigh bone follows that thigh; and faces that are the leg itself are kept where the hem crosses it, so the knee bends instead of parting.
+  const LEGS = opt.legs !== undefined, thighs = []; for (const s of ['Left', 'Right']) thighs.push([`${s}UpLeg`, seg(P(`${s}UpLeg`), P(`${s}Leg`))]); const limb = new Uint8Array(n);
   const W = Array.from({ length: n }, () => new Map()), bare = new Uint8Array(n), lower = new Uint8Array(n);   // bare: a leg below the hem; lower: a forearm or hand
   for (let i = 0; i < n; i++) { v.fromArray(A.getElement(i, [])); const w = W[i]; let best = null, score = 1;
     // an arm owns what lies inside its own thickness; the upper arm only on its outer side, or it would take the ribs beside it
     for (const [owner, s, r] of arms) { const d = dist(s); if (d < r * score && (!owner.endsWith('tArm') || Math.abs(v.x - cx) > Math.abs(c.x - cx) - 0.035 * H)) { score = d / r; best = owner; } }
     if (best) { w.set(J[best], 1); if (!/Arm$/.test(best) || /ForeArm$/.test(best)) lower[i] = 1; }
     else if (v.y > neckY) w.set(J.Head, 1);
+    else if (LEGS && v.y < hipY) {   // a short tunic: nothing is cut. Below the knee everything is leg; above it, what lies within a limb's thickness of a leg bone is that leg, and the rest is cloth on the hips, swayed by the thigh on its side
+      const kneeY = (P('LeftLeg').y + P('RightLeg').y) / 2; let bd = Infinity, bo = null, br = 1;
+      for (const [owner, sg, r] of [...thighs.map((x) => [...x, 0.052 * H]), ...legs.map((x) => [...x, 0.046 * H])]) { const d = dist(sg) / r; if (d < bd) { bd = d; bo = owner; br = r; } }
+      if (v.y < kneeY - 0.035 * H) { let d2 = Infinity; for (const [owner, sg] of legs) { const d = dist(sg); if (d < d2) { d2 = d; bo = owner; } } w.set(J[bo], 1); limb[i] = 1; }
+      else { const t = smooth(1.25, 0.85, bd), sway = 0.6 * smooth(0, hipY - kneeY, hipY - v.y), side = smooth(-0.04 * H, 0.04 * H, v.x - cx); if (t > 0) w.set(J[bo], t); if (t < 1) { w.set(J.Hips, (w.get(J.Hips) || 0) + (1 - t) * (1 - sway)); w.set(J.LeftUpLeg, (w.get(J.LeftUpLeg) || 0) + (1 - t) * sway * side); w.set(J.RightUpLeg, (w.get(J.RightUpLeg) || 0) + (1 - t) * sway * (1 - side)); } if (t > 0.5) limb[i] = 1; } }
     else if (v.y > hem) {   // torso and clothing: on the hips. Below the hips, clothing follows the thigh on its side more and more towards the hem, so a skirt is pushed by the stride and covers the legs; bound to the shins it would kick out behind
-      const sway = 0.6 * smooth(0, hipY - hem, hipY - v.y), side = smooth(-0.04 * H, 0.04 * H, v.x - cx); w.set(J.Hips, 1 - sway); if (sway > 0) { w.set(J.LeftUpLeg, sway * side); w.set(J.RightUpLeg, sway * (1 - side)); } }
-    else { let bd = Infinity; for (const [owner, s] of legs) { const d = dist(s); if (d < bd) { bd = d; best = owner; } } w.set(J[best], 1); bare[i] = 1; } }
+      const sway = 0.6 * smooth(0, hipY - hem, hipY - v.y), side = smooth(-0.04 * H, 0.04 * H, v.x - cx); w.set(J.Hips, 1 - sway); if (sway > 0) { w.set(J.LeftUpLeg, sway * side); w.set(J.RightUpLeg, sway * (1 - side)); } 
+      if (LEGS && v.y < hipY) { let bd = Infinity, bo = null; for (const [owner, sg] of thighs) { const d = dist(sg); if (d < bd) { bd = d; bo = owner; } } const t = smooth(0.066 * H, 0.042 * H, bd); if (t > 0) { for (const [k, x] of w) w.set(k, x * (1 - t)); w.set(J[bo], (w.get(J[bo]) || 0) + t); if (bd < 0.05 * H) limb[i] = 1; } } }
+    else { let bd = Infinity; for (const [owner, s] of legs) { const d = dist(s); if (d < bd) { bd = d; best = owner; } } w.set(J[best], 1); bare[i] = 1; if (bd < 0.05 * H) limb[i] = 1; } }
   console.log(`hem at ${((hem - lo) / H).toFixed(2)} of the height, neck at ${((neckY - lo) / H).toFixed(2)}`);
   // Faces that join a bare leg to the clothing above it (the underside of a skirt) would stretch into a sheet between the feet as the legs move.
   // They are inside the hem and never seen from above, so they are removed and the legs simply pass under the hem.
   // The same goes for stray faces joining a hand or forearm to the body beside it: they stretch into strings when the arm is raised.
   { const old = idx.getArray(), keep = []; let cutLeg = 0, cutArm = 0;
     for (let t = 0; t < old.length; t += 3) { const i = [old[t], old[t + 1], old[t + 2]], k = bare[i[0]] + bare[i[1]] + bare[i[2]], body = i.some((x) => !lower[x] && !W[x].has(J.LeftArm) && !W[x].has(J.RightArm));
-      if (k === 1 || k === 2) cutLeg++; else if (i.some((x) => lower[x]) && body) cutArm++; else keep.push(...i); }
+      if ((k === 1 || k === 2) && !LEGS) cutLeg++; else if (i.some((x) => lower[x]) && body) cutArm++; else keep.push(...i); }
     console.log(`removed ${cutLeg} faces joining bare legs to clothing and ${cutArm} joining a hand or forearm to the body`); idx.setArray(new old.constructor(keep)); }
   // blend across the surface so joints bend smoothly; vertices split by texture seams are treated as one
   const key = new Map(), group = new Int32Array(n); for (let i = 0; i < n; i++) { const p = A.getElement(i, []), k = `${Math.round(p[0] * 2e4)},${Math.round(p[1] * 2e4)},${Math.round(p[2] * 2e4)}`; if (!key.has(k)) key.set(k, key.size); group[i] = key.get(k); }

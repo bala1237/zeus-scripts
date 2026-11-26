@@ -63,8 +63,8 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open. First proof on `/world.html`; waiting for the owner: does it feel vast, the camera, the frame rate | 25 Nov 2026, owner |
 | ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
 | ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground), 3 (countryside), 4 (the remote), 5 (light and weather) and 6 (animals, standing) and 7 (new places) published; next 8 (the living city), 9 (the game) | 26 Nov 2026, owner |
-| ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Open | 26 Nov 2026, owner |
-| ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Open | 26 Nov 2026, owner |
+| ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Fix published 26 Nov 2026 (batches, far versions, near shadows, 60 cap); waiting for the owner's new numbers | 26 Nov 2026, owner |
+| ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt); waiting for the owner to watch it | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -640,3 +640,5 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | Story, at the city gate | 2,797 draws, 4.7 M | 1,118, 2.3 M | 143, 0.8 M | 72, 0.3 M |
 
 The buildings are the cost: about 3,300 of the village shot's draws and 5 million of its triangles, and the shadows draw most of them a second time. The land, trees, grass, people and animals together are under 450 draws.
+
+(ZW-052 and ZW-053, done 26 Nov 2026, after the owner said: "go ahead with all four, repair the man for free".) Frame rate: draws after the change are 685 (Thalassa), 1,271 (village shot), 919 (city gate); detail in `knowledge/world.md`. Walk: the man and the soldier rebuilt with `reskin.mjs --legs 1`; sheet `assets/sheets/walk_fixed.jpg`; detail in `knowledge/characters.md`. He also asked where the animals are: they stand at the farms and the shepherds' huts, off the story's road, so two places were added to fly to them (the Shepherds' Hill, a farm).
