@@ -60,7 +60,9 @@ function height(x, z) { let h = rawHeight(x, z);
     const bed = waterLevelAlong(r.along), bank = r.w + 3, valley = smooth(bank + 260 + 0.25 * Math.max(0, h - bed), bank, r.d);
     h = mix(h, Math.min(h, bed + 1.2 + 0.035 * r.d), valley * 0.85); if (r.d < bank) h = Math.min(h, bed - 0.4 - 2.2 * smooth(bank, 0, r.d)); }
   const dc = Math.hypot(x - CITY.x, z - CITY.z); if (dc < CITY.r + 260) h = mix(h, CITY.y, smooth(CITY.r + 260, CITY.r + 20, dc) * (r.d < r.w + 3 ? 0 : 1) * smooth(100, 66, z));
+  if (!levelling) { const v = PLACES.village, dv = Math.hypot(x - v.x, z - v.z); if (dv < 150) { if (villageY === null) { levelling = true; villageY = height(v.x, v.z); levelling = false; } h = mix(h, villageY, smooth(150, 82, dv) * (r.d < r.w + 8 ? 0 : 1)); } }
   return h; }
+let villageY = null, levelling = false;
 // The river's water level along its length, worked out once: start from the raw land at each point and never let it rise downstream.
 let LEVELS = null;
 function levels() { if (LEVELS) return LEVELS; const out = []; let run = 0, lvl = Infinity;

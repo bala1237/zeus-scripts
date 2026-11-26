@@ -14,15 +14,30 @@ export async function createPlaces({ scene, heightAt, places, onProgress = () =>
   const put = (n, x, z, ry = 0, s = 1, y = null) => jobs.push(get(n).then((m) => { onProgress(++done, jobs.length); if (!m) return; const o = m.clone(true); o.position.set(x, y ?? heightAt(x, z), z); o.rotation.y = ry; o.scale.setScalar(s); o.updateMatrixWorld(true); o.traverse((c) => { c.matrixAutoUpdate = false; }); root.add(o); }));
   const face = (x, z, cx, cz) => Math.atan2(cx - x, cz - z);
 
-  // ---------- Riverbend: cottages round a green with a well, a forge, a press, stalls, and the road running through
-  { const v = places.village, at = (dx, dz) => [v.x + dx, v.z + dz], homes = [[-34, -24], [-14, -30], [8, -28], [30, -22], [-30, 22], [-10, 28], [12, 26], [34, 20], [-52, -2], [54, 30], [-58, 30]];
-    homes.forEach(([dx, dz], i) => { const [x, z] = at(dx, dz); put(i % 2 ? 'home_cottage_t2' : 'home_cottage_t1', x, z, face(x, z, v.x, v.z)); });
-    put('water_well', ...at(-2, 0)); put('biz_stall_t1_fruit', ...at(14, -9), 0.4); put('biz_stall_t1_cloth', ...at(-16, 9), 3.5); put('biz_stall_t1_fish', ...at(18, 10), -2.4); put('decor_cart_t1', ...at(6, 8), 1.1); put('decor_cart_t1', ...at(-44, 14), 0.3);
-    put('biz_forge_t1', ...at(48, -8), -1.6); put('biz_olive-press_t1', ...at(-40, -44), 0.5); put('decor_shrine', ...at(64, 6), -1.57); put('build_timber-stack_t1', ...at(52, -24), 0.7); put('build_timber-stack_t1', ...at(-62, -18), 2.1); put('decor_barrels_t1', ...at(22, -12), 0.3); put('decor_amphorae_t1_cluster', ...at(-20, 14), 1.2); put('decor_brazier_t1', ...at(4, -4)); put('infra_signpost', ...at(40, 4), 1.2); }
+  // A Zeus World home, built the way the city builds them: walls, an upper floor if it has one, a roof, and a columned porch.
+  // The parts are made to fit one another: the upper floor sits 3 m up, the roof on top, the porch 2.2 m in front.
+  const villa = (x, z, ry, { walls = 't1_stone', upper = null, roof = 't1_terracotta', porch = null } = {}) => { const y = heightAt(x, z), c = Math.cos(ry), sn = Math.sin(ry); put(`home_villa-walls_${walls}`, x, z, ry, 1, y); let h = 3; if (upper) { put(`home_villa-upper_${upper}`, x, z, ry, 1, y + 3); h = 6; } put(`home_villa-roof_${roof}`, x, z, ry, 1, y + h); if (porch) put(`home_villa-porch_${porch}`, x + sn * 2.2, z + c * 2.2, ry, 1, y); };
+  // a strip of paving: tiles 2 m square laid from one point to another, `wide` tiles across
+  const pave = (n, x0, z0, x1, z1, wide = 1) => { const L = Math.hypot(x1 - x0, z1 - z0), k = Math.max(1, Math.round(L / 2)), ry = Math.atan2(x1 - x0, z1 - z0), px = Math.cos(ry), pz = -Math.sin(ry); for (let i = 0; i <= k; i++) for (let w = 0; w < wide; w++) { const o = (w - (wide - 1) / 2) * 2, x = x0 + (x1 - x0) * i / k + px * o, z = z0 + (z1 - z0) * i / k + pz * o; put(n, x, z, ry, 1, heightAt(x, z) + 0.02); } };
 
-  // ---------- farmsteads in the fields between the forest and the walls
-  for (const [x, z, ry] of [[-330, -70, 0.6], [-420, 90, 2.2], [-250, 120, -1.2], [-520, -40, 1.5], [-210, -190, 0.2], [-300, 250, 3.0], [-160, 200, -0.6], [-600, 160, 0.9]]) { put('home_cottage_t1', x, z, ry); put('decor_cart_t1', x + 7 * Math.cos(ry), z + 7 * Math.sin(ry), ry + 1); put('build_timber-stack_t1', x - 8 * Math.sin(ry), z + 8 * Math.cos(ry), ry); }
-  put('decor_shrine', places.crest.x + 8, places.crest.z - 10, 1.9); put('infra_signpost', places.crest.x - 4, places.crest.z + 5, 0.4);
+  // ---------- Riverbend: a Greek village. A paved square with a well, a columned hall, a shrine and banners; villas with porches round it;
+  // workshops and stalls; the road paved where it runs through.
+  { const v = places.village, at = (dx, dz) => [v.x + dx, v.z + dz], KINDS = [{ walls: 't1_stone', roof: 't1_terracotta', porch: 't2_doric' }, { walls: 't2_ochre', roof: 't1_terracotta' }, { walls: 't1_stone', roof: 't2_slate', porch: 't2_doric' }, { walls: 't2_ochre', upper: 't2_plaster', roof: 't1_terracotta', porch: 't2_doric' }, { walls: 't1_stone', roof: 't3_azure', porch: 't3_ionic' }, { walls: 't2_ochre', roof: 't2_slate' }];
+    [[-30, -26], [-12, -31], [10, -30], [31, -25], [-31, 24], [-11, 30], [12, 29], [33, 23], [-50, -6], [52, 2], [-52, 20], [54, -22]].forEach(([dx, dz], i) => { const [x, z] = at(dx, dz); villa(x, z, face(x, z, v.x, v.z), KINDS[i % KINDS.length]); });
+    for (let i = -4; i <= 4; i++) for (let j = -3; j <= 3; j++) put('infra_tile_t1_plaza', v.x + i * 2, v.z + j * 2, 0, 1, heightAt(v.x, v.z) + 0.02);
+    pave('infra_tile_t1_road', v.x - 70, v.z + 2, v.x - 10, v.z, 2); pave('infra_tile_t1_road', v.x + 10, v.z, v.x + 80, v.z - 4, 2);
+    put('water_well', ...at(0, 0)); put('civic_stoa', ...at(0, -52), 0); put('decor_shrine', ...at(-22, 2), Math.PI / 2); put('decor_statue-plinth_t1', ...at(7, -6)); put('decor_altar', ...at(0, -40));
+    put('decor_banner_t1_azure', ...at(-9, -7)); put('decor_banner_t1_red', ...at(9, -7)); put('decor_banner_t1_azure', ...at(9, 7)); put('decor_banner_t1_red', ...at(-9, 7));
+    put('decor_lantern_t1_bronze', ...at(-9, 0)); put('decor_lantern_t1_bronze', ...at(9, 0)); put('decor_bench_t1_marble', ...at(-5, 7), Math.PI); put('decor_bench_t1_marble', ...at(5, 7), Math.PI); put('decor_brazier_t1', ...at(-4, -44)); put('decor_brazier_t1', ...at(4, -44));
+    put('biz_stall_t1_fruit', ...at(15, -10), -0.5); put('biz_stall_t1_cloth', ...at(-16, 11), 2.6); put('biz_stall_t1_fish', ...at(17, 11), -2.5); put('biz_stall_t1_pottery', ...at(-16, -10), 0.5); put('decor_cart_t1', ...at(24, 4), 1.1); put('decor_amphorae_t1_cluster', ...at(-20, 14), 1.2); put('decor_barrels_t1', ...at(21, -13), 0.3);
+    put('biz_forge_t1', ...at(70, -16), -1.6); put('biz_olive-press_t1', ...at(-68, -30), 0.9); put('biz_pottery_t1', ...at(-70, 18), 1.6); put('biz_bakery_t1', ...at(72, 16), -1.6); put('decor_pergola_t1', ...at(-40, 40), 0.4); put('build_timber-stack_t1', ...at(80, -28), 0.7);
+    put('infra_signpost', ...at(84, 2), 1.2); put('decor_obelisk', ...at(92, -10)); for (let i = 0; i < 7; i++) { put('nature_cypress_t1', ...at(-26 + i * 9, -62), 0, 1.5); } for (const [dx, dz] of [[-62, -8], [-62, 34], [64, 34], [40, 44], [-24, 46]]) put('nature_cypress_t1', ...at(dx, dz), 0, 1.4); }
+
+  // ---------- farmsteads in the fields between the forest and the walls: a stone villa, a pergola, a cart, a low wall
+  for (const [x, z, ry, k] of [[-330, -70, 0.6, 0], [-420, 90, 2.2, 1], [-250, 120, -1.2, 2], [-520, -40, 1.5, 0], [-210, -190, 0.2, 1], [-300, 250, 3.0, 2], [-160, 200, -0.6, 0], [-600, 160, 0.9, 1]]) { const c = Math.cos(ry), sn = Math.sin(ry);
+    villa(x, z, ry, [{ walls: 't1_stone', roof: 't1_terracotta', porch: 't2_doric' }, { walls: 't2_ochre', roof: 't1_terracotta' }, { walls: 't1_stone', roof: 't2_slate' }][k]); put('decor_pergola_t1', x + c * 9, z - sn * 9, ry); put('decor_cart_t1', x - c * 8 + sn * 3, z + sn * 8 + c * 3, ry + 1); put('decor_amphorae_t1_cluster', x + sn * 5 + c * 4, z + c * 5 - sn * 4, ry);
+    for (let i = -2; i <= 2; i++) put('decor_garden-wall_t1_plaster', x + sn * 9 + c * i * 2, z + c * 9 - sn * i * 2, ry); put('nature_cypress_t1', x - c * 7 - sn * 6, z + sn * 7 - c * 6, 0, 1.4); }
+  put('decor_shrine', places.crest.x + 8, places.crest.z - 10, 1.9); put('infra_signpost', places.crest.x - 4, places.crest.z + 5, 0.4); put('decor_bench_t1_marble', places.crest.x + 3, places.crest.z + 8, 1.4);
 
   // ---------- the city: walls with towers and gates, the temple, the civic buildings, homes, the lighthouse and the colossus by the harbour
   { const Y = 4, X0 = -56, X1 = 56, Z0 = -68, Z1 = 60, c = (n, x, z, ry = 0, s = 1) => put(n, x, z, ry, s, Y);
