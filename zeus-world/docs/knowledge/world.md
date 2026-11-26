@@ -149,3 +149,15 @@ The page with controls is the remote for the same page running without them as a
 
 - **Verified:** stills of nine views; the ten checks by numbers; build.
 - **Not verified:** anything in motion: the camera moves, the flight, the cuts, land appearing as the camera travels, wind, water, frame rate.
+
+## Light, sky and weather (`worldair.js`, phase 5)
+
+One part owns the sun, the sky dome, the fog and everything that changes with the hour: `createAir({ scene, renderer, tickers, lamps, mistAt, start })`, then `air.set('night')` at any time. The table `AIR` holds each look: `day`, `dusk`, `night`, `dawn`, `storm`. On the page: the Light row, `&light=night` in the link, `window.worldLight('storm')`, and the remote (`{cmd:'air',key}`, `{cmd:'bolt'}`).
+
+- **Two sky pictures serve five looks.** Night is the dusk sky multiplied by a dark blue (`tint`); dawn is the dusk sky turned by 2.356 radians so its glow sits over the sea in the east; the storm is the day sky tinted grey. The fog colour must be close to the tinted sky, or the far mountains come out lighter than the sky behind them.
+- **Night needs blue fill, not only less light.** With the day's warm sky light simply turned down, the forest came out yellow-green. Night has its own sky and ground colours for the fill light and a lower-saturation grade on the canvas (`grade`).
+- **Lamps.** `worldplaces.js` returns `lamps`: lanterns, braziers and altars by name, a lamp in front of every home and building (front taken from the model's turn), and three travellers' camps beside the road. Each gets a glow (one `Points`), a pool of light on the ground (one instanced flat square, added to the picture), and fires get three flame sprites. Only five real lights exist; each sits on one of the lamps nearest what the camera looks at and dims with distance, so moving them never pops.
+- **Things the lights do not reach** (the white water, the mist at the falls) are dimmed by `dim` in `air.set`: a shader with `uFog`/`uDim` is updated, sprites have their colour scaled. Sprites made by `worldair.js` carry `userData.air` and are left alone.
+- **Rain** is 7,000 streaks in a 90 m box that wraps round the camera in the vertex shader; **lightning** is a bolt drawn on a canvas for each stroke, shown on a sprite 3.5 to 7 km away, with the sky and the fill light flashing twice.
+- **Trap, stills only:** the things that travel with the camera take its position in `air.follow`, so the still path calls it before the tickers; otherwise rain is drawn round the world's origin.
+- Not checked here: motion of rain and flames, the flash, frame rate at night (five extra lights).
