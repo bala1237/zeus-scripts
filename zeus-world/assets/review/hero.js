@@ -92,6 +92,10 @@ if (!PLAIN) { $('play').addEventListener('click', play); $('stop').addEventListe
 if (q.has('captions')) document.body.classList.add('captions');
 addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); playing ? stop() : play(); } else if (e.key.toLowerCase() === 'h' && q.get('ui') !== '0') { hidden = !hidden; showUi(); } });
 if (q.get('ui') === '0') { addEventListener('pointerdown', () => { if (!playing) play(); }); if (q.has('autoplay')) play(); } else if (q.has('autoplay')) play();
+// As a source with autoplay (ZW-050): hidden, the film stops and goes back to its start; shown again, it plays from the start.
+// OBS tells a browser source when it is shown and hidden (obsSourceVisibleChanged); a plain browser tab says it by visibilitychange.
+if (q.get('ui') === '0' && q.has('autoplay')) { let shown = true; const seen = (v) => { if (v === shown) return; shown = v; if (v) play(); else stop(); };
+  addEventListener('obsSourceVisibleChanged', (e) => seen(!!e.detail?.visible)); document.addEventListener('visibilitychange', () => seen(!document.hidden)); }
 // ---------- the remote (ZW-048). A page that runs without controls, as a browser source in OBS, does what it is told:
 // by OBS itself (an event that OBS hands to every browser source) or by another tab of the same browser.
 const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-hero') : null;
