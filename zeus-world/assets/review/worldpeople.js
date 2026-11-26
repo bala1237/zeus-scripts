@@ -12,7 +12,7 @@ import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { standClip } from './stand.js';
 
 const KINDS = ['char_citizen_man', 'char_citizen_woman', 'char_citizen_elder'], TINTS = [0xffffff, 0xffe2c4, 0xd6e6ff, 0xffd0d0, 0xdff3c8, 0xfff0a8, 0xe9d4ff, 0xc9f0ee], FAR = 55, SEEN = 420, ALIVE = 160;
-export async function createPeople({ scene, heightAt, places, road, hero: q0 }) {
+export async function createPeople({ scene, heightAt, places, spots = null, road, hero: q0 }) {
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); const src = {};
   for (const k of KINDS) { const [hi, lo] = await Promise.all([loader.loadAsync(`./models/${k}.glb`), loader.loadAsync(`./models/far/${k}.glb`)]); src[k] = { hi, lo, stand: standClip(hi.scene) }; }
   let seed = 41; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -43,6 +43,9 @@ export async function createPeople({ scene, heightAt, places, road, hero: q0 }) 
   // ---------- travellers on the road, each keeping to a stretch of it; one resting on the hill, looking at the city
   { const R = road, n = R.length; for (const [a, b] of [[0.06, 0.2], [0.22, 0.36], [0.4, 0.52], [0.56, 0.7], [0.66, 0.8], [0.78, 0.9], [0.84, 0.97]]) { const pts = []; for (let i = Math.floor(a * n); i < Math.floor(b * n); i += 3) pts.push([R[i][0] + 1.2, R[i][2] + 0.8]); if (pts.length > 2) walk(pts); }
     if (places.harbour) { const h = places.harbour; let sx = h.x; while (sx < h.x + 400 && heightAt(sx, h.z) > 0.9) sx += 1; const q = sx - 6; for (const [dx, dz, lx, lz] of [[-8, 14, -10, 14], [-8, 22, -10, 21], [-7.5, 34, -10, 33], [1, -2, 30, 0], [0, 46, 30, 44], [-3, -30, -1, -22], [-18, -18, -22, -26], [-26, 4, -30, 6], [2, -44, 30, -44]]) stand(q + dx, h.z + dz, [q + lx, h.z + lz]); }
+    // people at what the countryside gained: a farmer by each pen and barn, a shepherd by each hut, the miller, someone on the jetty, a traveller at the ruins
+    if (spots) { for (const f of spots.farms) { const c = Math.cos(f.ry), sn = Math.sin(f.ry); stand(f.pen[0] + c * 7.5, f.pen[1] - sn * 7.5, f.pen); stand(f.x - sn * 2 - c * 12, f.z - c * 2 + sn * 12, [f.x - c * 19, f.z + sn * 19]); } for (const h of spots.huts) { stand(h.x + 7, h.z + 8, [h.x + 18, h.z + 14]); } if (spots.mill) stand(spots.mill.x + 4.6, spots.mill.z + 1.5, [spots.mill.x + 9, spots.mill.z]); if (spots.jetty) stand(spots.jetty.x - 0.5, spots.jetty.z + 6.5, [spots.jetty.x, spots.jetty.z - 20]); }
+    if (places.ruins) stand(places.ruins.x + 7, places.ruins.z + 6, [places.ruins.x, places.ruins.z]);
     if (places.sanctuary) { const s = places.sanctuary; for (const [dx, dz] of [[24, -3], [25, 2.5], [17, 6], [31, -14.5]]) stand(s.x + dx, s.z + dz, [s.x + 20, s.z]); }
     stand(places.crest.x + 4.4, places.crest.z + 7, [places.city.x, places.city.z]); stand(places.crest.x + 6, places.crest.z - 8.4, [places.crest.x + 8, places.crest.z - 10]); }
   // ---------- the town outside the west gate and the square inside it

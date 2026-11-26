@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-054.**
+- **Next number: ZW-055.**
 
 ## Open
 
@@ -65,6 +65,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground), 3 (countryside), 4 (the remote), 5 (light and weather) and 6 (animals, standing) and 7 (new places) published; next 8 (the living city), 9 (the game) | 26 Nov 2026, owner |
 | ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Fix published 26 Nov 2026 (batches, far versions, near shadows, 60 cap). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
+| ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Item 1 (motion) published 26 Nov 2026, waiting for the owner; item 2 (water) next | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -642,3 +643,10 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 The buildings are the cost: about 3,300 of the village shot's draws and 5 million of its triangles, and the shadows draw most of them a second time. The land, trees, grass, people and animals together are under 450 draws.
 
 (ZW-052 and ZW-053, done 26 Nov 2026, after the owner said: "go ahead with all four, repair the man for free".) Frame rate: draws after the change are 685 (Thalassa), 1,271 (village shot), 919 (city gate); detail in `knowledge/world.md`. Walk: the man and the soldier rebuilt with `reskin.mjs --legs 1`; sheet `assets/sheets/walk_fixed.jpg`; detail in `knowledge/characters.md`. He also asked where the animals are: they stand at the farms and the shepherds' huts, off the story's road, so two places were added to fly to them (the Shepherds' Hill, a farm).
+
+### ZW-054: The open world polish round
+
+- **Asked:** 26 Nov 2026, by the owner: "looks good. lets focus on enhancements before we build other stuffs", and, to the list of seven offered in order, "your order."
+- **The order agreed:** 1. things that should move but do not (mill wheel, boats, banners, smoke, people at the new spots); 2. water (ripples, a soft shoreline, foam); 3. trees close up (leaves read as sharp triangles); 4. the story visits the new places; 5. sky and weather (storm cloud, a real night sky); 6. sound; 7. animals that walk and graze, and working people (the only paid item, not priced).
+- **How:** one item at a time, each shown on the preview before the next. New building (phases 8 and 9 of the world plan) stays parked.
+- **Item 1, motion, published 26 Nov 2026** (`worldlife.js`; sheet `assets/sheets/world_motion.jpg`). Checked by stills only: where things are, not how they move. The speed of the wheel, the size of the boats' roll, the cloth and the gulls' wing beat all wait for the owner's eye.
