@@ -83,6 +83,19 @@ The owner: "The trees lies very elementary and it doesn't look like Forrest ... 
 - **Still below the city's standard:** the ground is flat colour with a grain, not a real surface of grass, earth and rock; the cliff and mountains are plain; water is simple; the village is thin; there are no people.
 - **Published 26 Nov 2026** at the owner's word, for him to check motion and frame rate. Only stills had been checked before publishing.
 
+## Smoothness (26 Nov 2026)
+
+The owner, on the published forest: "when camera moves, its jittery since its rendering and lot of jerks". Motion cannot be seen here, so these are fixes for causes found in the code, not a measured cure:
+
+- **Depth.** The page drew depth on a logarithmic scale, which makes every hidden pixel cost as much as a visible one: ruinous in a forest of overlapping leaves and cards. It now uses a reversed depth buffer (`reversedDepthBuffer`), which gives the same range for nothing. If a browser lacks it, three.js falls back to ordinary depth and distant water may flicker.
+- **Sharpness.** The picture was drawn at twice the screen's pixels on a Retina display. Now 1.25 times; `?sharp=2` restores full sharpness.
+- **Squares arriving.** Each finished square was put into the picture the moment its worker returned it, several in one frame. They now queue and go in within about 3.5 ms a frame (`integrate` in `worldland.js`).
+- **Shadows** are redrawn on every other frame, and the ground no longer casts them (trees, rocks and buildings do).
+- **Programs** are compiled once the first view is ready, not when each kind of thing first appears.
+- **Less in view:** 28 full trees (was 40) and 220 close ones (was 260); rocks only on the finest squares; fewer fallen logs.
+- **Load after this:** forest road 9.0 million triangles and 2,470 draw calls (was 10.9 and 2,600); village from the air 6.4 million and 3,540; the road to the gate 4.0 million and 2,300. The figures include the shadow pass.
+- **If it is still not smooth, next:** draw calls (about ten separate drawings per square; the trees' cards could be one), the city and village models as fewer, merged pieces, a lower setting for shadows, and `sharp=1`.
+
 ## Not yet built
 
 - **No people.** The newcomer of the story, and people in each place doing different things, are the next batch.

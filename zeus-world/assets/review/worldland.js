@@ -27,26 +27,27 @@ export function createLand({ scene, tickers, trees, workers = Math.max(2, Math.m
   const tiles = new Map(), queue = [], pool = [], busy = new Map(); let serial = 0, wanted = new Set(), last = null, made = 0;
   for (let i = 0; i < workers; i++) { const w = new Worker(new URL('./worldworker.js', import.meta.url), { type: 'module' }); w.onmessage = (e) => done(w, e.data); pool.push(w); }
   const keyOf = (s, x, z) => `${s}:${x}:${z}`, cellsFor = (s) => (s >= 1024 ? 64 : 32), treesFor = (s) => (s <= 128 ? 1 : s <= 512 ? 0.6 : s <= 1024 ? 0.2 : 0);
-  function done(w, d) { const key = busy.get(w); busy.delete(w); const t = tiles.get(key); if (t && !t.ready) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(d.pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(d.nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(d.col, 3)); g.setIndex(new THREE.BufferAttribute(d.idx, 1));
+  const arrived = []; function done(w, d) { const key = busy.get(w); busy.delete(w); arrived.push([key, d]); pump(); }
+  function integrate(ms = 3.5) { const t0 = performance.now(); let any = false; while (arrived.length && (performance.now() - t0 < ms || !any)) { const [key, d] = arrived.shift(); build(key, d); any = true; } if (any) show(); }
+  function build(key, d) { const t = tiles.get(key); if (t && !t.ready) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(d.pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(d.nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(d.col, 3)); g.setIndex(new THREE.BufferAttribute(d.idx, 1));
       const cy = (d.minY + d.maxY) / 2; g.boundingSphere = new THREE.Sphere(new THREE.Vector3(t.x + t.s / 2, cy, t.z + t.s / 2), Math.hypot(t.s * 0.71, (d.maxY - d.minY) / 2 + 12));
-      t.mesh = new THREE.Mesh(g, groundMat); t.mesh.receiveShadow = true; t.mesh.castShadow = t.s <= 512; t.mesh.matrixAutoUpdate = false; t.group = new THREE.Group(); t.group.add(t.mesh);
+      t.mesh = new THREE.Mesh(g, groundMat); t.mesh.receiveShadow = true; t.mesh.castShadow = false; t.mesh.matrixAutoUpdate = false; t.group = new THREE.Group(); t.group.add(t.mesh);
       const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0), C = new THREE.Color();
       t.cy = cy; t.dy = (d.maxY - d.minY) / 2; trees.addTile(t, d);
       // grass and wild flowers: cards photographed from the catalogue's own tuft and flowers. Rocks: the catalogue's two scanned rocks.
       { const G = trees.ground, split = [[], []]; for (let i = 0; i < d.grass.length; i += 6) split[d.grass[i + 5] >= 2 ? 1 : 0].push(i);
         split.forEach((idx, f) => { if (!idx.length) return; const kit = f ? G.flowers : G.grass, im = new THREE.InstancedMesh(kit.geo, kit.mat, idx.length); idx.forEach((i, j) => { const sc = d.grass[i + 3] * (f ? 1.1 : 0.95), k = f ? 1 : d.grass[i + 5]; P.set(d.grass[i], d.grass[i + 1] - 0.04, d.grass[i + 2]); Q.setFromAxisAngle(Y, d.grass[i + 4]); S.set(sc, sc * (0.8 + 0.5 * ((j * 13) % 7) / 7), sc); im.setMatrixAt(j, M.compose(P, Q, S)); im.setColorAt(j, f ? C.setRGB(1, 1, 1) : C.setRGB(0.62 * k, 0.98 * k, 0.5 * k)); });
           im.receiveShadow = true; im.boundingSphere = g.boundingSphere.clone(); t.group.add(im); });
-        if (t.s <= 128 && d.rocks.length) [0, 1].forEach((v) => { const idx = []; for (let i = 0; i < d.rocks.length; i += 6) if (((i / 6) % 3 === 0 ? 0 : 1) === v) idx.push(i); if (!idx.length) return;
+        if (t.s <= MIN && d.rocks.length) [0, 1].forEach((v) => { const idx = []; for (let i = 0; i < d.rocks.length; i += 6) if (((i / 6) % 3 === 0 ? 0 : 1) === v) idx.push(i); if (!idx.length) return;
           for (const p of G.rocks[v]) { const im = new THREE.InstancedMesh(p.geo, p.mat, idx.length); idx.forEach((i, j) => { const sc = d.rocks[i + 3] * (v ? 0.8 : 0.55); P.set(d.rocks[i], d.rocks[i + 1] - 0.1 * sc, d.rocks[i + 2]); Q.setFromAxisAngle(Y, d.rocks[i + 4]); S.setScalar(sc); im.setMatrixAt(j, M.compose(P, Q, S)); }); im.castShadow = im.receiveShadow = true; im.boundingSphere = g.boundingSphere.clone(); t.group.add(im); } }); }
-      t.ready = true; made++; scene.add(t.group); show(); }
-    pump(); }
+      t.ready = true; made++; scene.add(t.group); } }
   function pump() { while (queue.length && pool.some((w) => !busy.has(w))) { const key = queue.shift(), t = tiles.get(key); if (!t || t.ready || t.sent) continue; const w = pool.find((x) => !busy.has(x)); busy.set(w, key); t.sent = true; w.postMessage({ id: ++serial, x: t.x, z: t.z, size: t.s, cells: cellsFor(t.s), trees: treesFor(t.s), grass: t.s <= MIN }); } }
   const overlap = (a, b) => a.x < b.x + b.s && b.x < a.x + a.s && a.z < b.z + b.s && b.z < a.z + a.s;
   // what is shown: every wanted square that is ready, and any older square still covering ground whose wanted square is not ready yet
   function show() { const waiting = []; for (const k of wanted) { const t = tiles.get(k); if (t && !t.ready) waiting.push(t); }
     for (const [k, t] of tiles) { if (!t.ready) continue; const keep = wanted.has(k) || waiting.some((w) => overlap(w, t)); if (!keep) { scene.remove(t.group); trees.removeTile(t); t.mesh.geometry.dispose(); tiles.delete(k); } } }
   // `also` is a second place to make ready: where the camera will be after the next cut, so that the land is there when it arrives
-  let lastAlso = null; function update(cam, force = false, also = null) { const moved = !last || Math.hypot(cam.x - last.x, cam.z - last.z) >= 10 || Math.abs(cam.y - last.y) >= 30, alsoMoved = (also && (!lastAlso || Math.hypot(also.x - lastAlso.x, also.z - lastAlso.z) > 20)) || (!also && lastAlso); if (!force && !moved && !alsoMoved) return; last = cam.clone(); lastAlso = also ? { x: also.x, y: also.y, z: also.z } : null; const want = new Set(), order = [], eyes = also ? [cam, also] : [cam];
+  let lastAlso = null; function update(cam, force = false, also = null) { integrate(force ? 1e9 : 3.5); const moved = !last || Math.hypot(cam.x - last.x, cam.z - last.z) >= 10 || Math.abs(cam.y - last.y) >= 30, alsoMoved = (also && (!lastAlso || Math.hypot(also.x - lastAlso.x, also.z - lastAlso.z) > 20)) || (!also && lastAlso); if (!force && !moved && !alsoMoved) return; last = cam.clone(); lastAlso = also ? { x: also.x, y: also.y, z: also.z } : null; const want = new Set(), order = [], eyes = also ? [cam, also] : [cam];
     // seen from high up, the ground beneath is far away, so the squares need not be so fine
     const lifts = eyes.map((c) => Math.max(0, c.y - heightAt(c.x, c.z) - 40));
     const visit = (s, x, z) => { let d = 1e9; eyes.forEach((c, i) => { d = Math.min(d, Math.hypot(Math.max(x - c.x, 0, c.x - x - s), Math.max(z - c.z, 0, c.z - z - s), lifts[i])); }); if (s > MIN && d < s * SPLIT) { const h = s / 2; visit(h, x, z); visit(h, x + h, z); visit(h, x, z + h); visit(h, x + h, z + h); } else { const k = keyOf(s, x, z); want.add(k); if (!tiles.has(k)) { tiles.set(k, { s, x, z, ready: false, sent: false }); order.push([d, k]); } } };
@@ -55,7 +56,7 @@ export function createLand({ scene, tickers, trees, workers = Math.max(2, Math.m
     for (let i = queue.length - 1; i >= 0; i--) if (!tiles.has(queue[i])) queue.splice(i, 1);
     order.sort((a, b) => a[0] - b[0]); for (const [, k] of order) queue.push(k); queue.sort((a, b) => { const ta = tiles.get(a), tb = tiles.get(b); return Math.hypot(ta.x + ta.s / 2 - cam.x, ta.z + ta.s / 2 - cam.z) - ta.s * 0.3 - (Math.hypot(tb.x + tb.s / 2 - cam.x, tb.z + tb.s / 2 - cam.z) - tb.s * 0.3); });
     show(); pump(); }
-  const settled = () => { for (const k of wanted) { const t = tiles.get(k); if (!t || !t.ready) return false; } return wanted.size > 0; };
+  const settled = () => { integrate(1e9); for (const k of wanted) { const t = tiles.get(k); if (!t || !t.ready) return false; } return wanted.size > 0; };
   const stats = () => { let n = 0, tris = 0; for (const t of tiles.values()) if (t.ready) { n++; tris += t.mesh.geometry.index.count / 3; } return { squares: n, wanted: wanted.size, groundTriangles: tris, made, ...trees.stats() }; };
 
   // ---------- water. A ripple pattern, made once, is laid over itself at three sizes moving three ways, so that it never visibly repeats.
