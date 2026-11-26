@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 26 Nov 2026
+
+- **The open world, first proof (ZW-049).** A new page, `/world.html`: a land that goes on without edge, with the city by the sea, a river that falls from a cliff and runs through forest and farmland, a village, and mountains in the west. The camera tells a two-minute story with ten kinds of move (drone, crane, hand-held, fast low flight and others), and seven buttons fly it to places. No people yet, and the city is a stand-in.
+
 ## 25 Nov 2026
 
 - **The Fire-Bringer without children (ZW-047).** Its faces shot, used in the opening and after the climax, is made again with adults only and the film rebuilt. All three hero films now follow the rule.
