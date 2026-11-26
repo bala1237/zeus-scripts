@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-050.**
+- **Next number: ZW-051.**
 
 ## Open
 
@@ -61,6 +61,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-047 | Enhancement | The hero film: a short story film that celebrates a battle's top giver (or top three), from a library of scripts | High | Three films on `/hero.html`: The Fire-Bringer (approved, "looks good"), The Last Banner and The Well (new; waiting for the owner to watch them) | 25 Nov 2026, owner |
 | ZW-048 | Enhancement | Use the pages in OBS as browser sources (by address) instead of window capture: hero film, laser show, Zeus World | High | Open. Built: sound input for the lasers (works in OBS on his Mac), controls-off for Zeus World, tempo in the address, a remote for the hero film. Waiting for the owner to try the remote and the RODECaster | 25 Nov 2026, owner |
 | ZW-049 | Brainstorm | The whole world, not only the city: mountains, forest, waterfalls, rivers, people in different places doing different things, the civilisation from huts to city; with cinematic camera moves that show it all | High | Open. First proof on `/world.html`; waiting for the owner: does it feel vast, the camera, the frame rate | 25 Nov 2026, owner |
+| ZW-050 | Enhancement | Hero film: a link for the browser source that carries the film and the name, and a line round the 16:9 picture for cropping a window capture | Medium (proposed) | Fix shipped 26 Nov. Waiting for the owner to try the link in OBS | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -583,3 +584,12 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Published 26 Nov 2026:** "publish it to the preview so i can check". The forest kit and the rebuilt village are on `/world.html`. Waiting for his view on motion, the change-over of trees as the camera moves, and the frame rate.
 - **Owner on the published forest and village, 26 Nov 2026:** "looks good. but when camera moves, its jittery since its rendering and lot of jerks". The look is accepted; the motion is not smooth: low or uneven frame rate and jerks as the camera travels.
 - **Smoothness fixes shipped 26 Nov 2026:** a cheaper way of handling depth, the picture drawn at 1.25 times the screen instead of twice, new land put in a little per frame, shadows on alternate frames, programs compiled up front, and less heavy detail in view. Causes were found by reading the code; whether it is now smooth waits for the owner.
+
+### ZW-050: The hero film as a source: a link with film and name, or a rectangle to crop
+
+- **Reported:** 26 Nov 2026, by the owner: "for the hero section, i will corp the video section and fill the screen or resize. can you put it in a rectangle for the size 16:9 , so its easy to crop. or should you provide an url with what video to play and the name which i can have it as source link instead of window capture".
+- **What was already there:** the picture is always 16:9, and the address already takes the film and the name (`hero.html?film=the-well&name=…&ui=0&autoplay`). But the address had to be written by hand, and the picture's edge could not be seen (black on black), so a crop was guesswork.
+- **Built 26 Nov 2026, both:** (1) a button, **Copy link for OBS**, which copies the address of the film and name chosen on the page, with controls off and starting by itself; pasted into a browser source of 1920 × 1080 it fills the source exactly, with nothing to crop. (2) A thin gold line round the 16:9 picture whenever the controls show, for cropping a window capture; it is not drawn when the controls are off.
+- **Recommended to him:** the link, not the crop. Sharper (the source is drawn at its own size), no crop to keep right, and its sound comes through OBS.
+- **Limits:** the hero's picture cannot travel in a link (use "Play in OBS" for that, or `&pic=` with the address of a picture). A new name means a new link, or the remote.
+- **Verified here:** the copied link opens the right film with the right name, fills a 1920 × 1080 window with no line, and starts; the line shows with the controls. **Not verified:** OBS itself.
