@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-058.**
+- **Next number: ZW-059.**
 
 ## Open
 
@@ -69,6 +69,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Fix published 26 Nov 2026 (says why, joins again by itself); cause not confirmed, waiting for the owner | 26 Nov 2026, owner |
 | ZW-056 | Bug | The controls show when a page is added to OBS by its address | High (proposed) | Fix shipped 26 Nov 2026; checked against a stand-in, waiting for the owner in OBS | 26 Nov 2026, owner |
 | ZW-057 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-058 | Enhancement | Liquid Sky, the flash-safe show, as a scene in Zeus Live | Medium (proposed) | Shipped 26 Nov 2026; waiting for the owner in OBS | 26 Nov 2026, owner |
 
 ## Closed
 
@@ -681,3 +682,10 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Chosen, and why:** the scenes stay separate pages inside a frame, rather than being merged into one program. Nothing is rewritten, one scene is in memory at a time, and the old addresses keep working.
 - **Checked:** against a stand-in for OBS. **Not checked in OBS itself.**
 - **Not done yet:** live orders for the lasers, stage, city and Andie's Place (today only the scene and its settings reach OBS for them); returning to the scene before when a hero film ends; a "controls only" control room that does not draw the scene a second time.
+
+### ZW-058: Liquid Sky in Zeus Live
+
+- **Asked:** 26 Nov 2026, by the owner, after seeing the tabs of `live.html`: "we did one for accessabilty. the little cloud", then "liquid cloud", then the file itself, `Liquid_Sky_Laser.html`.
+- **What it is:** a show he made outside this project: a flowing sheet of light overhead, made to be safe for viewers sensitive to flashing. No strobes, no blackouts, fades of three seconds, colour that cannot snap, slower when the viewer's device asks for less motion, and a "laser show on · flash-safe" badge.
+- **Built:** the file is now `assets/review/liquid.html`, unchanged in look. It has a tab in the control room ("Liquid sky"). In OBS it shows no panel and starts by itself. Its palette, sliders, badge and Start/Stop in the control room steer the copy in OBS, and pressing Show sends the control room's present settings with it.
+- **Checked:** against a stand-in for OBS. Not checked in OBS itself; how it looks in motion is the owner's to judge, though nothing in the picture was changed.

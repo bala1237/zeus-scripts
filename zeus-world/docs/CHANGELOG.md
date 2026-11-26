@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 26 Nov 2026
 
+- **Liquid Sky joins Zeus Live (ZW-058).** The owner's flash-safe show (no strobes, no blackouts) is now a scene with its own tab. Its colours and sliders in the control room steer the picture in OBS.
 - **One page for every scene: Zeus Live (ZW-057).** `live.html` is the only address OBS needs. In OBS it shows the picture; opened in Chrome it is a control room with a tab for each scene (open world, city, lasers, music stage, hero film, Andie's Place), one connection to OBS, and a "Show this in OBS" button that changes what the stream sees. A hero film told to play comes on screen by itself. The old addresses still work.
 - **Controls never show inside OBS (ZW-056).** The owner added `world.html` to OBS and saw its controls. Every page now knows when it is inside OBS and shows the picture only, whatever the address.
 - **World remote keeps its link to OBS (ZW-055).** The owner connected and then saw "connection to OBS closed". The page now says why OBS closed the link and joins again by itself.

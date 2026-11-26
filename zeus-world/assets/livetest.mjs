@@ -16,7 +16,7 @@ const wss = new WebSocketServer({ port: 4466 }); wss.on('connection', (ws) => { 
       ws.send(JSON.stringify({ op: 7, d: { requestId: d.requestId, requestStatus: { result: true, code: 100 }, responseData } })); } }); });
 
 // 1. every page, opened in OBS with its ordinary address, shows no controls
-for (const [page, sel] of [['world.html', '#ui'], ['city.html', '#panel'], ['laser.html', '#ui'], ['hero.html', '#ui'], ['andie.html', '#ui'], ['stage.html', '#ui']]) {
+for (const [page, sel] of [['world.html', '#ui'], ['city.html', '#panel'], ['laser.html', '#ui'], ['hero.html', '#ui'], ['andie.html', '#ui'], ['stage.html', '#ui'], ['liquid.html', '#panel']]) {
   await src.goto(base + page, { waitUntil: 'domcontentloaded' }); await src.waitForTimeout(2500);
   const seen = await src.evaluate((s) => { const e = document.querySelector(s); if (!e) return false; const r = e.getBoundingClientRect(), c = getComputedStyle(e); return c.display !== 'none' && c.visibility !== 'hidden' && Number(c.opacity) > 0.01 && r.width > 0 && r.height > 0 && r.top < innerHeight; }, sel);
   ok(`${page} in OBS: controls hidden`, !seen); }
@@ -42,6 +42,14 @@ await inner().waitForFunction(() => document.querySelectorAll('#places button').
 ok('world tab: no second password box', await inner().evaluate(() => document.querySelector('#obsConnect').style.display === 'none'));
 await inner().evaluate(() => document.querySelector('#places button').click()); await src.waitForTimeout(1200);
 const got = await src.evaluate(() => document.querySelector('#view').contentWindow.__got); ok('a place button steers the world in OBS, once', got.length === 1 && got[0].cmd === 'go', JSON.stringify(got));
+// 3b. the liquid sky: shown in OBS it takes the control room's settings, and a slider moved afterwards arrives too
+await ctl.evaluate(() => document.querySelector('#tabs button[data-k=liquid]').click()); await ctl.waitForTimeout(2500); await inner().waitForSelector('.pal', { state: 'attached', timeout: 60000 });
+await inner().evaluate(() => { const r = document.querySelector('#brt'); r.value = '0.5'; r.dispatchEvent(new Event('input')); document.querySelector('.pal[data-i="2"]').click(); });
+await ctl.evaluate(() => document.querySelector('#show').click()); await atScene('liquid.html'); await src.waitForTimeout(1500);
+const liq = () => src.evaluate(() => { const d = document.querySelector('#view').contentDocument; return { glow: d.querySelector('#brt').value, pal: d.querySelector('.pal[aria-pressed=true]').textContent, on: d.querySelector('#go').textContent, plain: d.body.classList.contains('plain') }; });
+let L = await liq(); ok('liquid sky in OBS: running, no controls, with the control room\'s settings', L.plain && L.on === 'Stop show' && L.glow === '0.5' && L.pal === 'Royal', JSON.stringify(L));
+await inner().evaluate(() => { const r = document.querySelector('#shn'); r.value = '0.2'; r.dispatchEvent(new Event('input')); }); await src.waitForTimeout(1000);
+ok('a slider moved in the control room moves it in OBS', (await src.evaluate(() => document.querySelector('#view').contentDocument.querySelector('#shn').value)) === '0.2');
 // 4. a hero film told to play comes on screen by itself, with the name
 await ctl.evaluate(() => document.querySelector('#tabs button[data-k=hero]').click()); await ctl.waitForTimeout(3000); await inner().waitForSelector('#sendPlay', { timeout: 120000 }); await inner().fill('#name', 'Andie Howard'); await inner().dispatchEvent('#name', 'input'); await inner().dispatchEvent('#name', 'change');
 await inner().click('#sendPlay'); await atScene('hero.html'); await src.waitForTimeout(1500);

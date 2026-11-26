@@ -15,6 +15,7 @@ export const SCENES = {
   world: { name: 'Open world', page: 'world.html', event: 'zeusWorld', hint: 'light=dusk' },
   city: { name: 'City', page: 'city.html', hint: 'view=plaza' },
   laser: { name: 'Lasers', page: 'laser.html', hint: 'input=rode  or  bpm=128' },
+  liquid: { name: 'Liquid sky', page: 'liquid.html', event: 'zeusLiquid', hint: 'pal=aurora' },
   stage: { name: 'Music stage', page: 'stage.html', hint: 'bpm=128' },
   hero: { name: 'Hero film', page: 'hero.html', event: 'zeusHero', hint: 'captions=1' },
   andie: { name: "Andie's Place", page: 'andie.html', hint: 'bpm=124' },
@@ -54,7 +55,7 @@ if (OUT) { // ---------- the picture
   const emit = async (name, data) => { if (!obs) throw new Error('not connected to OBS (the bar at the top)'); await obs.emit(name, { ...data, _n: ++n }); if (name === 'zeusHero' && data?.cmd === 'play' && sent !== 'hero') { sent = 'hero'; store.set('sent', sent); mark(); } };
   window.zeusLive = { emit, connected: () => !!obs };
   $('show').addEventListener('click', async () => { const m = { cmd: 'show', scene: tab, opts: store.get('opts-' + tab) || '' }; chan?.postMessage(m);
-    try { await emit('zeusLive', m); sent = tab; store.set('sent', sent); mark(); } catch (e) { say(e.message); } });
+    try { await emit('zeusLive', m); sent = tab; store.set('sent', sent); mark(); view.contentWindow.dispatchEvent(new CustomEvent('zeusShown')); } catch (e) { say(e.message); } });
   // if OBS drops the connection, say why and join again (as the world's remote does, ZW-055)
   const connect = async () => { clearTimeout(again); if (obs) return; say('connecting');
     try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: (e) => { obs = null; const why = { 4009: 'OBS refused the password', 4011: 'OBS restarted its WebSocket server', 1001: 'OBS was closed', 1006: 'OBS went away' }[e?.code] || `code ${e?.code ?? '?'}`; say(`connection to OBS closed (${why}); trying again…`); again = setTimeout(connect, 3000); } });

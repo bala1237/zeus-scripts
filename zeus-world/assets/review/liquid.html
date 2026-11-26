@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquid Sky Laser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Liquid Sky (ZW-058): the owner's flash-safe show, made for accessibility: no strobes, no blackouts, brightness never jumps.
+   In OBS (or with ?ui=0) it is the picture only and starts by itself. Address: ?pal=ocean|aurora|royal|dusk ?flow=1 ?depth=0.42
+   ?glow=0.85 ?shimmer=0.6 ?drift=0.5 ?badge=0 ?calm=1 (do not start). The page with controls steers the one in OBS (event zeusLiquid).
+   VOICE: a stage tool — dark, calm, the light is the star
+   IDEA: a lighting console driving a liquid-sky laser ceiling
+   PICTURE: full-screen shader: a flowing, filled sheet of light overhead
+   COLOUR and TYPE: black stage, light from the chosen palette; Manrope
+   LAYOUT: canvas fills screen, console bottom-right, safety badge bottom-left */
+:root{color-scheme:dark;--ink:#eef2ff;--mute:#9aa3c7;--glass:rgba(12,14,28,.82);--line:rgba(255,255,255,.12);--acc:#7fd4ff}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);font:15px/1.45 Manrope,system-ui,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.panel{position:fixed;right:16px;bottom:16px;width:min(320px,calc(100vw - 32px));background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;backdrop-filter:blur(10px);transition:opacity .6s,transform .6s}
+.panel.hide{opacity:0;transform:translateY(12px);pointer-events:none}
+h1{font-size:20px;font-weight:800;margin:0 0 2px}
+.sub{color:var(--mute);font-size:13px;margin:0 0 12px}
+.row{display:grid;grid-template-columns:84px minmax(0,1fr) 38px;align-items:center;gap:8px;margin:8px 0}
+.row label{font-size:13px;color:var(--mute)}
+.row output{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--acc);height:28px}
+.pals{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.pal{flex:1 1 calc(50% - 6px);min-height:40px;border-radius:10px;border:2px solid transparent;color:#fff;font:600 13px Manrope,sans-serif;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.pal[aria-pressed=true]{border-color:#fff}
+.btns{display:flex;gap:8px;margin-top:12px}
+button.main{flex:1;min-height:44px;border-radius:12px;border:0;background:var(--acc);color:#04121c;font:800 15px Manrope,sans-serif;cursor:pointer}
+button.ghost{min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:600 13px Manrope,sans-serif;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute);margin-top:10px;min-height:32px}
+.chk input{width:18px;height:18px;accent-color:var(--acc)}
+.keys{font-size:12px;color:var(--mute);margin:10px 0 0}
+.badge{position:fixed;left:16px;bottom:16px;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);font-size:14px;font-weight:600;transition:opacity 1.5s}
+.badge.off{opacity:0}
+.safe{display:flex;align-items:center;gap:6px;font-size:12px;color:#9ff0c0;margin-top:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#5fe39a}
+.plain .panel{display:none}
+.err{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:var(--mute)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="err" id="err">This browser can't run the liquid effect (WebGL is off). Try Chrome or enable hardware acceleration.</div>
+
+<div class="badge off" id="badge">✨ Laser show on · flash-safe</div>
+
+<div class="panel" id="panel" role="region" aria-label="Laser controls">
+  <h1>Liquid Sky</h1>
+  <p class="sub">A flowing sheet of light overhead. No strobes, no blackouts.</p>
+  <div class="pals" id="pals"></div>
+  <div class="row"><label for="spd">Flow</label><input id="spd" type="range" min="0.2" max="2" step="0.1" value="1"><output id="spdO"></output></div>
+  <div class="row"><label for="hgt">Sky depth</label><input id="hgt" type="range" min="0.2" max="0.65" step="0.01" value="0.42"><output id="hgtO"></output></div>
+  <div class="row"><label for="brt">Glow</label><input id="brt" type="range" min="0.3" max="1" step="0.05" value="0.85"><output id="brtO"></output></div>
+  <div class="row"><label for="shn">Shimmer</label><input id="shn" type="range" min="0" max="1" step="0.05" value="0.6"><output id="shnO"></output></div>
+  <div class="row"><label for="drf">Color drift</label><input id="drf" type="range" min="0" max="1" step="0.05" value="0.5"><output id="drfO"></output></div>
+  <label class="chk"><input type="checkbox" id="showBadge" checked> Show “laser show on” badge</label>
+  <div class="btns">
+    <button class="main" id="go">Start show</button>
+    <button class="ghost" id="fs">Full screen</button>
+  </div>
+  <div class="safe"><span class="dot"></span>Fades take 3 s. Brightness never jumps.</div>
+  <p class="keys">Space: start/stop · H: hide panel · F: full screen</p>
+</div>
+
+<script id="fsrc" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 R;uniform float T,HU,M,G,D,S;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return v;}
+vec3 hsv(float h,float s,float v){vec3 p=abs(fract(vec3(h)+vec3(0.,2./3.,1./3.))*6.-3.);return v*mix(vec3(1.),clamp(p-1.,0.,1.),s);}
+void main(){
+  vec2 uv=gl_FragCoord.xy/R;float ar=R.x/R.y;float y=1.-uv.y;float x=uv.x*ar;
+  float edge=D+D*.10*sin(x*1.9+T*.45)+D*.05*sin(x*4.7-T*.7)+D*.03*sin(x*9.1+T*.9);
+  float s=y/edge;vec3 col=vec3(0.);
+  if(s<1.){
+    float z=1./(1.-.86*s);
+    vec2 P=vec2((uv.x-.5)*ar*z*1.6,z*1.4-T*.22);
+    vec2 w=vec2(fbm(P+vec2(0.,T*.06)),fbm(P+vec2(5.2,1.3)-vec2(T*.05,0.)));
+    float n=fbm(P+2.2*w);
+    float r=1.-abs(2.*fbm(P*1.4+3.*w+vec2(T*.04))-1.);
+    float sheen=pow(r,5.)*S;
+    float caust=pow(1.-abs(2.*noise(P*3.+2.*w)-1.),8.)*S*.5;
+    float h=HU+.06*(n-.5)+.03*w.x;
+    col=hsv(h,.85,.22+.62*n);
+    col+=hsv(h+.03,.35,1.)*(sheen*.7+caust);
+    col+=hsv(HU,.55,1.)*smoothstep(.72,1.,s)*.55;
+    col*=mix(.55,1.,smoothstep(0.,.35,s));
+    col*=1.-smoothstep(.985,1.,s)*.5;
+  }
+  float d=y-edge;
+  col+=hsv(HU,.35,1.)*exp(-abs(d)*R.y*.22)*1.1;
+  col+=hsv(HU,.6,1.)*exp(-abs(d)*R.y*.04)*.35;
+  if(d>0.)col+=hsv(HU+.02,.8,.9)*exp(-d*22.)*.12;
+  col*=M*G;
+  col=col/(1.+col*.35);
+  gl_FragColor=vec4(col,1.);
+}
+</script>
+
+<script type="module">
+import { pageQuery, host, onceOnly, sceneReady } from './source.js';
+{
+const q=pageQuery(),PLAIN=q.get('ui')==='0';if(PLAIN)document.body.classList.add('plain');
+const PALS=[
+  {n:'Ocean',h:[200,215,190,225]},
+  {n:'Aurora',h:[150,175,195,165]},
+  {n:'Royal',h:[255,275,235,290]},
+  {n:'Dusk',h:[310,330,280,300]}
+];
+const $=id=>document.getElementById(id);
+const c=$('c');
+const gl=c.getContext('webgl',{antialias:false,premultipliedAlpha:false});
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pal=0,on=false,m=0,t=0,hueNow=PALS[0].h[0],last=performance.now();
+
+$('pals').innerHTML=PALS.map((p,i)=>`<button class="pal" data-i="${i}" aria-pressed="${i===0}" style="background:linear-gradient(90deg,${p.h.map(h=>`hsl(${h} 80% 45%)`).join(',')})">${p.n}</button>`).join('');
+const setPal=i=>{pal=i;document.querySelectorAll('.pal').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i))};
+$('pals').addEventListener('click',e=>{const b=e.target.closest('.pal');if(!b)return;setPal(+b.dataset.i);tell()});
+[['spd',v=>v+'×'],['hgt',v=>Math.round(v*100)+'%'],['brt',v=>Math.round(v*100)+'%'],['shn',v=>Math.round(v*100)+'%'],['drf',v=>v==0?'off':Math.round(v*100)+'%']]
+  .forEach(([id,f])=>{const r=$(id),o=$(id+'O');const u=()=>o.textContent=f(+r.value);r.addEventListener('input',()=>{u();tell()});r.addEventListener('set',u);u()});
+
+function updBadge(){$('badge').classList.toggle('off',!(on&&$('showBadge').checked))}
+function setOn(v){on=!!v;$('go').textContent=on?'Stop show':'Start show';updBadge()}
+function toggle(){setOn(!on);tell()}
+$('go').addEventListener('click',toggle);
+$('showBadge').addEventListener('change',()=>{updBadge();tell()});
+// ---------- the remote (ZW-058). The page with controls tells the page without them (in OBS, or another tab) everything it is set to.
+const IDS={flow:'spd',depth:'hgt',glow:'brt',shimmer:'shn',drift:'drf'},chan='BroadcastChannel' in window?new BroadcastChannel('zeus-liquid'):null;
+const state=()=>{const s={on,pal,badge:$('showBadge').checked};for(const k in IDS)s[k]=+$(IDS[k]).value;return s};
+const apply=s=>{if(!s||typeof s!=='object')return;for(const k in IDS)if(s[k]!=null&&isFinite(s[k])){const r=$(IDS[k]);r.value=Math.max(+r.min,Math.min(+r.max,+s[k]));r.dispatchEvent(new Event('set'))}
+  if(s.pal!=null){const i=isFinite(s.pal)?+s.pal:PALS.findIndex(p=>p.n.toLowerCase()===String(s.pal).toLowerCase());if(PALS[i])setPal(i)}
+  if(s.badge!=null)$('showBadge').checked=!!s.badge&&s.badge!=='0';if(s.on!=null)setOn(s.on);updBadge()};
+function tell(){if(PLAIN)return;const s=state();chan?.postMessage(s);if(host)host.emit('zeusLiquid',s).catch(()=>{})}
+const fresh=onceOnly();addEventListener('zeusLiquid',e=>{if(fresh(e.detail))apply(e.detail)});if(chan&&PLAIN)chan.onmessage=e=>apply(e.data);
+addEventListener('zeusShown',tell);   // the control room has just put this scene on the stream: send it everything
+apply(Object.fromEntries(q));if(q.get('calm')!=='1'&&(PLAIN||host||q.has('autoplay')))setOn(true);sceneReady('liquid');
+function fs(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}}
+$('fs').addEventListener('click',fs);
+let idle;
+function wake(){$('panel').classList.remove('hide');clearTimeout(idle);if(on)idle=setTimeout(()=>$('panel').classList.add('hide'),4000)}
+addEventListener('pointermove',wake);
+addEventListener('keydown',e=>{
+  if(e.key===' '){e.preventDefault();toggle();wake()}
+  else if(e.key==='h'||e.key==='H')$('panel').classList.toggle('hide');
+  else if(e.key==='f'||e.key==='F')fs();
+});
+
+if(!gl){$('err').style.display='grid'}else{
+  const vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  const mk=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.log(gl.getShaderInfoLog(s));return s};
+  const pr=gl.createProgram();
+  gl.attachShader(pr,mk(gl.VERTEX_SHADER,vs));gl.attachShader(pr,mk(gl.FRAGMENT_SHADER,$('fsrc').textContent));
+  gl.linkProgram(pr);gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const U={};['R','T','HU','M','G','D','S'].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
+  const size=()=>{const sc=Math.min(devicePixelRatio||1,1.5);c.width=Math.round(innerWidth*sc);c.height=Math.round(innerHeight*sc);gl.viewport(0,0,c.width,c.height)};
+  addEventListener('resize',size);size();
+
+  // hue moves the shortest way round, capped at 12°/s so colour can never snap
+  const stepHue=(target,dt)=>{const d=((target-hueNow+540)%360)-180,mx=12*dt;hueNow=(hueNow+Math.max(-mx,Math.min(mx,d))+360)%360};
+
+  const frame=now=>{
+    const dt=Math.min((now-last)/1000,0.1);last=now;
+    const spd=+$('spd').value*(reduce?0.35:1),drift=+$('drf').value;
+    const goal=on?1:0;m+=Math.sign(goal-m)*Math.min(Math.abs(goal-m),dt/3);
+    t+=dt*spd;
+    const hs=PALS[pal].h,cyc=(t*0.04*drift)%hs.length,i=Math.floor(cyc),a=hs[i],b=hs[(i+1)%hs.length],f=cyc-i,s=f*f*(3-2*f);
+    stepHue(a+(((b-a+540)%360)-180)*s,dt);
+    gl.uniform2f(U.R,c.width,c.height);gl.uniform1f(U.T,t);gl.uniform1f(U.HU,hueNow/360);
+    gl.uniform1f(U.M,m);gl.uniform1f(U.G,+$('brt').value);gl.uniform1f(U.D,+$('hgt').value);gl.uniform1f(U.S,+$('shn').value);
+    gl.drawArrays(gl.TRIANGLES,0,3);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+}
+</script>
+</body>
+</html>
