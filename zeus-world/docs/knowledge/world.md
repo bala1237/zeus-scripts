@@ -81,7 +81,7 @@ The owner: "The trees lies very elementary and it doesn't look like Forrest ... 
 - **The village** is rebuilt from the city's villa parts (walls, upper floor, roof, columned porch) on levelled ground, round a paved square with a well, a columned hall, a shrine, an altar, banners, lanterns and benches; the road is paved through it. Farmsteads are stone villas with a pergola, a cart and a low wall.
 - **Load with the kit:** forest road 163,600 trees, 2,600 draw calls, 10.9 million triangles; village from the air 177,800 trees, 3,665 calls, 7.8 million.
 - **Still below the city's standard:** the ground is flat colour with a grain, not a real surface of grass, earth and rock; the cliff and mountains are plain; water is simple; the village is thin; there are no people.
-- **Not published.** This state is on the work branch only; the preview still shows the first proof.
+- **Published 26 Nov 2026** at the owner's word, for him to check motion and frame rate. Only stills had been checked before publishing.
 
 ## Not yet built
 
