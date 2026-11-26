@@ -61,8 +61,9 @@ function height(x, z) { let h = rawHeight(x, z);
     h = mix(h, Math.min(h, bed + 1.2 + 0.035 * r.d), valley * 0.85); if (r.d < bank) h = Math.min(h, bed - 0.4 - 2.2 * smooth(bank, 0, r.d)); }
   const dc = Math.hypot(x - CITY.x, z - CITY.z); if (dc < CITY.r + 260) h = mix(h, CITY.y, smooth(CITY.r + 260, CITY.r + 20, dc) * (r.d < r.w + 3 ? 0 : 1) * smooth(100, 66, z));
   if (!levelling) { const v = PLACES.village, dv = Math.hypot(x - v.x, z - v.z); if (dv < 150) { if (villageY === null) { levelling = true; villageY = height(v.x, v.z); levelling = false; } h = mix(h, villageY, smooth(150, 82, dv) * (r.d < r.w + 8 ? 0 : 1)); } }
+  if (!levelling) for (const p of FLATS()) { const d = Math.hypot(x - p.x, z - p.z); if (d < p.flat) { if (p.y == null) { levelling = true; p.y = height(p.x, p.z); levelling = false; } h = mix(h, p.y, smooth(p.flat, p.flat * 0.6, d)); } }
   return h; }
-let villageY = null, levelling = false;
+let villageY = null, levelling = false, flats = null; const FLATS = () => (flats ||= Object.values(PLACES).filter((p) => p.flat));
 // The river's water level along its length, worked out once: start from the raw land at each point and never let it rise downstream.
 let LEVELS = null;
 function levels() { if (LEVELS) return LEVELS; const out = []; let run = 0, lvl = Infinity;
@@ -110,6 +111,11 @@ const PLACES = {
   // clearings for the countryside (phase 3 of the world plan): three shepherds' huts and the mill bank by the village
   hut1: { x: 130, z: -700, kind: 'hut', clear: 46 }, hut2: { x: -330, z: -860, kind: 'hut', clear: 46 }, hut3: { x: -160, z: -480, kind: 'hut', clear: 46 },
   mill: { x: -335, z: -1590, kind: 'mill', clear: 150 },
+  // new places (phase 7). flat: the ground is levelled this far out, as the village's is
+  harbour: { x: 700, z: -95, name: 'Thalassa', kind: 'harbour', clear: 170, flat: 78 },
+  sanctuary: { x: 515, z: -3480, name: 'The High Sanctuary', kind: 'sanctuary', clear: 85, flat: 46 },
+  grove: { x: 700, z: -900, name: 'The Olive Grove', kind: 'grove', clear: 100 },
+  ruins: { x: 300, z: -2000, name: 'The Old Stones', kind: 'ruins', clear: 62, flat: 20 },
 };
 // ---------- the door: everything the world uses, in the world's own directions (sea to the east)
 const W = { CITY: { x: CITY.z, z: CITY.x, r: CITY.r, y: CITY.y }, PLACES: Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, { ...p, x: p.z, z: p.x }])) };

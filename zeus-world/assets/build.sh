@@ -108,3 +108,4 @@ run country_fence            country.py fence     4000  512
 run country_beehives         country.py beehives  14000 512
 run country_threshing-floor  country.py threshing 22000 1024
 run country_shrine_roadside  country.py shrine    30000 512
+run country_ruin_temple      country.py ruin      26000 1024

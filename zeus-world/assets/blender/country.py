@@ -379,6 +379,32 @@ def shrine():
     P.pot(-0.62, -1.25, 0.17, 0.9); P.pot(0.7, -1.2, 0.17, 0.7, plant='leaf', seed=3)
 
 
-BUILD = {'hut': hut, 'barn': barn, 'mill': mill, 'bridge': bridge, 'boat': boat, 'jetty': jetty, 'cart': cart, 'haystack': haystack, 'fence': fence, 'beehives': beehives, 'threshing': threshing, 'shrine': shrine}
+# ---------------------------------------------------------------- 13. ruins in the forest: what is left of an older temple (10 x 7 m)
+def ruin():
+    for i, (w, d) in enumerate(((10.0, 7.0), (9.3, 6.3), (8.6, 5.6))):
+        o = zw.box('steps', (w, d, 0.24), (0, 0, 0.12 + i * 0.24), mat('hall'), bevel=0.03, segs=1, uv=1.6); zw.refine(o, 0.6); zw.wobble(o, 0.025, 1.3, i + 2); zw.box_uv(o, 1.6)
+    Z, R = 0.72, 0.34
+    def drum(c, h, r=R, tilt=None, m='marble'):
+        o = zw.lathe('drum', [(r, 0), (r * 0.97, h), (0, h)], mat(m), centre=(0, 0, 0), segs=20, uv=1.2, flutes=12, flute_depth=0.08)
+        o.data.transform(Matrix.Translation(c) @ (tilt or Matrix.Identity(4))); return o
+    cols = [(-3.6, -2.2, 4.3), (-1.2, -2.2, 4.3), (1.2, -2.2, 2.1), (3.6, -2.2, 0.8), (-3.6, 2.2, 3.0), (3.6, 2.2, 1.4), (-1.2, 2.2, 0.5)]
+    for i, (x, y, h) in enumerate(cols):
+        n = max(1, round(h / 0.72))
+        for k in range(n): drum((x + rnd.uniform(-0.015, 0.015), y + rnd.uniform(-0.015, 0.015), Z + k * h / n), h / n - 0.012, R * (1 - 0.04 * k / max(1, n)))
+        zw.box('base', (0.9, 0.9, 0.14), (x, y, Z + 0.0), mat('marble'), bevel=0.02, uv=1.2)
+        if h > 4:                                          # the two whole columns still carry their capitals and a length of the beam
+            zw.lathe('echinus', [(R * 0.82, 0), (R * 0.95, 0.06), (R * 1.3, 0.2), (R * 1.3, 0.26)], mat('marble'), centre=(x, y, Z + h), segs=14, uv=1.2); zw.box('abacus', (0.9, 0.9, 0.16), (x, y, Z + h + 0.34), mat('marble'), bevel=0.02, uv=1.2)
+        elif h > 1:                                        # a broken top: a slanted, chipped drum
+            o = drum((x, y, Z + h - 0.02), 0.3, R * 0.93, Matrix.Rotation(0.2 + 0.1 * i, 4, 'X')); zw.wobble(o, 0.03, 4.0, i)
+    b = zw.box('beam', (3.3, 0.8, 0.55), (-2.4, -2.2, Z + 4.3 + 0.7), mat('hall'), bevel=0.03, uv=1.4); zw.refine(b, 0.5); zw.wobble(b, 0.02, 1.5, 9); zw.box_uv(b, 1.4)
+    for x in (-3.4, -2.4, -1.4): zw.box('triglyph', (0.34, 0.06, 0.36), (x, -2.62, Z + 5.05), mat('paint_azure'), uv=1.0)
+    fallen = [((1.9, -3.9, 0.36), 0.9, 1.3), ((3.0, -4.3, 0.36), 0.8, 1.8), ((4.6, -0.2, Z + 0.34), 1.0, 0.4), ((0.6, 0.6, Z + 0.34), 0.85, 2.6), ((5.6, 3.2, 0.34), 0.9, 0.9), ((-5.7, -1.0, 0.34), 0.7, 2.0)]
+    for c, h, rz in fallen: drum(c, h, R, Matrix.Rotation(rz, 4, 'Z') @ Matrix.Rotation(math.pi / 2, 4, 'Y') @ Matrix.Translation((0, 0, -h / 2)))
+    for i, (x, y, z, r) in enumerate(((2.6, 1.0, Z, 0.5), (-4.9, 3.9, 0, 0.6), (5.4, -3.0, 0, 0.45), (0.2, -4.2, 0, 0.4), (-0.4, 3.0, Z, 0.35))): stone((x, y, z + r * 0.35), r, 30 + i, 'rock', 0.7)
+    zw.box('altar', (1.1, 0.8, 0.8), (0.0, 0.2, Z + 0.4), mat('marble'), bevel=0.04, uv=1.2).data.transform(Matrix.Translation((2.3, 0.3, 0)))
+    for i, (x, y, z, r) in enumerate(((-3.6, -2.3, Z + 0.5, 0.5), (-3.9, 2.2, Z + 0.3, 0.55), (4.9, -3.4, 0.2, 0.7), (-5.2, -3.3, 0.2, 0.8), (3.7, 2.4, Z + 1.3, 0.4), (-1.3, -2.3, Z + 2.2, 0.38), (0.9, 3.5, 0.3, 0.7))): P.shrub(x, y, z, r, 'leaf', 50 + i, 6)
+
+
+BUILD = {'ruin': ruin, 'hut': hut, 'barn': barn, 'mill': mill, 'bridge': bridge, 'boat': boat, 'jetty': jetty, 'cart': cart, 'haystack': haystack, 'fence': fence, 'beehives': beehives, 'threshing': threshing, 'shrine': shrine}
 BUILD[ITEM]()
-P.finish(OUT, dist=0.6 if ITEM in ('barn', 'mill', 'bridge', 'shrine', 'hut') else 0.4, keep=('deck', 'thatch', 'hay', 'floor'))
+P.finish(OUT, dist=0.6 if ITEM in ('barn', 'mill', 'bridge', 'shrine', 'hut', 'ruin') else 0.4, keep=('deck', 'thatch', 'hay', 'floor'))
