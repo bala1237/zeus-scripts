@@ -8,6 +8,8 @@ The rules and the scripts are in `docs/hero-films/`. This file is the how: the p
 
 - `hero.html?name=Andie%20Howard` fills the name in. `&autoplay` starts it (a browser may refuse sound until the page has been clicked once). `&ui=0` hides the bar, for a browser source. `&captions` shows the narrator's words.
 - Keys: Space plays and stops, H hides the bar.
+- **Copy link for OBS** (ZW-050) copies the address of the film and name now chosen, with `ui=0` and `autoplay`: paste it as the URL of a browser source, 1920 × 1080, and the picture fills it exactly. This is the way to use the film without the remote. The hero's picture is not in the link (it cannot be; use the remote, or `&pic=`). `sourceLink()` in `hero.js`.
+- **For a window capture** a thin gold line marks the 16:9 picture while the bar shows, so the crop can be set exactly; the line sits just outside the picture and is never drawn with the bar hidden (`body.bare`). A browser source is better: it is drawn at the source's own size, and its sound goes through OBS.
 - From another page or a tool: `window.playHeroFilm('A Name')`.
 - Code: `assets/review/hero.html`, `hero.js` (the player), `herofilms.js` (the library: one entry per film with its files and every timing).
 

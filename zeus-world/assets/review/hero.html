@@ -53,6 +53,8 @@
   body.captions #caption.on { opacity: .95; }
   #ui { flex: none; box-sizing: border-box; width: 100%; color: #fff; font: 600 13px system-ui, sans-serif; background: #100c06; border-top: 1px solid rgba(233, 194, 117, .45); padding: 8px 14px 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: center; }
   #ui.gone { display: none; }
+  /* with the controls showing, a thin gold line marks the 16:9 picture, so that a window capture can be cropped to it exactly; never drawn when the controls are off */
+  body:not(.bare) #frame { outline: 2px solid rgba(233, 194, 117, .75); }
   #ui button { background: #8a5a12; color: #fff; padding: 7px 12px; border-radius: 8px; border: 0; font: inherit; cursor: pointer; }
   #ui button.on { background: #e2b04a; color: #1d1305; }
   #ui input[type=text] { font: inherit; font-weight: 500; padding: 6px 8px; border-radius: 6px; border: 1px solid #6a4a1a; background: #1a1206; color: #fff; width: 190px; }
@@ -88,6 +90,7 @@
     <span style="font-weight:500;opacity:.85">The film in OBS:</span>
     <button id="sendPlay" class="on" title="Play the film, with this name, in the OBS browser source. It does not play here.">Play in OBS</button>
     <button id="sendStop">Stop in OBS</button>
+    <button id="copyLink" title="Copies the address of this film with this name, controls off, starting by itself. Paste it as the URL of a browser source in OBS (1920 by 1080).">Copy link for OBS</button>
     <label title="OBS: Tools, WebSocket Server Settings, Show Connect Info">OBS password <input id="obsPass" type="password" autocomplete="off" style="font:inherit;font-weight:500;padding:6px 8px;border-radius:6px;border:1px solid #6a4a1a;background:#1a1206;color:#fff;width:130px"></label>
     <button id="obsConnect" title="Connect this page to OBS on this computer">Connect to OBS</button>
     <span id="obsStatus" style="font-weight:500;opacity:.85">not connected</span>

@@ -20,7 +20,7 @@ let name = showName(q.get('name') ?? store.get('name') ?? ''), playing = false, 
 
 // ---------- the picture is always 16:9, as large as fits above the controls
 const frame = $('frame'), area = $('area'), fit = () => { const W = area.clientWidth, H = area.clientHeight, k = Math.min(W / 16, H / 9), w = Math.floor(16 * k), h = Math.floor(9 * k); frame.style.width = `${w}px`; frame.style.height = `${h}px`; frame.style.left = `${Math.round((W - w) / 2)}px`; frame.style.top = `${Math.round((H - h) / 2)}px`; const sp = document.getElementById('sparks'); sp.width = w; sp.height = h; };
-let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); fit(); }; showUi(); new ResizeObserver(fit).observe(area);
+let hidden = PLAIN; const showUi = () => { $('ui').classList.toggle('gone', hidden); document.body.classList.toggle('bare', hidden); fit(); }; showUi(); new ResizeObserver(fit).observe(area);
 
 // ---------- the lettering of the name: ?font=Cinzel Decorative&weight=700 tries another
 if (q.get('font')) { document.documentElement.style.setProperty('--title', `'${q.get('font').replace(/[^\w ]/g, '')}'`); document.documentElement.style.setProperty('--tw', String(Number(q.get('weight')) || 700)); }
@@ -105,6 +105,9 @@ if (!PLAIN) { let obs = null, src = null; const say = (t) => { $('obsStatus').te
   const send = async (m) => { chan?.postMessage(m); if (!obs) { say('not connected to OBS'); return; }
     try { await obs.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); }
     catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('film', m.film || filmId); u.searchParams.delete('pic'); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
+  // the address of this film with this name, for a browser source: controls off, starting by itself (ZW-050). The picture cannot travel in an address.
+  const sourceLink = () => { const u = new URL(location.pathname, location.origin); u.searchParams.set('film', filmId); u.searchParams.set('name', name); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); if (document.body.classList.contains('captions')) u.searchParams.set('captions', '1'); return u.toString(); }; window.__hero_link = sourceLink;
+  $('copyLink').addEventListener('click', async () => { const link = sourceLink(), b = $('copyLink'); try { await navigator.clipboard.writeText(link); b.textContent = 'Copied'; } catch { prompt('Copy this link into the browser source:', link); } setTimeout(() => { b.textContent = 'Copy link for OBS'; }, 1600); });
   $('obsConnect').addEventListener('click', connect); $('sendPlay').addEventListener('click', () => send({ cmd: 'play', name, film: filmId, pic })); $('sendStop').addEventListener('click', () => send({ cmd: 'stop' })); if (store.get('obspass') != null && q.get('obs') !== '0') connect(); }
 // the door for the stage or for TikFinity later: window.playHeroFilm('Andie Howard')
 window.playHeroFilm = (n) => { if (n != null) setName(n); play(); }; window.__hero = { get film() { return film; }, get pic() { return pic; }, video, base, line, draw, get name() { return name; }, get playing() { return playing; } };
