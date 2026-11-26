@@ -12,12 +12,29 @@ export function createLand({ scene, tickers, trees, workers = Math.max(2, Math.m
     for (let i = 0; i < S * S; i++) v[i] = r(); // blur once so that it is grain and not static
     for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { const a = (v[y * S + x] * 2 + v[y * S + (x + 1) % S] + v[((y + 1) % S) * S + x] + v[y * S + (x + S - 1) % S] + v[((y + S - 1) % S) * S + x]) / 6, k = (y * S + x) * 4, g = Math.round(255 * a); d[k] = d[k + 1] = d[k + 2] = g; d[k + 3] = 255; }
     const t = new THREE.DataTexture(d, S, S); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; t.anisotropy = 8; t.needsUpdate = true; return t; })();
+  // Real surfaces, scanned (Poly Haven, CC0): meadow grass, forest floor, bare earth, rock. The colour of every point still comes from
+  // the land's own design (fields, roads, sand, snow); the scans supply what a flat colour cannot: blades, leaves, stones, cracks, and
+  // the small shadows between them. Each is laid at two sizes so that its repeat does not show, blended by what the ground is made of there,
+  // and faded out in the distance, where it would only shimmer. On steep ground the rock is laid from the side, not from above, or it smears.
+  const TL = new THREE.TextureLoader(), held = {}, loading = [], surf = (n, kind) => held[`${n}_${kind}`];
+  const SURF = [['leafy_grass', [0.59, 0.51, 0.35]], ['forrest_ground_01', [0.57, 0.53, 0.36]], ['brown_mud_dry', [0.45, 0.36, 0.24]], ['rock_face_03', [0.52, 0.41, 0.32]]];
+  // the pictures are fetched before anything is drawn (`ready`), or the ground is black until they arrive
+  for (const [n] of SURF) for (const kind of ['diff', 'nor']) loading.push(TL.loadAsync(`./ground/${n}_${kind}.jpg`).then((t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; if (kind === 'diff') t.colorSpace = THREE.SRGBColorSpace; held[`${n}_${kind}`] = t; }));
+  const ready = Promise.all(loading);
   const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0 });
-  groundMat.onBeforeCompile = (sh) => { sh.uniforms.uGrain = { value: grain };
-    sh.vertexShader = 'varying vec2 vXZ;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vXZ = position.xz;');
-    sh.fragmentShader = 'varying vec2 vXZ; uniform sampler2D uGrain;\n' + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n float g1 = texture2D( uGrain, vXZ / 7.0 ).r, g2 = texture2D( uGrain, vXZ / 53.0 + 0.37 ).r, g3 = texture2D( uGrain, vXZ / 410.0 + 0.11 ).r; diffuseColor.rgb *= 0.62 + 0.3 * g1 + 0.28 * g2 + 0.22 * g3;'); };
+  groundMat.onBeforeCompile = (sh) => { sh.uniforms.uGrain = { value: grain }; SURF.forEach(([n, avg], i) => { sh.uniforms[`uD${i}`] = { value: surf(n, 'diff') }; sh.uniforms[`uN${i}`] = { value: surf(n, 'nor') }; sh.uniforms[`uA${i}`] = { value: new THREE.Vector3(...avg.map((v) => v ** 2.2)) }; });
+    sh.vertexShader = 'attribute vec3 mixw; varying vec2 vXZ; varying vec3 vMix; varying vec3 vWp; varying vec3 vWn;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vXZ = position.xz; vMix = mixw; vWp = position; vWn = normal;');
+    sh.fragmentShader = `varying vec2 vXZ; varying vec3 vMix; varying vec3 vWp; varying vec3 vWn; uniform sampler2D uGrain, uD0, uD1, uD2, uD3, uN0, uN1, uN2, uN3; uniform vec3 uA0, uA1, uA2, uA3;
+      vec3 lay(sampler2D t, vec3 avg, float s1, float s2) { return mix(texture2D(t, vXZ / s1).rgb, texture2D(t, vXZ / s2 + 0.37).rgb, 0.4) / avg; }
+      vec3 gSurf; vec3 gNor; float gNear;
+      void surface() { float d = length(vWp - cameraPosition); gNear = 1.0 - smoothstep(180.0, 700.0, d); float wr = vMix.z, wd = vMix.y, wf = vMix.x, wg = max(0.0, 1.0 - wr - wd - wf);
+        vec3 an = abs(normalize(vWn)); float side = smoothstep(0.5, 0.8, max(an.x, an.z));
+        vec3 rk = mix(lay(uD3, uA3, 9.0, 41.0), mix(texture2D(uD3, vWp.zy / 11.0).rgb, texture2D(uD3, vWp.xy / 11.0).rgb, step(an.x, an.z)) / uA3, side);
+        gSurf = wg * lay(uD0, uA0, 3.2, 17.0) + wf * lay(uD1, uA1, 3.6, 19.0) + wd * lay(uD2, uA2, 2.6, 13.0) + wr * rk; gSurf = mix(vec3(1.0), gSurf, gNear);
+        vec3 nm = wg * texture2D(uN0, vXZ / 3.2).xyz + wf * texture2D(uN1, vXZ / 3.6).xyz + wd * texture2D(uN2, vXZ / 2.6).xyz + wr * texture2D(uN3, vXZ / 9.0).xyz; gNor = (nm * 2.0 - 1.0) * gNear; }
+      ` + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n surface(); float g2 = texture2D( uGrain, vXZ / 53.0 + 0.37 ).r, g3 = texture2D( uGrain, vXZ / 410.0 + 0.11 ).r; diffuseColor.rgb *= gSurf * ( 0.74 + 0.26 * g2 + 0.26 * g3 );')
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n { vec3 wn = normalize( normalize( vWn ) + vec3( gNor.x, 0.0, gNor.y ) * 0.55 ); normal = normalize( ( viewMatrix * vec4( wn, 0.0 ) ).xyz ); }'); };
 
-  // ---------- the two kinds of tree, built from a few flat faces each: a broad-leaved tree and a pine
   const tint = (g, c, top = c, y0 = 0, y1 = 1) => { const p = g.attributes.position, col = new Float32Array(p.count * 3), a = new THREE.Color(c), b = new THREE.Color(top), t = new THREE.Color(); for (let i = 0; i < p.count; i++) { t.copy(a).lerp(b, THREE.MathUtils.clamp((p.getY(i) - y0) / (y1 - y0), 0, 1)); col.set([t.r, t.g, t.b], i * 3); } g.setAttribute('color', new THREE.BufferAttribute(col, 3)); return g; };
   const join = (parts) => { const pos = [], col = [], nor = []; for (const g of parts) { const n = g.index ? g.toNonIndexed() : g; if (!g.userData.round) n.computeVertexNormals(); pos.push(...n.attributes.position.array); col.push(...n.attributes.color.array); nor.push(...n.attributes.normal.array); } const o = new THREE.BufferGeometry(); o.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); o.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); o.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); return o; };
   const lump = (r, x, y, z, sy, seed, fine = 2) => { const g = new THREE.IcosahedronGeometry(r, fine), p = g.attributes.position, nn = g.attributes.normal; for (let i = 0; i < p.count; i++) { const ox = p.getX(i), oy = p.getY(i), oz = p.getZ(i), k = 1 + 0.2 * Math.sin(ox * 3.1 + seed) * Math.cos(oz * 2.7 + seed * 2) + 0.12 * Math.sin(oy * 5 + seed * 3) + 0.07 * Math.sin(ox * 9 + oz * 7 + seed), l = Math.hypot(ox, oy, oz) || 1; nn.setXYZ(i, ox / l * 0.8, oy / l * 0.8 + 0.35, oz / l * 0.8); p.setXYZ(i, ox * k + x, oy * k * sy + y, oz * k + z); } g.userData.round = true; return g; };
@@ -29,7 +46,7 @@ export function createLand({ scene, tickers, trees, workers = Math.max(2, Math.m
   const keyOf = (s, x, z) => `${s}:${x}:${z}`, cellsFor = (s) => (s >= 1024 ? 64 : 32), treesFor = (s) => (s <= 128 ? 1 : s <= 512 ? 0.6 : s <= 1024 ? 0.2 : 0);
   const arrived = []; function done(w, d) { const key = busy.get(w); busy.delete(w); arrived.push([key, d]); pump(); }
   function integrate(ms = 3.5) { const t0 = performance.now(); let any = false; while (arrived.length && (performance.now() - t0 < ms || !any)) { const [key, d] = arrived.shift(); build(key, d); any = true; } if (any) show(); }
-  function build(key, d) { const t = tiles.get(key); if (t && !t.ready) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(d.pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(d.nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(d.col, 3)); g.setIndex(new THREE.BufferAttribute(d.idx, 1));
+  function build(key, d) { const t = tiles.get(key); if (t && !t.ready) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(d.pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(d.nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(d.col, 3)); g.setAttribute('mixw', new THREE.BufferAttribute(d.mix, 3)); g.setIndex(new THREE.BufferAttribute(d.idx, 1));
       const cy = (d.minY + d.maxY) / 2; g.boundingSphere = new THREE.Sphere(new THREE.Vector3(t.x + t.s / 2, cy, t.z + t.s / 2), Math.hypot(t.s * 0.71, (d.maxY - d.minY) / 2 + 12));
       t.mesh = new THREE.Mesh(g, groundMat); t.mesh.receiveShadow = true; t.mesh.castShadow = false; t.mesh.matrixAutoUpdate = false; t.group = new THREE.Group(); t.group.add(t.mesh);
       const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0), C = new THREE.Color();
@@ -96,5 +113,5 @@ varying vec2 vUv; varying float vK; varying float vD; uniform float uT; uniform 
   const puff = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,0.9)'); g.addColorStop(0.5, 'rgba(255,255,255,0.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
   const mist = []; for (let i = 0; i < 22; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: puff, transparent: true, depthWrite: false, opacity: 0, color: 0xeaf4fa })); s.renderOrder = 3; scene.add(s); mist.push({ s, ph: i / 22, a: i * 2.399, r: 6 + (i * 37 % 17) }); }
   tickers.push((t) => { for (const m of mist) { const u = (t * 0.11 + m.ph) % 1; m.s.position.set(F.x + Math.cos(m.a) * m.r * (0.4 + u), F.foot + 2 + u * 34, F.z + Math.sin(m.a) * m.r * (0.4 + u)); const sc = 14 + 46 * u; m.s.scale.set(sc, sc, 1); m.s.material.opacity = 0.5 * Math.sin(Math.PI * u) ** 1.2; } });
-  return { update, settled, stats, integrate, groundMat, fallMat, sea, river: riv, tiles };
+  return { update, settled, stats, integrate, ready, groundMat, fallMat, sea, river: riv, tiles };
 }

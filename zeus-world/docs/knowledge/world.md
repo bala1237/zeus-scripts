@@ -118,11 +118,30 @@ After the smoothness fixes the owner said: "still jittery, mostly on the fast lo
 - **Not built:** people do not avoid each other or the stalls; nobody carries or works at anything; no one reacts to the newcomer. Working people (farmers, fishers, woodcutters) need new models: phase 6.
 - `&people=0` leaves them out.
 
+## The ground's surface (phase 2, 26 Nov 2026)
+
+The ground was flat colour with a grain. It now wears four real surfaces, scanned (Poly Haven, CC0, 1K, in `review/public/ground/`): `leafy_grass` (meadow), `forrest_ground_01` (forest floor), `brown_mud_dry` (road, river mud, sand), `rock_face_03` (rock).
+
+- **Colour still comes from the land's design** (fields, roads, sand, snow, the forest's darker floor). A scan is divided by its own average colour, so it adds only what flat colour lacks: blades, leaves, stones, cracks and the small shadows between them. The averages are in `SURF` in `worldland.js`; measure a new scan with `convert x.jpg -resize 1x1 -format '%[fx:r] %[fx:g] %[fx:b]' info:`.
+- **What is where** comes from `surfaceAt` in `worldgen.js`: three shares for each point (forest floor, bare earth, rock; the rest is grass), sent with the ground as the attribute `mixw`.
+- **Each scan is laid at two sizes** and mixed, so its repeat does not show; its normal map roughens the light; all of it fades out between 180 and 700 m, where it would only shimmer.
+- **On steep ground the rock is laid from the side.** Laid from above, a cliff smears into streaks.
+- **Trap: the pictures must be loaded before the first draw** (`land.ready`), or the ground near the camera is black. A still showed this at once.
+- Cost: about eleven picture look-ups for each pixel of ground. 4 MB of pictures.
+
+## The remote (phase 4, 26 Nov 2026)
+
+The page with controls is the remote for the same page running without them as a browser source in OBS (`world.html?ui=0`).
+
+- "Connect to OBS" (the password is from OBS: Tools, WebSocket Server Settings) uses `obsremote.js`, as the hero film does. Once connected, **Story** and the place buttons steer the world in OBS as well as in the remote's own window. The message is the event `zeusWorld` with `{ cmd: 'go', key }` or `{ cmd: 'story' }`.
+- Two tabs of one browser also work without OBS (the `ui=0` tab obeys).
+- Checked with `node renders/worldremotetest.mjs` against a stand-in for OBS. **Not checked in OBS itself.**
+
 ## Not yet built
 
 - **Working people and animals** (phase 6). The citizens are in; see "People".
 - **The city is a stand-in** made from catalogue models on the real ground plan, with a town outside the west gate. `city.js` is a page with no parts that can be imported; to stand the living city on this land it has to be turned into a part first.
-- The director's moments: building for the MVP, one person's place. A remote page (as for the hero film).
+- The director's moments: building for the MVP, one person's place (phase 9).
 - Dusk has only its light; no lamps.
 - Texture sharing (see `performance.md`) is not used in `worldplaces.js`.
 

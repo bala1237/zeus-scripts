@@ -17,9 +17,9 @@ How it works and what exists is in `knowledge/world.md`. This file is the order 
 | No. | Phase | What it gives | Cost | State |
 | --- | --- | --- | --- | --- |
 | 1 | **Life** | The newcomer walking the road in the story. People in the village square, at the stalls, in the fields, on the road, at the city gate. | Free (the city's three citizens) | Done 26 Nov 2026; waiting for the owner to watch it |
-| 2 | **The ground** | Real surfaces from the scanned library the city uses: meadow grass, forest floor, bare earth, sand, rock. Cliffs and mountains that look like stone. | Free | In progress |
+| 2 | **The ground** | Real surfaces from the scanned library the city uses: meadow grass, forest floor, bare earth, sand, rock. Cliffs and mountains that look like stone. | Free | Done 26 Nov 2026; waiting for the owner |
 | 3 | **A fuller countryside, built in Blender** | Things the catalogue lacks: a shepherd's hut, a barn, a mill, fences, haystacks, a hay cart, a fishing boat, a wooden bridge, a jetty, beehives, a threshing floor, a roadside shrine with columns. Each from an approved picture. | Pictures: about $0.10 each. Models: free | Needs approval of the pictures' cost |
-| 4 | **The director's remote** | A control page like the hero film's: fly to a place from Chrome while OBS shows the world. | Free | |
+| 4 | **The director's remote** | A control page like the hero film's: fly to a place from Chrome while OBS shows the world. | Free | Done 26 Nov 2026; not yet tried in OBS itself |
 | 5 | **Dusk, night and weather** | Lamps and windows lighting across the land, campfires, stars; morning mist; a storm from the mountains. | Free | |
 | 6 | **Animals and more people** | Sheep, goats, horses, oxen, birds; farmers, fishers, woodcutters, shepherds in working clothes. | About $0.45 a model, rigging extra | Needs approval |
 | 7 | **New places** | A harbour town, a mountain sanctuary above the falls, a quarry, vineyards and olive groves, ruins in the forest, an island. | Mostly free once phases 3 and 6 exist | |
