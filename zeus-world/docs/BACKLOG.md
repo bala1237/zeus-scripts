@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-056.**
+- **Next number: ZW-057.**
 
 ## Open
 
@@ -65,8 +65,9 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-051 | Enhancement | The open world built out in phases to the city's standard: life, the ground, a fuller countryside built in Blender, a remote, dusk and weather, animals, new places, the living city, the game | High | Open. Plan written (`WORLD-PLAN.md`); phases 1 (life), 2 (the ground), 3 (countryside), 4 (the remote), 5 (light and weather) and 6 (animals, standing) and 7 (new places) published; next 8 (the living city), 9 (the game) | 26 Nov 2026, owner |
 | ZW-052 | Bug | Open world frame rate: 35 at the low end in the story, 32 to 35 at best at Thalassa | High (proposed) | Fix published 26 Nov 2026 (batches, far versions, near shadows, 60 cap). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
-| ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Items 1 to 6 published, waiting for the owner; item 7 (animals that walk, working people) is the only one left and is paid, not priced | 26 Nov 2026, owner |
+| ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Items 1 to 6 published and accepted by the owner (27 Nov 2026: \"love it\"). Item 7 (animals that walk, working people) open: paid, not priced, not started | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Cause confirmed 26 Nov 2026: OBS's WebSocket server was switched off. Owner: "connected now". Whether the buttons steer the OBS source is not yet reported | 26 Nov 2026, owner |
+| ZW-056 | Enhancement | Open world: camera controls by hand (pan, zoom and so on), as the city page has | Medium (proposed) | Parked by the owner 27 Nov 2026 until after the story brainstorm | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -669,3 +670,12 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Item 4, the story, published 27 Nov 2026** (`cinecam.js`): five shots added (mill, shepherds' hill, a farm, Thalassa, the sanctuary), each a move round a place off the road, with a title. The newcomer is not in these shots. The tests that guard every story shot (above ground, no jumps, no steps in turning) pass with them. One still checked (the mill).
 - **Item 5, sky and weather, published 27 Nov 2026** (`worldair.js`, `public/sky/night.*`, `storm.*`; sheet `assets/sheets/world_sky.jpg`). Checked by stills.
 - **Item 6, sound, published 27 Nov 2026.** Owner, to generating the sounds on his ElevenLabs account: "Let's do it." Fourteen sounds made with ElevenLabs Sound Effects v2 (loops of 16 to 24 s, one thunderclap), about 900 credits (about 15 cents); seven first tries came back 1 to 6 s long because no length was set, about 120 credits more. `worldsound.js`, `assets/sound.sh`, `public/sound/`. Tested in a headless browser (`renders/soundtest.mjs`): the files load and play and each place raises the sounds it should. **Nobody has heard it yet**: whether the sounds themselves are good, and the balance between them, wait for the owner.
+- **Owner, 27 Nov 2026, after hearing the sound:** "love it. you are amazing." (He first heard nothing: the Sound button has to be pressed in Chrome.) Items 1 to 6 are accepted as far as he has commented; no changes asked. Item 7 (animals that walk, working people) is still unpriced and not started.
+
+### ZW-056: Camera controls by hand in the open world
+
+- **Asked:** 27 Nov 2026, by the owner, as a point to discuss: "We need to add the controls for pan, zoom and so on like we did in city.html."
+- **What the city has:** drag to orbit, right-drag or two fingers to pan, wheel or pinch to zoom, with easing; a Rotate button; touching the picture stops the tour.
+- **Open questions put to him:** whether moving the camera by hand on the Chrome page should also move the camera in the OBS source (the two are separate pages, joined only by the remote); and how the story resumes afterwards (a button, or by itself after a pause).
+- **Also from the same message, recorded here so it is not lost:** he confirmed the frame rate held ("yes it did. came it amazing"); he runs the OBS source at 30 frames a second, to keep memory down, because TikTok LIVE Studio and OBS run together; and he wants a full brainstorm of its own on voice-overs and story for the game ("adding voice overs and telling a story is whats gonna make interesting. This deserves a full brainstrorming by itself").
+- **Parked, 27 Nov 2026.** Owner: "park 1 and 2 and we will come back to it after 3. item 3 is the core that can make the game to be looked at a different level and ensure it becomes a success". Parked: these camera controls, and measuring the world's memory. First: the brainstorm on voice-overs and story.
