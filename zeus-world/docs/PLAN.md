@@ -10,7 +10,7 @@ Last updated: 27 Nov 2026.
 
 | Item | Backlog | State |
 | --- | --- | --- |
-| **Voice-overs and story for the game: a brainstorm** | none yet | **The next thing to do, in a new session** (owner, 27 Nov). The proposal and six unanswered questions are in `BRAINSTORM-GAME.md`, section "Voice-overs and story, 27 Nov 2026". Start by asking him those questions; build nothing first |
+| **Voice-overs and story for the game: a brainstorm** | ZW-057 | **The next thing to do, in a new session** (owner, 27 Nov). The proposal and six unanswered questions are in `BRAINSTORM-GAME.md`, section "Voice-overs and story, 27 Nov 2026". Start by asking him those questions; build nothing first |
 | The open world | ZW-049, 051 to 056 | On `/world.html`. Phases 1 to 7 of `WORLD-PLAN.md` live. Frame rate fixed and accepted (ZW-052), the man's walk repaired (ZW-053), polish items 1 to 6 accepted (ZW-054: motion, water, trees, a longer story, skies, sound). OBS remote works once OBS's WebSocket server is on (ZW-055). Parked: hand camera controls (ZW-056), measuring memory, phases 8 and 9, walking animals |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
