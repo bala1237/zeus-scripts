@@ -215,3 +215,16 @@ The owner measured 35 frames a second at the low end of the story and 32 to 35 a
 - **The patchwork on the water was the ripple picture, not the mesh.** The ripple normal map is built from a handful of cosine waves. With fractional numbers of waves across the picture it does not tile, so each repeat ends in a straight seam, and three layers at three scales and angles made a lattice of them. Proof: with the normal map's strength at zero the water was smooth. The waves now have whole numbers across (`W` in `ripple`, `worldland.js`). Tangents and coordinate precision were both tried first and were not the cause.
 - **The river ribbon** is resampled to a point every 9 m on a curve through the river's points, three points across, with normals straight up and given tangents. Its material takes `banks = true`: an attribute `across` (0 at a bank, 1 in midstream) makes the shallows pale and half clear and puts drifting flecks of foam there.
 - **The sea shore** is done in the ground's shader, since the sea is one flat sheet that knows nothing of the shore: ground within about 0.6 m above sea level is darkened as wet sand, and a band of white follows a height that rises and falls with time and place (`lap`). Bright sand hides foam drawn on it; the wet band under it is what makes it show. A steep shore makes the band very thin.
+
+## Trees close up (ZW-054 item 3)
+
+Two causes made near crowns look like broken glass, and both are fixed in `worldtrees.js`:
+
+- **Back faces.** Leaves are drawn from both sides. The renderer turns a face's normal round when it is seen from behind, so about half of every crown was lit as if from inside the tree. `sway()` now multiplies the normal by `faceDirection` a second time in the fragment shader, which undoes it. This applies to the full and the far-view trees.
+- **The models' own leaf normals** face every way, because each leaf is a loose scrap of surface. `round()` turns every normal above the trunk to face outward from the middle of the crown and somewhat upward (half outward, 0.42 up, a little of its own), the same idea `lod.mjs` uses for the far-view models. The fern is rounded whole; the log is left alone.
+
+The crowns are now evenly lit, which also makes them flatter and a little brighter than before. If more depth is wanted, raise the share of the model's own normal in `round()`.
+
+## The story's shots off the road (ZW-054 item 4)
+
+A story line whose anchor is not on the road uses `at(x, z)` in `cinecam.js` (a point with a fixed direction). Such shots have no `who`, so the newcomer is hidden for them. Chapters that begin far from the last one start with `fade: true`; the land there is made ready during the last five seconds of the shot before (`upcoming()` in `world.js`). The story is now 19 shots.
