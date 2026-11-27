@@ -76,10 +76,11 @@ export async function createAir({ scene, renderer, tickers, lamps = [], mistAt =
       for (const p of real) { const l = lamps[p.userData.at]; if (!l) { p.intensity = 0; continue; } const d = Math.hypot(l.x - foc.x, l.z - foc.z), k = Math.max(0, Math.min(1, 1.25 - d / 130)), fl = l.kind === 'fire' ? 0.8 + 0.2 * Math.sin(t * 9 + p.userData.at) + 0.1 * Math.sin(t * 21) : 1; p.intensity = g * k * fl * (l.kind === 'fire' ? 170 : 90); } }
     if (L.mist) for (const m of mist) { const x = m.p[0] + 30 * Math.sin(t * 0.03 + m.a), z = m.p[2] + 30 * Math.cos(t * 0.025 + m.a * 1.7), d = Math.hypot(x - cam.x, m.p[1] - cam.y, z - cam.z); m.s.position.set(x, m.p[1] + 7, z); m.s.scale.set(m.sc * 1.6, m.sc * 0.42, 1); m.s.material.opacity = 0.75 * Math.max(0, Math.min(1, (d - 60) / 160)); }
     if (L.rain) { rainU.uT.value = t; rainU.uCam.value.copy(cam);
-      if (t > strike.at) { strike.t = t; strike.at = t + 5 + Math.random() * 9; drawBolt(); const a = Math.atan2(foc.x - cam.x, foc.z - cam.z) + (Math.random() - 0.5) * 1.5, r = 3500 + Math.random() * 3500; bolt.position.set(cam.x + Math.sin(a) * r, Math.max(0, cam.y - 300), cam.z + Math.cos(a) * r); const h = 2600 + Math.random() * 900; bolt.scale.set(h * 0.5, h, 1); }
+      if (t > strike.at) { strike.t = t; strike.at = t + 5 + Math.random() * 9; drawBolt(); const a = Math.atan2(foc.x - cam.x, foc.z - cam.z) + (Math.random() - 0.5) * 1.5, r = 3500 + Math.random() * 3500; bolt.position.set(cam.x + Math.sin(a) * r, Math.max(0, cam.y - 300), cam.z + Math.cos(a) * r); const h = 2600 + Math.random() * 900; bolt.scale.set(h * 0.5, h, 1); onStrike?.(r); }
       const u = t - strike.t, e = u < 0 ? 0 : Math.max(0, 1 - u / 0.12) + (u > 0.16 ? Math.max(0, 1 - (u - 0.16) / 0.3) * 0.75 : 0); bolt.material.opacity = Math.min(1, e * 1.4); hemi.intensity = L.hemi + 2.2 * e; dome.material.color.set(L.tint).lerp(tintC.set(0xdfe6ff), Math.min(1, e * 0.8)); } });
 
-  return { sun, hemi, dome, AIR, set, get now() { return now; },
+  let onStrike = null; // told of each stroke of lightning and how far off it is, for the thunder
+  return { sun, hemi, dome, AIR, set, set onStrike(f) { onStrike = f; }, get now() { return now; },
     // called every frame: the sky and what travels with the camera follow it, and the shadows cover the ground round `focus`, moved in whole steps so that they do not crawl
     follow(camPos, focus) { cam.copy(camPos); foc.copy(focus); dome.position.copy(camPos); follow.position.copy(camPos); const s = 340 / 4096 * 8; sun.target.position.set(Math.round(focus.x / s) * s, focus.y, Math.round(focus.z / s) * s); sun.position.copy(sun.target.position).addScaledVector(sunDir, 420); sun.target.updateMatrixWorld(); },
     strike() { strike.at = tNow; } };
