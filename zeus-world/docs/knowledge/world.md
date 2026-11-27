@@ -228,3 +228,7 @@ The crowns are now evenly lit, which also makes them flatter and a little bright
 ## The story's shots off the road (ZW-054 item 4)
 
 A story line whose anchor is not on the road uses `at(x, z)` in `cinecam.js` (a point with a fixed direction). Such shots have no `who`, so the newcomer is hidden for them. Chapters that begin far from the last one start with `fade: true`; the land there is made ready during the last five seconds of the shot before (`upcoming()` in `world.js`). The story is now 19 shots.
+
+## The night and storm skies (ZW-054 item 5)
+
+`public/sky/night.jpg` and `.hdr` are Poly Haven's `qwantani_night_puresky`; `storm.*` is `kloofendal_overcast_puresky`. Both CC0, fetched from `https://api.polyhaven.com/files/<name>`: the 1k `.hdr` for the light, and the `tonemapped` picture cut down to 4096 by 2048 for the dome. Each is multiplied by a tint in `AIR` (the night picture is bright and grey as supplied, with a glow of town lights on its horizon that the fog and the mountains cover). The stars drawn as points and the moon are kept on top of the night picture.
