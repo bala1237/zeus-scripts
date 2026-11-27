@@ -384,3 +384,53 @@ All of them wait on the same thing: a console for the owner.
 3. How are the games run today: by voice, on paper, or with an on-screen tool?
 4. Which first: concert mode, or the game stage?
 
+## Voice-overs and story, 27 Nov 2026
+
+The owner, after the open world's polish round: "The game is shaping up every well. adding voice overs and telling a story is whats gonna make interesting. This deserves a full brainstrorming by itself." And, choosing what comes first: "item 3 is the core that can make the game to be looked at a different level and ensure it becomes a success". He asked for the brainstorm to be held in a new session. What follows is the proposal put to him; **he has not yet answered it, and nothing in it is decided or built.**
+
+### The idea in one line
+
+The world is the stage, and the story is the community's. A narrator who remembers what happened turns the stream into a saga people want to follow, not scenery they glance at.
+
+### Three layers, each building on the last
+
+1. **The Chronicle: a narrated journey.** The open world's story (village, mill, ford, shepherds, First Sight Hill, city, Thalassa, sanctuary; `review/cinecam.js`, 19 shots) gets a voice. One or two lines a place, written like the hero films, recorded once. Needs no live data. The tone offered:
+   - At the village: "Every city begins as a road. This one begins in Riverbend, where the river still remembers the mountain."
+   - At First Sight Hill: "Here, every traveller stops. No one tells them to."
+   - At the sanctuary: "The fire in this house has been cold for an age. It is waiting for enough hands."
+2. **The Living Chronicle: the story reacts to the stream.** The same narrator, with lines that fire on real moments.
+
+   | Moment on stream | What the world does |
+   | --- | --- |
+   | Stream starts | "Previously in Zeus World": a short recap of last time |
+   | New follower | A stranger appears on the road; the narrator welcomes them by name |
+   | Battle begins | The storm rolls down from the mountains; the narrator calls the valley to the walls |
+   | Battle won | Dawn breaks over the sea; the top three are honoured (the hero films slot in here) |
+   | Quiet stretch | The narrator tells a piece of the valley's history |
+   | Stream ends | A cliffhanger: sails on the horizon, smoke above the falls |
+
+3. **The Saga: a story across weeks.** Chapters with a beginning and an end. Hung on one mystery the world already contains, "the cold fire": the High Sanctuary's flame went out long ago, and the Old Stones in the forest are what is left of the people who let it. The community relights it piece by piece; each chapter reveals more; the finale is the fire lit, with everyone who was there recorded.
+
+### Who speaks
+
+The constitution already names a narrator: Zeya, the historian. Proposed: Zeya narrates day to day; Zeus (the owner's "Zeus-authorative" voice from the hero films) speaks rarely, for decrees and the biggest moments.
+
+### What it takes
+
+- Recorded lines cost pennies, as the hero films' narration did. The world's sound system exists (`worldsound.js`); the ambience can dip under a voice.
+- A name can be spoken live (generated in a few seconds, about a cent) or shown on screen while the voice says "one of us".
+- Triggers: buttons on the remote to begin with; from TikTok events once that connection exists.
+- The constitution's rules hold: no amounts, no ranking by spend, nothing invented about a real person, and the owner can silence the narrator.
+
+### A first step, if the direction is right
+
+Narrate the existing journey: about a dozen lines over shots he has already approved, to hear the tone before anything bigger is designed.
+
+### Questions put to the owner (unanswered)
+
+1. Who narrates: Zeya, Zeus, or both as above?
+2. Whose story: the community's, told as myth (recommended), or a fictional tale with its own characters?
+3. The mystery: does "the cold fire" appeal, or is there another thread?
+4. How live: buttons he presses to begin with, or automatic from the start?
+5. Names: spoken aloud, or shown on screen?
+6. Anything he already pictures: a scene, a line, a feeling viewers should leave with?

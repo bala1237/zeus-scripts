@@ -28,3 +28,9 @@ The build targets 2022-level JavaScript (2020 was tried and fails: the city and 
 `assets/models/` is about 85 MB in git, and every rebuilt model adds to the history. Moving models to file storage is an open question (ZW-011).
 
 **Trap: a failed build hidden by `tail`.** `npm run build | tail -1` prints the last line of an error as happily as "built in". Check for the words: `npm run build 2>&1 | grep -E "built in|error|failed"`. A build that fails here also fails on Vercel, and the preview then keeps showing the previous version.
+
+## The preview follows the default branch (learned 27 Nov 2026)
+
+Every merge into the default branch makes Vercel publish the default branch to the preview address. A session that published its own branch there (step 3 of the `deploy-preview` skill) is replaced the moment any other session merges, and pages that exist only on its branch answer "not found". This took `live.html` off the air while the owner was using it. So: when the owner is using a page for real, merge it into the default branch soon, not only at wrap-up; and when two sessions run at once, expect this.
+
+Two sessions at once also take the same backlog numbers. Before merging, compare "Next number" with the default branch and renumber the newer entries.

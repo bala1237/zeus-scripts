@@ -211,3 +211,35 @@ The owner measured 35 frames a second at the low end of the story and 32 to 35 a
 
 - The page with controls reaches OBS at `ws://127.0.0.1:4455` from an https page. Chrome allows that only if the site has "Local network access"; it asks once, and a refused or ignored question blocks the link silently. Safari does not allow it at all.
 - Close code 1006 ("went away") from a link that never joined means it never opened: OBS not running, its WebSocket server off, another port, or the browser blocking. `obsremote.js` keeps `done` (the promise is settled) apart from `joined` (OBS accepted us) so a failed attempt is not also reported as a closed link.
+
+## Water (ZW-054 item 2)
+
+- **The patchwork on the water was the ripple picture, not the mesh.** The ripple normal map is built from a handful of cosine waves. With fractional numbers of waves across the picture it does not tile, so each repeat ends in a straight seam, and three layers at three scales and angles made a lattice of them. Proof: with the normal map's strength at zero the water was smooth. The waves now have whole numbers across (`W` in `ripple`, `worldland.js`). Tangents and coordinate precision were both tried first and were not the cause.
+- **The river ribbon** is resampled to a point every 9 m on a curve through the river's points, three points across, with normals straight up and given tangents. Its material takes `banks = true`: an attribute `across` (0 at a bank, 1 in midstream) makes the shallows pale and half clear and puts drifting flecks of foam there.
+- **The sea shore** is done in the ground's shader, since the sea is one flat sheet that knows nothing of the shore: ground within about 0.6 m above sea level is darkened as wet sand, and a band of white follows a height that rises and falls with time and place (`lap`). Bright sand hides foam drawn on it; the wet band under it is what makes it show. A steep shore makes the band very thin.
+
+## Trees close up (ZW-054 item 3)
+
+Two causes made near crowns look like broken glass, and both are fixed in `worldtrees.js`:
+
+- **Back faces.** Leaves are drawn from both sides. The renderer turns a face's normal round when it is seen from behind, so about half of every crown was lit as if from inside the tree. `sway()` now multiplies the normal by `faceDirection` a second time in the fragment shader, which undoes it. This applies to the full and the far-view trees.
+- **The models' own leaf normals** face every way, because each leaf is a loose scrap of surface. `round()` turns every normal above the trunk to face outward from the middle of the crown and somewhat upward (half outward, 0.42 up, a little of its own), the same idea `lod.mjs` uses for the far-view models. The fern is rounded whole; the log is left alone.
+
+The crowns are now evenly lit, which also makes them flatter and a little brighter than before. If more depth is wanted, raise the share of the model's own normal in `round()`.
+
+## The story's shots off the road (ZW-054 item 4)
+
+A story line whose anchor is not on the road uses `at(x, z)` in `cinecam.js` (a point with a fixed direction). Such shots have no `who`, so the newcomer is hidden for them. Chapters that begin far from the last one start with `fade: true`; the land there is made ready during the last five seconds of the shot before (`upcoming()` in `world.js`). The story is now 19 shots.
+
+## The night and storm skies (ZW-054 item 5)
+
+`public/sky/night.jpg` and `.hdr` are Poly Haven's `qwantani_night_puresky`; `storm.*` is `kloofendal_overcast_puresky`. Both CC0, fetched from `https://api.polyhaven.com/files/<name>`: the 1k `.hdr` for the light, and the `tonemapped` picture cut down to 4096 by 2048 for the dome. Each is multiplied by a tint in `AIR` (the night picture is bright and grey as supplied, with a glow of town lights on its horizon that the fog and the mountains cover). The stars drawn as points and the moon are kept on top of the night picture.
+
+## Sound (`worldsound.js`, ZW-054 item 6)
+
+- **What it is:** thirteen loops and a thunderclap in `public/sound/*.webm`. All loops play all the time from the moment sound starts; only their loudness changes. Five times a second `update(camera)` works out a wanted loudness for each from where the camera is (ground height, forest density, distance to the river, the falls, the mill, the towns, the flocks, the fires), how high it is (ground sounds fade between 30 and 260 m up, wind takes over), the light (night swaps birds for crickets) and the weather (the storm brings rain and hushes the rest), and eases towards it over about a second.
+- **Where the sounds came from:** ElevenLabs Sound Effects v2 through the connector, on the owner's account: a node per sound with `duration_seconds` and `loop: true` (`creative_add_flow_node`, then `creative_run_flow_nodes` with `generations_count: 1`). Without a length the tool picks its own, 1 to 6 seconds, which is useless for ambience. The estimate it gave for the batch was about four times the real charge. Prompts are in `assets/PROMPTS.md`.
+- **Files:** `assets/sound.sh` turns the mp3s in `raw/sound/` into Opus at one loudness (-20 LUFS), so the mix is set from one level. mp3 is not used on the page because its padding leaves a gap at the join of a loop; the Opus files run 8 ms over a whole number of seconds, so the loop's end is set to the whole second.
+- **Starting:** a browser will not let a page make sound before a click, so the page with controls has a Sound button. With `?ui=0` (a browser source in OBS) it starts by itself. In OBS the source must have **Control audio via OBS** ticked or nothing is heard there. `?sound=0` never, `?sound=1` at once, `?vol=0.5`. Remote: `{cmd:'sound', on}`.
+- **Thunder:** `worldair.js` tells `onStrike` how far off each stroke is; the clap is later and softer with distance.
+- **Check:** `node renders/soundtest.mjs` prints which sounds are up at nine places and hours. It cannot tell whether they sound good.

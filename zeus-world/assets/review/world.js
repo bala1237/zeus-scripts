@@ -13,10 +13,11 @@ import { createCine } from './cinecam.js';
 import { createAir, AIR } from './worldair.js';
 import { createAnimals } from './worldanimals.js';
 import { createLife } from './worldlife.js';
+import { createSound } from './worldsound.js';
 import { createPeople } from './worldpeople.js';
 import { connectObs } from './obsremote.js';
 import { pageQuery, host, onceOnly, sceneReady } from './source.js';
-import { heightAt, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
+import { heightAt, forestAt, riverNear, places, city, river, pathThrough, ROAD_PTS } from './worldgen.js';
 
 const q = pageQuery(), $ = (id) => document.getElementById(id), SHOT = q.has('shot'); if (q.get('ui') === '0' || SHOT) document.body.classList.add('plain');
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: SHOT, reversedDepthBuffer: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, Number(q.get('sharp')) || 1.25)); renderer.setSize(innerWidth, innerHeight);
@@ -36,6 +37,9 @@ const rv = river(), air = await createAir({ scene, renderer, tickers, lamps: bui
 const animals = q.get('animals') === '0' ? null : await createAnimals({ scene, heightAt, spots: built.spots, tickers });
 const life = q.get('life') === '0' ? null : await createLife({ scene, built, places, heightAt, tickers });
 await air.set(light); // again, so that what was made after the light (smoke) takes its colours
+// sound: on a page with controls it waits for the Sound button (a browser will not let a page make sound before a click); with ?ui=0, as a
+// browser source in OBS, it starts by itself. ?sound=0 never; ?vol=0.5 quieter.
+const sound = q.get('sound') === '0' || SHOT ? null : createSound({ heightAt, forestAt, riverNear, places, spots: built.spots, lamps: built.lamps, air, volume: Number(q.get('vol')) || 0.8 }); if (sound) air.onStrike = (m) => sound.thunder(m);
 const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, spots: built.spots, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
 
 // ---------- the director: the story by itself, a place held for as long as wanted, and the flight between
@@ -52,13 +56,16 @@ $('story').addEventListener('click', () => { backToStory(); tell({ cmd: 'story' 
 function setAir(k) { if (!AIR[k]) return; air.set(k).then(() => { if (document.body.classList.contains('plain')) return; for (const b of $('airs').children) b.classList.toggle('on', b.dataset.k === k); }); }
 for (const [k, a] of Object.entries(AIR)) { const b = document.createElement('button'); b.textContent = a.name; b.dataset.k = k; b.style.marginRight = '6px'; b.classList.toggle('on', k === light); b.addEventListener('click', () => { setAir(k); tell({ cmd: 'air', key: k }); }); $('airs').append(b); }
 $('bolt').addEventListener('click', () => { air.strike(); tell({ cmd: 'bolt' }); });
-window.worldGo = go; window.worldStory = backToStory; window.worldLight = setAir;
+function setSound(want) { if (!sound) return; const p = want ? sound.start() : (sound.stop(), Promise.resolve(false)); Promise.resolve(p).then(() => { const b = $('sound'); if (b) { b.classList.toggle('on', sound.on); b.textContent = sound.on ? 'Sound on' : 'Sound off'; } }); }
+if ($('sound')) $('sound').addEventListener('click', () => { const w = !sound?.on; setSound(w); tell({ cmd: 'sound', on: w }); });
+if (sound && (q.get('ui') === '0' || q.get('sound') === '1')) setSound(true);
+window.worldGo = go; window.worldStory = backToStory; window.worldLight = setAir; window.worldSound = setSound;
 // ---------- the remote (phase 4). A page without controls (a browser source in OBS) does what it is told: by OBS itself (an event OBS
 // hands to every browser source) or by another tab of the same browser. The page with controls is the remote: once connected to OBS on
 // this computer, Story and the place buttons steer the world in OBS as well as here.
-const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); else if (m.cmd === 'air') setAir(m.key); else if (m.cmd === 'bolt') air.strike(); };
+const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); else if (m.cmd === 'air') setAir(m.key); else if (m.cmd === 'bolt') air.strike(); else if (m.cmd === 'sound') setSound(!!m.on); };
 const fresh = onceOnly(); addEventListener('zeusWorld', (e) => { if (fresh(e.detail)) obey(e.detail); }); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data); sceneReady('world');
-let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); const via = host || obs; if (via) via.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : m.cmd === 'air' ? `OBS: ${AIR[m.key].name.toLowerCase()}` : m.cmd === 'bolt' ? 'OBS: lightning' : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
+let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); const via = host || obs; if (via) via.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : m.cmd === 'air' ? `OBS: ${AIR[m.key].name.toLowerCase()}` : m.cmd === 'bolt' ? 'OBS: lightning' : m.cmd === 'sound' ? `OBS: sound ${m.on ? 'on' : 'off'}` : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
 if (host && !document.body.classList.contains('plain')) { $('obsPass').parentElement.style.display = $('obsConnect').style.display = 'none'; $('obsStatus').textContent = 'OBS is connected from the bar at the top'; }
 else if (!document.body.classList.contains('plain')) { const keep = { get: () => { try { return localStorage.getItem('world-obspass'); } catch { return null; } }, set: (v) => { try { localStorage.setItem('world-obspass', v); } catch { /* private window */ } } }; $('obsPass').value = keep.get() || '';
   // if OBS drops the connection (it does whenever its WebSocket settings are applied, or OBS restarts), the page says why and joins again by itself
@@ -82,12 +89,12 @@ function step(t) { const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t; 
   if (dir.mode === 'story') { dir.storyAt += dt; dir.pose = cine.story(dir.storyAt); }
   else if (dir.mode === 'place') dir.pose = cine.place(dir.key, dir.clock);
   else { const u = Math.min(1, dir.clock / dir.sec); dir.pose = cine.flight(dir.from, dir.to, u); if (u >= 1) { const f = dir.then; dir.then = null; f && f(); } }
-  apply(dir.pose, t); people?.subject(dir.mode === 'story' ? dir.pose.subject || null : null); people?.update(t, dt, camera.position); }
+  apply(dir.pose, t); people?.subject(dir.mode === 'story' ? dir.pose.subject || null : null); people?.update(t, dt, camera.position); sound?.update(camera.position, dt); }
 let frameNo = 0;
 function frame(t) { for (const f of tickers) f(t); frameNo++; aimSun(); sun.shadow.needsUpdate = true; const nx = upcoming(); land.update(camera.position, false, nx ? { x: nx.p[0], y: nx.p[1], z: nx.p[2] } : null); trees.update(camera.position); animals?.update(camera.position); built.update(camera.position, focus); renderer.render(scene, camera);
   if (q.get('debug') === '1') { const s = land.stats(), i = renderer.info.render; $('dbg').style.display = 'block'; $('dbg').textContent = `${dir.mode}${dir.key ? ' ' + dir.key : ''}  shot ${dir.pose?.beat ?? '-'}  squares ${s.squares}/${s.wanted}  trees ${s.trees} (${s.inFull} full, ${s.inFar} close)  calls ${i.calls}  triangles ${(i.triangles / 1e6).toFixed(2)}M  fps ${fps.toFixed(0)}`; } }
 let fps = 0;
-window.__world = { air, renderer, scene, camera, land, built, cine, dir, people, tickers, heightAt, places, city, go, backToStory };
+window.__world = { air, sound, renderer, scene, camera, land, built, cine, dir, people, tickers, heightAt, places, city, go, backToStory };
 
 if (SHOT) { // one still: a story shot, a place, or a chosen camera
   let pose; if (q.get('cam')) { const c = q.get('cam').split(',').map(Number); pose = { p: c.slice(0, 3), t: c.slice(3, 6), fov: Number(q.get('fov')) || 40, roll: 0, shake: 0 }; }
