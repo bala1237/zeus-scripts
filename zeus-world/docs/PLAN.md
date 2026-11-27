@@ -2,7 +2,7 @@
 
 Where the project stands and what happens next. Keep this short and current; detail belongs in the backlog and the knowledge files.
 
-Last updated: 26 Nov 2026.
+Last updated: 27 Nov 2026.
 
 **Live preview:** https://zeus-world-preview-bala-0416.vercel.app/city.html (public link; see `knowledge/hosting.md`).
 
@@ -10,6 +10,8 @@ Last updated: 26 Nov 2026.
 
 | Item | Backlog | State |
 | --- | --- | --- |
+| **Voice-overs and story for the game: a brainstorm** | none yet | **The next thing to do, in a new session** (owner, 27 Nov). The proposal and six unanswered questions are in `BRAINSTORM-GAME.md`, section "Voice-overs and story, 27 Nov 2026". Start by asking him those questions; build nothing first |
+| The open world | ZW-049, 051 to 056 | On `/world.html`. Phases 1 to 7 of `WORLD-PLAN.md` live. Frame rate fixed and accepted (ZW-052), the man's walk repaired (ZW-053), polish items 1 to 6 accepted (ZW-054: motion, water, trees, a longer story, skies, sound). OBS remote works once OBS's WebSocket server is on (ZW-055). Parked: hand camera controls (ZW-056), measuring memory, phases 8 and 9, walking animals |
 | Documentation system (plan, backlog, knowledge, changelog, skills) | none | Done 22 Nov, merged to the default branch |
 | Battle rebuilt: real soldiers, proper arrows and lightning, fast-cut camera | ZW-026, 027, 028 | Approved by the owner 24 Nov and closed |
 | Building labels showing during the battle | ZW-029 | Fix shipped 24 Nov. Waiting for the owner to confirm |
@@ -46,6 +48,8 @@ The owner sets the order. This is the current proposal; the numbers point to `BA
 
 ## Waiting on the owner
 
+0. **The story brainstorm** (see Now). His answers to the six questions in `BRAINSTORM-GAME.md`.
+0. **Open world, things published but never seen by him as far as he has said:** the four story shots added on 27 Nov (the Shepherds' Hill, the farm, Thalassa, the Sanctuary); the mill wheel's speed, the boats' rocking, the gulls and smoke; the river's colour and the foam on the beach; whether the buttons on the Chrome page steer the OBS source now that it connects; whether sound comes through in OBS ("Control audio via OBS"); the battle with the rebuilt soldier. Add `&fps=30` to the OBS link.
 0. **ZW-051, the open world in phases** (`WORLD-PLAN.md`). Published: phase 1 (people and the newcomer), phase 2 (a real ground surface), phase 4 (the remote for OBS), phase 5 (dusk, night, dawn, storm: the Light row). His check: people in motion; the ground close up; frame rate now; the remote in OBS. Phases 3 and 6 published 26 Nov: the countryside models and the animals are in the world. His check: the new models close up (are they Greek and good enough), the flocks, the eagles in flight, frame rate. Phase 7 published too: Thalassa (harbour), the High Sanctuary, the Olive Grove, the Old Stones, as Go-to buttons. **Now (owner, 27 Nov): the brainstorm on voice-overs and story for the game comes first; he calls it the core of the game's success. Hand camera controls (ZW-056) and measuring the world's memory are parked until after it.** **Owner, 27 Nov:** polish items 1 to 6 of ZW-054 accepted ("love it"). Three things to discuss before more building: hand camera controls for the world (ZW-056); a full brainstorm on voice-overs and story for the game; and that OBS runs at 30 frames a second beside LIVE Studio, so memory matters. **Owner, 26 Nov, after ZW-052 and ZW-053: "looks good. lets focus on enhancements before we build other stuffs".** So phases 8 and 9 stay parked and the next work is improving what exists; which enhancements is being agreed with him. Earlier check list, for the record:  new frame rates after ZW-052 (story and Thalassa, `?debug=1`); the man's walk after ZW-053, in the world and in the city; the animals at the two new places. **Stopped here on purpose, waiting for the owner:** (a) the frame rate on his Mac with phases 1 to 7 running (`world.html?debug=1`), before the real city, the heaviest scene there is, is moved onto this land (phase 8, which means turning `city.js` from a page into a part); (b) his decisions on the game's rules (phase 9; `BRAINSTORM-GAME.md` is still undecided).
 0. **ZW-049, the open world.** Look accepted. Jitter on the fast low flights traced to the camera's path and fixed (measured); published. His check on `/world.html?debug=1`: are the fast flights smooth now; frame rate. Known gaps after that: the ground's surface, cliffs and mountains, a fuller village, people.
 0. **ZW-050, the hero film by link.** On `/hero.html` choose the film, type the name, press **Copy link for OBS**, and paste it as the URL of a browser source (1920 × 1080, "Control audio via OBS" ticked). Does it fill the source and play when the scene is shown. Hide the source and show it again: does the film now start from the beginning each time. For a window capture instead: is the gold line round the picture enough to crop by.

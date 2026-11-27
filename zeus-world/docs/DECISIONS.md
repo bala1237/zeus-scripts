@@ -39,6 +39,14 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Stage direction, revised (25 Nov 2026) | The owner sent the Transmission Prague 2016 laser show as "something i loved": many projectors, fans of twenty or more beams each, green with magenta shafts, a temple stage. The lasers get a festival look in that manner alongside the club themes. This relaxes the "dark, restrained" rule of the first brief for that look |
 | Largest gifts (25 Nov 2026) | A gift of 5,000 coins or more is shown as a realistic, pre-made animated clip for its family, played inside the stage. The owner chose realistic over stylised and accepted that a clip plays the same each time. Clips are generated on fal; he approved a small spend for the first |
 | Gift clips are original work (25 Nov 2026) | The owner: "These are our creatives and we are not mimicking or copying anyone." The clips are made from our own written prompts, show no real person, brand or existing character, and do not imitate TikTok's gift artwork. Keep it so: prompts must never name an artist, a film, a brand or a real person, or ask for something "in the style of" one |
+| No children on screen | Owner, 26 Nov 2026: "We can't have kid in the video." Applies to the hero films and to the open world's newcomer (who is the man for that reason) |
+| Hero film scripts | Generic and without gender, so one script serves anyone (owner, 26 Nov 2026) |
+| Greek throughout | Owner, 26 Nov 2026: "ensure we don't deviate from the Greek theme". Dry stone, cream plaster, terracotta, azure, bronze, marble, the gold bolt; shutters, never glass. A reference picture that strays is corrected when the model is built |
+| Open world: frame rate | A steady 60, capped by the page (owner, 26 Nov 2026). In OBS he runs the source at 30, because LIVE Studio and OBS run together (27 Nov 2026) |
+| Open world: fidelity | Lower detail where a phone cannot show it (far buildings, shadows, drawing resolution); keep it close up (agreed 26 Nov 2026) |
+| Order of work on the open world | Improve what exists before building more (owner, 26 Nov 2026). Then, 27 Nov 2026: the brainstorm on voice-overs and story comes first, "the core that can make the game to be looked at a different level"; hand camera controls (ZW-056) and measuring the world's memory are parked until after it |
+| Sounds | Generated on the owner's ElevenLabs account with his word ("Let's do it", 27 Nov 2026). A sound costs about a cent; say the cost before a batch |
+
 
 ## Open questions
 
@@ -47,3 +55,8 @@ Decisions already taken, so they are not reopened by accident, and the questions
 - What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
 - That the "First 100 become Founders" promise is honoured at launch.
 - Whether every citizen gets the same plot size.
+- **Voice-overs and story for the game** (`BRAINSTORM-GAME.md`, section of 27 Nov 2026): who narrates (Zeya, Zeus, or both); whose story it is (the community's, told as myth, or a fictional tale); whether "the cold fire" is the thread; how live it is to begin with (buttons, or automatic); whether names are spoken or shown; what the owner already pictures.
+- Open world: mirror a hand-moved camera from the Chrome page to the OBS source, or Chrome only; and how the story resumes afterwards (ZW-056, parked).
+- Open world: the page's memory has never been measured (parked).
+- Animals that walk and working people: the cost of rigging is not known (ZW-054, item 7).
+
