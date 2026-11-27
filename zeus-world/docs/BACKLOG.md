@@ -67,7 +67,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Items 1 to 6 published, waiting for the owner; item 7 (animals that walk, working people) is the only one left and is paid, not priced | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Cause confirmed 26 Nov 2026: OBS's WebSocket server was switched off. Owner: "connected now". Whether the buttons steer the OBS source is not yet reported | 26 Nov 2026, owner |
-| ZW-056 | Enhancement | Open world: camera controls by hand (pan, zoom and so on), as the city page has | Medium (proposed) | Open: being discussed, not started | 27 Nov 2026, owner |
+| ZW-056 | Enhancement | Open world: camera controls by hand (pan, zoom and so on), as the city page has | Medium (proposed) | Parked by the owner 27 Nov 2026 until after the story brainstorm | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -678,3 +678,4 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **What the city has:** drag to orbit, right-drag or two fingers to pan, wheel or pinch to zoom, with easing; a Rotate button; touching the picture stops the tour.
 - **Open questions put to him:** whether moving the camera by hand on the Chrome page should also move the camera in the OBS source (the two are separate pages, joined only by the remote); and how the story resumes afterwards (a button, or by itself after a pause).
 - **Also from the same message, recorded here so it is not lost:** he confirmed the frame rate held ("yes it did. came it amazing"); he runs the OBS source at 30 frames a second, to keep memory down, because TikTok LIVE Studio and OBS run together; and he wants a full brainstorm of its own on voice-overs and story for the game ("adding voice overs and telling a story is whats gonna make interesting. This deserves a full brainstrorming by itself").
+- **Parked, 27 Nov 2026.** Owner: "park 1 and 2 and we will come back to it after 3. item 3 is the core that can make the game to be looked at a different level and ensure it becomes a success". Parked: these camera controls, and measuring the world's memory. First: the brainstorm on voice-overs and story.
