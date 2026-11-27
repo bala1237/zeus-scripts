@@ -36,6 +36,7 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
 
 - Its order is its whole state: `zeusLiquid` `{ on, pal, flow, depth, glow, shimmer, drift, badge }`, sent on every change. The same names work in the address (`pal=aurora&glow=0.6`).
 - When the control room presses Show it tells the tab's page (`zeusShown`), which sends its state, so OBS starts with what the control room is set to. A scene that wants the same only has to listen for `zeusShown`.
+- **Grey sky (ZW-061).** The first frame's clock (`requestAnimationFrame`'s time) can be earlier than `performance.now()` read when the script began. A negative step made the palette index -1 and the hue NaN for ever; a NaN hue draws grey. `dt` is clamped at zero and a NaN hue is reset. Check colour with a still: `PAGE=liquid.html node shot.mjs out.png "ui=0"`-style, or any screenshot after five seconds.
 - It starts by itself in OBS and in the control room; opened alone in a browser it waits for Start, as the original did.
 
 ### The city (ZW-060)

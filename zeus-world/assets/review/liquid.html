@@ -168,10 +168,12 @@ if(!gl){$('err').style.display='grid'}else{
   addEventListener('resize',size);size();
 
   // hue moves the shortest way round, capped at 12°/s so colour can never snap
-  const stepHue=(target,dt)=>{const d=((target-hueNow+540)%360)-180,mx=12*dt;hueNow=(hueNow+Math.max(-mx,Math.min(mx,d))+360)%360};
+  const stepHue=(target,dt)=>{const d=((target-hueNow+540)%360)-180,mx=12*dt;hueNow=(hueNow+Math.max(-mx,Math.min(mx,d))+360)%360;if(!isFinite(hueNow))hueNow=PALS[pal].h[0]};
 
   const frame=now=>{
-    const dt=Math.min((now-last)/1000,0.1);last=now;
+    // The first frame's clock can be a hair earlier than the moment this script started. Time then ran backwards for one frame, the place in
+    // the palette became -1, the hue became "not a number" and stayed so: a grey sky for good (ZW-061). Time never runs backwards now.
+    const dt=Math.max(0,Math.min((now-last)/1000,0.1));last=now;
     const spd=+$('spd').value*(reduce?0.35:1),drift=+$('drf').value;
     const goal=on?1:0;m+=Math.sign(goal-m)*Math.min(Math.abs(goal-m),dt/3);
     t+=dt*spd;

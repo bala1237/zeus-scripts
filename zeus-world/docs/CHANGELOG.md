@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 27 Nov 2026
 
+- **Liquid Sky has its colour back (ZW-061).** It was drawn grey, in the control room and in OBS. A timing fault from the original file turned the colour into "not a number" on the first frame, for good.
 - **The city's buttons steer OBS (ZW-060).** In the control room, the city's view links, Battle, Tour, Rotate and Reset now act on the picture in OBS too. Views are flown to; only a change of light loads the city again.
 - **No second sound on the hero film (ZW-059).** An old source of a scene left in OBS beside `live.html` no longer obeys the control room, so a film is not played twice.
 - **Hero film in the control room is no longer a black box (ZW-059).** The owner sent a film and saw only black. The control room now plays the film along, silently, while it runs in OBS. The dark moment between scenes in OBS is limited to five seconds, and a film that cannot start with sound starts without it.
