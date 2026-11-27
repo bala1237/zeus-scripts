@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 27 Nov 2026
+
+- **Open world: trees close up (ZW-054, item 3).** Near trees no longer look like dark, sharp shards. Each crown is now lit as one rounded mass, and a leaf is lit the same from either side.
+
 ## 26 Nov 2026
 
 - **Open world: the water (ZW-054, item 2).** The river and the sea no longer show a patchwork of straight seams: the ripple pattern did not tile, and every repeat left a line. The river is laid on a finer, curved line and lit as flat water, so it reflects the sky smoothly; it is pale and clear in the shallows by each bank, with flecks of foam there. On the sea shore the sand is dark where it is wet and a line of foam runs up it and back.
