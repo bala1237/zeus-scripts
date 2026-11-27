@@ -1,7 +1,7 @@
 // The open world's light, sky and weather (ZW-051, phase 5): day, dusk, night, dawn with mist in the valley, and a storm.
 //   const air = await createAir({ scene, renderer, tickers, lamps, mistAt, start: 'day' });
 //   await air.set('night');   air.follow(cameraPosition, focus);   air.sun is the light that casts the shadows
-// One sky picture serves two looks: the dusk sky, tinted dark, is the night sky; turned round, it is the dawn over the sea.
+// Four sky pictures (public/sky): day, dusk, a starry night and an overcast for the storm. The dusk sky, turned round, is also the dawn over the sea.
 // Lamps and fires are told to this file as points ({ x, y, z, kind: 'lamp' | 'fire' | 'door' }); it draws a glow at each, a pool of
 // light on the ground under it, and moves a few real lights to the ones nearest what the camera is looking at.
 import * as THREE from 'three';
@@ -10,9 +10,9 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 export const AIR = {
   day: { name: 'Day', sky: 'day', tint: 0xffffff, sun: 0xffe9c4, sunI: 3.4, dir: [-0.55, 0.62, 0.5], hemi: 0.5, env: 0.62, exp: 0.9, fog: 0xa9c8e6, den: 0.00013, rot: 2.2, glow: 0, stars: 0, dim: 1 },
   dusk: { name: 'Dusk', sky: 'dusk', tint: 0xffffff, sun: 0xff8a45, sunI: 1.7, dir: [-0.86, 0.2, 0.43], hemi: 0.16, env: 0.48, exp: 0.82, fog: 0xd99a78, den: 0.00013, rot: 3.9, glow: 0.75, stars: 0, dim: 0.8 },
-  night: { name: 'Night', sky: 'dusk', tint: 0x1b2748, sun: 0x7f9cf5, sunI: 0.85, dir: [0.35, 0.7, -0.5], hemi: 0.26, sky2: 0x5f7fe0, gnd: 0x0c1220, grade: 'saturate(0.82) contrast(1.1)', env: 0.05, exp: 1.0, fog: 0x0d1526, den: 0.00016, rot: 3.9, glow: 1, stars: 1, moon: 1, dim: 0.22 },
+  night: { name: 'Night', sky: 'night', tint: 0x5a668e, sun: 0x7f9cf5, sunI: 0.85, dir: [0.35, 0.7, -0.5], hemi: 0.26, sky2: 0x5f7fe0, gnd: 0x0c1220, grade: 'saturate(0.82) contrast(1.1)', env: 0.05, exp: 1.0, fog: 0x0d1526, den: 0.00016, rot: 3.9, glow: 1, stars: 1, moon: 1, dim: 0.22 },
   dawn: { name: 'Dawn', sky: 'dusk', tint: 0xfff2ee, sun: 0xffc9a4, sunI: 2.1, dir: [0.9, 0.17, 0.3], hemi: 0.24, env: 0.5, exp: 0.86, fog: 0xe6cfc6, den: 0.0002, rot: 3.9 + 2.356, glow: 0.4, stars: 0, mist: 1, dim: 0.9 },
-  storm: { name: 'Storm', sky: 'day', tint: 0x7c8693, sun: 0xb9c4d4, sunI: 0.7, dir: [-0.4, 0.75, 0.4], hemi: 0.3, sky2: 0xcfd8e6, gnd: 0x4a4f52, grade: 'saturate(0.72) contrast(1.08)', env: 0.3, exp: 0.74, fog: 0x565f6b, den: 0.0004, rot: 2.2, glow: 0.55, stars: 0, rain: 1, dim: 0.55 },
+  storm: { name: 'Storm', sky: 'storm', tint: 0x868e99, sun: 0xb9c4d4, sunI: 0.7, dir: [-0.4, 0.75, 0.4], hemi: 0.3, sky2: 0xcfd8e6, gnd: 0x4a4f52, grade: 'saturate(0.72) contrast(1.08)', env: 0.3, exp: 0.74, fog: 0x565f6b, den: 0.0004, rot: 2.2, glow: 0.55, stars: 0, rain: 1, dim: 0.55 },
 };
 
 const soft = (stops, S = 128) => { const c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), r = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2); for (const [at, col] of stops) r.addColorStop(at, col); g.fillStyle = r; g.fillRect(0, 0, S, S); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; };
