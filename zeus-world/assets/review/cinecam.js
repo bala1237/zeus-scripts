@@ -65,21 +65,27 @@ export function createCine({ heightAt, road, riverPath, places }) {
   // ---------- the story: a newcomer's road from the village to the city, told in chapters. Each line is one shot.
   // s is how far along the road the shot stands (in metres from the village); the road is about 1.7 km.
   const P = places, T = R.total, F = P.falls, fallsA = { p: [F.x + 150, 0, F.z + 150], d: [-0.7, 0, -0.7], s: 0 }, vill = anchor(P.village.x, P.village.z), cityA = { p: [P.city.x, 0, P.city.z], d: [1, 0, 0], s: T };
+  const at = (x, z) => ({ p: [x, 0, z], d: [1, 0, 0], s: 0 }); // a place off the road, for a shot that goes round it
   const STORY = [
     { title: ['Riverbend', 'where the road begins'], shot: 'drone', a: vill, sec: 10, o: { back0: 300, back1: 90, h0: 170, h1: 46, ahead: 60 }, fade: true },
     { shot: 'hand', a: onRoad(14), sec: 6, o: { at: [P.village.x, 0, P.village.z], th: 3, fov: 40 }, who: { stand: -6 } },
     { shot: 'track', a: onRoad(60), sec: 7, o: { dist: 9.5, side: -2.4 }, who: { ahead: 7 } },
+    { title: ['The Mill', 'on the river behind the village'], shot: 'orbit', a: at(P.millshelf.x, P.millshelf.z - 8), sec: 9, o: { r: 30, h0: 5, h1: 11, from: -2.5, sweep: 1.3, th: 3, fov: 44 }, min: 2.5 },
     { shot: 'fpv', a: onRoad(90), sec: 8, o: { dist: 330, h0: 12, h1: 6 } },
     { title: ['The Old Ford', 'the river comes down from the Falls of Zeus'], shot: 'top', a: anchor(P.ford.x, P.ford.z), sec: 8, o: { h0: 210, h1: 130 }, fade: true },
     { shot: 'skim', a: anchor(P.ford.x, P.ford.z), sec: 8, o: { from: -420, dist: 400 } },
     { shot: 'long', a: fallsA, sec: 7, o: { from: [P.ford.x - 320, 0, P.ford.z + 120], h: 30, th: 60, fov0: 11, fov1: 9.5 } },
     { shot: 'track', a: onRoad(R.nearest(P.ford.x, P.ford.z) + 120), sec: 7, o: { dist: 9.5, side: 2.6, ahead: 40 }, who: { ahead: 7 } },
+    { title: ['The Shepherds’ Hill', ''], shot: 'orbit', a: at(P.hut1.x + 10, P.hut1.z + 8), sec: 9, o: { r: 46, h0: 9, h1: 16, from: 0.4, sweep: 1.0, th: 1.5, fov: 44 }, fade: true },
     { title: ['First Sight Hill', ''], shot: 'crane', a: onRoad(R.nearest(P.crest.x, P.crest.z) - 6), sec: 11, o: { h0: 1.3, h1: 34, near: 30, far: 560, th: 16 }, fade: true, who: { stand: 3 } },
     { shot: 'long', a: cityA, sec: 7, o: { from: [P.crest.x, 0, P.crest.z], h: 8, th: 14, fov0: 13, fov1: 10 } },
     { shot: 'fpv', a: onRoad(R.nearest(P.crest.x, P.crest.z) + 30), sec: 9, o: { dist: 470, h0: 16, h1: 5 } },
+    { title: ['The Fields', 'farms between the forest and the walls'], shot: 'orbit', a: at(-334, -78), sec: 9, o: { r: 62, h0: 12, h1: 22, from: 2.2, sweep: 1.0, th: 2, fov: 44 }, fade: true },
     { title: ['Olympus', 'the city by the sea'], shot: 'track', a: onRoad(T - 60), sec: 7, o: { dist: 9.5, side: -2.8, ahead: 60, th: 6 }, fade: true, who: { ahead: 8 } },
     { shot: 'orbit', a: cityA, sec: 11, o: { r: 260, h0: 60, h1: 110, from: 2.6, sweep: 1.1, th: 12 } },
-    { shot: 'rise', a: cityA, sec: 10, o: { r0: 200, r1: 430, h0: 90, h1: 380, from: 3.6, sweep: 0.8, th: 0 } },
+    { shot: 'rise', a: cityA, sec: 10, o: { r0: 200, r1: 430, h0: 90, h1: 380, from: 3.6, sweep: 0.8, th: 0 } },    // beyond the city: the harbour town down the coast, and the sanctuary above the falls where the river begins. Then the road again.
+    { title: ['Thalassa', 'the harbour town, a day down the coast'], shot: 'orbit', a: at(P.harbour.x, P.harbour.z), sec: 10, o: { r: 150, h0: 30, h1: 60, from: 5.2, sweep: 0.9, th: 3 }, fade: true },
+    { title: ['The High Sanctuary', 'above the falls, the house of Zeus'], shot: 'rise', a: at(P.sanctuary.x, P.sanctuary.z), sec: 11, o: { r0: 60, r1: 260, h0: 14, h1: 190, from: 5.9, sweep: 0.6, th: 8 }, min: 10, fade: true },
   ];
   let total = 0; for (const b of STORY) { b.t0 = total; total += b.sec; }
   // the pose of the story at a given second. cut is true on the first frame of a shot; fade is 0 to 1, the black between chapters.
@@ -101,6 +107,7 @@ export function createCine({ heightAt, road, riverPath, places }) {
     sanctuary: { name: ['The High Sanctuary', 'above the falls, the house of Zeus'], shots: [{ shot: 'orbit', a: anc(P.sanctuary), sec: 13, o: { r: 110, h0: 22, h1: 55, from: 5.6, sweep: 1.2, th: 8 }, min: 10 }, { shot: 'rise', a: anc(P.sanctuary), sec: 11, o: { r0: 60, r1: 260, h0: 14, h1: 190, from: 5.9, sweep: 0.6, th: 8 }, min: 10 }] },
     grove: { name: ['The Olive Grove', ''], shots: [{ shot: 'orbit', a: anc(P.grove), sec: 12, o: { r: 95, h: 26, sweep: 1.0, th: 3 } }, { shot: 'top', a: anc(P.grove), sec: 8, o: {} }] },
     ruins: { name: ['The Old Stones', 'an older temple, lost in the forest'], shots: [{ shot: 'orbit', a: anc(P.ruins), sec: 13, o: { r: 25, h0: 7, h1: 13, sweep: 1.3, th: 3, fov: 46 } }, { shot: 'rise', a: anc(P.ruins), sec: 11, o: { r0: 22, r1: 120, h0: 8, h1: 110, sweep: 0.7, th: 2 } }] },
+    mill: { name: ['The Mill', 'on the river behind the village'], shots: [{ shot: 'orbit', a: at(P.millshelf.x, P.millshelf.z - 8), sec: 12, o: { r: 30, h0: 5, h1: 11, from: -2.5, sweep: 1.3, th: 3, fov: 44 }, min: 2.5 }, { shot: 'rise', a: at(P.millshelf.x, P.millshelf.z - 8), sec: 10, o: { r0: 34, r1: 140, h0: 8, h1: 90, from: -2.2, sweep: 0.7, th: 2 } }] },
     hills: { name: ['The Shepherds’ Hill', 'a hut, a flock and a dog'], shots: [{ shot: 'orbit', a: { p: [P.hut1.x + 10, 0, P.hut1.z + 8], d: [1, 0, 0], s: 0 }, sec: 13, o: { r: 46, h0: 9, h1: 16, sweep: 1.2, th: 1.5, fov: 44 } }, { shot: 'rise', a: { p: [P.hut1.x + 10, 0, P.hut1.z + 8], d: [1, 0, 0], s: 0 }, sec: 10, o: { r0: 30, r1: 130, h0: 8, h1: 90, sweep: 0.7, th: 2 } }] },
     farm: { name: ['A Farm in the Fields', 'barn, threshing floor and oxen'], shots: [{ shot: 'orbit', a: { p: [-334, 0, -78], d: [1, 0, 0], s: 0 }, sec: 13, o: { r: 62, h0: 12, h1: 22, sweep: 1.2, th: 2, fov: 44 } }, { shot: 'top', a: { p: [-334, 0, -78], d: [1, 0, 0], s: 0 }, sec: 8, o: {} }] },
     mountains: { name: ['The High Country', 'beyond the falls, the mountains'], shots: [{ shot: 'orbit', a: { p: [-5200, 0, 600], d: [1, 0, 0], s: 0 }, sec: 14, o: { r: 900, h0: 420, h1: 520, from: 0.3, sweep: 0.7, th: 200, fov: 40 }, min: 30 }, { shot: 'long', a: { p: [-6400, 0, 0], d: [1, 0, 0], s: 0 }, sec: 9, o: { from: [-3600, 0, 500], h: 60, th: 500, fov0: 16, fov1: 13 } }] },

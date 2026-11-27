@@ -4,6 +4,7 @@ What changed, when and why. Newest first. One entry per piece of work, in plain 
 
 ## 27 Nov 2026
 
+- **Open world: the story visits the new places (ZW-054, item 4).** The newcomer's journey now stops at the mill behind the village, the shepherds' hill before First Sight Hill, and a farm in the fields before the city; after the city it shows Thalassa and ends at the High Sanctuary above the falls, then begins again. Five new shots, about 48 seconds longer. The mill also has its own Go-to button.
 - **Open world: trees close up (ZW-054, item 3).** Near trees no longer look like dark, sharp shards. Each crown is now lit as one rounded mass, and a leaf is lit the same from either side.
 
 ## 26 Nov 2026

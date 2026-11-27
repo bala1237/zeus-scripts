@@ -224,3 +224,7 @@ Two causes made near crowns look like broken glass, and both are fixed in `world
 - **The models' own leaf normals** face every way, because each leaf is a loose scrap of surface. `round()` turns every normal above the trunk to face outward from the middle of the crown and somewhat upward (half outward, 0.42 up, a little of its own), the same idea `lod.mjs` uses for the far-view models. The fern is rounded whole; the log is left alone.
 
 The crowns are now evenly lit, which also makes them flatter and a little brighter than before. If more depth is wanted, raise the share of the model's own normal in `round()`.
+
+## The story's shots off the road (ZW-054 item 4)
+
+A story line whose anchor is not on the road uses `at(x, z)` in `cinecam.js` (a point with a fixed direction). Such shots have no `who`, so the newcomer is hidden for them. Chapters that begin far from the last one start with `fade: true`; the land there is made ready during the last five seconds of the shot before (`upcoming()` in `world.js`). The story is now 19 shots.
