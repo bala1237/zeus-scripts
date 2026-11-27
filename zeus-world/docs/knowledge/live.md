@@ -22,7 +22,7 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
 
 - The control room is connected to OBS's own remote control (`obsremote.js`, as before) and sends events that OBS hands to its browser sources:
   - `zeusLive` `{ cmd: 'show', scene, opts }`: change scene. The picture goes dark for a third of a second, loads the scene, and comes back. The scene before is thrown away, with its memory.
-  - `zeusWorld`, `zeusHero`, `zeusLiquid`: the scenes' own orders. OBS delivers them to `live.html`, which passes them into the frame.
+  - `zeusWorld`, `zeusHero`, `zeusLiquid`, `zeusCity`: the scenes' own orders. OBS delivers them to `live.html`, which passes them into the frame.
 - A scene shown inside the control room does not connect to OBS itself: it finds `parent.zeusLive` (see `host` in `source.js`) and sends through that. Its own password box is hidden. So one password, one connection.
 - An order for a scene that is not on screen is dropped, with one exception: a hero film told to play is put on screen first, and the order is kept until the film's page says it listens (`sceneReady`, a message to the page around it).
 - A scene that is in OBS by its own address (an old `hero.html` or `world.html` source left beside `live.html`) ignores numbered messages: they are meant for the scene inside `live.html`, and OBS hands every event to every source. Without this a film played twice, with two sounds (ZW-059). The old pages' own remotes send no number, so they still work.
@@ -38,6 +38,12 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
 - When the control room presses Show it tells the tab's page (`zeusShown`), which sends its state, so OBS starts with what the control room is set to. A scene that wants the same only has to listen for `zeusShown`.
 - It starts by itself in OBS and in the control room; opened alone in a browser it waits for Start, as the original did.
 
+### The city (ZW-060)
+
+- `zeusCity`: `{ cmd: 'battle', wins }`, `{ cmd: 'tour', on }`, `{ cmd: 'spin', on }`, `{ cmd: 'reset' }`, `{ cmd: 'address', view, light }`. Sent by `tell()` in `city.js`, obeyed by `obey()` in the battle block (where the camera's `go()` lives).
+- A view link still loads the control room's copy again with `?view=`, as it always did. The picture in OBS does not: it flies to that view's camera, because a loading bar would show on the stream. A different light does load it again (the light is chosen when the city is built).
+- Zoom, pan and dragging are not sent.
+
 ### Why a frame and not one merged program
 
 Each scene is a heavy program with its own renderer, written as a page. Merging them into one program would mean rewriting all of them and keeping every scene's models in memory at once. A frame costs nothing: one scene is loaded at a time, the old pages keep working at their own addresses, and a new scene is one line in `SCENES` in `live.js`.
@@ -52,7 +58,7 @@ Each scene is a heavy program with its own renderer, written as a page. Merging 
 ### Known limits
 
 - The control room runs its own copy of the scene, so the computer draws the scene twice (once in Chrome, once in OBS). The world and the city are heavy; if the stream's frame rate suffers, look at a light tab (Hero film) after pressing Show, or ask for a "controls only" mode.
-- The world, the hero film and Liquid Sky take live orders. The lasers, the stage, the city and Andie's Place have none yet: their controls in the control room change the control room's copy only. What reaches OBS for them is the scene and its "Settings in OBS". Orders for the lasers (theme, gifts) are the natural next step.
+- The world, the city, the hero film and Liquid Sky take live orders. The lasers, the stage and Andie's Place have none yet: their controls in the control room change the control room's copy only. What reaches OBS for them is the scene and its "Settings in OBS". Orders for the lasers (theme, gifts) are the natural next step.
 - The control room cannot ask OBS what it is showing. "OBS was last told" is what this browser sent last.
 - After the hero film ends the picture stays on the film's last frame; going back to the scene before is by hand.
 

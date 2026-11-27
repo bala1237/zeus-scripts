@@ -14,8 +14,13 @@ import { createTour } from './tour.js';
 import { createAftermath } from './aftermath.js';
 import { soldierKit } from './soldier.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { host, onceOnly, sceneReady } from './source.js';
 
 const q = new URLSearchParams(location.search);
+// ---------- the remote (ZW-060). The page with controls tells the page without them (the picture in OBS, or another tab) what was pressed:
+// the event zeusCity with { cmd: 'battle', wins } | { cmd: 'tour', on } | { cmd: 'spin', on } | { cmd: 'address', view, light } | { cmd: 'reset' }.
+const SOURCE = document.body.classList.contains('plain'), chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-city') : null;
+const tell = (m) => { if (SOURCE || q.has('shot')) return; chan?.postMessage(m); host?.emit('zeusCity', m).catch(() => {}); };
 const view = q.get('view') || 'wide', light = q.get('light') || (q.has('shot') || q.get('grade') === 'soft' ? 'day' : 'cycle');
 document.getElementById('label').textContent = q.get('label') || `City · ${view} · ${light}`;
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -142,16 +147,18 @@ const CLASSIC = q.get('tour') === 'classic';
 const tour = { on: !q.has('shot') && !q.has('view') && q.get('tour') !== '0', order: ['wide', 'plaza', 'civic', 'street', 'temple', 'harbour', 'river'], i: 0, phase: 'dwell', t0: null, from: [new THREE.Vector3(), new THREE.Vector3()], spin: true };
 { const $ = (id) => document.getElementById(id), home = [camera.position.clone(), controls.target.clone()];
   const spin = $('spin'), label = () => { if (spin) spin.textContent = `⟳ Rotate: ${controls.autoRotate ? 'on' : 'off'}`; }; label();
-  spin?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; tour.spin = controls.autoRotate; label(); });
+  spin?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; tour.spin = controls.autoRotate; label(); tell({ cmd: 'spin', on: controls.autoRotate }); });
   const tb = $('tour'), tl = () => { if (tb) tb.textContent = `🎥 Tour: ${tour.on ? 'on' : 'off'}`; }; tl(); tour.spin = controls.autoRotate;
-  tb?.addEventListener('click', () => { tour.on = !tour.on; tour.t0 = null; tour.phase = 'dwell'; controls.autoRotate = tour.spin; tl(); });
+  tb?.addEventListener('click', () => { tour.on = !tour.on; tour.t0 = null; tour.phase = 'dwell'; controls.autoRotate = tour.spin; tl(); tell({ cmd: 'tour', on: tour.on }); });
   renderer.domElement.addEventListener('pointerdown', () => { if (tour.on) { tour.on = false; controls.autoRotate = tour.spin; tl(); } });
   const name = $('label'), smooth = (k) => k * k * (3 - 2 * k);
   tickers.push((t) => { if (!tour.on || !CLASSIC) return; if (tour.t0 === null) tour.t0 = t; const e = t - tour.t0;
     if (tour.phase === 'dwell' && e > 13) { tour.i = (tour.i + 1) % tour.order.length; tour.from[0].copy(camera.position); tour.from[1].copy(controls.target); tour.phase = 'move'; tour.t0 = t; controls.autoRotate = false; if (name) name.textContent = `City · ${tour.order[tour.i]}`; }
     else if (tour.phase === 'move') { const k = smooth(Math.min(1, e / 5)), c = cams[tour.order[tour.i]]; camera.position.lerpVectors(tour.from[0], new THREE.Vector3(...c[0]), k); controls.target.lerpVectors(tour.from[1], new THREE.Vector3(...c[1]), k);
       if (e >= 5) { tour.phase = 'dwell'; tour.t0 = t; controls.autoRotate = tour.spin; } } });
-  $('reset')?.addEventListener('click', () => { camera.position.copy(home[0]); controls.target.copy(home[1]); });
+  $('reset')?.addEventListener('click', () => { camera.position.copy(home[0]); controls.target.copy(home[1]); tell({ cmd: 'reset' }); });
+  // a view or light link: say which before this page loads itself again with it
+  $('nav')?.addEventListener('click', (e) => { const a = e.target.closest('a'); if (!a) return; const u = new URLSearchParams(a.search); tell({ cmd: 'address', view: u.get('view'), light: u.get('light') }); });
   const hold = (el, fn) => { let t; const stop = () => clearInterval(t); el.addEventListener('pointerdown', () => { fn(); t = setInterval(fn, 40); }); for (const e of ['pointerup', 'pointerleave', 'pointercancel']) el.addEventListener(e, stop); };
   for (const b of document.querySelectorAll('[data-z]')) hold(b, () => { const d = camera.position.clone().sub(controls.target); const k = 1 + 0.03 * Number(b.dataset.z); if (d.length() * k > controls.minDistance && d.length() * k < controls.maxDistance) camera.position.copy(controls.target).add(d.multiplyScalar(k)); });
   for (const b of document.querySelectorAll('[data-p]')) hold(b, () => { const [x, z] = b.dataset.p.split(',').map(Number); const f = controls.target.clone().sub(camera.position); f.y = 0; const dist = camera.position.distanceTo(controls.target); f.normalize();
@@ -307,7 +314,16 @@ const battle = createBattle({ scene, camera, controls, tickers, kit, gateZ: Z1, 
     if (!s.on && t > next) { begin(wins); wins = !wins; }
     if (s.on && s.phase === 'fight' && demo) battle.setShare(wave(1 - s.left / demo.seconds, demo.wins));
     if (s.on && demo && !demo.filmed && s.t > 5 && !fly.on && q.get('cine') !== '0') { demo.filmed = true; battle.filming(true); } });   // once the armies are marching out, the cinematic camera takes over
-  document.getElementById('battle')?.addEventListener('click', () => { begin(wins); wins = !wins; });
+  document.getElementById('battle')?.addEventListener('click', () => { tell({ cmd: 'battle', wins }); begin(wins); wins = !wins; });
+  // what the picture does when told. A view is flown to (no loading again, which would show on the stream); only a change of light loads the city again.
+  const obey = (m) => { if (!m || typeof m !== 'object') return;
+    if (m.cmd === 'battle') { const w = m.wins ?? wins; begin(w); wins = !w; }
+    else if (m.cmd === 'tour') { tour.on = !!m.on; tour.t0 = null; tour.phase = 'dwell'; controls.autoRotate = tour.spin; }
+    else if (m.cmd === 'spin') { controls.autoRotate = tour.spin = !!m.on; }
+    else if (m.cmd === 'reset') go(cams[view]);
+    else if (m.cmd === 'address') { if (m.light && m.light !== light) { const u = new URLSearchParams(location.search); u.set('light', m.light); if (m.view) u.set('view', m.view); location.search = u.toString(); }
+      else if (m.view && cams[m.view] && !battle.state.on) { tour.on = false; go(cams[m.view]); } } };
+  const fresh = onceOnly(); addEventListener('zeusCity', (e) => { if (fresh(e.detail)) obey(e.detail); }); if (chan && SOURCE) chan.onmessage = (e) => obey(e.data); sceneReady('city'); window.cityObey = obey;
   if (q.has('shot') && q.has('battle')) { battle.pose(Number(q.get('battle')) || 0.5, 8, q.get('cine')); controls.update(); } }
 
 // ---------- the cinematic tour (ZW-024): runs whenever the tour is on and no battle is being fought. ?pace=lively shortens every shot.

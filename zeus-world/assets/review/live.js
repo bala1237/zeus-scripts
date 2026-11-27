@@ -13,7 +13,7 @@ import { pageQuery, onceOnly } from './source.js';
 // event: the orders a scene takes; hint: an example for the "Settings in OBS" box
 export const SCENES = {
   world: { name: 'Open world', page: 'world.html', event: 'zeusWorld', hint: 'light=dusk' },
-  city: { name: 'City', page: 'city.html', hint: 'view=plaza' },
+  city: { name: 'City', page: 'city.html', event: 'zeusCity', hint: 'view=plaza' },
   laser: { name: 'Lasers', page: 'laser.html', hint: 'input=rode  or  bpm=128' },
   liquid: { name: 'Liquid sky', page: 'liquid.html', event: 'zeusLiquid', hint: 'pal=aurora' },
   stage: { name: 'Music stage', page: 'stage.html', hint: 'bpm=128' },

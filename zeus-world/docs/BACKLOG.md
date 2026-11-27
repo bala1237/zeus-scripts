@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-060.**
+- **Next number: ZW-061.**
 
 ## Open
 
@@ -71,6 +71,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-057 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
 | ZW-058 | Enhancement | Liquid Sky, the flash-safe show, as a scene in Zeus Live | Medium (proposed) | Shipped 26 Nov 2026; waiting for the owner in OBS | 26 Nov 2026, owner |
 | ZW-059 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
+| ZW-060 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -701,3 +702,11 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **If OBS itself is still black:** the next things to check are whether the source's address is `live.html` and has been refreshed (OBS keeps old copies of pages), and whether the film plays in OBS at `hero.html?autoplay` by itself.
 - **Owner, 27 Nov 2026, after the fix:** "2 sounds from the browser and the obs for hero". So the film now plays in OBS. **Known from the code:** the control room's copy has both of its sound players muted when it plays along, so it should be silent. **Not known:** where the second sound comes from. Likely sources (guesses): an older `hero.html` browser source still in OBS, which receives the same order as `live.html` and plays too, about a second apart; another Chrome tab with the hero page open, which obeys through the tab-to-tab channel; or OBS playing the source's sound straight to the speakers because "Control audio via OBS" is not ticked. Asked the owner to check these.
 - **Owner, same day:** "i clicked on play it in obs and it happenned". So the second sound follows "Play in OBS" alone. The control room's copy is muted in the code, which leaves a second listener as the likely cause (still a guess). **Changed:** a scene that sits in OBS by its own address now ignores orders sent from the control room, so an old `hero.html` source left beside `live.html` no longer plays as well; and the control room's copy has its volume set to nothing as well as muted. **Not verified:** sound cannot be heard on the build machine.
+
+### ZW-060: The city's buttons do not reach OBS
+
+- **Reported:** 27 Nov 2026, by the owner: "check city. none of the scene switch is working. the battle dind't show up in obs but works in browser".
+- **Cause:** the city had no orders it could take from outside (listed as a limit when `live.html` shipped). Its buttons changed the control room's copy only.
+- **Changed:** the city's page tells the picture what was pressed. The view links (wide, plaza, street, …) make the camera in OBS fly to that view, without loading the city again. Battle starts the same battle (same winner). Tour, Rotate and Reset carry over. The light links (cycle, day, dusk) load the city again in OBS, because the light is set when the city is built.
+- **Not carried over:** zoom, pan and dragging the view with the mouse.
+- **Read as:** "scene switch" taken to mean the view links inside the city. If the tabs along the top were meant, that is a different fault.

@@ -50,6 +50,13 @@ const liq = () => src.evaluate(() => { const d = document.querySelector('#view')
 let L = await liq(); ok('liquid sky in OBS: running, no controls, with the control room\'s settings', L.plain && L.on === 'Stop show' && L.glow === '0.5' && L.pal === 'Royal', JSON.stringify(L));
 await inner().evaluate(() => { const r = document.querySelector('#shn'); r.value = '0.2'; r.dispatchEvent(new Event('input')); }); await src.waitForTimeout(1000);
 ok('a slider moved in the control room moves it in OBS', (await src.evaluate(() => document.querySelector('#view').contentDocument.querySelector('#shn').value)) === '0.2');
+// 3c. the city: the Battle button in the control room starts the battle in OBS (the camera there flies to the south gate)
+await ctl.evaluate(() => document.querySelector('#tabs button[data-k=city]').click()); await ctl.waitForTimeout(2000);
+await ctl.fill('#opts', 'tour=0&spin=0'); await ctl.dispatchEvent('#opts', 'change'); await ctl.evaluate(() => document.querySelector('#show').click()); await atScene('city.html');
+await src.waitForFunction(() => document.querySelector('#view').contentWindow.cityObey, null, { timeout: 420000, polling: 2000 }); await inner().waitForFunction(() => window.cityObey, null, { timeout: 420000, polling: 2000 });
+const camAt = () => src.evaluate(() => document.querySelector('#view').contentWindow.__cam().map((v) => Math.round(v))); const before = await camAt();
+await inner().evaluate(() => document.querySelector('#battle').click()); await src.waitForTimeout(25000); const afterCam = await camAt();
+ok('Battle in the control room starts the battle in OBS', JSON.stringify(before) !== JSON.stringify(afterCam), `${before} -> ${afterCam}`);
 // 4. a hero film told to play comes on screen by itself, with the name
 await ctl.evaluate(() => document.querySelector('#tabs button[data-k=hero]').click()); await ctl.waitForTimeout(3000); await inner().waitForSelector('#sendPlay', { timeout: 120000 }); await inner().fill('#name', 'Andie Howard'); await inner().dispatchEvent('#name', 'input'); await inner().dispatchEvent('#name', 'change');
 await inner().click('#sendPlay'); await atScene('hero.html'); await src.waitForTimeout(1500);
