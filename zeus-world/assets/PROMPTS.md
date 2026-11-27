@@ -84,3 +84,24 @@ For the open world, phases 3 and 6 of `docs/WORLD-PLAN.md` (ZW-051). Nano Banana
 All eighteen came back usable on the first try. Weakest: the horse, which reads glossier and more toy-like than the other animals.
 
 Built 26 Nov 2026 after the owner approved both sheets. Countryside: by script, `blender/country.py`, twelve lines in `build.sh` (names `country_*`); no generation cost. Animals: Trellis 2 (resolution 1536, texture 2048, decimation 120000), one try each, sizes in `animals.sh` (names `animal_*`, far-view versions in `models/far/`). The goat came out facing sideways and is turned 90 degrees; the eagle keeps about 39,000 triangles because its feathers do not simplify within the error limit.
+
+## Sounds for the open world (27 Nov 2026)
+
+ElevenLabs Sound Effects v2 (`eleven_text_to_sound_v2`), `loop: true` except the thunder, `prompt_influence` 0.4 to 0.5, one take each. Files `raw/sound/<name>.mp3`, converted by `sound.sh`.
+
+| Name | Seconds | Prompt |
+| --- | --- | --- |
+| country | 22 | Calm Mediterranean countryside ambience on a sunny day: gentle breeze through leaves, a few songbirds, distant cicadas. No people, no music. |
+| forest | 22 | Inside a broad-leaved forest: rich birdsong, leaves rustling in a light wind, a woodpecker far off now and then. No people, no music. |
+| river | 20 | A wide, slow river flowing steadily past its banks: smooth running water with soft gurgles, heard from the bank. No birds, no people, no music. |
+| mill | 16 | A large wooden water wheel turning slowly at a watermill: slow rhythmic creak of timber, paddles splashing through water, water dripping. No people, no music. |
+| sea | 24 | Gentle sea waves lapping on a sandy beach on a calm day: slow soft wash in and out, a slight hiss of foam. No birds, no people, no music. |
+| gulls | 20 | Seagulls calling over a small harbour: a few gulls crying at different distances with pauses between the calls, a wooden boat creaking gently. No people, no music. |
+| market | 22 | An ancient open-air village market heard from a little way off: soft murmur of a small crowd with no intelligible words, sandals on stone paving, an occasional clink of pottery, a wooden cart rolling. No music. |
+| sheep | 20 | A small flock of sheep and a few goats grazing on a hillside: occasional bleats at different distances with quiet between them, one small bronze bell now and then. No people, no music. |
+| rain | 20 | Steady heavy rain falling on grass and leaves in open country, with a low wind behind it. No thunder, no people, no music. |
+| thunder | 9 | One powerful crack of thunder close by, followed by a long deep rumble rolling away across mountains. No rain, no music. |
+| fire | 16 | A small wood campfire crackling and popping gently, close by, on a quiet night. No people, no music. |
+| night | 22 | A warm Mediterranean night in the countryside: steady crickets, a soft breeze, an owl hooting far off now and then. No people, no music. |
+| falls | 18 | A great waterfall dropping from a high cliff into a pool: a deep continuous roar of falling water with spray, heard from near its foot. No birds, no people, no music. |
+| wind | 20 | High open air above mountains: a broad steady wind with slow gusts, as heard by a bird gliding. No birds, no people, no music. |
