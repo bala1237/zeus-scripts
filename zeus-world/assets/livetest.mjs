@@ -56,6 +56,10 @@ await inner().click('#sendPlay'); await atScene('hero.html'); await src.waitForT
 ok('Play in OBS: the film is on screen', (await frameAt()).startsWith('hero.html'), await frameAt());
 ok('…with the name', /andie\s*howard/i.test(await src.evaluate(() => document.querySelector('#view').contentDocument.querySelector('#forgeName').textContent)), await src.evaluate(() => document.querySelector('#view').contentDocument.querySelector('#forgeName').textContent));
 ok('control room knows OBS moved to the film', /Hero film/.test(await ctl.textContent('#onAir')), await ctl.textContent('#onAir'));
+// 4b. an old hero.html source left in OBS beside live.html does not obey the control room's orders (it would play a second time, with a second sound)
+const oldSrc = await obsCtx.newPage(); await oldSrc.goto(base + 'hero.html', { waitUntil: 'load' }); await oldSrc.waitForTimeout(1500);
+await oldSrc.evaluate(() => dispatchEvent(new CustomEvent('zeusHero', { detail: { cmd: 'play', name: 'Echo', _n: 77 } }))); await oldSrc.waitForTimeout(1500); ok('old hero source ignores a control-room order', await oldSrc.evaluate(() => document.querySelector('#film').paused));
+await oldSrc.evaluate(() => dispatchEvent(new CustomEvent('zeusHero', { detail: { cmd: 'play', name: 'Echo' } }))); await oldSrc.waitForTimeout(1500); ok('…but still obeys its own remote', await oldSrc.evaluate(() => !document.querySelector('#film').paused)); await oldSrc.close();
 // 5. OBS restarted: the source comes back on the scene it had
 await src.reload({ waitUntil: 'domcontentloaded' }); await src.waitForTimeout(1500); ok('after a reload the source returns to its scene', (await frameAt()).startsWith('hero.html'), await frameAt());
 await ctl.screenshot({ path: process.argv[2] || 'live-control.png' });

@@ -7,6 +7,10 @@ export function pageQuery() { const q = new URLSearchParams(location.search); if
 // The control room this page is shown inside, if any (live.html): its one connection to OBS is used instead of the page's own.
 export const host = (() => { try { return parent !== window && parent.zeusLive ? parent.zeusLive : null; } catch { return null; } })();
 // A message sent from the control room carries a number (_n). If it reaches a page by two roads, it is obeyed once.
-export function onceOnly() { let seen = null; return (m) => { if (m && m._n != null) { if (m._n === seen) return false; seen = m._n; } return true; }; }
+// A numbered message is also meant for the scene inside live.html only. An older source of the same scene, still in OBS by its own
+// address, gets the same event from OBS; if it obeyed too, a film would play twice, a second apart, with two sounds (ZW-059).
+const ALONE_IN_OBS = IN_OBS && (() => { try { return parent === window; } catch { return false; } })();
+// shell: live.html itself, which is what the numbered messages are for
+export function onceOnly(shell = false) { let seen = null; return (m) => { if (m && m._n != null) { if ((ALONE_IN_OBS && !shell) || m._n === seen) return false; seen = m._n; } return true; }; }
 // Tell the page around this one (live.html) that this scene now listens, so that messages kept for it can be handed over.
 export function sceneReady(scene) { try { if (parent !== window) parent.postMessage({ zeusReady: scene }, location.origin); } catch { /* not inside another page */ } }

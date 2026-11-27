@@ -86,7 +86,7 @@ function draw(t) { const em = film.ember || [-9, -8], e = span(t, [em[0], em[0] 
 // ---------- playing. The footage is the clock; the sound is kept in step with it.
 // quiet: the picture without the sound. The control room plays along like that when the film is sent to OBS, so that the sound is not heard twice (ZW-059).
 // If the browser refuses to start a film with sound (no click yet), it is started again without sound: a silent film is better than a black screen.
-function play(quiet = false) { failed = ''; lineStarted = false; video.muted = true; base.muted = line.muted = quiet === true; video.currentTime = 0; base.currentTime = 0; line.pause(); line.currentTime = 0; playing = true;
+function play(quiet = false) { failed = ''; lineStarted = false; video.muted = true; base.muted = line.muted = quiet === true; base.volume = line.volume = quiet === true ? 0 : 1; video.currentTime = 0; base.currentTime = 0; line.pause(); line.currentTime = 0; playing = true;
   Promise.all([video.play(), base.play()]).catch((e) => { if (quiet !== true) { play(true); failed = 'playing without sound: ' + e.message; } else { failed = 'could not start: ' + e.message; playing = false; } }); }
 function stop() { playing = false; video.pause(); base.pause(); line.pause(); video.currentTime = 0; draw(0); }
 function tick() { const t = video.currentTime; if (playing) { if (Math.abs(base.currentTime - t) > 0.25) base.currentTime = t;

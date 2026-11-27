@@ -27,7 +27,7 @@ const address = (key, opts, plain) => { const p = new URLSearchParams(opts || ''
 const first = SCENES[q.get('scene')] ? q.get('scene') : null;
 
 if (OUT) { // ---------- the picture
-  document.body.classList.add('out'); const curtain = $('curtain'), fresh = onceOnly(), kept = {}; let now = null, nowOpts = '', listening = false, swap = 0, lift = 0;
+  document.body.classList.add('out'); const curtain = $('curtain'), fresh = onceOnly(true), kept = {}; let now = null, nowOpts = '', listening = false, swap = 0, lift = 0;
   const hand = (key, name, detail) => { try { view.contentWindow.dispatchEvent(new view.contentWindow.CustomEvent(name, { detail })); } catch { /* the frame is between pages */ } };
   function show(key, opts = '') { if (!SCENES[key] || (key === now && opts === nowOpts)) return; now = key; nowOpts = opts; listening = false; store.set('scene', key); store.set('opts', opts);
     // dark for a moment, so that a scene is never seen half loaded; the scene before is thrown away, and its memory with it

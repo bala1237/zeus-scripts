@@ -25,6 +25,7 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
   - `zeusWorld`, `zeusHero`, `zeusLiquid`: the scenes' own orders. OBS delivers them to `live.html`, which passes them into the frame.
 - A scene shown inside the control room does not connect to OBS itself: it finds `parent.zeusLive` (see `host` in `source.js`) and sends through that. Its own password box is hidden. So one password, one connection.
 - An order for a scene that is not on screen is dropped, with one exception: a hero film told to play is put on screen first, and the order is kept until the film's page says it listens (`sceneReady`, a message to the page around it).
+- A scene that is in OBS by its own address (an old `hero.html` or `world.html` source left beside `live.html`) ignores numbered messages: they are meant for the scene inside `live.html`, and OBS hands every event to every source. Without this a film played twice, with two sounds (ZW-059). The old pages' own remotes send no number, so they still work.
 - Every message from the control room carries a number (`_n`); a scene obeys a number once (`onceOnly`), in case OBS ever hands an event to the frame as well as to the page.
 - Without OBS, two tabs of one browser work: `live.html?ui=0` in one, `live.html` in the other (a BroadcastChannel carries Show; the scenes' own channels carry their orders).
 - From outside, later (TikFinity): `window.zeusShow('hero')` on the picture.
