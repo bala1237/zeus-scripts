@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 27 Nov 2026
+
+- **Hero film in the control room is no longer a black box (ZW-059).** The owner sent a film and saw only black. The control room now plays the film along, silently, while it runs in OBS. The dark moment between scenes in OBS is limited to five seconds, and a film that cannot start with sound starts without it.
+
 ## 26 Nov 2026
 
 - **Liquid Sky joins Zeus Live (ZW-058).** The owner's flash-safe show (no strobes, no blackouts) is now a scene with its own tab. Its colours and sliders in the control room steer the picture in OBS.

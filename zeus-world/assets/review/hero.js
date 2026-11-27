@@ -84,7 +84,10 @@ function draw(t) { const em = film.ember || [-9, -8], e = span(t, [em[0], em[0] 
   const c = film.captions.find((x) => t >= x[0] && t <= x[1]), cap = $('caption'); cap.classList.toggle('on', !!c); if (c) cap.textContent = c[2].replace('[NAME]', name || 'One of us'); }
 
 // ---------- playing. The footage is the clock; the sound is kept in step with it.
-function play() { failed = ''; lineStarted = false; video.currentTime = 0; base.currentTime = 0; line.pause(); line.currentTime = 0; playing = true; Promise.all([video.play(), base.play()]).catch((e) => { failed = 'could not start: ' + e.message; playing = false; }); }
+// quiet: the picture without the sound. The control room plays along like that when the film is sent to OBS, so that the sound is not heard twice (ZW-059).
+// If the browser refuses to start a film with sound (no click yet), it is started again without sound: a silent film is better than a black screen.
+function play(quiet = false) { failed = ''; lineStarted = false; video.muted = true; base.muted = line.muted = quiet === true; video.currentTime = 0; base.currentTime = 0; line.pause(); line.currentTime = 0; playing = true;
+  Promise.all([video.play(), base.play()]).catch((e) => { if (quiet !== true) { play(true); failed = 'playing without sound: ' + e.message; } else { failed = 'could not start: ' + e.message; playing = false; } }); }
 function stop() { playing = false; video.pause(); base.pause(); line.pause(); video.currentTime = 0; draw(0); }
 function tick() { const t = video.currentTime; if (playing) { if (Math.abs(base.currentTime - t) > 0.25) base.currentTime = t;
     if (!lineStarted && t >= film.nameLine.at) { lineStarted = true; line.currentTime = 0; line.play().catch(() => {}); } if (video.ended || t >= film.length) { playing = false; base.pause(); } draw(t); }
@@ -107,7 +110,7 @@ const fresh = onceOnly(); addEventListener('zeusHero', (e) => { if (fresh(e.deta
 if (!PLAIN) { let obs = null, src = null; const say = (t) => { $('obsStatus').textContent = t; }; $('obsPass').value = store.get('obspass') || '';
   const connect = async () => { say('connecting'); try { obs = await connectObs({ password: $('obsPass').value, port: Number(q.get('obsport')) || 4455, onClose: () => { obs = null; say('connection to OBS closed'); } }); store.set('obspass', $('obsPass').value);
       src = await obs.findBrowserSource('hero.html').catch(() => null); say(src ? `connected · source "${src.name}"` : 'connected, but OBS has no browser source with hero.html in its address'); } catch (e) { obs = null; say(e.message); } };
-  const send = async (m) => { chan?.postMessage(m); if (host) { try { await host.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); } catch (e) { say(e.message); } return; } if (!obs) { say('not connected to OBS'); return; }
+  const send = async (m) => { chan?.postMessage(m); if (host) { try { await host.emit('zeusHero', m); if (m.cmd === 'play') { play(true); say(`playing in OBS for ${m.name || 'our hero'} · shown here without sound`); } else { stop(); say('stopped in OBS'); } } catch (e) { say(e.message); } return; } if (!obs) { say('not connected to OBS'); return; }
     try { await obs.emit('zeusHero', m); say(m.cmd === 'play' ? `playing in OBS for ${m.name || 'our hero'}` : 'stopped in OBS'); }
     catch (e) { if (m.cmd === 'play' && src) { try { const u = new URL(src.url); u.searchParams.set('name', m.name || ''); u.searchParams.set('film', m.film || filmId); u.searchParams.delete('pic'); u.searchParams.set('ui', '0'); u.searchParams.set('autoplay', '1'); u.searchParams.set('n', String(Date.now())); await obs.setUrl(src.name, u.toString()); say(`playing in OBS for ${m.name || 'our hero'} (the source was loaded again)`); } catch (e2) { say(e2.message); } } else say(e.message); } };
   // the address of this film with this name, for a browser source: controls off, starting by itself (ZW-050). The picture cannot travel in an address.

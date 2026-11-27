@@ -41,6 +41,13 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
 
 Each scene is a heavy program with its own renderer, written as a page. Merging them into one program would mean rewriting all of them and keeping every scene's models in memory at once. A frame costs nothing: one scene is loaded at a time, the old pages keep working at their own addresses, and a new scene is one line in `SCENES` in `live.js`.
 
+### The hero film from the control room (ZW-059)
+
+- "Play in OBS" also plays the film in the control room, without sound (`play(true)` in `hero.js`), so the owner sees what the stream sees and the sound is not heard twice. The film's video is always silent; the sound is two separate audio players, and those are what `quiet` mutes.
+- A browser may refuse to start sound that nobody clicked for. `play()` then starts again without sound. OBS allows sound unasked, so this is for other software.
+- On the picture, the curtain between scenes lifts when the scene's page has loaded, at once when an order was waiting for it, and after five seconds whatever happens.
+- Checked with a throwaway script that tells the picture to play the film from the world, from the lasers and from the film itself, and reads the video's clock: it ran every time. The films are WebM, which the test browser can play.
+
 ### Known limits
 
 - The control room runs its own copy of the scene, so the computer draws the scene twice (once in Chrome, once in OBS). The world and the city are heavy; if the stream's frame rate suffers, look at a light tab (Hero film) after pressing Show, or ask for a "controls only" mode.

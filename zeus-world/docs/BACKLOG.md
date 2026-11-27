@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-059.**
+- **Next number: ZW-060.**
 
 ## Open
 
@@ -70,6 +70,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-056 | Bug | The controls show when a page is added to OBS by its address | High (proposed) | Fix shipped 26 Nov 2026; checked against a stand-in, waiting for the owner in OBS | 26 Nov 2026, owner |
 | ZW-057 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
 | ZW-058 | Enhancement | Liquid Sky, the flash-safe show, as a scene in Zeus Live | Medium (proposed) | Shipped 26 Nov 2026; waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-059 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -689,3 +690,12 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **What it is:** a show he made outside this project: a flowing sheet of light overhead, made to be safe for viewers sensitive to flashing. No strobes, no blackouts, fades of three seconds, colour that cannot snap, slower when the viewer's device asks for less motion, and a "laser show on · flash-safe" badge.
 - **Built:** the file is now `assets/review/liquid.html`, unchanged in look. It has a tab in the control room ("Liquid sky"). In OBS it shows no panel and starts by itself. Its palette, sliders, badge and Start/Stop in the control room steer the copy in OBS, and pressing Show sends the control room's present settings with it.
 - **Checked:** against a stand-in for OBS. Not checked in OBS itself; how it looks in motion is the owner's to judge, though nothing in the picture was changed.
+
+### ZW-059: The hero film is sent but the screen is black
+
+- **Reported:** 27 Nov 2026, by the owner: "the hero movie is sent, but i don't see the movie playing. just the black screen".
+- **Not known:** which screen was black, the control room in Chrome or the picture in OBS.
+- **Found, control room:** "Play in OBS" was built not to play the film in Chrome, so the Hero film tab stays a black box while the film runs in OBS. That reads as "nothing is playing".
+- **Tried, OBS side:** with a page that believes it is in OBS, the film was told to play while the world was showing, while the lasers were showing, and when already on the film, with and without the browser's permission to start sound unasked. It came on screen and played every time. So no fault was reproduced there.
+- **Changed:** (1) the control room now plays the film along, without sound, when it is sent to OBS, and stops with "Stop in OBS"; (2) the dark moment between scenes can never last more than five seconds, and lifts at once when a film is waiting to play; (3) if a browser refuses to start the film with sound, it starts without sound instead of staying black.
+- **If OBS itself is still black:** the next things to check are whether the source's address is `live.html` and has been refreshed (OBS keeps old copies of pages), and whether the film plays in OBS at `hero.html?autoplay` by itself.

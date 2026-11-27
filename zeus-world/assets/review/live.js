@@ -27,14 +27,15 @@ const address = (key, opts, plain) => { const p = new URLSearchParams(opts || ''
 const first = SCENES[q.get('scene')] ? q.get('scene') : null;
 
 if (OUT) { // ---------- the picture
-  document.body.classList.add('out'); const curtain = $('curtain'), fresh = onceOnly(), kept = {}; let now = null, nowOpts = '', listening = false, swap = 0;
+  document.body.classList.add('out'); const curtain = $('curtain'), fresh = onceOnly(), kept = {}; let now = null, nowOpts = '', listening = false, swap = 0, lift = 0;
   const hand = (key, name, detail) => { try { view.contentWindow.dispatchEvent(new view.contentWindow.CustomEvent(name, { detail })); } catch { /* the frame is between pages */ } };
   function show(key, opts = '') { if (!SCENES[key] || (key === now && opts === nowOpts)) return; now = key; nowOpts = opts; listening = false; store.set('scene', key); store.set('opts', opts);
     // dark for a moment, so that a scene is never seen half loaded; the scene before is thrown away, and its memory with it
-    curtain.classList.add('on'); clearTimeout(swap); swap = setTimeout(() => { view.src = address(key, opts, true); }, 360); }
-  view.addEventListener('load', () => { if (view.src) setTimeout(() => curtain.classList.remove('on'), 150); });
+    curtain.classList.add('on'); clearTimeout(swap); clearTimeout(lift); swap = setTimeout(() => { view.src = address(key, opts, true); }, 360); lift = setTimeout(open, 5000); }   // never dark for more than five seconds, whatever the scene does
+  const open = () => { clearTimeout(lift); curtain.classList.remove('on'); };
+  view.addEventListener('load', () => { if (view.src) setTimeout(open, 150); });
   // a scene says when it listens; what was kept for it is handed over then
-  addEventListener('message', (e) => { if (e.origin !== location.origin || !e.data?.zeusReady || e.data.zeusReady !== now) return; listening = true; for (const [name, d] of kept[now] || []) hand(now, name, d); kept[now] = []; });
+  addEventListener('message', (e) => { if (e.origin !== location.origin || !e.data?.zeusReady || e.data.zeusReady !== now) return; listening = true; if ((kept[now] || []).length) open(); for (const [name, d] of kept[now] || []) hand(now, name, d); kept[now] = []; });   // an order was waiting (a film to play): show it at once
   const order = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'show') show(m.scene, m.opts || ''); };
   addEventListener('zeusLive', (e) => { if (fresh(e.detail)) order(e.detail); }); if (chan) chan.onmessage = (e) => order(e.data);
   for (const [key, s] of Object.entries(SCENES)) if (s.event) addEventListener(s.event, (e) => { const d = e.detail;
