@@ -73,7 +73,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-059 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
 | ZW-060 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
 | ZW-061 | Bug | Liquid Sky has lost its colour: grey in the control room and in OBS | High (proposed) | Fix shipped 27 Nov 2026; colour confirmed in a still, waiting for the owner | 27 Nov 2026, owner |
-| ZW-062 | Bug | The battle shows no soldiers | High (proposed) | Open; being reproduced | 27 Nov 2026, owner |
+| ZW-062 | Bug | The battle shows no soldiers | High (proposed) | Works again for the owner 27 Nov 2026 after he checked again; no code changed, cause not found | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -724,3 +724,6 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 
 - **Reported:** 27 Nov 2026, by the owner, after ZW-060 was published: "oops, the battle is completely gone. i don't see any of the battle people".
 - **Not known yet:** whether in OBS, in the control room, or both; whether ZW-060 caused it.
+- **Owner, same day:** "battle is missing in both obs and browser", then, after checking again, "battle is working now".
+- **Tried meanwhile:** with the current code the soldiers draw in a posed still (`shot&battle=0.5&view=battle`) and in a live battle started with the Battle button on `city.html`. The Battle button inside the control room's City tab was not tested to the end (the owner stopped the run).
+- **Nothing was changed for this.** Cause not found. Guesses only: an older copy of the page still held by Chrome or OBS until the refresh; or the "battle" view link (top row, camera only) pressed instead of the ⚔ Battle button. If it comes back, note which button, and whether the camera flies to the gate with nobody there.
