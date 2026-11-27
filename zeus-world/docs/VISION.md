@@ -283,6 +283,56 @@ The owner asked that nothing built early should lock the world into a scripted t
 3. **Relationships.** The rule that Zeya never declares a relationship without consent is about real people. Proposed: the fictional cast may quarrel, befriend and fall out freely; a real person is never written into a relationship or a quarrel.
 4. **A recorded Zeus.** The owner is Zeus, live. Proposed: no recorded Zeus voice in the world; Zeya speaks to him and he answers himself. The hero films keep their own narrator.
 
+## Part 6. Characters on screen: the limits, and the options
+
+Asked by the owner on 27 Nov 2026: the experience "must eventually go beyond characters standing next to each other while audio plays", with voices, lip synchronisation, facial expressions, eye contact, head movements, gestures, body language, emotional reactions, cinematic angles and spatial audio. "I would rather start with a small number of convincing characters than populate the world with hundreds of lifeless ones." This part documents and evaluates; **nothing was generated or bought.**
+
+### What today's characters can and cannot do
+
+The three citizens were generated, then rigged automatically (`knowledge/characters.md`). Each has about 22 bones and four movements (walk, stand, cheer, clap).
+
+| Wanted | Today's characters |
+| --- | --- |
+| Voices, captions | Possible now; nothing in the model is needed |
+| Spatial audio (a voice comes from where the speaker stands) | Possible now, free; the world's sound system already follows the camera |
+| Cinematic angles (two-shot, over the shoulder) | Possible now, free |
+| Head turning to the speaker | Possible: there is a head bone |
+| Gestures and body language | Partly: arms and spine can be posed in code, as the standing pose and the soldier's thrust were. No fingers |
+| Eye contact | **No.** The eyes are painted on; there are no eye bones |
+| Lip-sync | **No.** The mouth is painted shut; the face has no moving parts |
+| Facial expression | **No**, for the same reason |
+| Telling people apart | **No.** Three bodies in eight colours |
+
+So the present people are good for the background and for scenes filmed from a few paces. They cannot carry a close-up.
+
+### The finding that changes the picture
+
+Zeya's own avatar project (`knowledge/zeya.md`) already contains lip-sync, face, eye and gesture code, written for the same engine the world uses. It will drive any character whose face has the standard set of shapes (jaw, mouth shapes, blink, brows). The code is not the obstacle. **The obstacle is getting characters that have such a face**, and that project's own experience is the warning: Zeya's first face was rejected and its replacement is still unfinished.
+
+### Routes to a character with a living face
+
+| Route | What it is | For | Against | Cost |
+| --- | --- | --- | --- | --- |
+| 1. Keep today's bodies | Head turns, gestures, voices, captions, filmed from a few paces | Free, immediate | No lips, eyes or expression; never a close-up | Free |
+| 2. A character-creator tool that exports a rigged face | Software that builds a person with the standard face shapes ready-made | Fastest route to a face that works; consistent quality across a cast | Look tends towards realism and must be bent to our style; licences for streaming must be read; heavy models must be lightened for the browser | Unknown; to be priced and the terms read before any decision |
+| 3. Commission an artist | A character artist builds the cast to our style, with face shapes | Best fit to the Greek, "not low-poly, not photoreal" look; a spec for exactly this already exists in the Zeya project | Slowest; a price per head | To be quoted |
+| 4. Generated body, face transplanted | Generate the body as now and fit a ready-rigged head to it | Cheap per character | The Zeya project tried this road and it is where the faults came from | Low, but high in effort |
+| 5. Film clips for special scenes | A close-up scene made as a short film, as the hero films are | Convincing faces today | Not live, not the same world; plays the same every time | Per clip, as the hero films |
+
+### Recommendation, for discussion
+
+- **Three grades of people**, which is the owner's "a small number of convincing characters" made concrete:
+  - **Background:** as now. Many, cheap, never in close-up.
+  - **Cast, body only:** the eight, each with a look of their own, head turns and gestures, filmed like a play. Enough for the first scripted scenes.
+  - **Cast, with a face:** the same eight with lips, eyes and expression, for close-ups.
+- **Prove a face on one character before eight.** One test character through route 2 or 3, seen talking in the world on the owner's Mac, judged by him. Only then the rest.
+- **Lip timing is free with the voice** for recorded lines (the voice service returns it). For lines spoken live, the sound itself drives the mouth.
+- **A stylised face forgives more than a realistic one.** The closer to real, the more small faults disturb; this argues for route 3's look even if route 2's method is used.
+
+### Not known yet
+
+Prices and licence terms for routes 2 and 3; how heavy eight faced characters are on the stream machine; whether working movements (hauling a net, kneading) can be made in code or must be bought. None has been looked up, because the owner asked for no purchases at this stage.
+
 ### Questions still open
 
 See `DECISIONS.md`, "Open questions", and the session notes in `BRAINSTORM-GAME.md`.

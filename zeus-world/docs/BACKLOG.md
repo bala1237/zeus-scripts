@@ -68,7 +68,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Items 1 to 6 published and accepted by the owner (27 Nov 2026: \"love it\"). Item 7 (animals that walk, working people) open: paid, not priced, not started | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Cause confirmed 26 Nov 2026: OBS's WebSocket server was switched off. Owner: "connected now". Whether the buttons steer the OBS source is not yet reported | 26 Nov 2026, owner |
 | ZW-056 | Enhancement | Open world: camera controls by hand (pan, zoom and so on), as the city page has | Medium (proposed) | Parked by the owner 27 Nov 2026 until after the story brainstorm | 27 Nov 2026, owner |
-| ZW-057 | Brainstorm | Voice-overs and story for the open-world game | High | Open. The owner answered with a long-term vision, kept in `VISION.md` with an assessment and the capabilities needed. Direction under discussion; nothing built | 27 Nov 2026, owner |
+| ZW-057 | Brainstorm | Voice-overs and story for the open-world game | High | Open. Vision in `VISION.md`; first draft of the world bible (`WORLD-BIBLE.md`) and a review of the existing Zeya (`knowledge/zeya.md`) written for the owner's review. Nothing is canon; nothing built or generated | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -691,3 +691,6 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Written in reply** (`VISION.md`, parts 2 to 5): what exists against the vision (the stage is strong; the actors, the script and the memory do not exist); the capabilities for each phase with what is free and what is paid; seven foundations to lay from the first step; cautions; four points where the constitution needs his word.
 - **His instruction:** "Do not begin implementation or asset generation yet. Let us discuss and finalize the direction first."
 - **The earlier first step** (a dozen narrated lines over the journey) is set aside: the world's identity is to be written first.
+- **Second round, 27 Nov 2026.** The owner ruled on Zeya (one character everywhere), the cast (six to eight, memorable, contrasting), the tone (a broad spectrum), conversations (aloud, with captions, growing towards lip-sync and expression), the constitution points, names (shown and spoken) and the world running by itself; all recorded in `DECISIONS.md`. He asked for the world bible "as a brainstorming exercise": "Do not treat the first draft as final canon." "No coding, asset generation or purchases at this stage."
+- **Written:** `WORLD-BIBLE.md` (draft 1); `knowledge/zeya.md` (her brain, body and campaign voice were found in two of his other repositories and read; they disagree with each other); `VISION.md`, part 6 (what today's characters cannot do, five routes to a living face, a recommendation to prove one face before eight).
+- **Waiting on the owner:** his reactions to the bible; which Zeya is the true one.

@@ -56,6 +56,16 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Foundations (27 Nov 2026) | Nothing built early may restrict the world to a scripted cinematic tour. The architecture must allow persistent world state, character intelligence, memory, event orchestration, dialogue, narrative management and an autonomous camera |
 | Measure of success (27 Nov 2026) | Not beauty alone: whether viewers know recurring characters, have favourites, remember earlier streams, ask what they missed and return to see what happens next |
 
+| One Zeya (27 Nov 2026) | "ZEYA should be the same character across the entire Zeus entertainment ecosystem. I do not want a separate Zeus World version of ZEYA with a different personality, voice or identity. Zeus World should become another domain of knowledge and capability" (owner). She is to be guide, observer, commentator and participant, able to decide that something elsewhere is more interesting and take the audience there; never "a sequence of automated announcements" |
+| First cast (27 Nov 2026) | Six to eight recurring characters with contrasting personalities, each "memorable enough that viewers eventually recognize them without an introduction". "I would rather start with a small number of convincing characters than populate the world with hundreds of lifeless ones" (owner) |
+| Tone (27 Nov 2026) | A broad spectrum, not only warm everyday comedy: comedy, friendship, mystery, adventure, rivalry, romance between fictional characters, festivals, philosophy, epic moments, suspense. The tone follows what is happening |
+| Conversations (27 Nov 2026) | Heard aloud, with captions. To grow step by step towards character voices, lip-sync, expressions, eye contact, gestures, body language, cinematic angles and spatial audio |
+| Myth and fact, agreed (27 Nov 2026) | Zeya may tell fictional legends and take part in fictional storytelling; she must never fabricate facts about real community members. Fictional characters may have friendships, rivalries, romances and stories. Real members control how they are represented and are never placed in fictional relationships or sensitive storylines without consent. To be written into the constitution as an addendum once the direction is final |
+| A recorded Zeus voice (27 Nov 2026) | Not forbidden. Allowed for cinematic introductions, trailers, special productions and mythology. It must not compete with the owner while he is hosting the LIVE |
+| Names of real people (27 Nov 2026) | Both displayed and spoken, depending on "the context, significance and entertainment value", not only for the biggest honours. Pronunciation preferences for recurring members to be supported in time. Recognition is never based only on gifting |
+| The world runs by itself (27 Nov 2026) | "Fundamental to the long-term vision" (owner): characters with their own routines, goals, relationships and memories; the world entertains while he talks, plays music, hosts another segment or steps away. Introduced step by step |
+| World bible (27 Nov 2026) | `WORLD-BIBLE.md` is a brainstorm for the owner's review. Nothing in it is canon until he approves it |
+
 
 ## Open questions
 
@@ -64,7 +74,9 @@ Decisions already taken, so they are not reopened by accident, and the questions
 - What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
 - That the "First 100 become Founders" promise is honoured at launch.
 - Whether every citizen gets the same plot size.
-- **The vision (`VISION.md`), still to settle with the owner:** where Zeya's voice and replies are produced today; the size of the first cast; the tone (how much comedy, how much myth); the origin myth itself; whether conversations are heard aloud with captions; whether names of real people are spoken or shown; the four points where the constitution needs his word (`VISION.md`, part 5); the running cost of dialogue written live, which is not yet known.
+- **The world bible (`WORLD-BIBLE.md`), for the owner's review:** which origin myth; the cast and their names; whether the inhabitants can hear Zeya; the humour; how far drama may go; the first mystery.
+- **Zeya (`knowledge/zeya.md`):** three descriptions of her on record disagree (the March brain, the November campaign, the avatar); which is the true one, what she runs on today on stream, and which voice.
+- **Characters with living faces (`VISION.md`, part 6):** which route; prices and licences not yet looked up; the running cost of dialogue written live is also unknown.
 - Open world: mirror a hand-moved camera from the Chrome page to the OBS source, or Chrome only; and how the story resumes afterwards (ZW-056, parked).
 - Open world: the page's memory has never been measured (parked).
 - Animals that walk and working people: the cost of rigging is not known (ZW-054, item 7).
