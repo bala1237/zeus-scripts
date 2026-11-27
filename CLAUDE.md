@@ -23,6 +23,7 @@ Then read whatever the task touches:
 | What changed and when | `zeus-world/docs/CHANGELOG.md` |
 | Decisions already taken, and open questions | `zeus-world/docs/DECISIONS.md` |
 | Product rules | `zeus-world/docs/CONSTITUTION.md` |
+| The long-term vision: a living world of characters and stories, narrated by Zeya (the owner's brief, word for word) | `zeus-world/docs/VISION.md` |
 | The bigger plan, in phases | `zeus-world/docs/ROADMAP.md` |
 | Ideas for making it a game (not decided) | `zeus-world/docs/BRAINSTORM-GAME.md` |
 | Research behind the game direction | `reports/Zeus World game design research.md`, notes in `research_notes/` |

@@ -47,6 +47,15 @@ Decisions already taken, so they are not reopened by accident, and the questions
 | Order of work on the open world | Improve what exists before building more (owner, 26 Nov 2026). Then, 27 Nov 2026: the brainstorm on voice-overs and story comes first, "the core that can make the game to be looked at a different level"; hand camera controls (ZW-056) and measuring the world's memory are parked until after it |
 | Sounds | Generated on the owner's ElevenLabs account with his word ("Let's do it", 27 Nov 2026). A sound costs about a cent; say the cost before a batch |
 
+| Long-term vision (27 Nov 2026) | Zeus World is to become "an ongoing television series inside a living, open-world simulation, experienced live alongside Zeus and ZEYA": inhabitants with personalities, relationships, routines and conversations, on the open world as the stage. The owner's brief is kept word for word in `VISION.md`. Built in his five phases: Discover Zeus World; Bring the world to life; Interactive living world; Persistent stories; Expanding universe |
+| Narrator (27 Nov 2026) | Zeya is the primary narrator, in her established personality, not a documentary voice. No other dedicated narrator at this stage |
+| World identity before any saga (27 Nov 2026) | Viewers must first understand what Zeus World is: its origin, mythology, regions and people. "The Cold Fire" is only a candidate for a later storyline and must not define the world. Several stories may run at once |
+| Myth and fact (27 Nov 2026) | "The fictional mythology of the world and the factual history of the community must remain clearly distinguishable" (owner) |
+| Not only money (27 Nov 2026) | The world must stay interesting with no battles or gifts. Recognition is for "presence, participation, kindness, loyalty and meaningful contributions" as well |
+| Dialogue quality (27 Nov 2026) | "We should avoid meaningless AI-generated dialogue simply to make characters appear active. Conversations need purpose, personality and entertainment value" (owner) |
+| Foundations (27 Nov 2026) | Nothing built early may restrict the world to a scripted cinematic tour. The architecture must allow persistent world state, character intelligence, memory, event orchestration, dialogue, narrative management and an autonomous camera |
+| Measure of success (27 Nov 2026) | Not beauty alone: whether viewers know recurring characters, have favourites, remember earlier streams, ask what they missed and return to see what happens next |
+
 
 ## Open questions
 
@@ -55,7 +64,7 @@ Decisions already taken, so they are not reopened by accident, and the questions
 - What the four teaser mysteries (colossus, sky temple, harbour, vault) become.
 - That the "First 100 become Founders" promise is honoured at launch.
 - Whether every citizen gets the same plot size.
-- **Voice-overs and story for the game** (`BRAINSTORM-GAME.md`, section of 27 Nov 2026): who narrates (Zeya, Zeus, or both); whose story it is (the community's, told as myth, or a fictional tale); whether "the cold fire" is the thread; how live it is to begin with (buttons, or automatic); whether names are spoken or shown; what the owner already pictures.
+- **The vision (`VISION.md`), still to settle with the owner:** where Zeya's voice and replies are produced today; the size of the first cast; the tone (how much comedy, how much myth); the origin myth itself; whether conversations are heard aloud with captions; whether names of real people are spoken or shown; the four points where the constitution needs his word (`VISION.md`, part 5); the running cost of dialogue written live, which is not yet known.
 - Open world: mirror a hand-moved camera from the Chrome page to the OBS source, or Chrome only; and how the story resumes afterwards (ZW-056, parked).
 - Open world: the page's memory has never been measured (parked).
 - Animals that walk and working people: the cost of rigging is not known (ZW-054, item 7).

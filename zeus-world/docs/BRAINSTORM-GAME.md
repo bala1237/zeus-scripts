@@ -434,3 +434,18 @@ Narrate the existing journey: about a dozen lines over shots he has already appr
 4. How live: buttons he presses to begin with, or automatic from the start?
 5. Names: spoken aloud, or shown on screen?
 6. Anything he already pictures: a scene, a line, a feeling viewers should leave with?
+
+### The owner's answer, 27 Nov 2026
+
+He answered with a full product brief, which is kept word for word in `VISION.md`, with an assessment of what exists and the capabilities each phase needs. Against the six questions:
+
+1. **Who narrates:** Zeya. "We already have ZEYA, and she should be the primary narrator of Zeus World. We do not need to introduce another dedicated narrator at this stage." She keeps her own personality: "She should not sound like a conventional documentary narrator." She also converses with Zeus, so Zeus is himself, live.
+2. **Whose story:** the world's inhabitants come first. "The environment is the foundation, but the inhabitants, their personalities, relationships, conversations and activities are what bring it to life." The real community "should gradually become part of Zeus World", and "the fictional mythology of the world and the factual history of the community must remain clearly distinguishable."
+3. **The cold fire:** not the thread. "The Cold Fire can remain a candidate for a future storyline, but it should not define or constrain the entire world." First, "viewers need to understand what Zeus World is all about". There is to be "room for multiple simultaneous stories".
+4. **How live:** not answered as asked. The world "should remain interesting even when Zeus is not actively controlling it and when there are no TikTok battles, gifts or other external events"; phase 1 has "manual and automatic exploration".
+5. **Names spoken or shown:** not answered yet.
+6. **What he pictures:** "an ongoing television series inside a living, open-world simulation, experienced live alongside Zeus and ZEYA", taking inspiration from GTA's world, characters, emergent events and storytelling. Success is viewers who have favourite characters and "return because they want to know what happens next".
+
+**What this changes in the proposal above.** The three layers (narrated journey, living chronicle, saga) are replaced by his five phases. The narrated journey survives as part of his phase 1, after the world's identity is written. The saga waits. A recorded Zeus voice is dropped.
+
+**Still not to be built:** "Do not begin implementation or asset generation yet. Let us discuss and finalize the direction first."

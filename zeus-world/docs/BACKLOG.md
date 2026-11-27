@@ -68,7 +68,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Items 1 to 6 published and accepted by the owner (27 Nov 2026: \"love it\"). Item 7 (animals that walk, working people) open: paid, not priced, not started | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Cause confirmed 26 Nov 2026: OBS's WebSocket server was switched off. Owner: "connected now". Whether the buttons steer the OBS source is not yet reported | 26 Nov 2026, owner |
 | ZW-056 | Enhancement | Open world: camera controls by hand (pan, zoom and so on), as the city page has | Medium (proposed) | Parked by the owner 27 Nov 2026 until after the story brainstorm | 27 Nov 2026, owner |
-| ZW-057 | Brainstorm | Voice-overs and story for the open-world game | High | Open. Proposal and six questions put to the owner (`BRAINSTORM-GAME.md`, "Voice-overs and story"); discussion started 27 Nov 2026; nothing built | 27 Nov 2026, owner |
+| ZW-057 | Brainstorm | Voice-overs and story for the open-world game | High | Open. The owner answered with a long-term vision, kept in `VISION.md` with an assessment and the capabilities needed. Direction under discussion; nothing built | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -687,3 +687,7 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **This is a brainstorm, not a build task.** The proposal (a narrated journey, a story that reacts to the stream, a saga across weeks) and the six questions are in `BRAINSTORM-GAME.md`, "Voice-overs and story, 27 Nov 2026".
 - **State:** the questions were put to him again at the start of a new session on 27 Nov 2026. His answers go into `BRAINSTORM-GAME.md` and `DECISIONS.md`.
 - **Proposed first step, not approved:** narrate the existing 19-shot journey on `world.html` with about a dozen recorded lines. Voice generation is paid and needs his approval with the cost stated first.
+- **The owner's answer, 27 Nov 2026:** a full brief for a living world: Zeya as the narrator; inhabitants with personalities, routines, relationships and conversations; the world's identity before any saga; the community joining gradually and not only through gifts; five phases; foundations that do not lock the world into a scripted tour. Kept word for word in `VISION.md`, part 1.
+- **Written in reply** (`VISION.md`, parts 2 to 5): what exists against the vision (the stage is strong; the actors, the script and the memory do not exist); the capabilities for each phase with what is free and what is paid; seven foundations to lay from the first step; cautions; four points where the constitution needs his word.
+- **His instruction:** "Do not begin implementation or asset generation yet. Let us discuss and finalize the direction first."
+- **The earlier first step** (a dozen narrated lines over the journey) is set aside: the world's identity is to be written first.
