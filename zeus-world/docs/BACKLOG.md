@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-062.**
+- **Next number: ZW-063.**
 
 ## Open
 
@@ -73,6 +73,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-059 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
 | ZW-060 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
 | ZW-061 | Bug | Liquid Sky has lost its colour: grey in the control room and in OBS | High (proposed) | Fix shipped 27 Nov 2026; colour confirmed in a still, waiting for the owner | 27 Nov 2026, owner |
+| ZW-062 | Bug | The battle shows no soldiers | High (proposed) | Open; being reproduced | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -718,3 +719,8 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Cause, found and reproduced:** a fault that was already in his original file, which only showed by luck of timing. On the very first frame the browser's clock can read a hair earlier than the moment the page's script began, so time ran backwards for one frame. The place in the palette became -1, the colour became "not a number", and it never recovered: everything drawn grey. Brought into the project the page starts a moment later than it did as a loose file, which makes the bad timing the usual case. His untouched original is grey on the build machine too.
 - **Changed:** time can no longer run backwards, and a colour that is not a number is replaced by the palette's first colour.
 - **Checked:** a still of `liquid.html?ui=0`, blue (Ocean) where it was grey. **My mistake:** when ZW-058 shipped I said the look was untouched without looking at a still. Stills are now part of checking this page.
+
+### ZW-062: The battle is gone
+
+- **Reported:** 27 Nov 2026, by the owner, after ZW-060 was published: "oops, the battle is completely gone. i don't see any of the battle people".
+- **Not known yet:** whether in OBS, in the control room, or both; whether ZW-060 caused it.
