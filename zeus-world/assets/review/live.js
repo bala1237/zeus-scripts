@@ -1,4 +1,4 @@
-// Zeus Live (ZW-057): every scene behind one address. The scenes stay the pages they are (world.html, laser.html, …); this page
+// Zeus Live (ZW-059): every scene behind one address. The scenes stay the pages they are (world.html, laser.html, …); this page
 // holds one of them at a time in a frame. It has two faces, chosen by where it runs:
 //   in OBS (or with ?ui=0)  the picture. Nothing but the scene. It changes scene when told, and hands a scene the orders meant for it.
 //   in a browser            the control room. A tab for each scene, with that scene's own controls, one connection to OBS for all

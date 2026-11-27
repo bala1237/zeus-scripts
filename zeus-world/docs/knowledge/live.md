@@ -1,8 +1,8 @@
 # Zeus Live: one page for every scene
 
-Made 26 Nov 2026 (ZW-056, ZW-057). The owner streams through OBS and had one address per scene (`world.html`, `laser.html`, `city.html`, `hero.html`, …), each with its own controls and, for two of them, its own connection to OBS.
+Made 26 Nov 2026 (ZW-058, ZW-059). The owner streams through OBS and had one address per scene (`world.html`, `laser.html`, `city.html`, `hero.html`, …), each with its own controls and, for two of them, its own connection to OBS.
 
-## Controls never show inside OBS (ZW-056)
+## Controls never show inside OBS (ZW-058)
 
 - OBS gives every page it shows as a browser source an object, `window.obsstudio`. `source.js` reads it: inside OBS, a page behaves as if its address said `ui=0`, whatever the address says. `pageQuery()` returns the address's settings with that applied, and every page takes its settings from it (`city.html` does the same check inline).
 - `?ui=1` brings the controls back inside OBS, for OBS's "Interact" window.
@@ -25,21 +25,21 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
   - `zeusWorld`, `zeusHero`, `zeusLiquid`, `zeusCity`: the scenes' own orders. OBS delivers them to `live.html`, which passes them into the frame.
 - A scene shown inside the control room does not connect to OBS itself: it finds `parent.zeusLive` (see `host` in `source.js`) and sends through that. Its own password box is hidden. So one password, one connection.
 - An order for a scene that is not on screen is dropped, with one exception: a hero film told to play is put on screen first, and the order is kept until the film's page says it listens (`sceneReady`, a message to the page around it).
-- A scene that is in OBS by its own address (an old `hero.html` or `world.html` source left beside `live.html`) ignores numbered messages: they are meant for the scene inside `live.html`, and OBS hands every event to every source. Without this a film played twice, with two sounds (ZW-059). The old pages' own remotes send no number, so they still work.
+- A scene that is in OBS by its own address (an old `hero.html` or `world.html` source left beside `live.html`) ignores numbered messages: they are meant for the scene inside `live.html`, and OBS hands every event to every source. Without this a film played twice, with two sounds (ZW-061). The old pages' own remotes send no number, so they still work.
 - Every message from the control room carries a number (`_n`); a scene obeys a number once (`onceOnly`), in case OBS ever hands an event to the frame as well as to the page.
 - Without OBS, two tabs of one browser work: `live.html?ui=0` in one, `live.html` in the other (a BroadcastChannel carries Show; the scenes' own channels carry their orders).
 - From outside, later (TikFinity): `window.zeusShow('hero')` on the picture.
 
-### Liquid Sky (ZW-058)
+### Liquid Sky (ZW-060)
 
 `liquid.html` is the owner's flash-safe show, brought in from a file of his own: one shader, no three.js. It is the accessible alternative to the lasers: no strobes, no blackouts, fades of three seconds, hue limited to 12 degrees a second, slower under "reduce motion". Keep those properties when changing it.
 
 - Its order is its whole state: `zeusLiquid` `{ on, pal, flow, depth, glow, shimmer, drift, badge }`, sent on every change. The same names work in the address (`pal=aurora&glow=0.6`).
 - When the control room presses Show it tells the tab's page (`zeusShown`), which sends its state, so OBS starts with what the control room is set to. A scene that wants the same only has to listen for `zeusShown`.
-- **Grey sky (ZW-061).** The first frame's clock (`requestAnimationFrame`'s time) can be earlier than `performance.now()` read when the script began. A negative step made the palette index -1 and the hue NaN for ever; a NaN hue draws grey. `dt` is clamped at zero and a NaN hue is reset. Check colour with a still: `PAGE=liquid.html node shot.mjs out.png "ui=0"`-style, or any screenshot after five seconds.
+- **Grey sky (ZW-063).** The first frame's clock (`requestAnimationFrame`'s time) can be earlier than `performance.now()` read when the script began. A negative step made the palette index -1 and the hue NaN for ever; a NaN hue draws grey. `dt` is clamped at zero and a NaN hue is reset. Check colour with a still: `PAGE=liquid.html node shot.mjs out.png "ui=0"`-style, or any screenshot after five seconds.
 - It starts by itself in OBS and in the control room; opened alone in a browser it waits for Start, as the original did.
 
-### The city (ZW-060)
+### The city (ZW-062)
 
 - `zeusCity`: `{ cmd: 'battle', wins }`, `{ cmd: 'tour', on }`, `{ cmd: 'spin', on }`, `{ cmd: 'reset' }`, `{ cmd: 'address', view, light }`. Sent by `tell()` in `city.js`, obeyed by `obey()` in the battle block (where the camera's `go()` lives).
 - A view link still loads the control room's copy again with `?view=`, as it always did. The picture in OBS does not: it flies to that view's camera, because a loading bar would show on the stream. A different light does load it again (the light is chosen when the city is built).
@@ -49,7 +49,7 @@ The scenes are still the pages they were. `live.html` holds one of them at a tim
 
 Each scene is a heavy program with its own renderer, written as a page. Merging them into one program would mean rewriting all of them and keeping every scene's models in memory at once. A frame costs nothing: one scene is loaded at a time, the old pages keep working at their own addresses, and a new scene is one line in `SCENES` in `live.js`.
 
-### The hero film from the control room (ZW-059)
+### The hero film from the control room (ZW-061)
 
 - "Play in OBS" also plays the film in the control room, without sound (`play(true)` in `hero.js`), so the owner sees what the stream sees and the sound is not heard twice. The film's video is always silent; the sound is two separate audio players, and those are what `quiet` mutes.
 - A browser may refuse to start sound that nobody clicked for. `play()` then starts again without sound. OBS allows sound unasked, so this is for other software.

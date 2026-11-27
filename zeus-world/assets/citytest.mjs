@@ -1,4 +1,4 @@
-// Checks that the city obeys the control room's orders (ZW-060): node citytest.mjs   (needs `npm run build` first; slow without a graphics card)
+// Checks that the city obeys the control room's orders (ZW-062): node citytest.mjs   (needs `npm run build` first; slow without a graphics card)
 // One copy of the city, as the picture inside live.html in OBS; the orders are given to live.html as OBS would give them.
 import { createRequire } from 'node:module';
 import { preview } from 'vite';

@@ -131,6 +131,6 @@ To add or change a shot, edit `PLACES`, render it with `film=`, and look at the 
 - Motion and frame rate have not been checked on this machine (see `environment.md`).
 - Open issues are in `../BACKLOG.md`.
 
-## Steered from the control room (ZW-060)
+## Steered from the control room (ZW-062)
 
 Inside `live.html` the city's view links, Battle, Tour, Rotate and Reset also act on the picture in OBS. See `live.md`, "The city".

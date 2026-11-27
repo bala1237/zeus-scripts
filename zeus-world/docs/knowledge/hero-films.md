@@ -105,6 +105,6 @@ The owner, 25 Nov 2026: "We can't have kid in the video." The Well's first cut h
 - Stills: `PAGE=hero.html node shot.mjs renders/x.png "name=Andie%20Howard&t=36" 960 600`.
 - Not checkable here: how it sounds, and how the motion looks.
 
-## In the control room (ZW-057)
+## In the control room (ZW-059)
 
 Shown inside `live.html`, the hero page sends "Play in OBS" through the control room's connection, and the picture in OBS changes to the film by itself before it plays. See `live.md`.

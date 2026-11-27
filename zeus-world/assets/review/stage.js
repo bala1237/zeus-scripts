@@ -12,7 +12,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createBeat } from './beat.js';
 import { pageQuery } from './source.js';
 
-const q = pageQuery(), SHOT = q.has('shot'); if (q.get('ui') === '0') document.body.classList.add('plain');   // a browser source: no controls (ZW-056)
+const q = pageQuery(), SHOT = q.has('shot'); if (q.get('ui') === '0') document.body.classList.add('plain');   // a browser source: no controls (ZW-058)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight); document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0x020308);
 const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 400);

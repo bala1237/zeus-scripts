@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-063.**
+- **Next number: ZW-065.**
 
 ## Open
 
@@ -67,13 +67,13 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-053 | Bug | Citizens walk as if an arm and a leg were broken, in the open world and in the city | High (proposed) | Fix published 26 Nov 2026 (the man's binding rebuilt). Owner, 26 Nov: \"looks good\" (no new frame-rate figure given) | 26 Nov 2026, owner |
 | ZW-054 | Enhancement | Open world polish round, in an agreed order: motion, water, trees close up, the story visits the new places, sky and weather, sound, moving animals and working people | High | Open. Item 1 (motion) published 26 Nov 2026, waiting for the owner; item 2 (water) next | 26 Nov 2026, owner |
 | ZW-055 | Bug | World remote: "connection to OBS closed" after connecting | High (proposed) | Fix published 26 Nov 2026 (says why, joins again by itself); cause not confirmed, waiting for the owner | 26 Nov 2026, owner |
-| ZW-056 | Bug | The controls show when a page is added to OBS by its address | High (proposed) | Fix shipped 26 Nov 2026; checked against a stand-in, waiting for the owner in OBS | 26 Nov 2026, owner |
-| ZW-057 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
-| ZW-058 | Enhancement | Liquid Sky, the flash-safe show, as a scene in Zeus Live | Medium (proposed) | Shipped 26 Nov 2026; waiting for the owner in OBS | 26 Nov 2026, owner |
-| ZW-059 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
-| ZW-060 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
-| ZW-061 | Bug | Liquid Sky has lost its colour: grey in the control room and in OBS | High (proposed) | Fix shipped 27 Nov 2026; colour confirmed in a still, waiting for the owner | 27 Nov 2026, owner |
-| ZW-062 | Bug | The battle shows no soldiers | High (proposed) | Works again for the owner 27 Nov 2026 after he checked again; no code changed, cause not found | 27 Nov 2026, owner |
+| ZW-058 | Bug | The controls show when a page is added to OBS by its address | High (proposed) | Fix shipped 26 Nov 2026; checked against a stand-in, waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-059 | Enhancement | One page for every scene, switched from the browser | High (proposed) | First version shipped 26 Nov 2026 (`live.html`); waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-060 | Enhancement | Liquid Sky, the flash-safe show, as a scene in Zeus Live | Medium (proposed) | Shipped 26 Nov 2026; waiting for the owner in OBS | 26 Nov 2026, owner |
+| ZW-061 | Bug | Hero film sent from the control room: only a black screen | High (proposed) | Fix shipped 27 Nov 2026 for the control room; the OBS side could not be made to fail here, waiting for the owner | 27 Nov 2026, owner |
+| ZW-062 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
+| ZW-063 | Bug | Liquid Sky has lost its colour: grey in the control room and in OBS | High (proposed) | Fix shipped 27 Nov 2026; colour confirmed in a still, waiting for the owner | 27 Nov 2026, owner |
+| ZW-064 | Bug | The battle shows no soldiers | High (proposed) | Works again for the owner 27 Nov 2026 after he checked again; no code changed, cause not found | 27 Nov 2026, owner |
 
 ## Closed
 
@@ -671,7 +671,7 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Changed:** a link that never joined is reported once, as not reached, with the three things to check: OBS open on the same computer; its WebSocket server enabled on port 4455; the browser allowed to reach this computer from a web page (Chrome asks for "Local network access" and blocks the link if that is refused or never answered).
 - **Not known:** which of the three it is on his Mac.
 
-### ZW-056: The controls show in OBS
+### ZW-058: The controls show in OBS
 
 - **Reported:** 26 Nov 2026, by the owner: "for world.html, we have it streamed to obs via websocket. when we give the world.html url in obs, it also shows the controls. we should not have that." And: "the controls should be available only in the browser".
 - **Cause:** the controls were hidden only if the address ended in `ui=0`. The plain address shows them.
@@ -679,7 +679,7 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Checked:** all six pages against a stand-in for OBS (`assets/livetest.mjs`). **Not checked in OBS itself.**
 - **Limit:** TikTok LIVE Studio gives a page no sign; there the address still needs `ui=0`.
 
-### ZW-057: One page for every scene
+### ZW-059: One page for every scene
 
 - **Asked:** 26 Nov 2026, by the owner: "we have different htmls like laser, city.html and hero and so on. we should consolidate all into one. since we have the web scokets connected, we should be able to show whichever tab we want. what do you think?"
 - **Built:** `live.html`. In OBS it is the picture: one browser source, one address, never changed. In a browser it is the control room: a tab per scene with that scene's controls, one connection to OBS, and "Show this in OBS". Detail in `knowledge/live.md`.
@@ -687,14 +687,14 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Checked:** against a stand-in for OBS. **Not checked in OBS itself.**
 - **Not done yet:** live orders for the lasers, stage, city and Andie's Place (today only the scene and its settings reach OBS for them); returning to the scene before when a hero film ends; a "controls only" control room that does not draw the scene a second time.
 
-### ZW-058: Liquid Sky in Zeus Live
+### ZW-060: Liquid Sky in Zeus Live
 
 - **Asked:** 26 Nov 2026, by the owner, after seeing the tabs of `live.html`: "we did one for accessabilty. the little cloud", then "liquid cloud", then the file itself, `Liquid_Sky_Laser.html`.
 - **What it is:** a show he made outside this project: a flowing sheet of light overhead, made to be safe for viewers sensitive to flashing. No strobes, no blackouts, fades of three seconds, colour that cannot snap, slower when the viewer's device asks for less motion, and a "laser show on · flash-safe" badge.
 - **Built:** the file is now `assets/review/liquid.html`, unchanged in look. It has a tab in the control room ("Liquid sky"). In OBS it shows no panel and starts by itself. Its palette, sliders, badge and Start/Stop in the control room steer the copy in OBS, and pressing Show sends the control room's present settings with it.
 - **Checked:** against a stand-in for OBS. Not checked in OBS itself; how it looks in motion is the owner's to judge, though nothing in the picture was changed.
 
-### ZW-059: The hero film is sent but the screen is black
+### ZW-061: The hero film is sent but the screen is black
 
 - **Reported:** 27 Nov 2026, by the owner: "the hero movie is sent, but i don't see the movie playing. just the black screen".
 - **Not known:** which screen was black, the control room in Chrome or the picture in OBS.
@@ -705,7 +705,7 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Owner, 27 Nov 2026, after the fix:** "2 sounds from the browser and the obs for hero". So the film now plays in OBS. **Known from the code:** the control room's copy has both of its sound players muted when it plays along, so it should be silent. **Not known:** where the second sound comes from. Likely sources (guesses): an older `hero.html` browser source still in OBS, which receives the same order as `live.html` and plays too, about a second apart; another Chrome tab with the hero page open, which obeys through the tab-to-tab channel; or OBS playing the source's sound straight to the speakers because "Control audio via OBS" is not ticked. Asked the owner to check these.
 - **Owner, same day:** "i clicked on play it in obs and it happenned". So the second sound follows "Play in OBS" alone. The control room's copy is muted in the code, which leaves a second listener as the likely cause (still a guess). **Changed:** a scene that sits in OBS by its own address now ignores orders sent from the control room, so an old `hero.html` source left beside `live.html` no longer plays as well; and the control room's copy has its volume set to nothing as well as muted. **Not verified:** sound cannot be heard on the build machine.
 
-### ZW-060: The city's buttons do not reach OBS
+### ZW-062: The city's buttons do not reach OBS
 
 - **Reported:** 27 Nov 2026, by the owner: "check city. none of the scene switch is working. the battle dind't show up in obs but works in browser".
 - **Cause:** the city had no orders it could take from outside (listed as a limit when `live.html` shipped). Its buttons changed the control room's copy only.
@@ -713,17 +713,17 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Not carried over:** zoom, pan and dragging the view with the mouse.
 - **Read as:** "scene switch" taken to mean the view links inside the city. If the tabs along the top were meant, that is a different fault.
 
-### ZW-061: Liquid Sky is grey
+### ZW-063: Liquid Sky is grey
 
 - **Reported:** 27 Nov 2026, by the owner, with two pictures (the picture in OBS and the control room, both grey, palette Royal): "its not colorful anymore why?"
 - **Cause, found and reproduced:** a fault that was already in his original file, which only showed by luck of timing. On the very first frame the browser's clock can read a hair earlier than the moment the page's script began, so time ran backwards for one frame. The place in the palette became -1, the colour became "not a number", and it never recovered: everything drawn grey. Brought into the project the page starts a moment later than it did as a loose file, which makes the bad timing the usual case. His untouched original is grey on the build machine too.
 - **Changed:** time can no longer run backwards, and a colour that is not a number is replaced by the palette's first colour.
-- **Checked:** a still of `liquid.html?ui=0`, blue (Ocean) where it was grey. **My mistake:** when ZW-058 shipped I said the look was untouched without looking at a still. Stills are now part of checking this page.
+- **Checked:** a still of `liquid.html?ui=0`, blue (Ocean) where it was grey. **My mistake:** when ZW-060 shipped I said the look was untouched without looking at a still. Stills are now part of checking this page.
 
-### ZW-062: The battle is gone
+### ZW-064: The battle is gone
 
-- **Reported:** 27 Nov 2026, by the owner, after ZW-060 was published: "oops, the battle is completely gone. i don't see any of the battle people".
-- **Not known yet:** whether in OBS, in the control room, or both; whether ZW-060 caused it.
+- **Reported:** 27 Nov 2026, by the owner, after ZW-062 was published: "oops, the battle is completely gone. i don't see any of the battle people".
+- **Not known yet:** whether in OBS, in the control room, or both; whether ZW-062 caused it.
 - **Owner, same day:** "battle is missing in both obs and browser", then, after checking again, "battle is working now".
 - **Tried meanwhile:** with the current code the soldiers draw in a posed still (`shot&battle=0.5&view=battle`) and in a live battle started with the Battle button on `city.html`. The Battle button inside the control room's City tab was not tested to the end (the owner stopped the run).
 - **Nothing was changed for this.** Cause not found. Guesses only: an older copy of the page still held by Chrome or OBS until the refresh; or the "battle" view link (top row, camera only) pressed instead of the ⚔ Battle button. If it comes back, note which button, and whether the camera flies to the gate with nobody there.

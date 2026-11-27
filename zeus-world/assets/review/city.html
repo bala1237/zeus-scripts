@@ -39,7 +39,7 @@
   // view links; the rest of the panel is wired up in city.js
   const q = new URLSearchParams(location.search), nav = document.getElementById('nav'), panel = document.getElementById('panel');
   const link = (t, k, v, d) => { const u = new URLSearchParams(q); u.set(k, v); const a = document.createElement('a'); a.textContent = t; a.href = '?' + u; if ((q.get(k) || d) === v) a.className = 'on'; nav.append(a); };
-  if (q.get('ui') === '0' || (window.obsstudio && q.get('ui') !== '1')) document.body.classList.add('plain');   // inside OBS the controls are never shown (ZW-056)
+  if (q.get('ui') === '0' || (window.obsstudio && q.get('ui') !== '1')) document.body.classList.add('plain');   // inside OBS the controls are never shown (ZW-058)
   if (q.has('shot')) panel.remove(); else { for (const v of ['wide', 'plaza', 'street', 'temple', 'harbour', 'river', 'homes', 'civic', 'battle', 'top']) link(v, 'view', v, q.has('view') ? 'wide' : ''); link('☀ ↔ 🌙 cycle', 'light', 'cycle', 'cycle'); link('day', 'light', 'day', 'cycle'); link('dusk', 'light', 'dusk', 'cycle'); }
   document.getElementById('fold')?.addEventListener('click', () => { panel.classList.toggle('shut'); try { localStorage.setItem('zw-panel', panel.classList.contains('shut') ? '1' : ''); } catch {} });
   try { if (localStorage.getItem('zw-panel')) panel.classList.add('shut'); } catch {}

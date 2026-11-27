@@ -1,4 +1,4 @@
-// Checks Zeus Live (ZW-056, ZW-057) against a stand-in for OBS: node livetest.mjs   (needs `npm run build` first)
+// Checks Zeus Live (ZW-058, ZW-059) against a stand-in for OBS: node livetest.mjs   (needs `npm run build` first)
 // The stand-in speaks OBS's remote control and hands emit_event to a page that believes it is a browser source (window.obsstudio).
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
