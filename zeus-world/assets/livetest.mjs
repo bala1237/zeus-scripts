@@ -42,6 +42,11 @@ await inner().waitForFunction(() => document.querySelectorAll('#places button').
 ok('world tab: no second password box', await inner().evaluate(() => document.querySelector('#obsConnect').style.display === 'none'));
 await inner().evaluate(() => document.querySelector('#places button').click()); await src.waitForTimeout(1200);
 const got = await src.evaluate(() => document.querySelector('#view').contentWindow.__got); ok('a place button steers the world in OBS, once', got.length === 1 && got[0].cmd === 'go', JSON.stringify(got));
+// 3a. the world's volume slider in the control room sets the volume in OBS (ZW-065)
+await src.waitForFunction(() => document.querySelector('#view').contentWindow.__world?.sound, null, { timeout: 180000, polling: 2000 });
+await inner().evaluate(() => { const r = document.querySelector('#vol'); r.value = '30'; r.dispatchEvent(new Event('input')); }); await src.waitForTimeout(1500);
+const vol = await src.evaluate(() => document.querySelector('#view').contentWindow.__world.sound.volume); ok('the volume slider sets the volume in OBS', Math.abs(vol - 0.3) < 0.001, String(vol));
+ok('…and the control room shows it', (await inner().evaluate(() => document.querySelector('#volN').textContent)) === '30%');
 // 3b. the liquid sky: shown in OBS it takes the control room's settings, and a slider moved afterwards arrives too
 await ctl.evaluate(() => document.querySelector('#tabs button[data-k=liquid]').click()); await ctl.waitForTimeout(2500); await inner().waitForSelector('.pal', { state: 'attached', timeout: 60000 });
 await inner().evaluate(() => { const r = document.querySelector('#brt'); r.value = '0.5'; r.dispatchEvent(new Event('input')); document.querySelector('.pal[data-i="2"]').click(); });

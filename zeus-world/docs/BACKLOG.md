@@ -9,7 +9,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 - **Priority.** `High`, `Medium` or `Low`. The owner decides; if they have not said, write the session's guess followed by `(proposed)`.
 - **Status.** `Open`, `In progress`, `Fix shipped` (delivered, waiting for the owner to confirm), `Blocked` (say on what), `Done`.
 - **Closing.** When the owner confirms, or for work that needs no confirmation, move the row to the closed table with the date and the commit, and keep the detail section.
-- **Next number: ZW-065.**
+- **Next number: ZW-066.**
 
 ## Open
 
@@ -75,6 +75,7 @@ Every bug and enhancement, numbered. The owner reports; the session logs it here
 | ZW-062 | Bug | City in the control room: views and the battle do not reach OBS | High (proposed) | Fix shipped 27 Nov 2026; waiting for the owner in OBS | 27 Nov 2026, owner |
 | ZW-063 | Bug | Liquid Sky has lost its colour: grey in the control room and in OBS | High (proposed) | Fix shipped 27 Nov 2026; colour confirmed in a still, waiting for the owner | 27 Nov 2026, owner |
 | ZW-064 | Bug | The battle shows no soldiers | High (proposed) | Works again for the owner 27 Nov 2026 after he checked again; no code changed, cause not found | 27 Nov 2026, owner |
+| ZW-065 | Enhancement | Open world: a volume control | Medium (proposed) | Shipped 28 Nov 2026; waiting for the owner's ear | 28 Nov 2026, owner |
 
 ## Closed
 
@@ -743,3 +744,10 @@ The buildings are the cost: about 3,300 of the village shot's draws and 5 millio
 - **Owner, same day:** "battle is missing in both obs and browser", then, after checking again, "battle is working now".
 - **Tried meanwhile:** with the current code the soldiers draw in a posed still (`shot&battle=0.5&view=battle`) and in a live battle started with the Battle button on `city.html`. The Battle button inside the control room's City tab was not tested to the end (the owner stopped the run).
 - **Nothing was changed for this.** Cause not found. Guesses only: an older copy of the page still held by Chrome or OBS until the refresh; or the "battle" view link (top row, camera only) pressed instead of the ⚔ Battle button. If it comes back, note which button, and whether the camera flies to the gate with nobody there.
+
+### ZW-065: Volume control for the open world
+
+- **Asked:** 28 Nov 2026, by the owner: "i need volume control for open world."
+- **Before:** the world's sound was on or off, at a fixed loudness (80%), or set once in the address with `vol=`.
+- **Built:** a Volume slider beside the Sound button. It sets the sound on this page and, through the remote or the control room, in OBS. It is remembered, in the browser and in OBS. Pressing "Show … in OBS" sends the present volume and whether sound is on.
+- **Checked:** that the slider's value reaches the sound's master level here and in a stand-in for OBS. **Not checked:** how it sounds; sound cannot be heard on the build machine.

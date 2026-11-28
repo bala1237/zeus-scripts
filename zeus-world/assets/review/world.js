@@ -39,7 +39,7 @@ const life = q.get('life') === '0' ? null : await createLife({ scene, built, pla
 await air.set(light); // again, so that what was made after the light (smoke) takes its colours
 // sound: on a page with controls it waits for the Sound button (a browser will not let a page make sound before a click); with ?ui=0, as a
 // browser source in OBS, it starts by itself. ?sound=0 never; ?vol=0.5 quieter.
-const sound = q.get('sound') === '0' || SHOT ? null : createSound({ heightAt, forestAt, riverNear, places, spots: built.spots, lamps: built.lamps, air, volume: Number(q.get('vol')) || 0.8 }); if (sound) air.onStrike = (m) => sound.thunder(m);
+const sound = q.get('sound') === '0' || SHOT ? null : createSound({ heightAt, forestAt, riverNear, places, spots: built.spots, lamps: built.lamps, air, volume: q.has('vol') ? Number(q.get('vol')) || 0 : Number((() => { try { return localStorage.getItem('world-vol'); } catch { return null; } })() ?? 0.8) }); if (sound) air.onStrike = (m) => sound.thunder(m);
 const people = q.get('people') === '0' ? null : await createPeople({ scene, heightAt, places, spots: built.spots, road: roadPath, hero: { man: 'char_citizen_man', woman: 'char_citizen_woman', elder: 'char_citizen_elder' }[q.get('hero')] });
 
 // ---------- the director: the story by itself, a place held for as long as wanted, and the flight between
@@ -58,14 +58,19 @@ for (const [k, a] of Object.entries(AIR)) { const b = document.createElement('bu
 $('bolt').addEventListener('click', () => { air.strike(); tell({ cmd: 'bolt' }); });
 function setSound(want) { if (!sound) return; const p = want ? sound.start() : (sound.stop(), Promise.resolve(false)); Promise.resolve(p).then(() => { const b = $('sound'); if (b) { b.classList.toggle('on', sound.on); b.textContent = sound.on ? 'Sound on' : 'Sound off'; } }); }
 if ($('sound')) $('sound').addEventListener('click', () => { const w = !sound?.on; setSound(w); tell({ cmd: 'sound', on: w }); });
+// volume (ZW-065): the slider sets this page's sound and, through the remote, the sound in OBS. It is remembered, here and in OBS.
+function setVolume(v) { if (!sound) return; sound.setVolume(v); try { localStorage.setItem('world-vol', String(sound.volume)); } catch { /* private window */ } const r = $('vol'); if (r) { r.value = String(Math.round(sound.volume * 100)); $('volN').textContent = r.value + '%'; } }
+if ($('vol')) { if (sound) setVolume(sound.volume); else $('vol').disabled = true; $('vol').addEventListener('input', () => { setVolume(Number($('vol').value) / 100); tell({ cmd: 'volume', v: sound.volume }); }); }
+// the control room has just put this scene on the stream: tell it the sound's state, so that OBS starts as this page is set
+addEventListener('zeusShown', () => { if (sound) { tell({ cmd: 'volume', v: sound.volume }); tell({ cmd: 'sound', on: sound.on }); } });
 if (sound && (q.get('ui') === '0' || q.get('sound') === '1')) setSound(true);
 window.worldGo = go; window.worldStory = backToStory; window.worldLight = setAir; window.worldSound = setSound;
 // ---------- the remote (phase 4). A page without controls (a browser source in OBS) does what it is told: by OBS itself (an event OBS
 // hands to every browser source) or by another tab of the same browser. The page with controls is the remote: once connected to OBS on
 // this computer, Story and the place buttons steer the world in OBS as well as here.
-const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); else if (m.cmd === 'air') setAir(m.key); else if (m.cmd === 'bolt') air.strike(); else if (m.cmd === 'sound') setSound(!!m.on); };
+const chan = 'BroadcastChannel' in window ? new BroadcastChannel('zeus-world') : null, obey = (m) => { if (!m || typeof m !== 'object') return; if (m.cmd === 'go') go(m.key); else if (m.cmd === 'story') backToStory(); else if (m.cmd === 'air') setAir(m.key); else if (m.cmd === 'bolt') air.strike(); else if (m.cmd === 'sound') setSound(!!m.on); else if (m.cmd === 'volume') setVolume(m.v); };
 const fresh = onceOnly(); addEventListener('zeusWorld', (e) => { if (fresh(e.detail)) obey(e.detail); }); if (chan && q.get('ui') === '0') chan.onmessage = (e) => obey(e.data); sceneReady('world');
-let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); const via = host || obs; if (via) via.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : m.cmd === 'air' ? `OBS: ${AIR[m.key].name.toLowerCase()}` : m.cmd === 'bolt' ? 'OBS: lightning' : m.cmd === 'sound' ? `OBS: sound ${m.on ? 'on' : 'off'}` : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
+let obs = null; const tell = (m) => { if (q.get('ui') === '0' || SHOT) return; chan?.postMessage(m); const via = host || obs; if (via) via.emit('zeusWorld', m).then(() => { $('obsStatus').textContent = m.cmd === 'go' ? `OBS: flying to ${cine.places[m.key].name[0]}` : m.cmd === 'air' ? `OBS: ${AIR[m.key].name.toLowerCase()}` : m.cmd === 'bolt' ? 'OBS: lightning' : m.cmd === 'sound' ? `OBS: sound ${m.on ? 'on' : 'off'}` : m.cmd === 'volume' ? `OBS: volume ${Math.round(m.v * 100)}%` : 'OBS: back to the story'; }).catch((e) => { $('obsStatus').textContent = 'OBS: ' + e.message; }); };
 if (host && !document.body.classList.contains('plain')) { $('obsPass').parentElement.style.display = $('obsConnect').style.display = 'none'; $('obsStatus').textContent = 'OBS is connected from the bar at the top'; }
 else if (!document.body.classList.contains('plain')) { const keep = { get: () => { try { return localStorage.getItem('world-obspass'); } catch { return null; } }, set: (v) => { try { localStorage.setItem('world-obspass', v); } catch { /* private window */ } } }; $('obsPass').value = keep.get() || '';
   // if OBS drops the connection (it does whenever its WebSocket settings are applied, or OBS restarts), the page says why and joins again by itself

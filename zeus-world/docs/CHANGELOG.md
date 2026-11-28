@@ -2,6 +2,10 @@
 
 What changed, when and why. Newest first. One entry per piece of work, in plain language, with the backlog number where there is one. The commit history has the line-by-line detail.
 
+## 28 Nov 2026
+
+- **Open world: volume control (ZW-065).** A Volume slider beside the Sound button. It also sets the volume in OBS, and is remembered.
+
 ## 27 Nov 2026
 
 - **Liquid Sky has its colour back (ZW-063).** It was drawn grey, in the control room and in OBS. A timing fault from the original file turned the colour into "not a number" on the first frame, for good.

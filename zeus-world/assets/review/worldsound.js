@@ -15,6 +15,8 @@ export function createSound({ heightAt, forestAt, riverNear, places, spots, lamp
     // every loop starts as soon as it has loaded, silent, at a different point of itself; only its loudness changes after that
     for (const n of NAMES) load(n).then((buf) => { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buf; src.loop = true; src.loopEnd = Math.floor(buf.duration); g.gain.value = 0; src.connect(g).connect(master); src.start(0, Math.random() * Math.floor(buf.duration)); layer[n] = g; }).catch((e) => console.warn('sound missing', n, e.message));
     load('thunder').then((b) => { thunderBuf = b; }).catch(() => {}); master.gain.setTargetAtTime(volume, ctx.currentTime, 1.2); return ctx.state === 'running'; }
+  // the whole sound louder or quieter, 0 to 1, eased so that it never jumps (ZW-065)
+  function setVolume(v) { volume = Math.max(0, Math.min(1, Number(v) || 0)); if (ctx && on) master.gain.setTargetAtTime(volume, ctx.currentTime, 0.15); }
   function stop() { on = false; if (ctx) master.gain.setTargetAtTime(0, ctx.currentTime, 0.3); }
 
   function update(cam, dt) { if (!ctx || !on) return; clock += dt; if (clock < 0.2) return; clock = 0;
@@ -31,5 +33,5 @@ export function createSound({ heightAt, forestAt, riverNear, places, spots, lamp
 
   // thunder after a stroke of lightning: later and softer the further off it was
   function thunder(metres = 4000) { if (!ctx || !on || !thunderBuf) return; const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = thunderBuf; g.gain.value = Math.min(1, 0.5 + 2500 / (metres + 1500)); s.connect(g).connect(master); s.start(ctx.currentTime + Math.min(4, metres / 2400)); }
-  return { start, stop, update, thunder, toggle: () => (on ? (stop(), false) : (start(), true)), get on() { return on; }, get running() { return !!ctx && ctx.state === 'running' && on; }, levels: () => ({ ...want }) };
+  return { start, stop, update, thunder, setVolume, get volume() { return volume; }, toggle: () => (on ? (stop(), false) : (start(), true)), get on() { return on; }, get running() { return !!ctx && ctx.state === 'running' && on; }, levels: () => ({ ...want }) };
 }

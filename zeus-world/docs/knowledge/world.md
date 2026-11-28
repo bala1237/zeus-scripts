@@ -243,3 +243,7 @@ A story line whose anchor is not on the road uses `at(x, z)` in `cinecam.js` (a 
 - **Starting:** a browser will not let a page make sound before a click, so the page with controls has a Sound button. With `?ui=0` (a browser source in OBS) it starts by itself. In OBS the source must have **Control audio via OBS** ticked or nothing is heard there. `?sound=0` never, `?sound=1` at once, `?vol=0.5`. Remote: `{cmd:'sound', on}`.
 - **Thunder:** `worldair.js` tells `onStrike` how far off each stroke is; the clap is later and softer with distance.
 - **Check:** `node renders/soundtest.mjs` prints which sounds are up at nine places and hours. It cannot tell whether they sound good.
+
+## Volume (ZW-065)
+
+`sound.setVolume(0..1)` in `worldsound.js` eases the master level (every layer and the thunder pass through it). The page's slider calls it, keeps the value in `localStorage` (`world-vol`) and sends `{ cmd: 'volume', v }` on the remote; the page in OBS keeps it too, so it survives a restart. `?vol=0.5` in the address wins over the remembered value. In OBS the source needs "Control audio via OBS" ticked for the sound to reach the mixer; OBS's own fader then works on top of this one.

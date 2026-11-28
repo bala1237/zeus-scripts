@@ -2,7 +2,7 @@
 
 Where the project stands and what happens next. Keep this short and current; detail belongs in the backlog and the knowledge files.
 
-Last updated: 27 Nov 2026.
+Last updated: 28 Nov 2026.
 
 **Live preview:** https://zeus-world-preview-bala-0416.vercel.app/city.html (public link; see `knowledge/hosting.md`).
 
